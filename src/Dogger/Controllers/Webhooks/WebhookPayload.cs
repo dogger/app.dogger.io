@@ -1,0 +1,34 @@
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
+
+#pragma warning disable 8618
+
+namespace Dogger.Controllers.Webhooks
+{
+    [ExcludeFromCodeCoverage]
+    public class WebhookPayload
+    {
+        public string? Action { get; set; }
+
+        [JsonPropertyName("pull_request")]
+        public PullRequestPayload? PullRequest { get;set; }
+
+        public RepositoryPayload? Repository { get;set; }
+
+        public UserPayload? Sender { get; set; }
+
+        public IssuePayload? Issue { get; set; }
+
+        public UserPayload? Pusher { get; set; }
+
+        public CommentPayload? Comment { get; set; }
+
+        public InstallationPayload Installation { get; set; }
+
+        public CommitPayload[]? Commits { get; set; }
+
+        [JsonPropertyName("ref")]
+        public string? Reference { get; set; }
+    }
+
+}

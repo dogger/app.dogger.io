@@ -1,0 +1,1 @@
+type GlobalFetch = Window;

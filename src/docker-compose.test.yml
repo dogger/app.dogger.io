@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  sut:
+    image: ${DOCKER_REGISTRY-}dogger-tests
+    build:
+      context: .
+      dockerfile: Dogger.Tests/Dockerfile
+    environment:
+    - SQL_CONNECTION_STRING="Server=mssql-test-container,1433;Database=master;User Id=SA;Password=hNxX9Qz2"
+    - DOTNET_RUNNING_IN_TEST=true
+
+  mssql-test-container:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    tmpfs: /var/lib/mssql:rw,exec,suid,dev
+    environment:
+    - ACCEPT_EULA=Y
+    - SA_PASSWORD=hNxX9Qz2
+    logging:
+      driver: none

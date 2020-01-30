@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <title>You're almost ready!</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .logo-wrapper {
+            text-align: center;
+        }
+
+        span.code {
+            font-family: monospace;
+            padding-left: 2px;
+            padding-right: 2px;
+        }
+
+        h1, h2, h3 {
+            font-weight: 400;
+            margin-bottom: 0;
+            margin-top: 32px;
+            text-align: center;
+        }
+
+        p {
+            margin-top: 8px;
+            line-height: 140%;
+        }
+    </style>
+    <script async defer data-domain="dogger.io" src="https://plausible.io/js/plausible.js"></script>
+</head>
+<body>
+    <div class="logo-wrapper">
+        <img alt="Logo" src="https://dogger.io/images/dogger-no-title.svg" />
+    </div>
+    <div>
+        @RenderBody()
+    </div>
+</body>
+</html>

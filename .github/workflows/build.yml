@@ -1,0 +1,139 @@
+name: Docker
+
+on:
+  push:
+    # Publish `master` as Docker `latest` image.
+    branches:
+      - master
+
+    # Publish `v1.2.3` tags as releases.
+    tags:
+      - v*
+
+  # Run tests for any PRs.
+  pull_request:
+
+env:
+  IMAGE_NAME: dogger
+
+jobs:
+
+  dependabot:
+    if: contains(github.head_ref, 'dependabot') == true
+    name: Check if compilation succeeds
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Compile dogger.io
+        working-directory: ./src
+        run: |
+          docker build . --file Dogger/Dockerfile
+
+  test:
+    name: Run all tests
+    runs-on: ubuntu-latest
+    if: contains(github.head_ref, 'dependabot') == false
+
+    steps:      
+      - name: 'Block concurrent executions'
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 10
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Run tests
+        working-directory: ./src
+        run: |
+          docker-compose --file docker-compose.test.yml build
+          docker-compose --file docker-compose.test.yml up --exit-code-from sut
+
+  publish-dogger-io:
+    name: Publish dogger-io
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && contains(github.ref, 'master')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build Dockerfile
+        working-directory: ./src
+        run: |
+          docker build . --file Dogger/Dockerfile --tag dogger-image --build-arg STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY_LIVE }}
+
+      - name: Tag Docker image
+        run: |
+          docker tag dogger-image ffmathy/dogger:latest
+
+      - name: Push Docker image to Docker Hub
+        working-directory: ./src
+        run: |
+          echo "Pushing image to Docker Hub."
+
+          echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+          docker push ffmathy/dogger:latest
+
+  deploy-dogger-io:
+    name: Deploy dogger-io
+    needs: [publish-dogger-io]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Deploy to dogger.io
+        working-directory: ./src
+        run: |
+          echo "Starting dogfeed process."
+
+          #replace newlines with the character \\n
+          DOGFEED_DOCKER_COMPOSE_YML_CONTENTS=$(sed ':a;N;$!ba;s/\n/\\n/g' docker-compose.deploy.yml)
+
+          echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+          
+          docker run\
+            -e DOGFEED=true\
+            -e DOGFEED_Aws__SecretAccessKey="${{ secrets.AWS_SECRET_ACCESS_KEY }}"\
+            -e DOGFEED_Aws__AccessKeyId="${{ secrets.AWS_ACCESS_KEY_ID }}"\
+            -e DOGFEED_Aws__LightsailPrivateKeyPem="${{ secrets.AWS_LIGHTSAIL_PRIVATE_KEY_PEM }}"\
+            -e DOGFEED_Dogfeed__DockerHub__Username="${{ secrets.DOCKER_HUB_USERNAME }}"\
+            -e DOGFEED_Dogfeed__DockerHub__Password="${{ secrets.DOCKER_HUB_PASSWORD }}"\
+            -e DOGFEED_Dogfeed__DockerComposeYmlContents="${DOGFEED_DOCKER_COMPOSE_YML_CONTENTS}"\
+            -e DOGFEED_Dogfeed__Elasticsearch__InstancePassword="${{ secrets.ELK_PASSWORD }}"\
+            -e DOGFEED_Dogfeed__Elasticsearch__ConfigurationYmlContents="${{ secrets.ELK_CONFIGURATION_YML_CONTENTS }}"\
+            -e DOGFEED_Dogfeed__Elasticsearch__AdminKeyContents="${{ secrets.ELK_ADMIN_KEY_CONTENTS }}"\
+            -e DOGFEED_Dogfeed__Elasticsearch__AdminPemContents="${{ secrets.ELK_ADMIN_PEM_CONTENTS }}"\
+            -e DOGFEED_Dogfeed__Elasticsearch__AdminKeyPassword="${{ secrets.ELK_ADMIN_KEY_PASSWORD }}"\
+            -e DOGFEED_Dogfeed__Elasticsearch__NodeKeyContents="${{ secrets.ELK_NODE_KEY_CONTENTS }}"\
+            -e DOGFEED_Dogfeed__Elasticsearch__NodePemContents="${{ secrets.ELK_NODE_PEM_CONTENTS }}"\
+            -e DOGFEED_Dogfeed__Elasticsearch__RootCaKeyContents="${{ secrets.ELK_ROOT_CA_KEY_CONTENTS }}"\
+            -e DOGFEED_Dogfeed__Elasticsearch__RootCaPemContents="${{ secrets.ELK_ROOT_CA_PEM_CONTENTS }}"\
+            -e DOGFEED_Slack__IncomingUrl="${{ secrets.SLACK_INCOMING_URL }}"\
+            -e DOGFEED_Cloudflare__ApiKey="${{ secrets.CLOUDFLARE_KEY }}"\
+            -e DOGFEED_ASPNETCORE_ENVIRONMENT="Production"\
+            -e INSTANCE_Sql__ConnectionString="Server=dogger-mssql.cilzcbhfqhkd.eu-west-1.rds.amazonaws.com,1433;Database=dogger;User Id=admin;Password=${{ secrets.SQL_PASSWORD }}"\
+            -e INSTANCE_Aws__SecretAccessKey="${{ secrets.AWS_SECRET_ACCESS_KEY }}"\
+            -e INSTANCE_Aws__AccessKeyId="${{ secrets.AWS_ACCESS_KEY_ID }}"\
+            -e INSTANCE_Aws__LightsailPrivateKeyPem="${{ secrets.AWS_LIGHTSAIL_PRIVATE_KEY_PEM }}"\
+            -e INSTANCE_Stripe__PublishableKey="${{ secrets.STRIPE_PUBLISHABLE_KEY_LIVE }}"\
+            -e INSTANCE_Stripe__SecretKey="${{ secrets.STRIPE_SECRET_KEY_LIVE }}"\
+            -e INSTANCE_Slack__IncomingUrl="${{ secrets.SLACK_INCOMING_URL }}"\
+            -e INSTANCE_Encryption__Pepper="${{ secrets.ENCRYPTION_PEPPER }}"\
+            -e INSTANCE_GitHub__PullDog__PrivateKey="${{ secrets.PULL_DOG_PRIVATE_KEY }}"\
+            -e INSTANCE_GitHub__PullDog__AppIdentifier="${{ secrets.PULL_DOG_APP_IDENTIFIER }}"\
+            -e INSTANCE_GitHub__PullDog__WebhookSecret="${{ secrets.PULL_DOG_WEBHOOK_SECRET }}"\
+            -e INSTANCE_GitHub__PullDog__ClientId="${{ secrets.PULL_DOG_CLIENT_ID }}"\
+            -e INSTANCE_GitHub__PullDog__ClientSecret="${{ secrets.PULL_DOG_CLIENT_SECRET }}"\
+            -e INSTANCE_Auth0__ClientId="${{ secrets.AUTHZERO_CLIENT_ID }}"\
+            -e INSTANCE_Auth0__ClientSecret="${{ secrets.AUTHZERO_CLIENT_SECRET }}"\
+            -e INSTANCE_ASPNETCORE_ENVIRONMENT="Production"\
+            ffmathy/dogger:latest

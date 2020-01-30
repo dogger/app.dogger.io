@@ -1,0 +1,12 @@
+.line > span > span {
+    color: #856648;
+    padding-left: 16px;
+}
+
+.line {
+    background-color: transparent !important;
+}
+
+.line > a {
+    display: none;
+}
