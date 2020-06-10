@@ -28,8 +28,6 @@
 }
 
 .blog img {
-    max-width: 500px;
-
     box-shadow: 0px 0px 28px 6px rgba(0,0,0,0.05);
 
     border-radius: 3px;

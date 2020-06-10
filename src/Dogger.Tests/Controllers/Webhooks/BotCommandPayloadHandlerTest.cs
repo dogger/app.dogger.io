@@ -174,7 +174,7 @@ namespace Dogger.Tests.Controllers.Webhooks
                 {
                     Comment = new CommentPayload()
                     {
-                        Body = "@pull-dog go fetch"
+                        Body = "@pull-dog up"
                     }
                 },
                 null!,
@@ -202,7 +202,7 @@ namespace Dogger.Tests.Controllers.Webhooks
                 {
                     Comment = new CommentPayload()
                     {
-                        Body = "@pull-dog get lost"
+                        Body = "@pull-dog down"
                     }
                 },
                 null!,

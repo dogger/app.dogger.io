@@ -1,6 +1,6 @@
-import React, { } from 'react';
+import React from 'react';
 import { graphql } from "gatsby";
-import { useTheme, Typography, Container, Box, Card, CardContent, Link, Divider, Grid, makeStyles, Theme, useMediaQuery, CircularProgress } from '@material-ui/core';
+import { useTheme, Typography, Container, Box, Card, CardContent, Link, Divider, Grid, makeStyles, Theme, useMediaQuery } from '@material-ui/core';
 import { GitHub, Storage, ArrowDownward, AssignmentTurnedIn, MoneyOff, Share } from '@material-ui/icons';
 import { PullDogPricingTable } from '../components/pull-dog/PullDogPricingTable';
 import { isDarkTheme } from '../hooks/theme';
@@ -496,8 +496,8 @@ export const query = graphql`
       relativePath: { eq: "pull-dog/screenshot-1.jpg" }
     ) {
       childImageSharp {
-        fluid(maxWidth: 450, quality: 90) {
-          ...GatsbyImageSharpFluid
+        fluid(maxWidth: 450) {
+          ...GatsbyImageSharpFluid_withWebp
         }
       }
     }
@@ -505,8 +505,8 @@ export const query = graphql`
       relativePath: { eq: "pull-dog/screenshot-2.jpg" }
     ) {
       childImageSharp {
-        fluid(maxWidth: 450, quality: 90) {
-          ...GatsbyImageSharpFluid
+        fluid(maxWidth: 450) {
+          ...GatsbyImageSharpFluid_withWebp
         }
       }
     }
@@ -514,8 +514,8 @@ export const query = graphql`
       relativePath: { eq: "pull-dog/screenshot-3.jpg" }
     ) {
       childImageSharp {
-        fluid(maxWidth: 450, quality: 90) {
-          ...GatsbyImageSharpFluid
+        fluid(maxWidth: 450) {
+          ...GatsbyImageSharpFluid_withWebp
         }
       }
     }

@@ -17,6 +17,7 @@ But that second step can be quite tedious and annoying, especially if the person
 
 This is where Pull Dog comes in to play.
 
+
 <img src="/images/dogger-no-title.svg" alt="Pull Dog logo" />
 
 Pull Dog is a GitHub app that will automatically provision a Docker-based test server for your feature as you open a pull request. And best of all - *it's all free!*
@@ -84,13 +85,13 @@ volumes:
 #### Opening a pull request
 Upon opening my pull request, I am greeted with the following comment from pull-dog where I can see that it is provisioning a server for me.
 
-<img src="/images/pull-dog/screenshot-1.jpg" alt="Pull Dog is provisioning a server here after opening the pull request" />
+![Pull Dog is provisioning a server here after opening the pull request](../images/pull-dog/screenshot-1.jpg)
 
 After a brief while, the comment is updated with the connection details of my server. *Note that the port 8000 is the exposed port from the docker-compose.yml file.*
 
-<img src="/images/pull-dog/screenshot-2.jpg" alt="The server is ready" />
+![The server is ready](../images/pull-dog/screenshot-2.jpg)
 
 #### Closing the pull request
 After closing the pull request, the server is shut down again, and the comment is updated to reflect that.
 
-<img src="/images/pull-dog/screenshot-3.jpg" alt="Pull Request is closed and server is destroyed" />
+![Pull Request is closed and server is destroyed](../images/pull-dog/screenshot-3.jpg)

@@ -15,7 +15,19 @@ module.exports = {
     `gatsby-plugin-styled-components`,
     `gatsby-plugin-sharp`,
     {
-      resolve: `gatsby-transformer-remark`
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        plugins: [
+          {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 800,
+              quality: 100,
+              withWebp: true
+            },
+          },
+        ],
+      },
     },
     `gatsby-plugin-react-helmet`,
     {
@@ -28,7 +40,7 @@ module.exports = {
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        name: `blog-posts`,
+        name: `posts`,
         path: `${__dirname}/static/blog`,
       },
     },
