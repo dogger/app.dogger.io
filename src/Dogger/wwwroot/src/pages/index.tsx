@@ -1,6 +1,5 @@
 import React, { } from 'react';
 import { graphql } from "gatsby";
-import { useAuth0 } from '../auth/Auth0Provider';
 import { useTheme, Typography, Container, Box, Card, CardContent, Link, Divider, Grid, makeStyles, Theme, useMediaQuery, CircularProgress } from '@material-ui/core';
 import { GitHub, Storage, ArrowDownward, AssignmentTurnedIn, MoneyOff, Share } from '@material-ui/icons';
 import { PullDogPricingTable } from '../components/pull-dog/PullDogPricingTable';
