@@ -31,13 +31,13 @@ namespace Dogger.Controllers.Webhooks.Handlers
 
             switch (text)
             {
-                case "@pull-dog get lost":
+                case "@pull-dog down":
                     await this.mediator.Send(new DeleteInstanceByPullRequestCommand(
                         context.Repository.Handle,
                         context.PullRequest.Handle));
                     break;
 
-                case "@pull-dog go fetch":
+                case "@pull-dog up":
                     await this.mediator.Send(new ProvisionPullDogEnvironmentCommand(
                         context.PullRequest.Handle,
                         context.Repository));

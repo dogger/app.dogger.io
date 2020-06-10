@@ -1,15 +1,17 @@
-import React, {  } from 'react';
+import React, { } from 'react';
+import { graphql } from "gatsby";
 import { useAuth0 } from '../auth/Auth0Provider';
 import { useTheme, Typography, Container, Box, Card, CardContent, Link, Divider, Grid, makeStyles, Theme, useMediaQuery, CircularProgress } from '@material-ui/core';
 import { GitHub, Storage, ArrowDownward, AssignmentTurnedIn, MoneyOff, Share } from '@material-ui/icons';
-import {PullDogPricingTable} from '../components/pull-dog/PullDogPricingTable';
-import {isDarkTheme} from '../hooks/theme';
+import { PullDogPricingTable } from '../components/pull-dog/PullDogPricingTable';
+import { isDarkTheme } from '../hooks/theme';
+import Img from "gatsby-image";
 
 const useStyles = makeStyles({
     header: () => ({}),
     accentColor: (existingTheme: Theme) => ({
-        color: existingTheme.palette.type === "dark" ? 
-            'white' : 
+        color: existingTheme.palette.type === "dark" ?
+            'white' :
             existingTheme.palette.primary.main
     })
 });
@@ -53,12 +55,12 @@ const BenefitGridItem = (props: { icon: JSX.Element, title: string, description:
     </>;
 }
 
-export const Timeline = (props: { entries: Array<{ title: string, text: JSX.Element, imageUrl: string }> }) => {
+export const Timeline = (props: { entries: Array<{ title: string, text: JSX.Element, image: any }> }) => {
     const theme = useTheme();
     const isDownFromMedium = useMediaQuery(theme.breakpoints.down('sm'));
 
     const isDarkTheme = theme.palette.type === "dark";
-    const linkColor = isDarkTheme ? 
+    const linkColor = isDarkTheme ?
         "rgba(0,0,0,0.25)" :
         "rgba(0,0,0,0.08)";
 
@@ -82,7 +84,7 @@ export const Timeline = (props: { entries: Array<{ title: string, text: JSX.Elem
                 const linkMargin = 10;
                 const linkBorderWidth = 2;
 
-                const elementWidth = `${isDownFromMedium ? 100 : 50}vw - ${linkWidth*2}px - ${linkMargin * (isDownFromMedium ? 1 : 2)}px - ${elementsHorizontalMargin}px`;
+                const elementWidth = `${isDownFromMedium ? 100 : 50}vw - ${linkWidth * 2}px - ${linkMargin * (isDownFromMedium ? 1 : 2)}px - ${elementsHorizontalMargin}px`;
                 const maxElementWidth = 450;
 
                 const calc = (inner: string) => `calc(${inner})`;
@@ -98,7 +100,7 @@ export const Timeline = (props: { entries: Array<{ title: string, text: JSX.Elem
 
                 const imageOffset = isDownFromMedium ? -30 : 50;
                 const imageElement =
-                    <img alt="Timeline screenshot" src={entry.imageUrl} style={{
+                    <Img alt="Timeline screenshot" fluid={entry.image} style={{
                         width: calc(elementWidth),
                         maxWidth: maxElementWidth,
                         borderRadius: 10,
@@ -161,9 +163,9 @@ export const Timeline = (props: { entries: Array<{ title: string, text: JSX.Elem
 
                 elements.push(...(!isLeft ?
                     [linkElement, contentElement] :
-                    [!isDownFromMedium && linkElement, !isDownFromMedium &&imageElement]).filter(x => !!x));
+                    [!isDownFromMedium && linkElement, !isDownFromMedium && imageElement]).filter(x => !!x));
 
-                if(!isDownFromMedium)
+                if (!isDownFromMedium)
                     isLeft = !isLeft;
 
                 return <div key={`timeline-entry-${index}`} style={{
@@ -181,11 +183,11 @@ export const Timeline = (props: { entries: Array<{ title: string, text: JSX.Elem
     </div>;
 }
 
-const ProductCard = (props: { 
+const ProductCard = (props: {
     description: string,
-    title: string, 
-    icon: JSX.Element, 
-    disabled?: boolean, 
+    title: string,
+    icon: JSX.Element,
+    disabled?: boolean,
     anchor: string
 }) => {
     const theme = useTheme();
@@ -236,7 +238,7 @@ const ProductCard = (props: {
     </Card>;
 }
 
-const App = () => {
+const App = ({data}) => {
     const theme = useTheme();
     const styles = useStyles(theme);
     const isDownFromMedium = useMediaQuery(theme.breakpoints.down('sm'));
@@ -414,7 +416,7 @@ const App = () => {
                             This causes Pull Dog to start creating a brand new test environment for the feature you're about to merge in.<br /><br />
                             The server is created with a docker-compose file from your repository, that you specify.
                         </>,
-                        imageUrl: "/images/pull-dog/screenshot-1.jpg"
+                        image: data.pullRequestOpenedImage.childImageSharp.fluid
                     },
                     {
                         title: "Environment ready",
@@ -423,14 +425,14 @@ const App = () => {
                             <br /><br />
                             The ports specified are the exposed ports of your docker-compose file, and are the only ones open in the firewall.
                         </>,
-                        imageUrl: "/images/pull-dog/screenshot-2.jpg"
+                        image: data.environmentReadyImage.childImageSharp.fluid
                     },
                     {
                         title: "Pull request closed",
                         text: <>
                             The test environment is destroyed again, along with all of its files and variables that were attached to it.
                         </>,
-                        imageUrl: "/images/pull-dog/screenshot-3.jpg"
+                        image: data.pullRequestClosedImage.childImageSharp.fluid
                     }
                 ]} />
             </>
@@ -482,6 +484,41 @@ const App = () => {
     </>;
 }
 
-export default () => (
-    <App />
-);
+export default ({data}) => {
+    console.log(data);
+    return (
+        <App data={data} />
+    );
+}
+
+export const query = graphql`
+  query {
+    pullRequestOpenedImage: file(
+      relativePath: { eq: "pull-dog/screenshot-1.jpg" }
+    ) {
+      childImageSharp {
+        fluid(maxWidth: 450, quality: 90) {
+          ...GatsbyImageSharpFluid
+        }
+      }
+    }
+    environmentReadyImage: file(
+      relativePath: { eq: "pull-dog/screenshot-2.jpg" }
+    ) {
+      childImageSharp {
+        fluid(maxWidth: 450, quality: 90) {
+          ...GatsbyImageSharpFluid
+        }
+      }
+    }
+    pullRequestClosedImage: file(
+      relativePath: { eq: "pull-dog/screenshot-3.jpg" }
+    ) {
+      childImageSharp {
+        fluid(maxWidth: 450, quality: 90) {
+          ...GatsbyImageSharpFluid
+        }
+      }
+    }
+  }
+`

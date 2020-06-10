@@ -126,11 +126,19 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             {
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
-                    $"cd dogger && {environmentVariablesPrefix} docker-compose {filesArgument} build --force-rm --parallel --pull --no-cache {buildArgumentsArgument}");
+                    $"cd dogger && {environmentVariablesPrefix} docker-compose {filesArgument} down --rmi all --volumes --remove-orphans");
+
+                await sshClient.ExecuteCommandAsync(
+                    SshRetryPolicy.AllowRetries,
+                    $"cd dogger && {environmentVariablesPrefix} docker-compose {filesArgument} pull --include-deps");
+
+                await sshClient.ExecuteCommandAsync(
+                    SshRetryPolicy.AllowRetries,
+                    $"cd dogger && {environmentVariablesPrefix} docker-compose {filesArgument} build --force-rm --parallel --no-cache {buildArgumentsArgument}");
 
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.ProhibitRetries,
-                    $"cd dogger && {environmentVariablesPrefix} docker-compose {filesArgument} --compatibility up -d --remove-orphans");
+                    $"cd dogger && {environmentVariablesPrefix} docker-compose {filesArgument} --compatibility up --detach --remove-orphans --always-recreate-deps --force-recreate --renew-anon-volumes");
             }
             catch (SshCommandExecutionException ex) when (ex.Result.ExitCode == 1)
             {
