@@ -3,7 +3,6 @@ import { graphql } from "gatsby";
 import { useTheme, Typography, Container, Box, Card, CardContent, Link, Divider, Grid, makeStyles, Theme, useMediaQuery } from '@material-ui/core';
 import { GitHub, Storage, ArrowDownward, AssignmentTurnedIn, MoneyOff, Share } from '@material-ui/icons';
 import { PullDogPricingTable } from '../components/pull-dog/PullDogPricingTable';
-import { isDarkTheme } from '../hooks/theme';
 import Img from "gatsby-image";
 
 const useStyles = makeStyles({
@@ -260,7 +259,7 @@ const App = ({data}) => {
             </div>
             <img
                 alt="Shape divider"
-                src={isDarkTheme(theme) ?
+                src={theme.palette.type === "dark" ?
                     "/images/landing/hero-svg-shape-5-dark.svg" :
                     "/images/landing/hero-svg-shape-5-light.svg"}
                 style={{
