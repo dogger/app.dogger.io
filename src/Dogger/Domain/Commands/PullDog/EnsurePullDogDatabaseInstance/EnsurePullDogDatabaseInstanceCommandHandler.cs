@@ -34,29 +34,44 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance
             var settings = pullRequest.PullDogRepository.PullDogSettings;
             var user = settings.User;
 
-            var existingInstance = cluster
-                .Instances
-                .SingleOrDefault(x =>
-                    x.PullDogPullRequest == pullRequest);
-            if (existingInstance != null)
-                return existingInstance;
+            var expiry = request.Configuration.Expiry;
+            var expiryTime = expiry == null ?
+                (DateTime?)null :
+                DateTime.UtcNow.Add(expiry.Value);
 
-            var newInstance = new Instance()
+            try
             {
-                Name = $"pull-dog_{user.Id}_{Guid.NewGuid()}",
-                Cluster = cluster,
-                IsProvisioned = false,
-                PlanId = settings.PlanId,
-                Type = InstanceType.DockerCompose,
-                PullDogPullRequest = pullRequest
-            };
-            pullRequest.Instance = newInstance;
+                var existingInstance = cluster
+                    .Instances
+                    .SingleOrDefault(x =>
+                        x.PullDogPullRequest == pullRequest);
+                if (existingInstance != null)
+                {
+                    existingInstance.ExpiresAtUtc = expiryTime;
+                    return existingInstance;
+                }
 
-            cluster.Instances.Add(newInstance);
-            await this.dataContext.Instances.AddAsync(newInstance, cancellationToken);
-            await this.dataContext.SaveChangesAsync(cancellationToken);
+                var newInstance = new Instance()
+                {
+                    Name = $"pull-dog_{user.Id}_{Guid.NewGuid()}",
+                    Cluster = cluster,
+                    IsProvisioned = false,
+                    PlanId = settings.PlanId,
+                    Type = InstanceType.DockerCompose,
+                    PullDogPullRequest = pullRequest,
+                    ExpiresAtUtc = expiryTime
+                };
+                pullRequest.Instance = newInstance;
 
-            return newInstance;
+                cluster.Instances.Add(newInstance);
+                await this.dataContext.Instances.AddAsync(newInstance, cancellationToken);
+
+                return newInstance;
+            }
+            finally
+            {
+                await this.dataContext.SaveChangesAsync(cancellationToken);
+            }
         }
     }
 }

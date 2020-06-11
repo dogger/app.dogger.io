@@ -48,6 +48,9 @@ namespace Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest
 
             if (configurationOverride.ConversationMode != default)
                 configuration.ConversationMode = configurationOverride.ConversationMode;
+
+            if (configurationOverride.Expiry != default)
+                configuration.Expiry = configurationOverride.Expiry;
         }
     }
 }

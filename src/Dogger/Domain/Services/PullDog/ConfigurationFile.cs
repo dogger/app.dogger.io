@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Dogger.Domain.Services.PullDog
 {
@@ -18,6 +19,7 @@ namespace Dogger.Domain.Services.PullDog
         public string[]? DockerComposeYmlFilePaths { get; set; }
         public string[]? AdditionalPaths { get; set; }
 
+        public TimeSpan? Expiry { get; set; }
         public ConversationMode ConversationMode { get; set; }
     }
 

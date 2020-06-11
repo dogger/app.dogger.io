@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
@@ -192,6 +193,44 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             //Assert
             Assert.AreEqual(ConversationMode.MultipleComments, configuration.ConversationMode);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public async Task Handle_ConfigurationOverridePresentWithExpiry_OverridesExistingExpiry()
+        {
+            //Arrange
+            var fakePullDogPullRequest = new PullDogPullRequest()
+            {
+                ConfigurationOverride = new ConfigurationFileOverride()
+                {
+                    Expiry = TimeSpan.FromMinutes(2)
+                }
+            };
+
+            var fakeConfiguration = new ConfigurationFile()
+            {
+                Expiry = TimeSpan.FromMinutes(1)
+            };
+
+            var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
+
+            var fakePullDogFileCollector = await fakePullDogFileCollectorFactory.CreateAsync(fakePullDogPullRequest);
+            fakePullDogFileCollector
+                .GetConfigurationFileAsync()
+                .Returns(fakeConfiguration);
+
+            var handler = new GetConfigurationForPullRequestQueryHandler(
+                fakePullDogFileCollectorFactory);
+
+            //Act
+            var configuration = await handler.Handle(
+                new GetConfigurationForPullRequestQuery(
+                    fakePullDogPullRequest),
+                default);
+
+            //Assert
+            Assert.AreEqual(TimeSpan.FromMinutes(2), configuration.Expiry);
         }
     }
 }

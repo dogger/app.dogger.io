@@ -96,7 +96,9 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
                 await ReportProvisioningToSlackAsync(request, settings);
 
                 var instance = await this.mediator.Send(
-                    new EnsurePullDogDatabaseInstanceCommand(pullRequest),
+                    new EnsurePullDogDatabaseInstanceCommand(
+                        pullRequest,
+                        configuration),
                     cancellationToken);
 
                 var flowsToUse = new List<IProvisioningStateFlow>();

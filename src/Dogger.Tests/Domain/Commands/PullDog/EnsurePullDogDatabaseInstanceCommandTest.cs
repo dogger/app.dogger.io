@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest;
+using Dogger.Domain.Services.PullDog;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
     {
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_ExistingClusterInstanceFound_ReusesExistingInstance()
+        public async Task Handle_ExistingClusterInstanceFound_ReusesExistingInstanceAndUpdatesExpiry()
         {
             //Arrange
             await using var environment = await IntegrationTestEnvironment.CreateAsync();
@@ -56,7 +57,11 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             //Act
             var instance = await environment.Mediator.Send(new EnsurePullDogDatabaseInstanceCommand(
-                pullDogPullRequest));
+                pullDogPullRequest,
+                new ConfigurationFile()
+                {
+                    Expiry = TimeSpan.FromDays(30)
+                }));
 
             //Assert
             Assert.AreSame(instance, oldInstance);
@@ -70,14 +75,15 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     .AsNoTracking()
                     .SingleOrDefaultAsync(x =>
                         x.Name == oldInstance.Name &&
-                        x.Id == oldInstance.Id);
+                        x.Id == oldInstance.Id &&
+                        x.ExpiresAtUtc > DateTime.UtcNow.AddDays(7));
                 Assert.IsNotNull(refreshedOldInstance);
             });
         }
 
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_NoExistingClusterInstanceFound_ReturnsNewPersistedInstanceWithProperValues()
+        public async Task Handle_NoExistingClusterInstanceFound_ReturnsNewPersistedInstanceWithProperValuesAndExpiry()
         {
             //Arrange
             var pullDogPullRequest = new PullDogPullRequest()
@@ -111,7 +117,11 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             //Act
             var instance = await environment.Mediator.Send(new EnsurePullDogDatabaseInstanceCommand(
-                pullDogPullRequest));
+                pullDogPullRequest,
+                new ConfigurationFile()
+                {
+                    Expiry = TimeSpan.FromDays(30)
+                }));
 
             //Assert
             Assert.IsNotNull(instance);
@@ -122,6 +132,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     .Instances
                     .SingleAsync();
                 Assert.AreEqual(instance.Id, refreshedInstance.Id);
+                Assert.IsTrue(instance.ExpiresAtUtc > DateTime.UtcNow.AddDays(7));
             });
         }
     }
