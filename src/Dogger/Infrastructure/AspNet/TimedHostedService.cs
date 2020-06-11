@@ -48,8 +48,11 @@ namespace Dogger.Infrastructure.AspNet
 
         public async Task StopAsync(CancellationToken stoppingToken)
         {
-            this.timer?.Change(Timeout.Infinite, 0);
-            this.timer?.Dispose();
+            if (this.timer != null)
+            {
+                this.timer.Change(Timeout.Infinite, 0);
+                await this.timer.DisposeAsync();
+            }
 
             this.scope?.Dispose();
         }

@@ -27,6 +27,8 @@ namespace Dogger.Domain.Models
 
         public bool IsProvisioned { get; set; }
 
+        public DateTime? ExpiresAtUtc { get; set; }
+
         public Instance()
         {
             CreatedAtUtc = DateTime.UtcNow;

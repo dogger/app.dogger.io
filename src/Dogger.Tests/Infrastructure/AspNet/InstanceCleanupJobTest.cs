@@ -5,6 +5,7 @@ using Dogger.Domain.Commands.Clusters.EnsureClusterWithId;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
+using Dogger.Domain.Queries.Instances.GetExpiredInstances;
 using Dogger.Infrastructure.AspNet;
 using Dogger.Infrastructure.Time;
 using Dogger.Tests.TestHelpers;
@@ -21,70 +22,21 @@ namespace Dogger.Tests.Infrastructure.AspNet
     {
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task OnTick_NoDemoInstanceFoundInLightsailAndDatabase_DoesNothing()
-        {
-            //Arrange
-            var fakeMediator = Substitute.For<IMediator>();
-            fakeMediator
-                .Send(
-                    Arg.Any<GetLightsailInstanceByNameQuery>(),
-                    default)
-                .Returns((Instance)null);
-
-            fakeMediator
-                .Send(
-                    Arg.Is<EnsureClusterWithIdCommand>(args => args.Id == DataContext.DemoClusterId),
-                    default)
-                .Returns(new Cluster()
-                {
-                    Instances = new List<Dogger.Domain.Models.Instance>()
-                });
-
-            var fakeServiceProvider = GetServiceProviderForTimedServiceTesting();
-            fakeServiceProvider
-                .GetService(typeof(IMediator))
-                .Returns(fakeMediator);
-
-            //Act
-            var job = new InstanceCleanupJob(fakeServiceProvider);
-            try
-            {
-                await job.StartAsync(default);
-            }
-            finally
-            {
-                await job.StopAsync(default);
-            }
-
-            //Assert
-            await fakeMediator
-                .DidNotReceive()
-                .Send(
-                    Arg.Any<DeleteInstanceByNameCommand>(),
-                    default);
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
         public async Task OnTick_NoDemoInstanceFoundInLightsailButFoundInDatabase_DeletesInstance()
         {
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
-                .Send(
-                    Arg.Any<GetLightsailInstanceByNameQuery>(),
-                    default)
-                .Returns((Instance)null);
-
-            fakeMediator
-                .Send(
-                    Arg.Is<EnsureClusterWithIdCommand>(args => args.Id == DataContext.DemoClusterId),
-                    default)
-                .Returns(new Cluster()
+                .Send(Arg.Any<GetExpiredInstancesQuery>())
+                .Returns(new Dogger.Domain.Models.Instance[]
                 {
-                    Instances = new List<Dogger.Domain.Models.Instance>()
+                    new Dogger.Domain.Models.Instance()
                     {
-                        new Dogger.Domain.Models.Instance()
+                        Name = "some-instance-name-1"
+                    },
+                    new Dogger.Domain.Models.Instance()
+                    {
+                        Name = "some-instance-name-2"
                     }
                 });
 
@@ -106,134 +58,33 @@ namespace Dogger.Tests.Infrastructure.AspNet
 
             //Assert
             await fakeMediator
-                .Received()
+                .Received(2)
                 .Send(
                     Arg.Any<DeleteInstanceByNameCommand>(),
                     default);
-        }
 
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
-        public async Task OnTick_NoDatabaseDemoInstanceFoundButOldLightsailModelFound_DoesNothing()
-        {
-            //Arrange
-            var fakeMediator = Substitute.For<IMediator>();
-            fakeMediator
-                .Send(
-                    Arg.Any<GetLightsailInstanceByNameQuery>(),
-                    default)
-                .Returns(new Instance()
-                {
-                    CreatedAt = DateTime.UtcNow.AddHours(-1)
-                });
-
-            fakeMediator
-                .Send(
-                    Arg.Is<EnsureClusterWithIdCommand>(args => args.Id == DataContext.DemoClusterId),
-                    default)
-                .Returns(new Cluster()
-                {
-                    Instances = new List<Dogger.Domain.Models.Instance>()
-                });
-
-            var fakeServiceProvider = GetServiceProviderForTimedServiceTesting();
-            fakeServiceProvider
-                .GetService(typeof(IMediator))
-                .Returns(fakeMediator);
-
-            //Act
-            var job = new InstanceCleanupJob(fakeServiceProvider);
-            try
-            {
-                await job.StartAsync(default);
-            }
-            finally
-            {
-                await job.StopAsync(default);
-            }
-
-            //Assert
             await fakeMediator
-                .Received()
+                .Received(1)
                 .Send(
-                    Arg.Any<DeleteInstanceByNameCommand>(),
+                    Arg.Is<DeleteInstanceByNameCommand>(args => args.Name == "some-instance-name-1"),
                     default);
-        }
 
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
-        public async Task OnTick_NoDatabaseDemoInstanceFoundButNewLightsailModelFound_DoesNothing()
-        {
-            //Arrange
-            var fakeMediator = Substitute.For<IMediator>();
-            fakeMediator
-                .Send(
-                    Arg.Any<GetLightsailInstanceByNameQuery>(),
-                    default)
-                .Returns(new Instance()
-                {
-                    CreatedAt = DateTime.UtcNow
-                });
-
-            fakeMediator
-                .Send(
-                    Arg.Is<EnsureClusterWithIdCommand>(args => args.Id == DataContext.DemoClusterId),
-                    default)
-                .Returns(new Cluster()
-                {
-                    Instances = new List<Dogger.Domain.Models.Instance>()
-                });
-
-            var fakeServiceProvider = GetServiceProviderForTimedServiceTesting();
-            fakeServiceProvider
-                .GetService(typeof(IMediator))
-                .Returns(fakeMediator);
-
-            //Act
-            var job = new InstanceCleanupJob(fakeServiceProvider);
-            try
-            {
-                await job.StartAsync(default);
-            }
-            finally
-            {
-                await job.StopAsync(default);
-            }
-
-            //Assert
             await fakeMediator
-                .DidNotReceive()
+                .Received(1)
                 .Send(
-                    Arg.Any<DeleteInstanceByNameCommand>(),
+                    Arg.Is<DeleteInstanceByNameCommand>(args => args.Name == "some-instance-name-2"),
                     default);
         }
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task OnTick_NewDemoInstanceFound_DoesNothing()
+        public async Task OnTick_NoExpiredInstancesFound_DoesNothing()
         {
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
-                .Send(
-                    Arg.Any<GetLightsailInstanceByNameQuery>(),
-                    default)
-                .Returns(new Instance()
-                {
-                    CreatedAt = DateTime.UtcNow
-                });
-
-            fakeMediator
-                .Send(
-                    Arg.Is<EnsureClusterWithIdCommand>(args => args.Id == DataContext.DemoClusterId),
-                    default)
-                .Returns(new Cluster()
-                {
-                    Instances = new List<Dogger.Domain.Models.Instance>()
-                    {
-                        new Dogger.Domain.Models.Instance()
-                    }
-                });
+                .Send(Arg.Any<GetExpiredInstancesQuery>())
+                .Returns(new Dogger.Domain.Models.Instance[0]);
 
             var fakeServiceProvider = GetServiceProviderForTimedServiceTesting();
             fakeServiceProvider

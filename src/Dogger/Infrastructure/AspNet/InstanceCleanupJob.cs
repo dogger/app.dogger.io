@@ -6,6 +6,7 @@ using Dogger.Domain.Commands.Clusters.EnsureClusterWithId;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
+using Dogger.Domain.Queries.Instances.GetExpiredInstances;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,7 +18,7 @@ namespace Dogger.Infrastructure.AspNet
         {
         }
 
-        protected override TimeSpan Interval => TimeSpan.FromMinutes(3);
+        protected override TimeSpan Interval => TimeSpan.FromMinutes(1);
 
         protected override async Task OnTickAsync(
             IServiceProvider serviceProvider,
@@ -28,21 +29,17 @@ namespace Dogger.Infrastructure.AspNet
             await CleanUpDemoClusterAsync(mediator, cancellationToken);
         }
 
-        private static async Task CleanUpDemoClusterAsync(IMediator mediator, CancellationToken cancellationToken)
+        private static async Task CleanUpDemoClusterAsync(
+            IMediator mediator, 
+            CancellationToken cancellationToken)
         {
-            var demoLightsailInstance = await mediator.Send(new GetLightsailInstanceByNameQuery("demo"), cancellationToken);
-
-            var demoCluster = await mediator.Send(new EnsureClusterWithIdCommand(DataContext.DemoClusterId), cancellationToken);
-            var demoDatabaseInstance = demoCluster.Instances.FirstOrDefault();
-            if (demoDatabaseInstance == null && demoLightsailInstance == null)
-                return;
-
-            if (demoLightsailInstance != null && DateTime.UtcNow - demoLightsailInstance.CreatedAt < TimeSpan.FromMinutes(30))
-                return;
-
-            await mediator.Send(
-                new DeleteInstanceByNameCommand("demo"),
-                cancellationToken);
+            var expiredInstances = await mediator.Send(new GetExpiredInstancesQuery(), cancellationToken);
+            foreach (var expiredInstance in expiredInstances)
+            {
+                await mediator.Send(
+                    new DeleteInstanceByNameCommand(expiredInstance.Name),
+                    cancellationToken);
+            }
         }
     }
 }

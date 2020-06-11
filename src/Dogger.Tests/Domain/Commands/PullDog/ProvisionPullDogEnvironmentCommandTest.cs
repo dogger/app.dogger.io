@@ -521,7 +521,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 {
                     new PullRequestDetails(
                         "some-repository-name",
-                        "some-pull-request-link")
+                        "some-indirect-pull-request-link",
+                        "some-direct-pull-request-link")
                 }));
 
             fakeMediator

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
@@ -74,7 +75,8 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDemoInstance
                 Cluster = cluster,
                 IsProvisioned = false,
                 PlanId = plan.Id,
-                Type = InstanceType.DockerCompose
+                Type = InstanceType.DockerCompose,
+                ExpiresAtUtc = DateTime.UtcNow.AddMinutes(30)
             };
 
             cluster.UserId = request.AuthenticatedUserId;
