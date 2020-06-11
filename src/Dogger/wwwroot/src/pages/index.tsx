@@ -483,7 +483,6 @@ const App = ({data}) => {
 }
 
 export default ({data}) => {
-    console.log(data);
     return (
         <App data={data} />
     );
