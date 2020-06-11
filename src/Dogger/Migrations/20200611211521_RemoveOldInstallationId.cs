@@ -17,21 +17,10 @@ namespace Dogger.Migrations
             migrationBuilder.DropColumn(
                 name: "GitHubInstallationId",
                 table: "PullDogSettings");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PullDogRepositories_GitHubInstallationId_PullDogSettingsId",
-                table: "PullDogRepositories",
-                columns: new[] { "GitHubInstallationId", "PullDogSettingsId" },
-                unique: true,
-                filter: "[GitHubInstallationId] IS NOT NULL");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_PullDogRepositories_GitHubInstallationId_PullDogSettingsId",
-                table: "PullDogRepositories");
-
             migrationBuilder.AddColumn<long>(
                 name: "GitHubInstallationId",
                 table: "PullDogSettings",
