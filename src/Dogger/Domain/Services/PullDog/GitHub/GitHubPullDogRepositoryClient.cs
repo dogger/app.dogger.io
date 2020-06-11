@@ -95,7 +95,7 @@ namespace Dogger.Domain.Services.PullDog.GitHub
             var repository = GetTargetRepository();
             return new PullRequestDetails(
                 repository.FullName,
-                $"https://github.com/{repository.FullName}/pull/{pullRequest.Handle}");
+                $"[{repository.FullName}: PR #{pullRequest.Handle}](https://github.com/{repository.FullName}/pulls?q=is%3Apr)");
         }
     }
 }
