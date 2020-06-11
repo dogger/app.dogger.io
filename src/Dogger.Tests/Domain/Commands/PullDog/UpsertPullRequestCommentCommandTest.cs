@@ -35,10 +35,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                         {
                             PullDogRepository = new PullDogRepository()
                             {
+                                GitHubInstallationId = null,
                                 PullDogSettings = new PullDogSettings()
-                                {
-                                    GitHubInstallationId = null
-                                }
                             }
                         },
                         "some-content"),
@@ -68,10 +66,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                             PullDogRepository = new PullDogRepository()
                             {
                                 Handle = "invalid-handle",
+                                GitHubInstallationId = 1337,
                                 PullDogSettings = new PullDogSettings()
-                                {
-                                    GitHubInstallationId = 1337
-                                }
                             }
                         },
                         "some-content"),
@@ -102,10 +98,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                             PullDogRepository = new PullDogRepository()
                             {
                                 Handle = "1337",
+                                GitHubInstallationId = 1337,
                                 PullDogSettings = new PullDogSettings()
-                                {
-                                    GitHubInstallationId = 1337
-                                }
                             }
                         },
                         "some-content"),
@@ -168,10 +162,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                         PullDogRepository = new PullDogRepository()
                         {
                             Handle = "1337",
+                            GitHubInstallationId = 1337,
                             PullDogSettings = new PullDogSettings()
-                            {
-                                GitHubInstallationId = 1337
-                            }
                         }
                     },
                     "some-content"),
@@ -241,10 +233,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                         PullDogRepository = new PullDogRepository()
                         {
                             Handle = "1337",
+                            GitHubInstallationId = 1337,
                             PullDogSettings = new PullDogSettings()
-                            {
-                                GitHubInstallationId = 1337
-                            }
                         }
                     },
                     "some-content"),
@@ -306,10 +296,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                         PullDogRepository = new PullDogRepository()
                         {
                             Handle = "1337",
+                            GitHubInstallationId = 1337,
                             PullDogSettings = new PullDogSettings()
-                            {
-                                GitHubInstallationId = 1337
-                            }
                         }
                     },
                     "some-content"),
@@ -370,10 +358,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                         PullDogRepository = new PullDogRepository()
                         {
                             Handle = "1337",
+                            GitHubInstallationId = 1337,
                             PullDogSettings = new PullDogSettings()
-                            {
-                                GitHubInstallationId = 1337
-                            }
                         }
                     },
                     "some-content"),

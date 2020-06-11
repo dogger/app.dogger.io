@@ -26,8 +26,7 @@ namespace Dogger.Domain.Commands.PullDog.UpsertPullRequestComment
         {
             var repository = request.PullRequest.PullDogRepository;
 
-            var settings = repository.PullDogSettings;
-            if (settings?.GitHubInstallationId == null)
+            if (repository?.GitHubInstallationId == null)
                 throw new InvalidOperationException("Could not fetch the GitHub installation ID.");
 
             if(!long.TryParse(repository.Handle, out var repositoryId))
@@ -37,7 +36,7 @@ namespace Dogger.Domain.Commands.PullDog.UpsertPullRequestComment
                 throw new InvalidOperationException("Invalid pull request handle.");
 
             var client = await this.gitHubClientFactory.CreateInstallationClientAsync(
-                settings.GitHubInstallationId.Value);
+                repository.GitHubInstallationId.Value);
 
             var pullRequest = await client.PullRequest.Get(
                 repositoryId,

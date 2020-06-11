@@ -35,8 +35,12 @@ namespace Dogger.Domain.Models
                 .IsUnique();
 
             modelBuilder
-                .Entity<PullDogSettings>()
-                .HasIndex(settings => settings.GitHubInstallationId)
+                .Entity<PullDogRepository>()
+                .HasIndex(settings => new
+                {
+                    settings.GitHubInstallationId,
+                    settings.PullDogSettingsId
+                })
                 .IsUnique();
 
             modelBuilder

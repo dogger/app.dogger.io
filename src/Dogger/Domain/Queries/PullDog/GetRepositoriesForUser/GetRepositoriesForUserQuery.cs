@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Dogger.Domain.Models;
 using MediatR;
 
@@ -6,12 +7,12 @@ namespace Dogger.Domain.Queries.PullDog.GetRepositoriesForUser
 {
     public class GetRepositoriesForUserQuery : IRequest<IReadOnlyCollection<UserRepositoryResponse>>
     {
-        public User User { get; }
+        public Guid UserId { get; }
 
         public GetRepositoriesForUserQuery(
-            User user)
+            Guid userId)
         {
-            this.User = user;
+            this.UserId = userId;
         }
     }
 

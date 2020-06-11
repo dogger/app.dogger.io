@@ -3,16 +3,6 @@ module.exports = {
     siteUrl: `https://dogger.io`,
   },
   plugins: [
-    'gatsby-plugin-top-layout',
-    {
-      resolve: `gatsby-plugin-material-ui`,
-      options: {
-        stylesProvider: {
-          injectFirst: true,
-        },
-      },
-    },
-    `gatsby-plugin-styled-components`,
     `gatsby-plugin-sharp`,
     {
       resolve: `gatsby-transformer-remark`,
@@ -74,5 +64,15 @@ module.exports = {
       },
     },
     `gatsby-plugin-sitemap`,
+    'gatsby-plugin-top-layout',
+    {
+      resolve: `gatsby-plugin-material-ui`,
+      options: {
+        stylesProvider: {
+          injectFirst: true,
+        },
+      },
+    },
+    `gatsby-plugin-styled-components`
   ],
 }

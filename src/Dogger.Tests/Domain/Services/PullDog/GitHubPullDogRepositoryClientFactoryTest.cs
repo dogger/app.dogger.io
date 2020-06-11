@@ -29,10 +29,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 {
                     PullDogRepository = new PullDogRepository()
                     {
+                        GitHubInstallationId = null,
                         PullDogSettings = new PullDogSettings()
-                        {
-                            GitHubInstallationId = null
-                        }
                     }
                 }));
 
@@ -64,10 +62,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 PullDogRepository = new PullDogRepository()
                 {
                     Handle = "2",
+                    GitHubInstallationId = 1337,
                     PullDogSettings = new PullDogSettings()
-                    {
-                        GitHubInstallationId = 1337
-                    }
                 }
             });
 

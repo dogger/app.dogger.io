@@ -22,7 +22,7 @@ namespace Dogger.Domain.Queries.PullDog.GetPullRequestHandleFromCommitReference
         public async Task<string?> Handle(GetPullRequestHandleFromCommitReferenceQuery request, CancellationToken cancellationToken)
         {
             var pullDogRepository = request.Repository;
-            var installationId = pullDogRepository.PullDogSettings.GitHubInstallationId;
+            var installationId = pullDogRepository.GitHubInstallationId;
             if (installationId == null)
                 throw new InvalidOperationException("Installation ID not found.");
 

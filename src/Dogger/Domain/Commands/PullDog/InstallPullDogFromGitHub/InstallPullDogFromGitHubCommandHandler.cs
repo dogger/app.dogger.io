@@ -93,18 +93,13 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
                     auth0User.UserId,
                     preferredEmail.Email),
                 cancellationToken);
-            if (user.PullDogSettings != null)
-            {
-                user.PullDogSettings.GitHubInstallationId = request.InstallationId;
-            }
-            else
+            if (user.PullDogSettings == null)
             {
                 var plan = await this.mediator.Send(
                     new GetDemoPlanQuery(),
                     cancellationToken);
                 user.PullDogSettings = new PullDogSettings()
                 {
-                    GitHubInstallationId = request.InstallationId,
                     PlanId = plan.Id,
                     PoolSize = 0,
                     EncryptedApiKey = await this.aesEncryptionHelper.EncryptAsync(

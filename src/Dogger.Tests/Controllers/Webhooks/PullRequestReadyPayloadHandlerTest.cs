@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Dogger.Controllers.Webhooks;
 using Dogger.Controllers.Webhooks.Handlers;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
@@ -184,9 +185,6 @@ namespace Dogger.Tests.Controllers.Webhooks
             {
                 Handle = "1337",
                 PullDogSettings = new PullDogSettings()
-                {
-                    GitHubInstallationId = 1339
-                }
             };
 
             var fakeMediator = Substitute.For<IMediator>();

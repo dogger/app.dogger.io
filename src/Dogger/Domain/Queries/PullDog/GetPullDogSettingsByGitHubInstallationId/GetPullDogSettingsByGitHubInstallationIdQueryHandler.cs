@@ -19,10 +19,12 @@ namespace Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId
 
         public async Task<PullDogSettings?> Handle(GetPullDogSettingsByGitHubInstallationIdQuery request, CancellationToken cancellationToken)
         {
-            return await this.dataContext
-                .PullDogSettings
+            var repository = await this.dataContext
+                .PullDogRepositories
+                .Include(x => x.PullDogSettings)
                 .Where(x => x.GitHubInstallationId == request.InstallationId)
                 .FirstOrDefaultAsync(cancellationToken);
+            return repository?.PullDogSettings;
         }
     }
 }

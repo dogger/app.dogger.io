@@ -6,6 +6,7 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetRepositoriesForUser;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.TestHelpers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Octokit;
@@ -17,50 +18,95 @@ namespace Dogger.Tests.Domain.Queries.PullDog
     public class GetRepositoriesForUserQueryTest
     {
         [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_NoPullDogSettingsFoundOnUser_ThrowsException()
         {
             //Arrange
-            var handler = new GetRepositoriesForUserQueryHandler(Substitute.For<IGitHubClientFactory>());
+            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+
+            var userId = Guid.NewGuid();
+            await environment.WithFreshDataContext(async dataContext =>
+                await dataContext.Users.AddAsync(new User()
+                {
+                    Id = userId,
+                    StripeCustomerId = "dummy",
+                    PullDogSettings = null
+                }));
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
-                await handler.Handle(
-                    new GetRepositoriesForUserQuery(new User()
-                    {
-                        PullDogSettings = null
-                    }),
-                    default));
+                await environment.Mediator.Send(
+                    new GetRepositoriesForUserQuery(userId)));
 
             //Assert
             Assert.IsNotNull(exception);
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
-        public async Task Handle_SettingsContainNoInstallationId_ThrowsException()
+        [TestCategory(TestCategories.IntegrationCategory)]
+        public async Task Handle_SettingsContainNoRepositories_ThrowsException()
         {
             //Arrange
-            var handler = new GetRepositoriesForUserQueryHandler(Substitute.For<IGitHubClientFactory>());
+            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+
+            var userId = Guid.NewGuid();
+            await environment.WithFreshDataContext(async dataContext =>
+                await dataContext.Users.AddAsync(new User()
+                {
+                    Id = userId,
+                    StripeCustomerId = "dummy",
+                    PullDogSettings = new PullDogSettings()
+                    {
+                        PlanId = "dummy",
+                        EncryptedApiKey = Array.Empty<byte>()
+                    }
+                }));
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
-                await handler.Handle(
-                    new GetRepositoriesForUserQuery(new User()
-                    {
-                        PullDogSettings = new PullDogSettings()
-                        {
-                            GitHubInstallationId = null
-                        } 
-                    }),
-                    default));
+                await environment.Mediator.Send(new GetRepositoriesForUserQuery(userId)));
 
             //Assert
             Assert.IsNotNull(exception);
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
+        [TestCategory(TestCategories.IntegrationCategory)]
+        public async Task Handle_SettingsContainNoInstallationIdOnAnyRepositories_ThrowsException()
+        {
+            //Arrange
+            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+
+            var userId = Guid.NewGuid();
+            await environment.WithFreshDataContext(async dataContext =>
+                await dataContext.Users.AddAsync(new User()
+                {
+                    Id = userId,
+                    StripeCustomerId = "dummy",
+                    PullDogSettings = new PullDogSettings()
+                    {
+                        PlanId = "dummy",
+                        EncryptedApiKey = Array.Empty<byte>(),
+                        Repositories = new List<PullDogRepository>()
+                        {
+                            new PullDogRepository()
+                            {
+                                Handle = "dummy"
+                            }
+                        }
+                    }
+                }));
+
+            //Act
+            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
+                await environment.Mediator.Send(new GetRepositoriesForUserQuery(userId)));
+
+            //Assert
+            Assert.IsNotNull(exception);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_DatabaseRepositoriesAndGitHubRepositoriesFoundWithNoOverlap_IncludesAllRepositories()
         {
             //Arrange
@@ -79,28 +125,40 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                         new Repository(2)
                     }));
 
-            var handler = new GetRepositoriesForUserQueryHandler(fakeGitHubClientFactory);
+            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            {
+                IocConfiguration = services => services.AddSingleton(fakeGitHubClientFactory)
+            });
 
-            //Act
-            var repositories = await handler.Handle(
-                new GetRepositoriesForUserQuery(new User()
+            var userId = Guid.NewGuid();
+            await environment.WithFreshDataContext(async dataContext =>
+                await dataContext.Users.AddAsync(new User()
                 {
+                    Id = userId,
+                    StripeCustomerId = "dummy",
                     PullDogSettings = new PullDogSettings()
                     {
-                        GitHubInstallationId = 1337,
+                        PlanId = "dummy",
+                        EncryptedApiKey = Array.Empty<byte>(),
                         Repositories = new List<PullDogRepository>()
                         {
                             new PullDogRepository()
                             {
-                                Handle = "3"
+                                Handle = "3",
+                                GitHubInstallationId = 1337
                             },
                             new PullDogRepository()
                             {
-                                Handle = "4"
+                                Handle = "4",
+                                GitHubInstallationId = 1337
                             }
                         }
                     }
-                }),
+                }));
+
+            //Act
+            var repositories = await environment.Mediator.Send(
+                new GetRepositoriesForUserQuery(userId),
                 default);
 
             //Assert
@@ -114,7 +172,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_DatabaseRepositoriesAndGitHubRepositoriesFoundWithOverlap_MergesRepositories()
         {
             //Arrange
@@ -134,25 +192,36 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                         new Repository(3)
                     }));
 
-            var handler = new GetRepositoriesForUserQueryHandler(fakeGitHubClientFactory);
+            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            {
+                IocConfiguration = services => services.AddSingleton(fakeGitHubClientFactory)
+            });
 
-            //Act
-            var repositories = await handler.Handle(
-                new GetRepositoriesForUserQuery(new User()
+            var userId = Guid.NewGuid();
+            await environment.WithFreshDataContext(async dataContext =>
+                await dataContext.Users.AddAsync(new User()
                 {
+                    Id = userId,
+                    StripeCustomerId = "dummy",
                     PullDogSettings = new PullDogSettings()
                     {
-                        GitHubInstallationId = 1337,
+                        PlanId = "dummy",
+                        EncryptedApiKey = Array.Empty<byte>(),
                         Repositories = new List<PullDogRepository>()
                         {
                             new PullDogRepository()
                             {
+                                GitHubInstallationId = 1337,
                                 Handle = "2",
                                 Id = Guid.NewGuid()
                             }
                         }
                     }
-                }),
+                }));
+
+            //Act
+            var repositories = await environment.Mediator.Send(
+                new GetRepositoriesForUserQuery(userId),
                 default);
 
             //Assert

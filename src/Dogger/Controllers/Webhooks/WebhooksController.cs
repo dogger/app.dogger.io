@@ -90,9 +90,8 @@ namespace Dogger.Controllers.Webhooks
             if (repository == null)
                 return null;
 
-            var settings = repository.PullDogSettings;
-            if (settings.GitHubInstallationId != payload.Installation.Id)
-                throw new InvalidOperationException($"Installation ID of {payload.Installation.Id} did not match the stored installation ID of {settings.GitHubInstallationId}.");
+            if (repository.GitHubInstallationId != payload.Installation.Id)
+                throw new InvalidOperationException($"Installation ID of {payload.Installation.Id} did not match the repository installation ID of {repository.GitHubInstallationId}.");
 
             var pullRequest = await GetPullRequestFromPayloadAsync(payload, repository);
             if (pullRequest == null)
@@ -100,7 +99,7 @@ namespace Dogger.Controllers.Webhooks
 
             return new WebhookPayloadContext(
                 payload,
-                settings,
+                repository.PullDogSettings,
                 repository,
                 pullRequest);
         }

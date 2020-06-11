@@ -19,8 +19,6 @@ namespace Dogger.Domain.Models
         public string PlanId { get; set; }
         public int PoolSize { get; set; }
 
-        public long? GitHubInstallationId { get; set; }
-
         [NotLogged]
         public byte[] EncryptedApiKey { get; set; }
 

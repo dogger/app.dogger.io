@@ -53,9 +53,6 @@ export default ({children}: PropsWithChildren<any>) => {
     ],
   );
 
-  if(!isPreferredThemeReady)
-    return null;
-  
   return (
     <>
     <ThemeProvider theme={theme}>

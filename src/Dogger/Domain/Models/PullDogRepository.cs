@@ -19,6 +19,8 @@ namespace Dogger.Domain.Models
         [NotLogged]
         public List<PullDogPullRequest> PullRequests { get; set; }
 
+        public long? GitHubInstallationId { get; set; }
+
         public string Handle { get; set; }
 
         public PullDogRepository()

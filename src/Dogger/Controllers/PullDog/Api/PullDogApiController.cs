@@ -110,7 +110,7 @@ namespace Dogger.Controllers.PullDog.Api
             if (user.PullDogSettings == null)
                 return NotFound("Pull Dog has not been installed yet.");
 
-            var repositories = await this.mediator.Send(new GetRepositoriesForUserQuery(user));
+            var repositories = await this.mediator.Send(new GetRepositoriesForUserQuery(user.Id));
             return Ok(new RepositoriesResponse()
             {
                 Repositories = repositories

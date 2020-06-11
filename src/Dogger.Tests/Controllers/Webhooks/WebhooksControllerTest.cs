@@ -63,10 +63,8 @@ namespace Dogger.Tests.Controllers.Webhooks
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
                 .Returns(new PullDogRepository()
                 {
+                    GitHubInstallationId = 1338,
                     PullDogSettings = new PullDogSettings()
-                    {
-                        GitHubInstallationId = 1338
-                    }
                 });
 
             var fakeHandler1 = Substitute.For<IWebhookPayloadHandler>();
@@ -187,10 +185,8 @@ namespace Dogger.Tests.Controllers.Webhooks
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
                 .Returns(new PullDogRepository()
                 {
+                    GitHubInstallationId = 1338,
                     PullDogSettings = new PullDogSettings()
-                    {
-                        GitHubInstallationId = 1338
-                    }
                 });
 
             var fakeWebhookPayloadHandler = Substitute.For<IWebhookPayloadHandler>();
@@ -261,10 +257,8 @@ namespace Dogger.Tests.Controllers.Webhooks
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
                 .Returns(new PullDogRepository()
                 {
+                    GitHubInstallationId = 13381338,
                     PullDogSettings = new PullDogSettings()
-                    {
-                        GitHubInstallationId = 13381338
-                    }
                 });
 
             var fakeWebhookPayloadHandler = Substitute.For<IWebhookPayloadHandler>();
@@ -323,10 +317,8 @@ namespace Dogger.Tests.Controllers.Webhooks
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
                 .Returns(new PullDogRepository()
                 {
+                    GitHubInstallationId = 1338,
                     PullDogSettings = new PullDogSettings()
-                    {
-                        GitHubInstallationId = 1338
-                    }
                 });
 
             var fakeWebhookPayloadHandler = Substitute.For<IWebhookPayloadHandler>();
@@ -393,10 +385,8 @@ namespace Dogger.Tests.Controllers.Webhooks
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
                 .Returns(new PullDogRepository()
                 {
+                    GitHubInstallationId = 1338,
                     PullDogSettings = new PullDogSettings()
-                    {
-                        GitHubInstallationId = 1338
-                    }
                 });
 
             var fakeWebhookPayloadHandler = Substitute.For<IWebhookPayloadHandler>();

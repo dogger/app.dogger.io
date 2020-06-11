@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lightsail.Model;
@@ -63,7 +64,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_ExistingAuth0UserByGitHubUserIdPresent_SetsSettingsOnUser()
+        public async Task Handle_ExistingAuth0UserByGitHubUserIdPresent_DoesNothing()
         {
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
@@ -80,7 +81,20 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             var userInDatabase = new Dogger.Domain.Models.User()
             {
-                StripeCustomerId = "dummy"
+                StripeCustomerId = "dummy",
+                PullDogSettings = new PullDogSettings()
+                {
+                    PlanId = "some-plan-id",
+                    EncryptedApiKey = Array.Empty<byte>(),
+                    Repositories = new List<PullDogRepository>()
+                    {
+                        new PullDogRepository()
+                        {
+                            GitHubInstallationId = 1337,
+                            Handle = "dummy"
+                        }
+                    }
+                }
             };
             await environment.DataContext.Users.AddAsync(userInDatabase);
             await environment.DataContext.SaveChangesAsync();
@@ -139,11 +153,12 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 var user = await dataContext
                     .Users
                     .Include(x => x.PullDogSettings)
+                    .ThenInclude(x => x.Repositories)
                     .SingleAsync();
                 var settings = user.PullDogSettings;
 
-                Assert.AreEqual(settings.GitHubInstallationId, 1337);
-                Assert.AreEqual(settings.PlanId, "demo-plan-id");
+                Assert.AreEqual(settings.Repositories.Single().GitHubInstallationId, 1337);
+                Assert.AreEqual(settings.PlanId, "some-plan-id");
                 Assert.AreEqual(settings.PoolSize, 0);
             });
         }
@@ -225,6 +240,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 var user = await dataContext
                     .Users
                     .Include(x => x.PullDogSettings)
+                    .ThenInclude(x => x.Repositories)
                     .SingleAsync();
                 var settings = user.PullDogSettings;
                 Assert.IsNotNull(settings);
@@ -342,7 +358,15 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 PullDogSettings = new PullDogSettings()
                 {
                     PlanId = "some-plan-id",
-                    EncryptedApiKey = Array.Empty<byte>()
+                    EncryptedApiKey = Array.Empty<byte>(),
+                    Repositories = new List<PullDogRepository>()
+                    {
+                        new PullDogRepository()
+                        {
+                            GitHubInstallationId = 1337,
+                            Handle = "dummy"
+                        }
+                    }
                 }
             };
             await environment.DataContext.Users.AddAsync(userInDatabase);
@@ -389,11 +413,12 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 var user = await dataContext
                     .Users
                     .Include(x => x.PullDogSettings)
+                    .ThenInclude(x => x.Repositories)
                     .SingleAsync();
                 var settings = user.PullDogSettings;
                 Assert.IsNotNull(settings);
                 Assert.AreEqual("some-plan-id", settings.PlanId);
-                Assert.AreEqual(1337, settings.GitHubInstallationId);
+                Assert.AreEqual(1337, settings.Repositories.Single().GitHubInstallationId);
             });
         }
     }

@@ -24,11 +24,10 @@ namespace Dogger.Domain.Services.PullDog.GitHub
             PullDogPullRequest pullRequest)
         {
             var repository = pullRequest.PullDogRepository;
-            var settings = repository.PullDogSettings;
-            if (settings?.GitHubInstallationId == null)
+            if (repository?.GitHubInstallationId == null)
                 throw new InvalidOperationException("The GitHub installation ID could not be determined.");
 
-            var installationId = settings.GitHubInstallationId.Value;
+            var installationId = repository.GitHubInstallationId.Value;
             var gitHubClient = await this.gitHubClientFactory.CreateInstallationClientAsync(installationId);
 
             var gitHubPullRequest = await gitHubClient.PullRequest.Get(

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
@@ -36,33 +38,54 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             {
                 await dataContext.PullDogSettings.AddAsync(new PullDogSettings()
                 {
-                    GitHubInstallationId = 1336,
                     PlanId = "dummy",
                     User = new User()
                     {
                         StripeCustomerId = "dummy"
                     },
-                    EncryptedApiKey = Array.Empty<byte>()
+                    EncryptedApiKey = Array.Empty<byte>(),
+                    Repositories = new List<PullDogRepository>()
+                    {
+                        new PullDogRepository()
+                        {
+                            Handle = "dummy",
+                            GitHubInstallationId = 1336
+                        }
+                    }
                 });
                 await dataContext.PullDogSettings.AddAsync(new PullDogSettings()
                 {
-                    GitHubInstallationId = 1337,
                     PlanId = "dummy",
                     User = new User()
                     {
                         StripeCustomerId = "dummy"
                     },
-                    EncryptedApiKey = Array.Empty<byte>()
+                    EncryptedApiKey = Array.Empty<byte>(),
+                    Repositories = new List<PullDogRepository>()
+                    {
+                        new PullDogRepository()
+                        {
+                            Handle = "dummy",
+                            GitHubInstallationId = 1337
+                        }
+                    }
                 });
                 await dataContext.PullDogSettings.AddAsync(new PullDogSettings()
                 {
-                    GitHubInstallationId = 1338,
                     PlanId = "dummy",
                     User = new User()
                     {
                         StripeCustomerId = "dummy"
                     },
-                    EncryptedApiKey = Array.Empty<byte>()
+                    EncryptedApiKey = Array.Empty<byte>(),
+                    Repositories = new List<PullDogRepository>()
+                    {
+                        new PullDogRepository()
+                        {
+                            Handle = "dummy",
+                            GitHubInstallationId = 1338
+                        }
+                    }
                 });
             });
 
@@ -71,7 +94,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
 
             //Assert
             Assert.IsNotNull(settings);
-            Assert.AreEqual(1337, settings.GitHubInstallationId);
+            Assert.AreEqual(1337, settings.Repositories.Single().GitHubInstallationId);
         }
     }
 }

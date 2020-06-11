@@ -43,8 +43,7 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
         {
             var repository = request.Repository;
 
-            var settings = repository.PullDogSettings;
-            if (settings.GitHubInstallationId == null)
+            if (repository.GitHubInstallationId == null)
                 throw new InvalidOperationException("The GitHub installation ID could not be determined.");
 
             var pullRequest = await this.mediator.Send(
@@ -93,6 +92,7 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
 
             try
             {
+                var settings = repository.PullDogSettings;
                 await ReportProvisioningToSlackAsync(request, settings);
 
                 var instance = await this.mediator.Send(
@@ -180,7 +180,7 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
                                 new SlackField()
                                 {
                                     Title = "Installation ID",
-                                    Value = settings.GitHubInstallationId.ToString(),
+                                    Value = request.Repository.GitHubInstallationId.ToString(),
                                     Short = true
                                 }
                             }

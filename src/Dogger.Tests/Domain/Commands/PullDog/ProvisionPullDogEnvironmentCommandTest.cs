@@ -78,10 +78,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     "some-pull-request-handle",
                     new PullDogRepository()
                     {
+                        GitHubInstallationId = 1337,
                         PullDogSettings = new PullDogSettings()
-                        {
-                            GitHubInstallationId = 1337
-                        }
                     })
                 {
                     ConfigurationOverride = new ConfigurationFileOverride()
@@ -151,10 +149,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     "some-pull-request-handle",
                     new PullDogRepository()
                     {
+                        GitHubInstallationId = 1337,
                         PullDogSettings = new PullDogSettings()
-                        {
-                            GitHubInstallationId = 1337
-                        }
                     }),
                 default);
 
@@ -219,10 +215,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     "some-pull-request-handle",
                     new PullDogRepository()
                     {
+                        GitHubInstallationId = 1337,
                         PullDogSettings = new PullDogSettings()
-                        {
-                            GitHubInstallationId = 1337
-                        }
                     }),
                 default);
 
@@ -267,10 +261,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                         "some-pull-request-handle",
                         new PullDogRepository()
                         {
+                            GitHubInstallationId = null,
                             PullDogSettings = new PullDogSettings()
-                            {
-                                GitHubInstallationId = null
-                            }
                         }),
                     default));
 
@@ -323,10 +315,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     "some-pull-request-handle",
                     new PullDogRepository()
                     {
+                        GitHubInstallationId = 1337,
                         PullDogSettings = new PullDogSettings()
-                        {
-                            GitHubInstallationId = 1337
-                        }
                     }),
                 default);
 
@@ -387,10 +377,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     "some-pull-request-handle",
                     new PullDogRepository()
                     {
+                        GitHubInstallationId = 1337,
                         PullDogSettings = new PullDogSettings()
-                        {
-                            GitHubInstallationId = 1337
-                        }
                     }),
                 default);
 
@@ -449,10 +437,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     "some-pull-request-handle",
                     new PullDogRepository()
                     {
+                        GitHubInstallationId = 1337,
                         PullDogSettings = new PullDogSettings()
-                        {
-                            GitHubInstallationId = 1337
-                        }
                     }),
                 default);
 
@@ -507,10 +493,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     "some-pull-request-handle",
                     new PullDogRepository()
                     {
+                        GitHubInstallationId = 1337,
                         PullDogSettings = new PullDogSettings()
-                        {
-                            GitHubInstallationId = 1337
-                        }
                     }),
                 default);
 
@@ -574,10 +558,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     "some-pull-request-handle",
                     new PullDogRepository()
                     {
+                        GitHubInstallationId = 1337,
                         PullDogSettings = new PullDogSettings()
-                        {
-                            GitHubInstallationId = 1337
-                        }
                     }),
                 default);
 
@@ -640,10 +622,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     "some-pull-request-handle",
                     new PullDogRepository()
                     {
+                        GitHubInstallationId = 1337,
                         PullDogSettings = new PullDogSettings()
-                        {
-                            GitHubInstallationId = 1337
-                        }
                     }),
                 default);
 

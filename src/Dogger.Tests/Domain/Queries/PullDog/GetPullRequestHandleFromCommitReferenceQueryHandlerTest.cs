@@ -162,10 +162,8 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                     new PullDogRepository()
                     {
                         Handle = "1338",
+                        GitHubInstallationId = 1337,
                         PullDogSettings = new PullDogSettings()
-                        {
-                            GitHubInstallationId = 1337
-                        }
                     },
                     "some-commit-reference"),
                 default);
