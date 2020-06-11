@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Dogger.Domain.Services.PullDog;
+using Dogger.Infrastructure;
 
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 namespace Dogger.Domain.Models
@@ -36,15 +37,6 @@ namespace Dogger.Domain.Models
 
             modelBuilder
                 .Entity<PullDogRepository>()
-                .HasIndex(settings => new
-                {
-                    settings.GitHubInstallationId,
-                    settings.PullDogSettingsId
-                })
-                .IsUnique();
-
-            modelBuilder
-                .Entity<PullDogRepository>()
                 .HasIndex(repository => new
                 {
                     repository.PullDogSettingsId,
@@ -56,8 +48,8 @@ namespace Dogger.Domain.Models
                 .Entity<PullDogPullRequest>()
                 .Property(x => x.ConfigurationOverride)
                 .HasConversion(
-                    x => JsonSerializer.Serialize(x, GetJsonSerializerOptions()),
-                    x => JsonSerializer.Deserialize<ConfigurationFileOverride>(x, GetJsonSerializerOptions()));
+                    x => JsonSerializer.Serialize(x, JsonFactory.GetOptions()),
+                    x => JsonSerializer.Deserialize<ConfigurationFileOverride>(x, JsonFactory.GetOptions()));
 
             modelBuilder
                 .Entity<PullDogPullRequest>()
@@ -76,21 +68,6 @@ namespace Dogger.Domain.Models
                     cluster.Name
                 })
                 .IsUnique();
-        }
-
-        private static JsonSerializerOptions GetJsonSerializerOptions()
-        {
-            return new JsonSerializerOptions()
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = false,
-                IgnoreNullValues = true,
-                IgnoreReadOnlyProperties = true,
-                Converters =
-                {
-                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-                }
-            };
         }
 
         public DbSet<AmazonUser> AmazonUsers { get; set; }

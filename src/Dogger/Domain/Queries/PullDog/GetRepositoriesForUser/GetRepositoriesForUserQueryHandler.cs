@@ -37,7 +37,7 @@ namespace Dogger.Domain.Queries.PullDog.GetRepositoriesForUser
                 .GroupBy(x => x.GitHubInstallationId!)
                 .Select(x => x.Key)
                 .Where(x => x != null)
-                .Select(x => x.Value)
+                .Select(x => x!.Value)
                 .ToArray();
 
             if (allInstallationIds.Length == 0)

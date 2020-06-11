@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Dogger.Infrastructure;
 using Dogger.Infrastructure.Docker.Yml;
 
 namespace Dogger.Domain.Services.PullDog
@@ -62,17 +63,7 @@ namespace Dogger.Domain.Services.PullDog
 
             var configurationFile = JsonSerializer.Deserialize<ConfigurationFile>(
                 configurationFileEntry.Contents,
-                new JsonSerializerOptions()
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    WriteIndented = false,
-                    IgnoreNullValues = true,
-                    IgnoreReadOnlyProperties = true,
-                    Converters =
-                    {
-                        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-                    }
-                });
+                JsonFactory.GetOptions());
             return configurationFile;
         }
 

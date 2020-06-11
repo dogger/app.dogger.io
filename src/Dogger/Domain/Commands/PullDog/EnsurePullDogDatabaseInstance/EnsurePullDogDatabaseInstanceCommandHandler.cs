@@ -34,10 +34,10 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance
             var settings = pullRequest.PullDogRepository.PullDogSettings;
             var user = settings.User;
 
-            var expiry = request.Configuration.Expiry;
-            var expiryTime = expiry == null ?
+            var expiryDuration = request.Configuration.Expiry;
+            var expiryTime = expiryDuration.TotalMinutes < 1 ?
                 (DateTime?)null :
-                DateTime.UtcNow.Add(expiry.Value);
+                DateTime.UtcNow.Add(expiryDuration);
 
             try
             {
