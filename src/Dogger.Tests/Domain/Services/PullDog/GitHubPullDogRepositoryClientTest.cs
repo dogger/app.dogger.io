@@ -208,7 +208,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             //Assert
             Assert.IsNotNull(details);
-            Assert.AreEqual("[some-repository-name: PR #some-handle](https://github.com/some-repository-name/pulls?q=is%3Apr)", details.PullRequestCommentReference);
+            Assert.AreEqual("[some-repository-name: PR #some-handle](https://github.com/some-repository-name/pulls?q=is%3Apr)", details.IndirectPullRequestCommentReference);
         }
 
         [TestMethod]

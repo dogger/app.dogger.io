@@ -126,7 +126,7 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
             {
                 var offendingPullRequestListText = string.Join('\n', ex
                     .OffendingPullRequests
-                    .Select(x => $"- {x.PullRequestCommentReference}"));
+                    .Select(x => $"- {x.DirectPullRequestCommentReference}"));
                 await this.mediator.Send(
                     new UpsertPullRequestCommentCommand(
                         pullRequest,
@@ -138,7 +138,7 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
                 await this.mediator.Send(
                     new UpsertPullRequestCommentCommand(
                         pullRequest,
-                        $"I tried to provision a test environment for your pull request, but there aren't enough free-plan servers available :tired_face:\n\nWe'll keep trying every time you open a new pull request in the future, but if you want to make sure to always have a test environment available, you need to [upgrade your plan](https://dogger.io/dashboard/pull-dog) to a paid plan.\n\nThe latest pull request that is currently using a demo server is: {ex.OffendingPullRequests.Last().PullRequestCommentReference}"),
+                        $"I tried to provision a test environment for your pull request, but there aren't enough free-plan servers available :tired_face:\n\nWe'll keep trying every time you open a new pull request in the future, but if you want to make sure to always have a test environment available, you need to [upgrade your plan](https://dogger.io/dashboard/pull-dog) to a paid plan.\n\nThe latest pull request that is currently using a demo server is: {ex.OffendingPullRequests.Last().IndirectPullRequestCommentReference}"),
                     cancellationToken);
             }
             catch (DockerComposeSyntaxErrorException)

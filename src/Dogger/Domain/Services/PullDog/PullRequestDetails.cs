@@ -3,14 +3,18 @@
     public class PullRequestDetails
     {
         public string RepositoryFullName { get; }
-        public string PullRequestCommentReference { get; }
+
+        public string IndirectPullRequestCommentReference { get; }
+        public string DirectPullRequestCommentReference { get; }
 
         public PullRequestDetails(
             string repositoryFullName,
-            string pullRequestCommentReference)
+            string indirectPullRequestCommentReference, 
+            string directPullRequestCommentReference)
         {
             this.RepositoryFullName = repositoryFullName;
-            this.PullRequestCommentReference = pullRequestCommentReference;
+            this.IndirectPullRequestCommentReference = indirectPullRequestCommentReference;
+            this.DirectPullRequestCommentReference = directPullRequestCommentReference;
         }
     }
 }
