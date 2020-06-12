@@ -91,27 +91,6 @@ namespace Dogger.Tests.TestHelpers
                 .AddJsonFile($"appsettings.{Environments.Development}.json", false);
         }
 
-        [Obsolete("Instead of this, we should replace all commands/queries with direct database references into something that only passes simple values.")]
-        public async Task WithDefaultDataContext(Func<DataContext, Task> action)
-        {
-            await WithDefaultDataContext<object>(async (dataContext) =>
-            {
-                await action(dataContext);
-                return null;
-            });
-        }
-
-        [Obsolete("Instead of this, we should replace all commands/queries with direct database references into something that only passes simple values.")]
-        public async Task<T> WithDefaultDataContext<T>(Func<DataContext, Task<T>> action)
-        {
-            var dataContext = this.serviceScope.ServiceProvider.GetRequiredService<DataContext>();
-
-            var result = await action(dataContext);
-            await dataContext.SaveChangesAsync();
-
-            return result;
-        }
-
         public async Task WithFreshDataContext(Func<DataContext, Task> action)
         {
             await WithFreshDataContext<object>(async (dataContext) =>
