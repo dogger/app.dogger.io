@@ -8,6 +8,7 @@ module.exports = {
       resolve: `gatsby-transformer-remark`,
       options: {
         plugins: [
+          `gatsby-remark-autolink-headers`,
           {
             resolve: `gatsby-remark-images`,
             options: {
@@ -32,6 +33,13 @@ module.exports = {
       options: {
         name: `posts`,
         path: `${__dirname}/static/blog`,
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `documentation`,
+        path: `${__dirname}/static/documentation`,
       },
     },
     `gatsby-transformer-sharp`,

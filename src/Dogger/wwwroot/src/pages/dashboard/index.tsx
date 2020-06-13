@@ -2,13 +2,13 @@ import React, { PropsWithChildren } from 'react';
 import { Container, Drawer, List, ListItem, ListItemText, makeStyles, createStyles, Theme, ListItemIcon, CircularProgress } from '@material-ui/core';
 import { AccountCircle, Code } from '@material-ui/icons';
 import {Helmet} from "react-helmet";
-import { useAuth0 } from '../auth/Auth0Provider';
-import { usePath } from '../hooks/path';
+import { useAuth0 } from '../../auth/Auth0Provider';
+import { usePath } from '../../hooks/path';
 import { RouteComponentProps } from "@reach/router"
 import { navigate } from 'gatsby';
 import { Router } from '@reach/router';
-import { AccountPage } from '../components/account/AccountPage';
-import { PullDogPage } from '../components/pull-dog/PullDogPage';
+import { AccountPage } from '../../components/account/AccountPage';
+import { PullDogPage } from '../../components/pull-dog/PullDogPage';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

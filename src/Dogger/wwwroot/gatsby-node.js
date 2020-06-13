@@ -1,6 +1,9 @@
 async function createBlogPosts({ actions, graphql, reporter }) {
   const { createPage } = actions;
-  const blogPostTemplate = require.resolve(`./src/templates/BlogPostTemplate.tsx`);
+  const templates = {
+    blog: require.resolve(`./src/templates/BlogPostTemplate.tsx`),
+    documentation: require.resolve(`./src/templates/DocumentationPageTemplate.tsx`)
+  };
   const result = await graphql(`
     {
       allMarkdownRemark(
@@ -24,11 +27,14 @@ async function createBlogPosts({ actions, graphql, reporter }) {
   }
 
   result.data.allMarkdownRemark.edges.forEach(({ node }) => {
+    const slug = node.frontmatter.slug;
+    const type = slug.split("/")[1];
+
     createPage({
-      path: node.frontmatter.slug,
-      component: blogPostTemplate,
+      path: slug,
+      component: templates[type],
       context: {
-        slug: node.frontmatter.slug,
+        slug: slug,
       },
     });
   })
