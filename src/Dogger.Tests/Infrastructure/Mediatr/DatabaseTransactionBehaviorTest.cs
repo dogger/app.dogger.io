@@ -134,7 +134,7 @@ namespace Dogger.Tests.Infrastructure.Mediatr
             });
         }
 
-        private class TestCommand : IRequest
+        public class TestCommand : IRequest
         {
             public Func<Task> Action { get; }
 
@@ -145,7 +145,7 @@ namespace Dogger.Tests.Infrastructure.Mediatr
             }
         }
 
-        private class TestCommandHandler : IRequestHandler<TestCommand>
+        public class TestCommandHandler : IRequestHandler<TestCommand>
         {
             public async Task<Unit> Handle(TestCommand request, CancellationToken cancellationToken)
             {
