@@ -30,6 +30,16 @@ async function createBlogPosts({ actions, graphql, reporter }) {
     const slug = node.frontmatter.slug;
     const type = slug.split("/")[1];
 
+    if(!templates[type]) {
+      reporter.panicOnBuild("Could not find a template for type " + type + ".");
+      return;
+    }
+
+    if(slug.substr(slug.length-1, 1) === "/") {
+      reporter.panicOnBuild("The slug " + slug + " ended with a slash.");
+      return;
+    }
+
     createPage({
       path: slug,
       component: templates[type],

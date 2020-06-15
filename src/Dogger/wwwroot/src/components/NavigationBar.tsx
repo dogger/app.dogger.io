@@ -31,6 +31,10 @@ export const NavigationBar = (props: { onThemeToggle: () => void }) => {
           Blog
         </Button>
 
+        <Button color="inherit" onClick={() => navigate('/documentation')}>
+          Docs
+        </Button>
+
         <Box style={{
           marginLeft: 12,
           width: 35,
