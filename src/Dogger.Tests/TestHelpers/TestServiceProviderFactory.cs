@@ -50,6 +50,10 @@ namespace Dogger.Tests.TestHelpers
             ConfigureFakeDelay(services);
 
             services.AddScoped<Mediator>();
+
+            services.AddMediatR(
+                typeof(Startup).Assembly,
+                typeof(TestServiceProviderFactory).Assembly);
         }
 
         private static void ConfigureAmazonIdentityDefaultFakes(IServiceCollection services)
