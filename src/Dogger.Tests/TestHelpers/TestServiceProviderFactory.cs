@@ -3,6 +3,7 @@ using System.Linq;
 using Amazon.IdentityManagement;
 using Amazon.Lightsail;
 using Dogger.Domain.Services.Amazon.Lightsail;
+using Dogger.Infrastructure;
 using Dogger.Infrastructure.AspNet;
 using Dogger.Infrastructure.Time;
 using MediatR;
@@ -49,11 +50,11 @@ namespace Dogger.Tests.TestHelpers
             ConfigureAmazonIdentityDefaultFakes(services);
             ConfigureFakeDelay(services);
 
-            services.AddScoped<Mediator>();
-
-            services.AddMediatR(
+            IocRegistry.ConfigureMediatr(services,
                 typeof(Startup).Assembly,
                 typeof(TestServiceProviderFactory).Assembly);
+
+            services.AddScoped<Mediator>();
         }
 
         private static void ConfigureAmazonIdentityDefaultFakes(IServiceCollection services)

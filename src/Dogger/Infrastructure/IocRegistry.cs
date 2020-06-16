@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection;
 using Amazon;
 using Amazon.ECR;
 using Amazon.Extensions.NETCore.Setup;
@@ -69,7 +70,7 @@ namespace Dogger.Infrastructure
 
             ConfigureProvisioning(services);
             ConfigureAutoMapper(services);
-            ConfigureMediatr(services);
+            ConfigureMediatr(services, typeof(IocRegistry).Assembly);
             ConfigureDocker(services);
 
             ConfigureEntityFramework(
@@ -301,9 +302,11 @@ namespace Dogger.Infrastructure
             services.AddSingleton(configuration);
         }
 
-        private static void ConfigureMediatr(IServiceCollection services)
+        public static void ConfigureMediatr(
+            IServiceCollection services, 
+            params Assembly[] assemblies)
         {
-            services.AddMediatR(x => x.AsTransient(), typeof(IocRegistry).Assembly);
+            services.AddMediatR(x => x.AsTransient(), assemblies);
 
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(DatabaseTransactionBehavior<,>));
