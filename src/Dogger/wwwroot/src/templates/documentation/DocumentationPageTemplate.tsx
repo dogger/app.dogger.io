@@ -1,7 +1,7 @@
 import React from 'react';
 import { graphql } from 'gatsby';
 
-import './DocumentationPageTemplate.css';
+import classes from './DocumentationPageTemplate.module.css';
 
 type DocumentationReference = {
   title: string;
@@ -20,7 +20,7 @@ type DocumentationPage = {
 const renderMenu = (references: DocumentationReference[]) => {
   return <>
     {references.map(x => <>
-      <div className={"menu menu-" + x.depth}>
+      <div className={classes.menu + " " + classes["menu" + x.depth]}>
         <a href={"#" + x.slug}>
           {x.title}
         </a>
@@ -31,10 +31,10 @@ const renderMenu = (references: DocumentationReference[]) => {
 }
 
 const renderDocumentation = (post: DocumentationPage) => {
-  return <>
-    <div className="documentation" dangerouslySetInnerHTML={{ __html: post.contents }}></div>
-    <div className="root-menu">{renderMenu(post.references)}</div>
-  </>;
+  return <div className={classes.documentationWrapper}>
+    <div className={classes.documentation} dangerouslySetInnerHTML={{ __html: post.contents }} />
+    <div className={classes.rootMenu}>{renderMenu(post.references)}</div>
+  </div>;
 }
 
 export default ({
@@ -66,8 +66,6 @@ export default ({
     const rootReferences = allReferences.filter(x => x.depth === 1);
 
     for(let i=1;i<allReferences.length;i++) {
-      console.log(i);
-
       const previousReference = allReferences[i-1];
       const currentReference = allReferences[i];
 

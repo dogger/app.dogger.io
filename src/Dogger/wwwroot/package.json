@@ -46,7 +46,7 @@
     "react-lazylog": "^4.5.2",
     "react-monaco-editor": "^0.36.0",
     "react-scripts": "^3.4.1",
-    "typescript": "~3.8.3",
+    "typescript": "^3.8.3",
     "webfontloader": "^1.6.28",
     "yaml": "1.9.2"
   },
@@ -89,7 +89,8 @@
     "gatsby-plugin-styled-components": "^3.3.4",
     "monaco-editor-webpack-plugin": "^1.9.0",
     "rimraf": "^3.0.2",
-    "styled-components": "^5.1.1"
+    "styled-components": "^5.1.1",
+    "typescript-plugin-css-modules": "^2.3.0"
   },
   "jest": {
     "roots": [

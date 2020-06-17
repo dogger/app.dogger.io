@@ -1,4 +1,4 @@
-.root-menu {
+.rootMenu {
     display: flex;
     flex-direction: column;
     align-self: flex-start;
@@ -6,7 +6,8 @@
     margin: 24px;
 }
 
-#gatsby-focus-wrapper {
+.documentationWrapper {
+    display: flex;
     flex-direction: row;
     justify-content: space-evenly;
     padding-top: 80px;
@@ -41,7 +42,7 @@
     padding-right: 12px !important;
 }
 
-.root-menu > .menu {
+.rootMenu > .menu {
     padding-left: 0;
 }
 

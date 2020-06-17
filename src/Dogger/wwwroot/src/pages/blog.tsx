@@ -4,7 +4,7 @@ import moment, { Moment } from 'moment';
 import {Helmet} from "react-helmet";
 import { RouteComponentProps } from "@reach/router";
 
-import './blog.css';
+import classes from './blog.module.css';
 
 import { Link } from '@material-ui/core';
 
@@ -55,7 +55,7 @@ export const renderBlogPost = (post: BlogPost) => {
 }
 
 export const BlogPage = (props: PropsWithChildren<RouteComponentProps>) => {
-    return <div className="blog">
+    return <div className={classes.blog}>
         <h1>Blog</h1>
         <Helmet>
             <title>Blog</title>
@@ -74,6 +74,7 @@ export default (props: any) => {
         .allMarkdownRemark
         .edges
         .map(x => x.node)
+        .filter(x => x.frontmatter.slug.indexOf("/blog/") === 0)
         .map(x => ({
             contents: "",
             summary: x.frontmatter.summary,
