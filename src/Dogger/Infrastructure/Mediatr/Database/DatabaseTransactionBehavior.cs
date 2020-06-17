@@ -20,8 +20,8 @@ namespace Dogger.Infrastructure.Mediatr.Database
         }
 
         public async Task<TResponse> Handle(
-            TRequest request,
-            CancellationToken cancellationToken,
+            TRequest request, 
+            CancellationToken cancellationToken, 
             RequestHandlerDelegate<TResponse> next)
         {
             if (!(request is IDatabaseTransactionRequest databaseTransactionRequest))
@@ -30,22 +30,26 @@ namespace Dogger.Infrastructure.Mediatr.Database
             if (this.dataContext.Database.CurrentTransaction != null)
                 return await next();
 
-            await using var transaction = await this.dataContext.Database.BeginTransactionAsync(
-                databaseTransactionRequest.TransactionIsolationLevel ?? IsolationLevel.RepeatableRead,
-                cancellationToken);
-
-            try
+            var strategy = this.dataContext.Database.CreateExecutionStrategy();
+            return await strategy.ExecuteAsync(async () =>
             {
-                var result = await next();
-                await transaction.CommitAsync(cancellationToken);
+                await using var transaction = await this.dataContext.Database.BeginTransactionAsync(
+                    databaseTransactionRequest.TransactionIsolationLevel ?? IsolationLevel.RepeatableRead,
+                    cancellationToken);
 
-                return result;
-            }
-            catch
-            {
-                await transaction.RollbackAsync(cancellationToken);
-                throw;
-            }
+                try
+                {
+                    var result = await next();
+                    await transaction.CommitAsync(cancellationToken);
+
+                    return result;
+                }
+                catch
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    throw;
+                }
+            });
         }
     }
 }

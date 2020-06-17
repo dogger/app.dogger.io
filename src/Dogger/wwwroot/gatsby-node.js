@@ -2,7 +2,7 @@ async function createBlogPosts({ actions, graphql, reporter }) {
   const { createPage } = actions;
   const templates = {
     blog: require.resolve(`./src/templates/BlogPostTemplate.tsx`),
-    documentation: require.resolve(`./src/templates/DocumentationPageTemplate.tsx`)
+    documentation: require.resolve(`./src/templates/documentation/DocumentationPageTemplate.tsx`)
   };
   const result = await graphql(`
     {

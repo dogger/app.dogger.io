@@ -72,6 +72,15 @@ module.exports = {
         "background_color": "#ffffff"
       },
     },
+    {
+      resolve: `gatsby-plugin-google-fonts`,
+      options: {
+        fonts: [
+          `Roboto`
+        ],
+        display: 'swap'
+      }
+    },
     `gatsby-plugin-sitemap`,
     'gatsby-plugin-top-layout',
     {
