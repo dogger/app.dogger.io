@@ -3,12 +3,8 @@ import { Container, Drawer, List, ListItem, ListItemText, makeStyles, createStyl
 import { AccountCircle, Code } from '@material-ui/icons';
 import {Helmet} from "react-helmet";
 import { useAuth0 } from '../../auth/Auth0Provider';
-import { usePath } from '../../hooks/path';
-import { RouteComponentProps } from "@reach/router"
 import { navigate } from 'gatsby';
-import { Router } from '@reach/router';
 import { AccountPage } from '../../components/account/AccountPage';
-import { PullDogPage } from '../../components/pull-dog/PullDogPage';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -43,7 +39,7 @@ type MenuItem = {
     renderIcon: () => JSX.Element;
 }
 
-export const DashboardPage = (props: PropsWithChildren<RouteComponentProps>) => {
+export const DashboardPage = (props: PropsWithChildren<any>) => {
     const classes = useStyles();
     const {isAuthenticated, loading } = useAuth0();
     if(!isAuthenticated || loading)
@@ -114,12 +110,7 @@ export const DashboardPage = (props: PropsWithChildren<RouteComponentProps>) => 
 };
 
 export default () => (
-    <Router style={{
-        height: '100%'
-    }}>
-        <DashboardPage path="/dashboard">
-            <PullDogPage path="/pull-dog" />
-            <AccountPage path="/" default />
-        </DashboardPage>
-    </Router>
+    <DashboardPage>
+        <AccountPage />
+    </DashboardPage>
 )
