@@ -106,7 +106,8 @@ namespace Dogger.Infrastructure
 
         private static void ConfigureWebhooks(IServiceCollection services)
         {
-            services.AddTransient<IConfigurationCommitPayloadHandler, ConfigurationCommitPayloadHandler>();
+            services.AddTransient<IConfigurationPayloadHandler, InstallationConfigurationPayloadHandler>();
+            services.AddTransient<IConfigurationPayloadHandler, UninstallationConfigurationPayloadHandler>();
 
             services.AddTransient<IWebhookPayloadHandler, BotCommandPayloadHandler>();
             services.AddTransient<IWebhookPayloadHandler, PullRequestClosedPayloadHandler>();

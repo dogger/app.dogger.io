@@ -2,9 +2,12 @@
 
 namespace Dogger.Controllers.Webhooks.Handlers
 {
-    public interface IConfigurationCommitPayloadHandler
+    public interface IConfigurationPayloadHandler
     {
+        string Event { get; }
+
         bool CanHandle(WebhookPayload payload);
+
         Task HandleAsync(WebhookPayload payload);
     }
 }

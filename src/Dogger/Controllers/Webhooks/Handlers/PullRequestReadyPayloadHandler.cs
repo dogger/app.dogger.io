@@ -8,6 +8,8 @@ namespace Dogger.Controllers.Webhooks.Handlers
     {
         private readonly IMediator mediator;
 
+        public string Event => "pull_request";
+
         public PullRequestReadyPayloadHandler(
             IMediator mediator)
         {

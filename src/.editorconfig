@@ -202,3 +202,6 @@ dotnet_diagnostic.IdentityManagementService1000.severity = none
 
 # CA1801: Parameter payload of method PullDogWebhook is never used. Remove the parameter or use it in the method body.
 dotnet_diagnostic.CA1801.severity = none
+
+# CA1716: Identifiers should not match keywords
+dotnet_diagnostic.CA1716.severity = none

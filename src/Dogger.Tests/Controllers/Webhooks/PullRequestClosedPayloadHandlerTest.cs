@@ -38,29 +38,6 @@ namespace Dogger.Tests.Controllers.Webhooks
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task CanHandle_PullRequestStateNotClosed_ReturnsFalse()
-        {
-            //Arrange
-            var fakeMediator = Substitute.For<IMediator>();
-
-            var handler = new PullRequestClosedPayloadHandler(fakeMediator);
-
-            //Act
-            var result = handler.CanHandle(new WebhookPayload()
-            {
-                Action = "closed",
-                PullRequest = new PullRequestPayload()
-                {
-                    State = "open"
-                }
-            });
-
-            //Assert
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
         public async Task CanHandle_PullRequestClosedAndActionClosed_ReturnsTrue()
         {
             //Arrange
