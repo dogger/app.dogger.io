@@ -70,31 +70,9 @@
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     <Content Remove="$(SpaRoot)**" />
-    <Content Remove="%2a%2a\**" />
     <None Remove="$(SpaRoot)**" />
-    <None Remove="%2a%2a\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="%2a%2a\**" />
-    <EmbeddedResource Remove="%2a%2a\**" />
-    <TypeScriptCompile Remove="%2a%2a\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <TypeScriptCompile Remove="%2a%2a\%2a.ts" />
-    <TypeScriptCompile Remove="%2a%2a\%2a.tsx" />
-  </ItemGroup>
-
-  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
-    <!-- Ensure Node.js is installed -->
-    <Exec Command="node --version" ContinueOnError="true">
-      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
-    </Exec>
-    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
-    <Exec Condition="'$(ErrorCode)' == '0'" WorkingDirectory="$(SpaRoot)" Command="npm install" />
-  </Target>
 
 
 </Project>
