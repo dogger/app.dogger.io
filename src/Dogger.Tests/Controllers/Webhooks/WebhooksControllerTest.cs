@@ -90,7 +90,7 @@ namespace Dogger.Tests.Controllers.Webhooks
                     services.AddSingleton(fakeHandler4);
 
                     services.AddSingleton(Substitute.For<IConfigurationCommitPayloadHandler>());
-                    services.AddSingleton(Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                    services.AddSingleton(GenerateTestGitHubOptions());
                 }
             });
 
@@ -147,7 +147,7 @@ namespace Dogger.Tests.Controllers.Webhooks
                     services.AddSingleton(fakeHandler);
 
                     services.AddSingleton(Substitute.For<IConfigurationCommitPayloadHandler>());
-                    services.AddSingleton(Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                    services.AddSingleton(GenerateTestGitHubOptions());
                 }
             });
 
@@ -215,8 +215,8 @@ namespace Dogger.Tests.Controllers.Webhooks
                     services.AddSingleton(fakeMediator);
                     services.AddSingleton(fakeWebhookPayloadHandler);
 
-                    services.AddSingleton(Substitute.For<IConfigurationCommitPayloadHandler>());
-                    services.AddSingleton(Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                    services.AddSingleton(fakeConfigurationCommitPayloadHandler);
+                    services.AddSingleton(GenerateTestGitHubOptions());
                 }
             });
 
@@ -288,7 +288,7 @@ namespace Dogger.Tests.Controllers.Webhooks
                     services.AddSingleton(fakeWebhookPayloadHandler);
 
                     services.AddSingleton(Substitute.For<IConfigurationCommitPayloadHandler>());
-                    services.AddSingleton(Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                    services.AddSingleton(GenerateTestGitHubOptions());
                 }
             });
 
@@ -356,7 +356,7 @@ namespace Dogger.Tests.Controllers.Webhooks
                     services.AddSingleton(fakeWebhookPayloadHandler);
 
                     services.AddSingleton(Substitute.For<IConfigurationCommitPayloadHandler>());
-                    services.AddSingleton(Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                    services.AddSingleton(GenerateTestGitHubOptions());
                 }
             });
 
@@ -429,7 +429,7 @@ namespace Dogger.Tests.Controllers.Webhooks
                     services.AddSingleton(fakeWebhookPayloadHandler);
 
                     services.AddSingleton(Substitute.For<IConfigurationCommitPayloadHandler>());
-                    services.AddSingleton(Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                    services.AddSingleton(GenerateTestGitHubOptions());
                 }
             });
 
