@@ -24,9 +24,7 @@ namespace Dogger.Controllers.Webhooks.Handlers
 
         public bool CanHandle(WebhookPayload payload)
         {
-            return
-                payload.Action == "deleted" &&
-                payload.Installation != null;
+            return payload.Action == "deleted";
         }
 
         public async Task HandleAsync(WebhookPayload payload)
