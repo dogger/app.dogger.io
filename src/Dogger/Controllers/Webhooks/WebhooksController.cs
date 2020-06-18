@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Controllers.Webhooks.Handlers;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
@@ -32,6 +33,7 @@ namespace Dogger.Controllers.Webhooks
         private readonly IEnumerable<IWebhookPayloadHandler> genericPayloadHandlers;
 
         private readonly IOptionsMonitor<GitHubOptions> gitHubOptionsMonitor;
+        private readonly DataContext dataContext;
 
         //smee --url https://smee.io/EtHope2meSLYybsn --target http://localhost:14566/api/webhooks/github/pull-dog
 
@@ -39,45 +41,53 @@ namespace Dogger.Controllers.Webhooks
             IMediator mediator,
             IConfigurationCommitPayloadHandler configurationCommitPayloadHandler,
             IEnumerable<IWebhookPayloadHandler> genericPayloadHandlers,
-            IOptionsMonitor<GitHubOptions> gitHubOptionsMonitor)
+            IOptionsMonitor<GitHubOptions> gitHubOptionsMonitor,
+            DataContext dataContext)
         {
             this.mediator = mediator;
             this.configurationCommitPayloadHandler = configurationCommitPayloadHandler;
             this.genericPayloadHandlers = genericPayloadHandlers;
             this.gitHubOptionsMonitor = gitHubOptionsMonitor;
+            this.dataContext = dataContext;
         }
 
         [HttpPost]
         [Route("github/pull-dog")]
         [AllowAnonymous]
-        public async Task<IActionResult> PullDogWebhook(WebhookPayload payload)
+        public async Task<IActionResult> PullDogWebhook(
+            WebhookPayload payload,
+            CancellationToken cancellationToken)
         {
             if (!await IsGithubPushAllowedAsync())
                 return NotFound();
 
-            if (this.configurationCommitPayloadHandler.CanHandle(payload))
-            {
-                await this.configurationCommitPayloadHandler.HandleAsync(payload);
-                return Ok();
-            }
+            return await this.dataContext.ExecuteInTransactionAsync(
+                async () =>
+                {
+                    if (this.configurationCommitPayloadHandler.CanHandle(payload))
+                    {
+                        await this.configurationCommitPayloadHandler.HandleAsync(payload);
+                        return Ok();
+                    }
 
-            var context = await GetWebhookPayloadContextAsync(payload);
-            if (context == null)
-                return NoContent();
+                    var context = await GetWebhookPayloadContextAsync(payload);
+                    if (context == null)
+                        return NoContent();
 
-            var foundHandler = false;
-            foreach (var handler in this.genericPayloadHandlers)
-            {
-                if (!handler.CanHandle(payload))
-                    continue;
+                    var foundHandler = false;
+                    foreach (var handler in this.genericPayloadHandlers)
+                    {
+                        if (!handler.CanHandle(payload))
+                            continue;
 
-                await handler.HandleAsync(context);
-                foundHandler = true;
-            }
+                        await handler.HandleAsync(context);
+                        foundHandler = true;
+                    }
 
-            return foundHandler ? 
-                (IActionResult)Ok() :
-                (IActionResult)NoContent();
+                    return foundHandler ? (IActionResult)Ok() : (IActionResult)NoContent();
+                },
+                default,
+                cancellationToken);
         }
 
         private async Task<WebhookPayloadContext?> GetWebhookPayloadContextAsync(WebhookPayload payload)

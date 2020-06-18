@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure;
 
@@ -13,6 +16,39 @@ namespace Dogger.Domain.Models
         public static Guid DemoClusterId => new Guid("810fb451-0c78-4451-b3ac-b504450bc7dd");
         public static Guid PullDogDemoClusterId => new Guid("1112df9e-f6a9-40e9-950a-5e372d03c9a2");
         public static Guid DoggerClusterId => new Guid("352ba80a-3f32-43fd-ab37-f97facc4a9bb");
+
+        public async Task<T> ExecuteInTransactionAsync<T>(
+            Func<Task<T>> action,
+            IsolationLevel? isolationLevel,
+            CancellationToken cancellationToken)
+        {
+            if (this.Database.CurrentTransaction != null)
+                return await action();
+
+            if (this.Database.CurrentTransaction != null)
+                return await action();
+
+            var strategy = this.Database.CreateExecutionStrategy();
+            return await strategy.ExecuteAsync(async () =>
+            {
+                await using var transaction = await this.Database.BeginTransactionAsync(
+                    isolationLevel ?? IsolationLevel.RepeatableRead,
+                    cancellationToken);
+
+                try
+                {
+                    var result = await action();
+                    await transaction.CommitAsync(cancellationToken);
+
+                    return result;
+                }
+                catch
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    throw;
+                }
+            });
+        }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
