@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
+using Dogger.Infrastructure.Mediatr.Database;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -134,7 +136,7 @@ namespace Dogger.Tests.Infrastructure.Mediatr
             });
         }
 
-        public class TestCommand : IRequest
+        public class TestCommand : IRequest, IDatabaseTransactionRequest
         {
             public Func<Task> Action { get; }
 
@@ -143,6 +145,8 @@ namespace Dogger.Tests.Infrastructure.Mediatr
             {
                 this.Action = action;
             }
+
+            public IsolationLevel? TransactionIsolationLevel => default;
         }
 
         public class TestCommandHandler : IRequestHandler<TestCommand>
