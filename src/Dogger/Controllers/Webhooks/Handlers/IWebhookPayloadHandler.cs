@@ -4,8 +4,9 @@ namespace Dogger.Controllers.Webhooks.Handlers
 {
     public interface IWebhookPayloadHandler
     {
-        bool CanHandle(WebhookPayload payload);
+        string Event { get; }
 
+        bool CanHandle(WebhookPayload payload);
         Task HandleAsync(WebhookPayloadContext context);
     }
 }

@@ -8,6 +8,8 @@ namespace Dogger.Controllers.Webhooks.Handlers
     {
         private readonly IMediator mediator;
 
+        public string Event => "pull_request";
+
         public PullRequestClosedPayloadHandler(
             IMediator mediator)
         {
@@ -16,9 +18,7 @@ namespace Dogger.Controllers.Webhooks.Handlers
 
         public bool CanHandle(WebhookPayload payload)
         {
-            return 
-                payload.Action == "closed" && 
-                payload.PullRequest?.State == "closed";
+            return payload.Action == "closed";
         }
 
         public async Task HandleAsync(WebhookPayloadContext context)

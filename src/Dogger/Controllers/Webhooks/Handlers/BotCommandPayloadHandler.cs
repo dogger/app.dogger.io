@@ -10,6 +10,8 @@ namespace Dogger.Controllers.Webhooks.Handlers
     {
         private readonly IMediator mediator;
 
+        public string Event => "issue_comment";
+
         public BotCommandPayloadHandler(
             IMediator mediator)
         {
@@ -18,10 +20,7 @@ namespace Dogger.Controllers.Webhooks.Handlers
 
         public bool CanHandle(WebhookPayload payload)
         {
-            return
-                payload.Action == "created" &&
-                payload.Issue?.PullRequest != null &&
-                payload.Comment != null;
+            return payload.Action == "created";
         }
 
         public async Task HandleAsync(WebhookPayloadContext context)
