@@ -68,9 +68,6 @@ export default ({children}: PropsWithChildren<any>) => {
         <Helmet>
             <title>Docker technologies - Dogger</title>
             <meta name="robots" content="all" />
-            <meta 
-                name="description" 
-                content="Dogger has services and products to aid you in your Docker-related workflow." />
         </Helmet>
         <NavigationBar onThemeToggle={() => {
             const newThemeName = theme.palette.type === "dark" ? "light" : "dark";

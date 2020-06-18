@@ -2,6 +2,7 @@ import React from 'react';
 import { graphql } from 'gatsby';
 
 import classes from './DocumentationPageTemplate.module.css';
+import { Helmet } from 'react-helmet';
 
 type DocumentationReference = {
   title: string;

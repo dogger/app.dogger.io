@@ -4,6 +4,7 @@ import { useTheme, Typography, Container, Box, Card, CardContent, Link, Divider,
 import { GitHub, Storage, ArrowDownward, AssignmentTurnedIn, MoneyOff, Share } from '@material-ui/icons';
 import { PullDogPricingTable } from '../components/pull-dog/PullDogPricingTable';
 import Img from "gatsby-image";
+import { Helmet } from 'react-helmet';
 
 const useStyles = makeStyles({
     header: () => ({}),
@@ -242,6 +243,9 @@ const App = ({data}) => {
     const isDownFromMedium = useMediaQuery(theme.breakpoints.down('sm'));
 
     return <>
+        <Helmet>
+            <meta name="description" content="Dogger has services and products to aid you in your Docker-related workflow." />
+        </Helmet>
         <LandingPageSection style={{
             paddingTop: '6rem',
             paddingBottom: '20rem',
