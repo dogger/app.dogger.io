@@ -55,34 +55,6 @@ namespace Dogger.Tests.Controllers.Webhooks
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task Handle_PullDogNotInstalled_ThrowsException()
-        {
-            //Arrange
-            var fakeMediator = Substitute.For<IMediator>();
-            fakeMediator
-                .Send(Arg.Is<GetPullDogSettingsByGitHubInstallationIdQuery>(args =>
-                    args.InstallationId == 1337))
-                .Returns((PullDogSettings)null);
-
-            var handler = new UninstallationConfigurationPayloadHandler(
-                fakeMediator);
-
-            //Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
-                await handler.HandleAsync(new WebhookPayload()
-                {
-                    Installation = new InstallationPayload()
-                    {
-                        Id = 1337
-                    }
-                }));
-
-            //Assert
-            Assert.IsNotNull(exception);
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
         public async Task Handle_RepositoriesOfOtherInstallationIdAndCorrectInstallationIdPresent_DeletesCorrectInstallationIds()
         {
             //Arrange
