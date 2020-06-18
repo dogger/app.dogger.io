@@ -14,8 +14,7 @@ namespace Dogger.Controllers.Webhooks.Handlers
 
         private const string masterReference = "refs/heads/master";
 
-        public string Event { get; }
-        public string Action { get; }
+        public string Event => "push";
 
         public InstallationConfigurationPayloadHandler(
             IMediator mediator)
@@ -26,22 +25,10 @@ namespace Dogger.Controllers.Webhooks.Handlers
         public bool CanHandle(WebhookPayload payload)
         {
             return
-                IsMasterCommitPayload(payload) &&
+                payload.Reference == masterReference &&
                 payload.Commits.Any(x =>
                     x.Added.Contains("pull-dog.json") ||
                     x.Modified.Contains("pull-dog.json"));
-        }
-
-        private static bool IsMasterCommitPayload(WebhookPayload payload)
-        {
-            return
-                IsCommitPayload(payload) &&
-                payload.Reference == masterReference;
-        }
-
-        private static bool IsCommitPayload(WebhookPayload payload)
-        {
-            return payload.Pusher != null && payload.Commits != null;
         }
 
         public async Task HandleAsync(WebhookPayload payload)

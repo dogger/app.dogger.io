@@ -9,12 +9,16 @@ namespace Dogger.Controllers.Webhooks.Handlers
         private readonly IMediator mediator;
 
         public string Event => "pull_request";
-        public string Action => "closed";
 
         public PullRequestClosedPayloadHandler(
             IMediator mediator)
         {
             this.mediator = mediator;
+        }
+
+        public bool CanHandle(WebhookPayload payload)
+        {
+            return payload.Action == "closed";
         }
 
         public async Task HandleAsync(WebhookPayloadContext context)

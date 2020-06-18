@@ -69,9 +69,16 @@ namespace Dogger.Controllers.Webhooks
 
         private async Task<IActionResult> HandlePayloadAsync(WebhookPayload payload)
         {
+            var @event = Request.Headers["X-GitHub-Event"].ToString();
+            if (@event == null)
+                throw new InvalidOperationException("Event is not set.");
+
             foreach (var handler in this.configurationPayloadHandlers)
             {
-                if (!handler.CanHandle(payload))
+                if (handler.Event != @event)
+                    continue;
+
+                if(!handler.CanHandle(payload))
                     continue;
 
                 await handler.HandleAsync(payload);
@@ -86,6 +93,9 @@ namespace Dogger.Controllers.Webhooks
             var foundHandler = false;
             foreach (var handler in this.genericPayloadHandlers)
             {
+                if (handler.Event != @event)
+                    continue;
+
                 if (!handler.CanHandle(payload))
                     continue;
 
@@ -113,14 +123,11 @@ namespace Dogger.Controllers.Webhooks
             if (pullRequest == null)
                 return null;
 
-            var @event = Request.Headers["X-GitHub-Event"]
-
             return new WebhookPayloadContext(
                 payload,
                 repository.PullDogSettings,
                 repository,
-                pullRequest,
-                request);
+                pullRequest);
         }
 
         private async Task<PullDogPullRequest?> GetPullRequestFromPayloadAsync(

@@ -14,6 +14,8 @@ namespace Dogger.Controllers.Webhooks.Handlers
     {
         private readonly IMediator mediator;
 
+        public string Event => "installation";
+
         public UninstallationConfigurationPayloadHandler(
             IMediator mediator)
         {
