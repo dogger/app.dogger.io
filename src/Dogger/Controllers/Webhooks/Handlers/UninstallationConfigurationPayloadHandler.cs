@@ -32,7 +32,7 @@ namespace Dogger.Controllers.Webhooks.Handlers
             var settings = await this.mediator.Send(
                 new GetPullDogSettingsByGitHubInstallationIdQuery(payload.Installation.Id));
             if (settings == null)
-                throw new InvalidOperationException("Pull Dog not installed for user.");
+                return;
 
             foreach (var repository in settings.Repositories)
             {
