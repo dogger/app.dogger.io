@@ -11,6 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="docker-entrypoint.sh" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="docker-entrypoint.sh" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="..\Dogger\appsettings.Development.json" Link="appsettings.Development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
