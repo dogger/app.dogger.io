@@ -5,6 +5,7 @@ import {Helmet} from "react-helmet";
 import { useAuth0 } from '../../auth/Auth0Provider';
 import { navigate } from 'gatsby';
 import { AccountPage } from '../../components/account/AccountPage';
+import { usePath } from '../../hooks/path';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -42,10 +43,10 @@ type MenuItem = {
 export const DashboardPage = (props: PropsWithChildren<any>) => {
     const classes = useStyles();
     const {isAuthenticated, loading } = useAuth0();
+    const pathname = usePath();
     if(!isAuthenticated || loading)
         return <CircularProgress />;
 
-    const pathName = props.location.pathname;
     const menuItems: MenuItem[] = [
         {
             title: "Account",
