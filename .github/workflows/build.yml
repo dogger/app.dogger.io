@@ -37,7 +37,14 @@ jobs:
     runs-on: ubuntu-latest
     if: contains(github.head_ref, 'dependabot') == false
 
-    steps:
+    steps:      
+      - name: 'Block concurrent executions'
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 10
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -65,13 +72,6 @@ jobs:
       - name: Tag Docker image
         run: |
           docker tag dogger-image ffmathy/dogger:latest
-
-      - name: 'Block concurrent executions'
-        uses: softprops/turnstyle@v1
-        with:
-          poll-interval-seconds: 10
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push Docker image to Docker Hub
         working-directory: ./src
