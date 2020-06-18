@@ -50,18 +50,9 @@ async function createBlogPosts({ actions, graphql, reporter }) {
   })
 }
 
-async function createWildcard(path, { page, actions }) {
-    const { createPage } = actions
-    if (page.path.indexOf("/" + path) > -1) {
-      page.matchPath = "/" + path + "/*"
-      createPage(page);
-    }
-}
-
 exports.createPages = async (context) => {
   await createBlogPosts(context);
 }
 
 exports.onCreatePage = async (context) => {
-  await createWildcard("dashboard", context);
 }
