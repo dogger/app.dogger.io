@@ -29,7 +29,7 @@ namespace Dogger.Controllers.Webhooks
         private const string sha1Prefix = "sha1=";
 
         private readonly IMediator mediator;
-        private readonly IConfigurationCommitPayloadHandler configurationCommitPayloadHandler;
+        private readonly IEnumerable<IConfigurationPayloadHandler> configurationPayloadHandlers;
         private readonly IEnumerable<IWebhookPayloadHandler> genericPayloadHandlers;
 
         private readonly IOptionsMonitor<GitHubOptions> gitHubOptionsMonitor;
@@ -39,13 +39,13 @@ namespace Dogger.Controllers.Webhooks
 
         public WebhooksController(
             IMediator mediator,
-            IConfigurationCommitPayloadHandler configurationCommitPayloadHandler,
+            IEnumerable<IConfigurationPayloadHandler> configurationPayloadHandlers,
             IEnumerable<IWebhookPayloadHandler> genericPayloadHandlers,
             IOptionsMonitor<GitHubOptions> gitHubOptionsMonitor,
             DataContext dataContext)
         {
             this.mediator = mediator;
-            this.configurationCommitPayloadHandler = configurationCommitPayloadHandler;
+            this.configurationPayloadHandlers = configurationPayloadHandlers;
             this.genericPayloadHandlers = genericPayloadHandlers;
             this.gitHubOptionsMonitor = gitHubOptionsMonitor;
             this.dataContext = dataContext;
@@ -62,32 +62,38 @@ namespace Dogger.Controllers.Webhooks
                 return NotFound();
 
             return await this.dataContext.ExecuteInTransactionAsync(
-                async () =>
-                {
-                    if (this.configurationCommitPayloadHandler.CanHandle(payload))
-                    {
-                        await this.configurationCommitPayloadHandler.HandleAsync(payload);
-                        return Ok();
-                    }
-
-                    var context = await GetWebhookPayloadContextAsync(payload);
-                    if (context == null)
-                        return NoContent();
-
-                    var foundHandler = false;
-                    foreach (var handler in this.genericPayloadHandlers)
-                    {
-                        if (!handler.CanHandle(payload))
-                            continue;
-
-                        await handler.HandleAsync(context);
-                        foundHandler = true;
-                    }
-
-                    return foundHandler ? (IActionResult)Ok() : (IActionResult)NoContent();
-                },
+                async () => await HandlePayloadAsync(payload),
                 default,
                 cancellationToken);
+        }
+
+        private async Task<IActionResult> HandlePayloadAsync(WebhookPayload payload)
+        {
+            foreach (var handler in this.configurationPayloadHandlers)
+            {
+                if (!handler.CanHandle(payload))
+                    continue;
+
+                await handler.HandleAsync(payload);
+
+                return Ok();
+            }
+
+            var context = await GetWebhookPayloadContextAsync(payload);
+            if (context == null)
+                return NoContent();
+
+            var foundHandler = false;
+            foreach (var handler in this.genericPayloadHandlers)
+            {
+                if (!handler.CanHandle(payload))
+                    continue;
+
+                await handler.HandleAsync(context);
+                foundHandler = true;
+            }
+
+            return foundHandler ? (IActionResult) Ok() : (IActionResult) NoContent();
         }
 
         private async Task<WebhookPayloadContext?> GetWebhookPayloadContextAsync(WebhookPayload payload)
@@ -107,11 +113,14 @@ namespace Dogger.Controllers.Webhooks
             if (pullRequest == null)
                 return null;
 
+            var @event = Request.Headers["X-GitHub-Event"]
+
             return new WebhookPayloadContext(
                 payload,
                 repository.PullDogSettings,
                 repository,
-                pullRequest);
+                pullRequest,
+                request);
         }
 
         private async Task<PullDogPullRequest?> GetPullRequestFromPayloadAsync(

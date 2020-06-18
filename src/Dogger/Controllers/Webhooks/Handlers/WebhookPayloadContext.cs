@@ -11,16 +11,20 @@ namespace Dogger.Controllers.Webhooks.Handlers
         public PullDogRepository Repository { get; }
         public PullDogPullRequest PullRequest { get; }
 
+        public string Event { get; }
+
         public WebhookPayloadContext(
             WebhookPayload payload,
             PullDogSettings settings,
             PullDogRepository repository,
-            PullDogPullRequest pullRequest)
+            PullDogPullRequest pullRequest,
+            string @event)
         {
             this.Payload = payload;
             this.Settings = settings;
             this.Repository = repository;
             this.PullRequest = pullRequest;
+            this.Event = @event;
         }
     }
 }

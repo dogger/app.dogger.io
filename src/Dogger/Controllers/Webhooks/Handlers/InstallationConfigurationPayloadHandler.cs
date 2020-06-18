@@ -8,13 +8,13 @@ using MediatR;
 
 namespace Dogger.Controllers.Webhooks.Handlers
 {
-    public class ConfigurationCommitPayloadHandler : IConfigurationCommitPayloadHandler
+    public class InstallationConfigurationPayloadHandler : IConfigurationPayloadHandler
     {
         private readonly IMediator mediator;
 
         private const string masterReference = "refs/heads/master";
 
-        public ConfigurationCommitPayloadHandler(
+        public InstallationConfigurationPayloadHandler(
             IMediator mediator)
         {
             this.mediator = mediator;
@@ -22,11 +22,16 @@ namespace Dogger.Controllers.Webhooks.Handlers
 
         public bool CanHandle(WebhookPayload payload)
         {
+            return IsInstallPayload(payload);
+        }
+
+        private static bool IsInstallPayload(WebhookPayload payload)
+        {
             return
                 IsMasterCommitPayload(payload) &&
                 payload.Commits.Any(x =>
-                    x.Added.Contains("pull-dog.json") ||
-                    x.Modified.Contains("pull-dog.json"));
+                   x.Added.Contains("pull-dog.json") ||
+                   x.Modified.Contains("pull-dog.json"));
         }
 
         private static bool IsMasterCommitPayload(WebhookPayload payload)

@@ -13,7 +13,7 @@ using NSubstitute;
 namespace Dogger.Tests.Controllers.Webhooks
 {
     [TestClass]
-    public class ConfigurationCommitPayloadHandlerTest
+    public class InstallationConfigurationPayloadHandlerTest
     {
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
@@ -22,7 +22,7 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            var handler = new ConfigurationCommitPayloadHandler(fakeMediator);
+            var handler = new InstallationConfigurationPayloadHandler(fakeMediator);
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -50,7 +50,7 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            var handler = new ConfigurationCommitPayloadHandler(fakeMediator);
+            var handler = new InstallationConfigurationPayloadHandler(fakeMediator);
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -78,7 +78,7 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            var handler = new ConfigurationCommitPayloadHandler(fakeMediator);
+            var handler = new InstallationConfigurationPayloadHandler(fakeMediator);
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -106,7 +106,7 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            var handler = new ConfigurationCommitPayloadHandler(fakeMediator);
+            var handler = new InstallationConfigurationPayloadHandler(fakeMediator);
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -139,7 +139,7 @@ namespace Dogger.Tests.Controllers.Webhooks
                 .Send(Arg.Is<GetPullDogSettingsByGitHubInstallationIdQuery>(args => args.InstallationId == 1338))
                 .Returns(settings);
 
-            var handler = new ConfigurationCommitPayloadHandler(fakeMediator);
+            var handler = new InstallationConfigurationPayloadHandler(fakeMediator);
 
             //Act
             await handler.HandleAsync(new WebhookPayload()
@@ -170,7 +170,7 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            var handler = new ConfigurationCommitPayloadHandler(fakeMediator);
+            var handler = new InstallationConfigurationPayloadHandler(fakeMediator);
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>

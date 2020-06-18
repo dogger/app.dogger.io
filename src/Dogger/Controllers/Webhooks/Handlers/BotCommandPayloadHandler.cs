@@ -10,6 +10,9 @@ namespace Dogger.Controllers.Webhooks.Handlers
     {
         private readonly IMediator mediator;
 
+        public string Event { get; }
+        public string Action => "created";
+
         public BotCommandPayloadHandler(
             IMediator mediator)
         {
