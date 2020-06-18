@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -30,7 +31,7 @@ namespace Dogger.Tests.Controllers.Webhooks
     public class WebhooksControllerTest
     {
         [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task PullDogWebhook_SeveralHandlersWithTwoAcceptableOnes_AcceptableHandlersHandled()
         {
             //Arrange
@@ -77,21 +78,27 @@ namespace Dogger.Tests.Controllers.Webhooks
             fakeHandler3.CanHandle(context.Payload).Returns(true);
             fakeHandler4.CanHandle(context.Payload).Returns(false);
 
-            var webhooksController = new WebhooksController(
-                fakeMediator,
-                Substitute.For<IConfigurationCommitPayloadHandler>(),
-                new []
+            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            {
+                IocConfiguration = services =>
                 {
-                    fakeHandler1,
-                    fakeHandler2,
-                    fakeHandler3,
-                    fakeHandler4
-                },
-                GenerateTestGitHubOptions());
+                    services.AddSingleton(fakeMediator);
+
+                    services.AddSingleton(fakeHandler1);
+                    services.AddSingleton(fakeHandler2);
+                    services.AddSingleton(fakeHandler3);
+                    services.AddSingleton(fakeHandler4);
+
+                    services.AddSingleton(Substitute.For<IConfigurationCommitPayloadHandler>());
+                    services.AddSingleton(Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                }
+            });
+
+            var webhooksController = environment.ServiceProvider.GetRequiredService<WebhooksController>();
             FakeOutAuthenticResponse(webhooksController);
 
             //Act
-            await webhooksController.PullDogWebhook(context.Payload);
+            await webhooksController.PullDogWebhook(context.Payload, default);
 
             //Assert
             await fakeHandler1.DidNotReceive().HandleAsync(Arg.Any<WebhookPayloadContext>());
@@ -101,7 +108,7 @@ namespace Dogger.Tests.Controllers.Webhooks
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task PullDogWebhook_RepositoryNotFound_DoesNothing()
         {
             //Arrange
@@ -132,18 +139,23 @@ namespace Dogger.Tests.Controllers.Webhooks
 
             var fakeHandler = Substitute.For<IWebhookPayloadHandler>();
 
-            var webhooksController = new WebhooksController(
-                fakeMediator,
-                Substitute.For<IConfigurationCommitPayloadHandler>(),
-                new[]
+            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            {
+                IocConfiguration = services =>
                 {
-                    fakeHandler
-                },
-                GenerateTestGitHubOptions());
+                    services.AddSingleton(fakeMediator);
+                    services.AddSingleton(fakeHandler);
+
+                    services.AddSingleton(Substitute.For<IConfigurationCommitPayloadHandler>());
+                    services.AddSingleton(Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                }
+            });
+
+            var webhooksController = environment.ServiceProvider.GetRequiredService<WebhooksController>();
             FakeOutAuthenticResponse(webhooksController);
 
             //Act
-            await webhooksController.PullDogWebhook(context.Payload);
+            await webhooksController.PullDogWebhook(context.Payload, default);
 
             //Assert
             fakeHandler
@@ -156,7 +168,7 @@ namespace Dogger.Tests.Controllers.Webhooks
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task PullDogWebhook_ConfigurationCommitPayloadGiven_InvokesConfigurationPayloadHandlerAndNothingElse()
         {
             //Arrange
@@ -196,18 +208,23 @@ namespace Dogger.Tests.Controllers.Webhooks
                 .CanHandle(Arg.Any<WebhookPayload>())
                 .Returns(true);
 
-            var webhooksController = new WebhooksController(
-                fakeMediator,
-                fakeConfigurationCommitPayloadHandler,
-                new[]
+            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            {
+                IocConfiguration = services =>
                 {
-                    fakeWebhookPayloadHandler
-                },
-                GenerateTestGitHubOptions());
+                    services.AddSingleton(fakeMediator);
+                    services.AddSingleton(fakeWebhookPayloadHandler);
+
+                    services.AddSingleton(Substitute.For<IConfigurationCommitPayloadHandler>());
+                    services.AddSingleton(Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                }
+            });
+
+            var webhooksController = environment.ServiceProvider.GetRequiredService<WebhooksController>();
             FakeOutAuthenticResponse(webhooksController);
 
             //Act
-            await webhooksController.PullDogWebhook(context.Payload);
+            await webhooksController.PullDogWebhook(context.Payload, default);
 
             //Assert
             fakeWebhookPayloadHandler
@@ -228,7 +245,7 @@ namespace Dogger.Tests.Controllers.Webhooks
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task PullDogWebhook_InstallationIdNotMatching_ThrowsException()
         {
             //Arrange
@@ -263,26 +280,31 @@ namespace Dogger.Tests.Controllers.Webhooks
 
             var fakeWebhookPayloadHandler = Substitute.For<IWebhookPayloadHandler>();
 
-            var webhooksController = new WebhooksController(
-                fakeMediator,
-                Substitute.For<IConfigurationCommitPayloadHandler>(),
-                new[]
+            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            {
+                IocConfiguration = services =>
                 {
-                    fakeWebhookPayloadHandler
-                },
-                GenerateTestGitHubOptions());
+                    services.AddSingleton(fakeMediator);
+                    services.AddSingleton(fakeWebhookPayloadHandler);
+
+                    services.AddSingleton(Substitute.For<IConfigurationCommitPayloadHandler>());
+                    services.AddSingleton(Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                }
+            });
+
+            var webhooksController = environment.ServiceProvider.GetRequiredService<WebhooksController>();
             FakeOutAuthenticResponse(webhooksController);
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
-                await webhooksController.PullDogWebhook(context.Payload));
+                await webhooksController.PullDogWebhook(context.Payload, default));
 
             //Assert
             Assert.IsNotNull(exception);
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task PullDogWebhook_PullRequestNumberGivenViaIssueInstead_FetchesPullRequestFromIssueNumber()
         {
             //Arrange
@@ -326,18 +348,23 @@ namespace Dogger.Tests.Controllers.Webhooks
                 .CanHandle(Arg.Any<WebhookPayload>())
                 .Returns(true);
 
-            var webhooksController = new WebhooksController(
-                fakeMediator,
-                Substitute.For<IConfigurationCommitPayloadHandler>(),
-                new[]
+            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            {
+                IocConfiguration = services =>
                 {
-                    fakeWebhookPayloadHandler
-                },
-                GenerateTestGitHubOptions());
+                    services.AddSingleton(fakeMediator);
+                    services.AddSingleton(fakeWebhookPayloadHandler);
+
+                    services.AddSingleton(Substitute.For<IConfigurationCommitPayloadHandler>());
+                    services.AddSingleton(Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                }
+            });
+
+            var webhooksController = environment.ServiceProvider.GetRequiredService<WebhooksController>();
             FakeOutAuthenticResponse(webhooksController);
 
             //Act
-            await webhooksController.PullDogWebhook(context.Payload);
+            await webhooksController.PullDogWebhook(context.Payload, default);
 
             //Assert
             fakeWebhookPayloadHandler
@@ -351,7 +378,7 @@ namespace Dogger.Tests.Controllers.Webhooks
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task PullDogWebhook_PullRequestNumberGivenViaPullRequest_FetchesPullRequestFromPullRequestNumber()
         {
             //Arrange
@@ -394,18 +421,23 @@ namespace Dogger.Tests.Controllers.Webhooks
                 .CanHandle(Arg.Any<WebhookPayload>())
                 .Returns(true);
 
-            var webhooksController = new WebhooksController(
-                fakeMediator,
-                Substitute.For<IConfigurationCommitPayloadHandler>(),
-                new[]
+            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            {
+                IocConfiguration = services =>
                 {
-                    fakeWebhookPayloadHandler
-                },
-                GenerateTestGitHubOptions());
+                    services.AddSingleton(fakeMediator);
+                    services.AddSingleton(fakeWebhookPayloadHandler);
+
+                    services.AddSingleton(Substitute.For<IConfigurationCommitPayloadHandler>());
+                    services.AddSingleton(Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                }
+            });
+
+            var webhooksController = environment.ServiceProvider.GetRequiredService<WebhooksController>();
             FakeOutAuthenticResponse(webhooksController);
 
             //Act
-            await webhooksController.PullDogWebhook(context.Payload);
+            await webhooksController.PullDogWebhook(context.Payload, default);
 
             //Assert
             fakeWebhookPayloadHandler
