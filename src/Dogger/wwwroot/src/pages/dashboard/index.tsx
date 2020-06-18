@@ -43,7 +43,7 @@ type MenuItem = {
 export const DashboardPage = (props: PropsWithChildren<any>) => {
     const classes = useStyles();
     const {isAuthenticated, loading } = useAuth0();
-    const pathname = usePath();
+    const pathName = usePath();
     if(!isAuthenticated || loading)
         return <CircularProgress />;
 
