@@ -468,6 +468,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 default,
                 default,
                 default,
+                default,
                 default);
         }
 

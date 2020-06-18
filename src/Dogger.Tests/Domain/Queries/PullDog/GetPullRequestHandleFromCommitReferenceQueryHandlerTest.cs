@@ -118,6 +118,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                     default,
                     default,
                     default,
+                    default,
                     default));
 
             fakeGitHubClient

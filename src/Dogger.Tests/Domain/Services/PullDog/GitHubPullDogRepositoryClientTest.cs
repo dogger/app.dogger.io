@@ -100,6 +100,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                         default,
                         default,
                         default,
+                        default,
                         default)));
 
             //Act
@@ -172,6 +173,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                             default),
                         default,
                         "some-repository-name",
+                        default,
                         default,
                         default,
                         default,
@@ -279,6 +281,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                             default,
                             default), 
                         "some-repository-name",
+                        default,
                         default,
                         default,
                         default,
@@ -414,6 +417,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                             default,
                             default),
                         "some-repository-name",
+                        default,
                         default,
                         default,
                         default,
