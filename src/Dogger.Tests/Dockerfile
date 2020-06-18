@@ -5,4 +5,4 @@ COPY ["Dogger/Dogger.csproj", "Dogger/"]
 RUN dotnet restore "Dogger.Tests/Dogger.Tests.csproj"
 COPY . .
 WORKDIR "/src/Dogger.Tests"
-ENTRYPOINT ["/src/Dogger.Tests/docker-entrypoint.sh"]
+ENTRYPOINT ["sh", "/src/Dogger.Tests/docker-entrypoint.sh"]
