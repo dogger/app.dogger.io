@@ -11,6 +11,7 @@ namespace Dogger.Domain.Services.Provisioning
         Task<IProvisioningJob?> GetJobByIdAsync(string jobId);
 
         Task ProcessPendingJobsAsync();
+        Task ExecuteJobAsync(ProvisioningJob job);
 
         IProvisioningJob GetCompletedJob();
     }
