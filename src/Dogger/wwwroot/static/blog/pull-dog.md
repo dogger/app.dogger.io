@@ -1,6 +1,6 @@
 ---
 slug: "/blog/pull-dog-automatic-docker-test-environments-for-pull-requests"
-date: "2020-06-03"
+date: "2020-04-29"
 title: "Pull Dog: Automatic Docker Test Environments for Pull Requests"
 summary: "Pull Dog is a GitHub app that will automatically provision a Docker-based test server for your feature as you open a pull request. And best of all - it's all free!"
 ---
