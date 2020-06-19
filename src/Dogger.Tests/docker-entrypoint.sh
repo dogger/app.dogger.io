@@ -1,6 +1,4 @@
 #!/bin/bash
-dotnet test --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=json,cobertura,lcov,teamcity,opencover
+dotnet test --filter TestCategory=Unit --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
-pwd
-echo "finding files"
-find ./src/Dogger.Tests/TestResults -name "*.opencover.xml"
+cp $(find ./TestResults -name "*.opencover.xml" | head -1) ./TestResults

@@ -54,6 +54,11 @@ jobs:
           docker-compose --file docker-compose.test.yml build
           docker-compose --file docker-compose.test.yml up --exit-code-from sut
 
+      - name: Code coverage reporting
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./TestResults/coverage.opencover.xml
+
   publish-dogger-io:
     name: Publish dogger-io
     needs: test

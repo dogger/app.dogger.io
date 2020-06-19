@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: Dogger.Tests/Dockerfile
+    volumes:
+      - "./TestResults:/src/Dogger.Tests/TestResults"
     environment:
     - SQL_CONNECTION_STRING="Server=mssql-test-container,1433;Database=master;User Id=SA;Password=hNxX9Qz2"
     - DOTNET_RUNNING_IN_TEST=true
