@@ -7,9 +7,9 @@ export const usePath = () => {
       setPath(winPath);
     };
     useEffect(() => {
-      window.addEventListener("popstate", listenToPopstate);
+      window && window.addEventListener("popstate", listenToPopstate);
       return () => {
-        window.removeEventListener("popstate", listenToPopstate);
+        window && window.removeEventListener("popstate", listenToPopstate);
       };
     }, []);
     return path;
