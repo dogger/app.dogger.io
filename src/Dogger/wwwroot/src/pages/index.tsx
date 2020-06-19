@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactFragment } from 'react';
 import { graphql } from "gatsby";
 import { useTheme, Typography, Container, Box, Card, CardContent, Link, Divider, Grid, makeStyles, Theme, useMediaQuery } from '@material-ui/core';
 import { GitHub, Storage, ArrowDownward, AssignmentTurnedIn, MoneyOff, Share } from '@material-ui/icons';
@@ -23,7 +23,7 @@ const LandingPageSection = (props: { children, style?}) =>
         {props.children}
     </section>;
 
-const BenefitGridItem = (props: { icon: JSX.Element, title: string, description: string }) => {
+const BenefitGridItem = (props: { icon: JSX.Element, title: string, description: ReactFragment }) => {
     return <>
         <div style={{
             display: 'flex',
@@ -447,22 +447,29 @@ const App = ({data}) => {
                     <Grid item xs={12} sm={6} md={4}>
                         <BenefitGridItem
                             title="Better quality"
-                            description="Don't just review code. Review the UX and test for bugs against a real environment before merging."
+                            description={<>Don't just review code. Review the UX and test for bugs against a real environment before merging.</>}
                             icon={<AssignmentTurnedIn className={styles.accentColor} style={{ fontSize: 80 }} />}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6} md={4}>
                         <BenefitGridItem
                             title="Starts free"
-                            description="Don't have many pull requests open that require testing at the same time? The free plan will suffice."
+                            description={<>Don't have many pull requests open that require testing at the same time? The free plan will suffice.</>}
                             icon={<MoneyOff className={styles.accentColor} style={{ fontSize: 80 }} />}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6} md={4}>
                         <BenefitGridItem
                             title="Share your feature"
-                            description="Pull Dog lets you show off a temporary feature you're working on to a friend or colleague."
+                            description={<>Pull Dog lets you show off a temporary feature in a PR you're working on to a friend or colleague.</>}
                             icon={<Share className={styles.accentColor} style={{ fontSize: 80 }} />}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={4}>
+                        <BenefitGridItem
+                            title="Fully open source"
+                            description={<>We love open source. Everything we make at Dogger (including Pull Dog) is <a rel="nofollow" target="_blank" href="https://github.com/dogger">100% open source</a>.</>}
+                            icon={<GitHub className={styles.accentColor} style={{ fontSize: 80 }} />}
                         />
                     </Grid>
                 </Grid>
