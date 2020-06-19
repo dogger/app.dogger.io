@@ -4,7 +4,7 @@ export const onRedirectCallback = async appState => {
   navigate(
     appState && appState.targetUrl
       ? appState.targetUrl
-      : (window && window.location.pathname)
+      : (typeof window !== "undefined" && window.location.pathname)
   );
 };
   

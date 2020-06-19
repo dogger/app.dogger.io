@@ -66,9 +66,14 @@ export const PullDogPage = (props: RouteComponentProps) => {
                 color="primary"
                 startIcon={<GitHub />}
                 style={{ alignSelf: 'flex-start', marginTop: 16 }}
-                onClick={() => window.location.href = window.location.href.indexOf('://localhost') > -1 ?
-                    'https://github.com/settings/apps/pull-dog-debugging/installations' :
-                    'https://github.com/apps/pull-dog/installations/new'}
+                onClick={() => {
+                    if(typeof window === "undefined")
+                        return;
+
+                    window.location.href = window.location.href.indexOf('://localhost') > -1 ?
+                        'https://github.com/settings/apps/pull-dog-debugging/installations' :
+                        'https://github.com/apps/pull-dog/installations/new'
+                }}
             >
                 Install
             </Button>

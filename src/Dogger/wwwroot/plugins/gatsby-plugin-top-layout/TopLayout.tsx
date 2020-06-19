@@ -10,12 +10,11 @@ import {NavigationBar} from '../../src/components/NavigationBar';
 import { Auth0Provider } from '../../src/auth/Auth0Provider';
 
 import { auth0Config, onRedirectCallback } from '../../src/setup/auth';
-import { localStorageGet, localStorageSet } from '../../src/helpers/gatsby-compatibility';
 
 import {Helmet} from "react-helmet";
 
 export default ({children}: PropsWithChildren<any>) => {
-  const themeFromStorage = localStorageGet("theme");
+  const themeFromStorage = typeof localStorage !== "undefined" && localStorage.getItem("theme");
 
   const prefersDarkModeFromMediaQuery = useMediaQuery('(prefers-color-scheme: dark)');
   const prefersLightModeFromMediaQuery = useMediaQuery('(prefers-color-scheme: light)');
@@ -71,7 +70,10 @@ export default ({children}: PropsWithChildren<any>) => {
         </Helmet>
         <NavigationBar onThemeToggle={() => {
             const newThemeName = theme.palette.type === "dark" ? "light" : "dark";
-            localStorageSet("theme", newThemeName);
+            
+            if(typeof localStorage !== "undefined")
+              localStorage.setItem("theme", newThemeName);
+            
             setThemeName(newThemeName);
         }} />
         <div style={{ display: "flex", flexDirection: 'column', flexGrow: 1 }}>

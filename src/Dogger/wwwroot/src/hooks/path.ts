@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 
 export const usePath = () => {
-    const [path, setPath] = useState(window && window.location.pathname);
+    const [path, setPath] = useState(typeof window !== "undefined" && window.location.pathname);
     const listenToPopstate = () => {
-      const winPath = window && window.location.pathname;
+      const winPath = typeof window !== "undefined" && window.location.pathname;
       setPath(winPath);
     };
     useEffect(() => {
-      window && window.addEventListener("popstate", listenToPopstate);
+      typeof window !== "undefined" && window.addEventListener("popstate", listenToPopstate);
       return () => {
-        window && window.removeEventListener("popstate", listenToPopstate);
+        typeof window !== "undefined" && window.removeEventListener("popstate", listenToPopstate);
       };
     }, []);
     return path;

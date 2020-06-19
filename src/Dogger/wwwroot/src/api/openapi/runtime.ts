@@ -148,7 +148,7 @@ export class Configuration {
     }
 
     get fetchApi(): FetchAPI {
-        return this.configuration.fetchApi || (window && window.fetch.bind(window));
+        return this.configuration.fetchApi || (typeof window !== "undefined" && window.fetch.bind(window));
     }
 
     get middleware(): Middleware[] {
