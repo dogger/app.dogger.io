@@ -55,6 +55,7 @@ jobs:
           docker-compose --file docker-compose.test.yml up --exit-code-from sut
 
       - name: Code coverage reporting
+        working-directory: ./src
         uses: codecov/codecov-action@v1
         with:
           file: ./TestResults/coverage.opencover.xml
