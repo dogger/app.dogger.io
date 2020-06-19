@@ -68,12 +68,40 @@ namespace Dogger.Domain.Services.Provisioning
     public class InstructionGroup
     {
         public string Title { get; }
-        public Instruction[] Instructions { get; }
+        public IInstruction[] Instructions { get; }
     }
 
-    public class Instruction
+    public interface IInstruction
     {
-        public string Type { get; }
-        public string Data { get; }
+        string Type { get; }
+    }
+
+    public class SshInstruction : IInstruction
+    {
+        public string Type => "ssh";
+
+        public string CommandText { get; }
+    }
+
+    public class HttpInstruction : IInstruction
+    {
+        public enum HttpInstructionVerb
+        {
+            Get,
+            Put,
+            Post,
+            Patch,
+            Delete
+        }
+
+        public string Type => "http";
+
+        public HttpInstructionVerb Verb { get; set; }
+
+        public Dictionary<string, string>? Headers { get; set; }
+
+        public string Url { get; }
+
+        public string? Body { get; set; }
     }
 }
