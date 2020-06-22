@@ -26,7 +26,11 @@ namespace Dogger.Controllers.Webhooks.Handlers
         public async Task HandleAsync(WebhookPayloadContext context)
         {
             var payload = context.Payload;
-            var text = payload.Comment?.Body;
+            var text = payload
+                .Comment
+                ?.Body
+                ?.Trim()
+                ?.ToLowerInvariant();
 
             switch (text)
             {

@@ -205,3 +205,6 @@ dotnet_diagnostic.CA1801.severity = none
 
 # CA1716: Identifiers should not match keywords
 dotnet_diagnostic.CA1716.severity = none
+
+# CA1308: Normalize strings to uppercase
+dotnet_diagnostic.CA1308.severity = none
