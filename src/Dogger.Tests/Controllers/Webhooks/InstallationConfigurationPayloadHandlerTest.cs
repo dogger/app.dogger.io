@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dogger.Controllers.Webhooks;
 using Dogger.Controllers.Webhooks.Handlers;
+using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogRepository;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
@@ -73,7 +74,7 @@ namespace Dogger.Tests.Controllers.Webhooks
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task CanHandle_ConfigurationFileInCommitAddsAndOnMasterBranch_ReturnsTrue()
+        public async Task CanHandle_ActionIsAdded_ReturnsTrue()
         {
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
@@ -83,16 +84,7 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Act
             var result = handler.CanHandle(new WebhookPayload()
             {
-                Reference = "refs/heads/master",
-                Pusher = new UserPayload(),
-                Commits = new[]
-                {
-                    new CommitPayload()
-                    {
-                        Added = new [] { "pull-dog.json" },
-                        Modified = Array.Empty<string>()
-                    }
-                }
+                Action = "added"
             });
 
             //Assert
@@ -101,7 +93,7 @@ namespace Dogger.Tests.Controllers.Webhooks
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task CanHandle_ConfigurationFileInCommitModifiesAndOnMasterBranch_ReturnsTrue()
+        public async Task CanHandle_ActionIsRemoved_ReturnsTrue()
         {
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
@@ -111,16 +103,7 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Act
             var result = handler.CanHandle(new WebhookPayload()
             {
-                Reference = "refs/heads/master",
-                Pusher = new UserPayload(),
-                Commits = new[]
-                {
-                    new CommitPayload()
-                    {
-                        Added = Array.Empty<string>(),
-                        Modified = new [] { "pull-dog.json" }
-                    }
-                }
+                Action = "removed"
             });
 
             //Assert
@@ -129,7 +112,7 @@ namespace Dogger.Tests.Controllers.Webhooks
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task Handle_ValidConfigurationCommitPayloadWithValidConfigurationFile_ConfiguresPullDogRepository()
+        public async Task Handle_ValidConfigurationCommitPayloadWithValidConfigurationFileAndRepositoriesToAdd_AddsRepositoriesToInstallation()
         {
             //Arrange
             var settings = new PullDogSettings();
@@ -149,18 +132,86 @@ namespace Dogger.Tests.Controllers.Webhooks
                 {
                     Id = 1338
                 },
-                Repository = new RepositoryPayload()
+                RepositoriesAdded = new []
                 {
-                    Id = 1337
+                    new InstallationRepositoryReferencePayload()
+                    {
+                        Id = 1339
+                    },
+                    new InstallationRepositoryReferencePayload()
+                    {
+                        Id = 1340
+                    }
                 }
             });
 
             //Assert
             await fakeMediator
+                .Received(2)
+                .Send(Arg.Any<EnsurePullDogRepositoryCommand>());
+
+            await fakeMediator
                 .Received(1)
                 .Send(Arg.Is<EnsurePullDogRepositoryCommand>(args =>
                     args.PullDogSettings == settings &&
-                    args.RepositoryHandle == "1337"));
+                    args.RepositoryHandle == "1339"));
+
+            await fakeMediator
+                .Received(1)
+                .Send(Arg.Is<EnsurePullDogRepositoryCommand>(args =>
+                    args.PullDogSettings == settings &&
+                    args.RepositoryHandle == "1340"));
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public async Task Handle_ValidConfigurationCommitPayloadWithValidConfigurationFileAndRepositoriesToRemove_RemovesRepositoriesFromInstallation()
+        {
+            //Arrange
+            var settings = new PullDogSettings();
+
+            var fakeMediator = Substitute.For<IMediator>();
+            fakeMediator
+                .Send(Arg.Is<GetPullDogSettingsByGitHubInstallationIdQuery>(args => args.InstallationId == 1338))
+                .Returns(settings);
+
+            var handler = new InstallationConfigurationPayloadHandler(fakeMediator);
+
+            //Act
+            await handler.HandleAsync(new WebhookPayload()
+            {
+                Pusher = new UserPayload(),
+                Installation = new InstallationPayload()
+                {
+                    Id = 1338
+                },
+                RepositoriesRemoved = new[]
+                {
+                    new InstallationRepositoryReferencePayload()
+                    {
+                        Id = 1339
+                    },
+                    new InstallationRepositoryReferencePayload()
+                    {
+                        Id = 1340
+                    }
+                }
+            });
+
+            //Assert
+            await fakeMediator
+                .Received(2)
+                .Send(Arg.Any<DeletePullDogRepositoryCommand>());
+
+            await fakeMediator
+                .Received(1)
+                .Send(Arg.Is<DeletePullDogRepositoryCommand>(args =>
+                    args.Handle == "1339"));
+
+            await fakeMediator
+                .Received(1)
+                .Send(Arg.Is<DeletePullDogRepositoryCommand>(args =>
+                    args.Handle == "1340"));
         }
 
         [TestMethod]

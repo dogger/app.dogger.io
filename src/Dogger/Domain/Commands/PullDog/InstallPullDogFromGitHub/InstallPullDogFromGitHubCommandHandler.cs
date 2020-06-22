@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Auth0.CreateAuth0User;
+using Dogger.Domain.Commands.PullDog.EnsurePullDogRepository;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Auth0.GetAuth0UserFromEmails;
@@ -105,6 +106,22 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
                     EncryptedApiKey = await this.aesEncryptionHelper.EncryptAsync(
                         Guid.NewGuid().ToString())
                 };
+            }
+
+            var installedRepositories = await client.GitHubApps.Installation.GetAllRepositoriesForCurrent(new ApiOptions()
+            {
+                PageSize = 1000
+            });
+            if (installedRepositories.TotalCount > installedRepositories.Repositories.Count)
+                throw new InvalidOperationException("Did not fetch all repositories.");
+
+            foreach (var installedRepository in installedRepositories.Repositories)
+            {
+                await this.mediator.Send(
+                    new EnsurePullDogRepositoryCommand(
+                        user.PullDogSettings,
+                        installedRepository.FullName),
+                    cancellationToken);
             }
 
             await dataContext.SaveChangesAsync(cancellationToken);

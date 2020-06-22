@@ -27,8 +27,19 @@ namespace Dogger.Controllers.Webhooks
 
         public CommitPayload[]? Commits { get; set; }
 
+        [JsonPropertyName("repositories_added")]
+        public InstallationRepositoryReferencePayload[]? RepositoriesAdded { get; set; }
+
+        [JsonPropertyName("repositories_removed")]
+        public InstallationRepositoryReferencePayload[]? RepositoriesRemoved { get; set; }
+
         [JsonPropertyName("ref")]
         public string? Reference { get; set; }
+    }
+
+    public class InstallationRepositoryReferencePayload
+    {
+        public long Id { get; set; }
     }
 
 }
