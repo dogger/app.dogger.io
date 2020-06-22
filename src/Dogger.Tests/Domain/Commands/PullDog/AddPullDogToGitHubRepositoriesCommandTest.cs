@@ -22,9 +22,11 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             var user = new User()
             {
+                StripeCustomerId = "dummy",
                 PullDogSettings = new PullDogSettings()
                 {
-                    EncryptedApiKey = Array.Empty<byte>()
+                    EncryptedApiKey = Array.Empty<byte>(),
+                    PlanId = "dummy"
                 }
             };
             await environment.DataContext.Users.AddAsync(user);
@@ -50,12 +52,12 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
                 Assert.IsTrue(repositories.Any(repository =>
                     repository.GitHubInstallationId == 1337 && 
-                    repository.PullDogSettings == user.PullDogSettings &&
+                    repository.PullDogSettingsId == user.PullDogSettings.Id &&
                     repository.Handle == "1338"));
 
                 Assert.IsTrue(repositories.Any(repository =>
                     repository.GitHubInstallationId == 1337 &&
-                    repository.PullDogSettings == user.PullDogSettings &&
+                    repository.PullDogSettingsId == user.PullDogSettings.Id &&
                     repository.Handle == "1339"));
             });
         }
