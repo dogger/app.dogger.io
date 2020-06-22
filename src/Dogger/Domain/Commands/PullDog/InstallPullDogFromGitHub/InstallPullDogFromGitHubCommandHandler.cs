@@ -108,7 +108,8 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
                 };
             }
 
-            var installedRepositories = await client.GitHubApps.Installation.GetAllRepositoriesForCurrent(new ApiOptions()
+            var installationClient = await this.gitHubClientFactory.CreateInstallationClientAsync(request.InstallationId);
+            var installedRepositories = await installationClient.GitHubApps.Installation.GetAllRepositoriesForCurrent(new ApiOptions()
             {
                 PageSize = 1000
             });

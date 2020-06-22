@@ -41,7 +41,7 @@ namespace Dogger.Domain.Queries.PullDog.GetRepositoriesForUser
                 .ToArray();
 
             if (allInstallationIds.Length == 0)
-                return Array.Empty<UserRepositoryResponse>();
+                throw new InvalidOperationException("Could not find a GitHub installation ID for the user among the user's repositories.");
 
             var clients = await Task.WhenAll(allInstallationIds
                 .Select(installationId => gitHubClientFactory
