@@ -26,11 +26,7 @@ namespace Dogger.Controllers.Webhooks.Handlers
         public async Task HandleAsync(WebhookPayloadContext context)
         {
             var payload = context.Payload;
-            var text = payload
-                .Comment
-                ?.Body
-                ?.Trim()
-                ?.ToLowerInvariant();
+            var text = ExtractCommentTextFromPayload(payload);
 
             switch (text)
             {
@@ -49,6 +45,20 @@ namespace Dogger.Controllers.Webhooks.Handlers
                 case null:
                     throw new InvalidOperationException("No text found.");
             }
+        }
+
+        private static string? ExtractCommentTextFromPayload(WebhookPayload payload)
+        {
+            var text = payload
+                .Comment
+                ?.Body
+                ?.Trim();
+
+            while (text?.Contains("  ", StringComparison.InvariantCulture) == true)
+                text = text.Replace("  ", " ", StringComparison.InvariantCulture);
+
+            text = text?.ToLowerInvariant();
+            return text;
         }
     }
 }

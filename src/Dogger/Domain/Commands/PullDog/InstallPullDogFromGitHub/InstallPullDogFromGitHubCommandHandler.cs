@@ -121,7 +121,7 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
                 await this.mediator.Send(
                     new EnsurePullDogRepositoryCommand(
                         user.PullDogSettings,
-                        installedRepository.FullName),
+                        installedRepository.Id.ToString(CultureInfo.InvariantCulture)),
                     cancellationToken);
             }
 
