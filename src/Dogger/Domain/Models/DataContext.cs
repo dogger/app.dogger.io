@@ -25,9 +25,6 @@ namespace Dogger.Domain.Models
             if (this.Database.CurrentTransaction != null)
                 return await action();
 
-            if (this.Database.CurrentTransaction != null)
-                return await action();
-
             var strategy = this.Database.CreateExecutionStrategy();
             return await strategy.ExecuteAsync(async () =>
             {
