@@ -25,9 +25,6 @@ class DoggerConfigurationParameters implements ConfigurationParameters {
             }
 
             if(init.method === "GET") {
-                init.mode = "same-origin";
-                init.cache = "default";
-
                 while(true) {
                     try {
                         return await fetch(input, init);
