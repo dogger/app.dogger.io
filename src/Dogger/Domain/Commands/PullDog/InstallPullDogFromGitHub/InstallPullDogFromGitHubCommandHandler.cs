@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Auth0.CreateAuth0User;
+using Dogger.Domain.Commands.PullDog.AddPullDogToGitHubRepositories;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogRepository;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
 using Dogger.Domain.Models;
@@ -109,21 +110,19 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
             }
 
             var installationClient = await this.gitHubClientFactory.CreateInstallationClientAsync(request.InstallationId);
-            var installedRepositories = await installationClient.GitHubApps.Installation.GetAllRepositoriesForCurrent(new ApiOptions()
-            {
-                PageSize = 1000
-            });
+            var installedRepositories = await installationClient.GitHubApps.Installation.GetAllRepositoriesForCurrent();
             if (installedRepositories.TotalCount > installedRepositories.Repositories.Count)
                 throw new InvalidOperationException("Did not fetch all repositories.");
 
-            foreach (var installedRepository in installedRepositories.Repositories)
-            {
-                await this.mediator.Send(
-                    new EnsurePullDogRepositoryCommand(
-                        user.PullDogSettings,
-                        installedRepository.Id.ToString(CultureInfo.InvariantCulture)),
-                    cancellationToken);
-            }
+            await this.mediator.Send(
+                new AddPullDogToGitHubRepositoriesCommand(
+                    request.InstallationId,
+                    user.PullDogSettings,
+                    installedRepositories
+                        .Repositories
+                        .Select(x => x.Id)
+                        .ToArray()),
+                cancellationToken);
 
             await dataContext.SaveChangesAsync(cancellationToken);
 

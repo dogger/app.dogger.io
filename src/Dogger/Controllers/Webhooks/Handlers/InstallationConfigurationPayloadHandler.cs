@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Dogger.Domain.Commands.PullDog.AddPullDogToGitHubRepositories;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogRepository;
 using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
@@ -47,12 +48,13 @@ namespace Dogger.Controllers.Webhooks.Handlers
 
             if (payload.RepositoriesAdded != null)
             {
-                foreach (var repository in payload.RepositoriesAdded)
-                {
-                    await this.mediator.Send(new EnsurePullDogRepositoryCommand(
+                await this.mediator.Send(
+                    new AddPullDogToGitHubRepositoriesCommand(
+                        payload.Installation.Id,
                         settings,
-                        repository.Id.ToString(CultureInfo.InvariantCulture)));
-                }
+                        payload.RepositoriesAdded
+                            .Select(x => x.Id)
+                            .ToArray()));
             }
         }
     }

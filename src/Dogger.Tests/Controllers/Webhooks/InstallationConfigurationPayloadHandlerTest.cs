@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Controllers.Webhooks;
 using Dogger.Controllers.Webhooks.Handlers;
+using Dogger.Domain.Commands.PullDog.AddPullDogToGitHubRepositories;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogRepository;
 using Dogger.Domain.Models;
@@ -147,20 +149,12 @@ namespace Dogger.Tests.Controllers.Webhooks
 
             //Assert
             await fakeMediator
-                .Received(2)
-                .Send(Arg.Any<EnsurePullDogRepositoryCommand>());
-
-            await fakeMediator
                 .Received(1)
-                .Send(Arg.Is<EnsurePullDogRepositoryCommand>(args =>
+                .Send(Arg.Is<AddPullDogToGitHubRepositoriesCommand>(args =>
                     args.PullDogSettings == settings &&
-                    args.RepositoryHandle == "1339"));
-
-            await fakeMediator
-                .Received(1)
-                .Send(Arg.Is<EnsurePullDogRepositoryCommand>(args =>
-                    args.PullDogSettings == settings &&
-                    args.RepositoryHandle == "1340"));
+                    args.GitHubInstallationId == 1338 &&
+                    args.GitHubRepositoryIds.Contains(1339) &&
+                    args.GitHubRepositoryIds.Contains(1340)));
         }
 
         [TestMethod]

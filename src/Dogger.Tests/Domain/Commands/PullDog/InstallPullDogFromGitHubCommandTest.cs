@@ -125,6 +125,13 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     args.IdentityName == "auth0-user-id"))
                 .Returns(userInDatabase);
 
+            var fakeGitHubInstallationClient = await fakeGitHubClientFactory.CreateInstallationClientAsync(1337);
+            fakeGitHubInstallationClient
+                .GitHubApps
+                .Installation
+                .GetAllRepositoriesForCurrent()
+                .Returns(new RepositoriesResponse(0, Array.Empty<Repository>()));
+
             var fakeGitHubClient = await fakeGitHubClientFactory.CreateInstallationInitiatorClientAsync("some-code");
             fakeGitHubClient
                 .User
@@ -212,6 +219,13 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     args.IdentityName == "auth0-user-id"))
                 .Returns(userInDatabase);
 
+            var fakeGitHubInstallationClient = await fakeGitHubClientFactory.CreateInstallationClientAsync(1337);
+            fakeGitHubInstallationClient
+                .GitHubApps
+                .Installation
+                .GetAllRepositoriesForCurrent()
+                .Returns(new RepositoriesResponse(0, Array.Empty<Repository>()));
+
             var fakeGitHubClient = await fakeGitHubClientFactory.CreateInstallationInitiatorClientAsync("some-code");
             fakeGitHubClient
                 .User
@@ -296,6 +310,13 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     args.Email == "email-2@example.com" &&
                     args.IdentityName == "auth0-user-id"))
                 .Returns(userInDatabase);
+
+            var fakeGitHubInstallationClient = await fakeGitHubClientFactory.CreateInstallationClientAsync(1337);
+            fakeGitHubInstallationClient
+                .GitHubApps
+                .Installation
+                .GetAllRepositoriesForCurrent()
+                .Returns(new RepositoriesResponse(0, Array.Empty<Repository>()));
 
             var fakeGitHubClient = await fakeGitHubClientFactory.CreateInstallationInitiatorClientAsync("some-code");
             fakeGitHubClient
@@ -385,11 +406,24 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     args.IdentityName == "auth0-user-id"))
                 .Returns(userInDatabase);
 
+            var fakeGitHubInstallationClient = await fakeGitHubClientFactory.CreateInstallationClientAsync(1337);
+            fakeGitHubInstallationClient
+                .GitHubApps
+                .Installation
+                .GetAllRepositoriesForCurrent()
+                .Returns(new RepositoriesResponse(0, Array.Empty<Repository>()));
+
             var fakeGitHubClient = await fakeGitHubClientFactory.CreateInstallationInitiatorClientAsync("some-code");
             fakeGitHubClient
                 .User
                 .Current()
                 .Returns(new User());
+
+            fakeGitHubClient
+                .GitHubApps
+                .Installation
+                .GetAllRepositoriesForCurrent()
+                .Returns(new RepositoriesResponse(0, Array.Empty<Repository>()));
 
             fakeGitHubClient
                 .User
