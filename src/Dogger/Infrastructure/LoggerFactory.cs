@@ -31,7 +31,7 @@ namespace Dogger.Infrastructure
                 .CreateLogger();
         }
 
-        public static ILogger BuildWebApplicationLogger(IConfigurationRoot configuration)
+        public static ILogger BuildWebApplicationLogger(IConfiguration configuration)
         {
             if (Debugger.IsAttached)
                 return BuildDogfeedLogger();
