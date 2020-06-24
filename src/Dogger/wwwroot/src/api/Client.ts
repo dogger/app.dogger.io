@@ -25,9 +25,6 @@ class DoggerConfigurationParameters implements ConfigurationParameters {
             }
 
             if(init.method === "GET") {
-                init.mode = "same-origin";
-                init.cache = "default";
-
                 while(true) {
                     try {
                         return await fetch(input, init);
@@ -43,7 +40,18 @@ class DoggerConfigurationParameters implements ConfigurationParameters {
     }
 }
 
+class CachedDoggerConfigurationParameters extends DoggerConfigurationParameters {
+    get basePath() {
+        if(typeof window === "undefined")
+            return "";
+        
+        return "//cached." + window.location.host;
+    }
+}
+
 export const apiClient = new GeneralApi(new Configuration(new DoggerConfigurationParameters()));
+export const cachedApiClient = apiClient;
+// export const cachedApiClient = new GeneralApi(new Configuration(new CachedDoggerConfigurationParameters()));
 
 export function withAuthenticatedApiClient<T>(action: (signal: AbortSignal) => Promise<T>)
 {

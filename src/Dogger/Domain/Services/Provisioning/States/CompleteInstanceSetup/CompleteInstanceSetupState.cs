@@ -8,11 +8,10 @@ namespace Dogger.Domain.Services.Provisioning.States.CompleteInstanceSetup
 {
     public sealed class CompleteInstanceSetupState : SshInstanceState, ICompleteInstanceSetupState
     {
-        private string description;
 
         private readonly IMediator mediator;
 
-        public override string Description => this.description;
+        public override string Description { get; }
 
         public override string? IpAddress { get; set; }
 
@@ -24,7 +23,7 @@ namespace Dogger.Domain.Services.Provisioning.States.CompleteInstanceSetup
             ISshClientFactory sshClientFactory,
             IMediator mediator) : base(sshClientFactory)
         {
-            this.description = "Completing instance setup";
+            this.Description = "Completing instance setup";
 
             this.mediator = mediator;
         }

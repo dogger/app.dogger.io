@@ -1,12 +1,12 @@
 import { PlanResponse } from "../api/openapi";
-import { apiClient } from "../api/Client";
+import { cachedApiClient } from "../api/Client";
 import { createGlobalResource } from '@fluffy-spoon/react-globalize';
 
 export const demoPlanAccessor = createGlobalResource(async () => 
-    await apiClient.apiPlansDemoGet());
+    await cachedApiClient.apiPlansDemoGet());
 
 export const plansAccessor = createGlobalResource(async () => 
-    await apiClient.apiPlansGet());
+    await cachedApiClient.apiPlansGet());
 
 export function getCheapestPlan(plans: PlanResponse[]) {
     const plansByPrice = getPlansByPrice(plans);

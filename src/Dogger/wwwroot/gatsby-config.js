@@ -20,6 +20,23 @@ module.exports = {
         ],
       },
     },
+    {
+      resolve: 'gatsby-plugin-robots-txt',
+      options: {
+        host: 'https://dogger.io',
+        sitemap: 'https://dogger.io/sitemap.xml',
+        policy: [
+          { 
+            userAgent: '*', 
+            allow: '/' 
+          },
+          { 
+            userAgent: '*', 
+            disallow: '/dashboard' 
+          }
+        ]
+      }
+    },
     `gatsby-plugin-remove-trailing-slashes`,
     `gatsby-plugin-react-helmet`,
     {
