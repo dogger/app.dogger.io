@@ -1,50 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
-using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
+using Dogger.Domain.Events.InstanceDeleted;
 using Dogger.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 
-namespace Dogger.Tests.Domain.Commands.PullDog
+namespace Dogger.Tests.Domain.Events
 {
     [TestClass]
-    public class DeleteInstanceByPullRequestCommandTest
+    public class InstanceDeletedEventTest
     {
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_NoMatchingInstanceFound_DoesNothing()
-        {
-            //Arrange
-            var fakeMediator = Substitute.For<IMediator>();
-
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
-            {
-                IocConfiguration = services => services.AddSingleton(fakeMediator)
-            });
-
-            //Act
-            await environment.Mediator.Send(new DeleteInstanceByPullRequestCommand(
-                "dummy",
-                "dummy"));
-
-            //Assert
-            await fakeMediator
-                .DidNotReceive()
-                .Send(Arg.Any<DeleteInstanceByNameCommand>(), default);
-
-            await fakeMediator
-                .DidNotReceive()
-                .Send(Arg.Any<UpsertPullRequestCommentCommand>(), default);
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_ValidConditions_DeletesInstanceByName()
+        public async Task Handle_ValidConditions_UpsertsPullRequestComment()
         {
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
@@ -81,17 +57,24 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
             });
 
+            var createdInstance = await environment
+                .DataContext
+                .Instances
+                .Include(x => x.PullDogPullRequest)
+                .ThenInclude(x => x.PullDogRepository)
+                .ThenInclude(x => x.PullDogSettings)
+                .SingleOrDefaultAsync();
+
             //Act
-            await environment.Mediator.Send(new DeleteInstanceByPullRequestCommand(
-                "some-repository-handle",
-                "some-pull-request-handle"));
+            await environment.Mediator.Send(new InstanceDeletedEvent(createdInstance));
 
             //Assert
             await fakeMediator
                 .Received(1)
                 .Send(
-                    Arg.Is<DeleteInstanceByNameCommand>(args => 
-                        args.Name == "some-instance-name"), 
+                    Arg.Is<UpsertPullRequestCommentCommand>(args =>
+                        args.PullRequest.Handle == "some-pull-request-handle" &&
+                        args.PullRequest.PullDogRepository.Handle == "some-repository-handle"),
                     default);
         }
     }

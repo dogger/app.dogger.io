@@ -27,10 +27,6 @@ namespace Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest
         {
             var instance = await this.dataContext
                 .Instances
-                .Include(x => x.PullDogPullRequest!)
-                .ThenInclude(x => x.PullDogRepository!)
-                .ThenInclude(x => x.PullDogSettings!)
-                .ThenInclude(x => x.User!)
                 .Where(x => 
                     x.PullDogPullRequest!.PullDogRepository.Handle == request.RepositoryHandle &&
                     x.PullDogPullRequest!.Handle == request.PullRequestHandle)
@@ -40,12 +36,6 @@ namespace Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest
 
             await mediator.Send(
                 new DeleteInstanceByNameCommand(instance.Name),
-                cancellationToken);
-
-            await this.mediator.Send(
-                new UpsertPullRequestCommentCommand(
-                    instance.PullDogPullRequest!,
-                    "The test environment for this pull request has been destroyed :boom: This may have happened explicitly via a command, or because the pull request was closed."),
                 cancellationToken);
 
             return Unit.Value;

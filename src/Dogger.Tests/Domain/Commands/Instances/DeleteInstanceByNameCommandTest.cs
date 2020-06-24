@@ -7,14 +7,19 @@ using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.Amazon.Lightsail;
+using Dogger.Domain.Services.PullDog;
+using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.TestHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using Octokit;
 using Stripe;
 using Instance = Dogger.Domain.Models.Instance;
+using NotFoundException = Amazon.Lightsail.Model.NotFoundException;
+using User = Dogger.Domain.Models.User;
 
 namespace Dogger.Tests.Domain.Commands.Instances
 {
@@ -152,12 +157,40 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
 
+            var fakeGitHubClient = Substitute.For<IGitHubClient>();
+            fakeGitHubClient
+                .GitHubApps
+                .CreateInstallationToken(Arg.Any<long>())
+                .Returns(new AccessToken("dummy", DateTimeOffset.MaxValue));
+
+            var fakeGitHubClientFactory = Substitute.For<IGitHubClientFactory>();
+
+            var fakeGitHubInstallationClient = await fakeGitHubClientFactory.CreateInstallationClientAsync(1337);
+            fakeGitHubInstallationClient
+                .PullRequest
+                .Get(
+                    1338,
+                    1339)
+                .Returns(
+                    CreatePullRequestDto(
+                        CreateGitReferenceDto(
+                            CreateRepositoryDto(
+                                1338)),
+                        CreateGitReferenceDto(
+                            CreateRepositoryDto(
+                                1338))));
+
+            var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
+
             await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
                     services.AddSingleton(fakeAmazonLightsailClient);
                     services.AddSingleton(fakeLightsailOperationService);
+                    services.AddSingleton(fakeGitHubClient);
+                    services.AddSingleton(fakeGitHubClientFactory);
+                    services.AddSingleton(fakePullDogFileCollectorFactory);
                 }
             });
 
@@ -195,10 +228,11 @@ namespace Dogger.Tests.Domain.Commands.Instances
                         PlanId = "dummy",
                         PullDogPullRequest = new PullDogPullRequest()
                         {
-                            Handle = "dummy",
+                            Handle = "1339",
                             PullDogRepository = new PullDogRepository()
                             {
-                                Handle = "dummy",
+                                Handle = "1338",
+                                GitHubInstallationId = 1337,
                                 PullDogSettings = new PullDogSettings()
                                 {
                                     PlanId = "dummy",
@@ -655,6 +689,107 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await fakeLightsailOperationService
                 .DidNotReceiveWithAnyArgs()
                 .WaitForOperationsAsync(default);
+        }
+
+        private static Repository CreateRepositoryDto(
+            long id)
+        {
+            return new Repository(
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                id,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default);
+        }
+
+        private static GitReference CreateGitReferenceDto(
+            Repository repository)
+        {
+            return new GitReference(
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                repository);
+        }
+
+        private static PullRequest CreatePullRequestDto(GitReference @base, GitReference head)
+        {
+            return new PullRequest(
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                head,
+                @base,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default);
         }
     }
 }

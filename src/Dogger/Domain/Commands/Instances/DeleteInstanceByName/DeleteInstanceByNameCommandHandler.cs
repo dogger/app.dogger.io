@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
+using Dogger.Domain.Events.InstanceDeleted;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.Amazon.Lightsail;
 using MediatR;
@@ -40,7 +41,9 @@ namespace Dogger.Domain.Commands.Instances.DeleteInstanceByName
         public async Task<Unit> Handle(DeleteInstanceByNameCommand request, CancellationToken cancellationToken)
         {
             var instance = await this.dataContext.Instances
-                .Include(x => x.PullDogPullRequest)
+                .Include(x => x.PullDogPullRequest!)
+                .ThenInclude(x => x.PullDogRepository!)
+                .ThenInclude(x => x.PullDogSettings!)
                 .Include(x => x.Cluster)
                 .ThenInclude(x => x.Instances)
                 .Include(x => x.Cluster)
@@ -63,6 +66,13 @@ namespace Dogger.Domain.Commands.Instances.DeleteInstanceByName
             }
 
             await DeleteLightsailInstanceAsync(request, cancellationToken);
+
+            if (instance != null)
+            {
+                await this.mediator.Send(
+                    new InstanceDeletedEvent(instance),
+                    cancellationToken);
+            }
 
             return Unit.Value;
         }
