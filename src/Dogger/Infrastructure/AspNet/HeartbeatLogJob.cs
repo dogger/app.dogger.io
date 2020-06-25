@@ -31,7 +31,7 @@ namespace Dogger.Infrastructure.AspNet
 
             var configuration = serviceProvider.GetRequiredService<IConfiguration>();
             var newLogger = LoggerFactory.BuildWebApplicationLogger(configuration);
-            newLogger.Verbose("Scoped heartbeat.");
+            newLogger.Verbose("New logger heartbeat.");
         }
     }
 }
