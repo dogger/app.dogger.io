@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Destructurama;
+using Dogger.Infrastructure.Logging;
+using Elasticsearch.Net;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Core;
@@ -33,7 +35,7 @@ namespace Dogger.Infrastructure
         }
 
         [Obsolete("Only used temporarily for debugging. Should be removed when this issue is solved: https://github.com/dogger/dogger.io/issues/372")]
-        internal static ILogEventSink Sink { get; set; }
+        internal static DisposableBugLoggerProxy Sink { get; set; }
 
         public static ILogger BuildWebApplicationLogger(IConfiguration configuration)
         {
@@ -42,27 +44,33 @@ namespace Dogger.Infrastructure
 
             SelfLog.Enable(Console.Error);
 
-            if (Sink == null)
+            if (Sink == null || Sink.IsDisposed)
             {
-                Sink = new ElasticsearchSink(new ElasticsearchSinkOptions(new Uri("https://elasticsearch:9200"))
-                {
-                    FailureCallback = e => Console.WriteLine($"Unable to log message with template {e.MessageTemplate}"),
-                    EmitEventFailure =
-                        EmitEventFailureHandling.WriteToSelfLog |
-                        EmitEventFailureHandling.RaiseCallback,
-                    NumberOfReplicas = 0,
-                    NumberOfShards = 1,
-                    BatchPostingLimit = 1,
-                    MinimumLogEventLevel = LogEventLevel.Verbose,
-                    DetectElasticsearchVersion = false,
-                    AutoRegisterTemplate = true,
-                    AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
-                    RegisterTemplateFailure = RegisterTemplateRecovery.IndexAnyway,
-                    ModifyConnectionSettings = x => x
-                        .BasicAuthentication("elastic", "elastic")
-                        .ServerCertificateValidationCallback((a, b, c, d) => true),
-                    ConnectionTimeout = TimeSpan.FromMinutes(15)
-                });
+                Sink = new DisposableBugLoggerProxy(
+                    new ElasticsearchSink(
+                        new ElasticsearchSinkOptions(new Uri("https://elasticsearch:9200"))
+                        {
+                            FailureCallback = e => Console.WriteLine($"Unable to log message with template {e.MessageTemplate}"),
+                            EmitEventFailure =
+                                EmitEventFailureHandling.WriteToSelfLog |
+                                EmitEventFailureHandling.RaiseCallback,
+                            NumberOfReplicas = 0,
+                            NumberOfShards = 1,
+                            BatchPostingLimit = 10,
+                            BufferFileCountLimit = 0,
+                            MinimumLogEventLevel = LogEventLevel.Verbose,
+                            DetectElasticsearchVersion = false,
+                            AutoRegisterTemplate = true,
+                            AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
+                            RegisterTemplateFailure = RegisterTemplateRecovery.IndexAnyway,
+                            ModifyConnectionSettings = x => x
+                                .BasicAuthentication("elastic", "elastic")
+                                .ServerCertificateValidationCallback((a, b, c, d) => true)
+                        }));
+            } else if (Sink.IsDisposed)
+            {
+                Log.Error("Sink is disposed!");
+                Sink = null;
             }
 
             var slackWebhookUrl = configuration["Slack:IncomingUrl"];
