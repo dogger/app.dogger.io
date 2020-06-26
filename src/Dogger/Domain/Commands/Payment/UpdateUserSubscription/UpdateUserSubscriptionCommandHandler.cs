@@ -77,7 +77,10 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
             if (CountAdditions(subscriptionItems) == 0 && user.StripeSubscriptionId == null)
                 return Unit.Value;
 
-            var createdSubscription = await UpdateSubscriptionAsync(user, subscriptionItems, cancellationToken);
+            var createdSubscription = await UpdateSubscriptionAsync(
+                user, 
+                subscriptionItems, 
+                cancellationToken);
 
             var intent = createdSubscription.LatestInvoice.PaymentIntent;
             switch (intent?.Status)

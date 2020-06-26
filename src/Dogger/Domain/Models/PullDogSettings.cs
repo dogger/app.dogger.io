@@ -25,9 +25,13 @@ namespace Dogger.Domain.Models
         [NotLogged]
         public List<PullDogRepository> Repositories { get; set; }
 
+        [NotLogged]
+        public List<Blueprint> PoolBlueprints { get; set; }
+
         public PullDogSettings()
         {
             this.Repositories = new List<PullDogRepository>();
+            this.PoolBlueprints = new List<Blueprint>();
         }
     }
 }

@@ -2,8 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Destructurama.Attributed;
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-
 namespace Dogger.Domain.Models
 {
     [ExcludeFromCodeCoverage]
@@ -13,15 +11,19 @@ namespace Dogger.Domain.Models
         public DateTime CreatedAtUtc { get; set; }
 
         [NotLogged]
-        public Cluster Cluster { get; set; }
+        public Cluster Cluster { get; set; } = null!;
         public Guid ClusterId { get; set; }
 
         [NotLogged]
         public PullDogPullRequest? PullDogPullRequest { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
-        public string PlanId { get; set; }
+        public string PlanId { get; set; } = null!;
+
+        [NotLogged]
+        public Blueprint Blueprint { get; set; } = null!;
+        public Guid BlueprintId { get; set; }
 
         public DateTime? ExpiresAtUtc { get; set; }
 

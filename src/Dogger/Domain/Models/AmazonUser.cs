@@ -22,5 +22,9 @@ namespace Dogger.Domain.Models
         [NotLogged]
         public User? User { get; set; }
         public Guid? UserId { get; set; }
+
+        [NotLogged]
+        public Blueprint? Blueprint { get; set; }
+        public Guid? BlueprintId { get; set; }
     }
 }
