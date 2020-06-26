@@ -6,7 +6,5 @@ namespace Dogger.Domain.Services.Provisioning.Stages.CreateLightsailInstance
     {
         Models.Instance? DatabaseInstance { get; }
         string? PlanId { get; }
-
-        Instance CreatedLightsailInstance { get; }
     }
 }

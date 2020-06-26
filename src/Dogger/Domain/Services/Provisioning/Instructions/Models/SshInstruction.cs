@@ -2,10 +2,15 @@
 {
     public class SshInstruction : IInstruction
     {
-        public SshInstruction(string commandText)
+        public SshInstruction(
+            RetryPolicy retryPolicy,
+            string commandText)
         {
+            this.RetryPolicy = retryPolicy;
             this.CommandText = commandText;
         }
+
+        public RetryPolicy RetryPolicy { get; }
 
         public string Type => "ssh";
 
