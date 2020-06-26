@@ -89,10 +89,16 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
                     throw new NotImplementedException("Subscriptions requiring action are not yet supported.");
             }
 
+            await this.mediator.Send(
+                new UpdateQueryPlansForUserCommand(request.UserId),
+                cancellationToken);
+
             return Unit.Value;
         }
 
-        private static void AddRemainingExistingSubscriptionItemsAsDeletions(List<SubscriptionItemOptions> subscriptionItems, SubscriptionItem[] existingSubscriptionItems)
+        private static void AddRemainingExistingSubscriptionItemsAsDeletions(
+            List<SubscriptionItemOptions> subscriptionItems, 
+            SubscriptionItem[] existingSubscriptionItems)
         {
             foreach (var existingSubscriptionItem in existingSubscriptionItems)
             {

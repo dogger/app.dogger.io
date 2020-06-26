@@ -373,7 +373,6 @@ namespace Dogger.Infrastructure
             services.AddTransient<CreateLightsailInstanceStage>();
             services.AddTransient<InstallSoftwareOnInstanceStage>();
             services.AddTransient<RunDockerComposeOnInstanceStage>();
-            services.AddTransient<CompleteInstanceSetupStage>();
         }
 
         [ExcludeFromCodeCoverage]

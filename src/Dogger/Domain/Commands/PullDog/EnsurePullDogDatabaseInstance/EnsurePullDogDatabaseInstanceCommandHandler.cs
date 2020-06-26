@@ -55,9 +55,7 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance
                 {
                     Name = $"pull-dog_{user.Id}_{Guid.NewGuid()}",
                     Cluster = cluster,
-                    IsProvisioned = false,
                     PlanId = settings.PlanId,
-                    Type = InstanceType.DockerCompose,
                     PullDogPullRequest = pullRequest,
                     ExpiresAtUtc = expiryTime
                 };

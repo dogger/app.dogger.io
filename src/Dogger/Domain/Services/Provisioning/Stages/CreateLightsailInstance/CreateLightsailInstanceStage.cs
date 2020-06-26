@@ -40,7 +40,8 @@ namespace Dogger.Domain.Services.Provisioning.Stages.CreateLightsailInstance
                 throw new InvalidOperationException("Database instance is not set.");
 
             using var createInstanceGroup = instructionCollector.CollectGroup("Creating AWS Lightsail instance");
-            createInstanceGroup.CollectInstruction(
+            createInstanceGroup.CollectInstructionWithSignal(
+                "create-instance",
                 this.amazonLightsailInstructionFactory.Create(
                     new CreateInstancesRequest()
                     {

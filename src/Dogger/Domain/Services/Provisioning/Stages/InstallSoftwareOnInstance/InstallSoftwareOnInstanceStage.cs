@@ -11,16 +11,23 @@ namespace Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance
 {
     public class InstallSoftwareOnInstanceStage : IInstallSoftwareOnInstanceStage
     {
-        public Guid? UserId { get; set; }
-        public string? InstanceName { get; set; }
-
         public void CollectInstructions(IInstructionGroupCollector instructionCollector)
         {
-            CollectInstallDockerInstructions(instructionCollector.CollectGroup("Installing Docker Engine"));
-            CollectInstallDockerComposeInstructions(instructionCollector.CollectGroup("Installing Docker Compose"));
-            CollectConfigureDockerDaemonInstructions(instructionCollector.CollectGroup("Configuring Docker Daemon"));
-            CollectConfigurePostInstallInstructions(instructionCollector.CollectGroup("Finalizing Docker installation"));
-            CollectSetSystemConfigurationValueInstructions(instructionCollector, "vm.max_map_count", "262144");
+            CollectInstallDockerInstructions(instructionCollector
+                .CollectGroup("Installing Docker Engine"));
+
+            CollectInstallDockerComposeInstructions(instructionCollector
+                .CollectGroup("Installing Docker Compose"));
+
+            CollectConfigureDockerDaemonInstructions(instructionCollector
+                .CollectGroup("Configuring Docker Daemon"));
+
+            CollectConfigurePostInstallInstructions(instructionCollector
+                .CollectGroup("Finalizing Docker installation"));
+
+            CollectSetSystemConfigurationValueInstructions(
+                instructionCollector, 
+                "vm.max_map_count", "262144");
         }
 
         private static void CollectSetSystemConfigurationValueInstructions(

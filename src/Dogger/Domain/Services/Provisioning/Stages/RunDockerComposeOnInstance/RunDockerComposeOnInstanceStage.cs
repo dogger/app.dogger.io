@@ -8,6 +8,8 @@ using Dogger.Domain.Events.ServerDeploymentCompleted;
 using Dogger.Domain.Events.ServerDeploymentFailed;
 using Dogger.Domain.Queries.Instances.GetNecessaryInstanceFirewallPorts;
 using Dogger.Domain.Services.Provisioning.Arguments;
+using Dogger.Domain.Services.Provisioning.Instructions;
+using Dogger.Domain.Services.Provisioning.Instructions.Models;
 using Dogger.Infrastructure.Docker.Yml;
 using Dogger.Infrastructure.Ssh;
 using MediatR;
@@ -17,262 +19,52 @@ namespace Dogger.Domain.Services.Provisioning.Stages.RunDockerComposeOnInstance
 {
     public class RunDockerComposeOnInstanceStage : IRunDockerComposeOnInstanceStage
     {
-        public string? InstanceName { get; set; }
-
-        public IDictionary<string, string>? BuildArguments { get; set; }
-        public string[]? DockerComposeYmlContents { get; set; }
-        public IEnumerable<InstanceDockerFile>? Files { get; set; }
-
-        [NotLogged]
-        public IEnumerable<IDockerAuthenticationArguments>? Authentication { get; set; }
-
-        protected override async Task<ProvisioningStateUpdateResult> OnUpdateAsync(ISshClient sshClient)
+        public void CollectInstructions(IInstructionGroupCollector instructionCollector)
         {
-            if (this.DockerComposeYmlContents == null)
-                throw new InvalidOperationException("Docker Compose contents must be set.");
+            CollectClearExistingFilesInstructions(instructionCollector);
 
-            await OpenExposedFirewallPortsOnInstanceAsync();
-            await ClearExistingDoggerFilesAsync(sshClient);
-            await CreateFilesOnServerAsync(sshClient);
-            await CreateDockerComposeYmlFilesOnServerAsync(sshClient);
-            await RunContainersAsync(sshClient);
-
-            await SendServerDeploymentCompletedEventAsync();
-
-            return ProvisioningStateUpdateResult.Succeeded;
+            instructionCollector.CollectInstructionWithSignal("docker-compose");
+            instructionCollector.CollectInstructionWithSignal("open-firewall");
         }
 
-        private async Task SendServerDeploymentCompletedEventAsync()
+        private static void CollectClearExistingFilesInstructions(
+            IInstructionGroupCollector instructionCollector)
         {
-            if (this.InstanceName == null)
-                throw new InvalidOperationException("No instance name was found.");
-
-            await this.mediator.Send(new ServerDeploymentCompletedEvent(this.InstanceName));
+            CollectRemoveDirectoryInstructions(instructionCollector, "dogger");
+            CollectEnsureDirectoryInstructions(instructionCollector, "dogger");
         }
 
-        private static async Task ClearExistingDoggerFilesAsync(ISshClient sshClient)
+        private static void CollectRemoveDirectoryInstructions(
+            IInstructionGroupCollector instructionCollector,
+            string path)
         {
-            await RemoveDirectoryAsync(sshClient, "dogger");
-            await EnsureDirectoryAsync(sshClient, "dogger");
+            instructionCollector.CollectInstruction(new SshInstruction(
+                RetryPolicy.AllowRetries,
+                $"sudo rm ./{path} -rf"));
         }
 
-        private static async Task RemoveDirectoryAsync(ISshClient sshClient, string path)
+        private static void CollectEnsureDirectoryInstructions(
+            IInstructionGroupCollector instructionCollector,
+            string path)
         {
-            await sshClient.ExecuteCommandAsync(
-                SshRetryPolicy.AllowRetries,
-                $"sudo rm ./{path} -rf");
+            instructionCollector.CollectInstruction(new SshInstruction(
+                RetryPolicy.AllowRetries,
+                $"mkdir -m 777 -p ./{path}"));
+
+            CollectSetUserPermissionsOnPathInstructions(instructionCollector, path);
         }
 
-        private static async Task EnsureDirectoryAsync(ISshClient sshClient, string path)
+        private static void CollectSetUserPermissionsOnPathInstructions(
+            IInstructionGroupCollector instructionCollector,
+            string fileName)
         {
-            await sshClient.ExecuteCommandAsync(
-                SshRetryPolicy.AllowRetries,
-                $"mkdir -m 777 -p ./{path}");
-
-            await SetUserPermissionsOnPathAsync(sshClient, path);
+            instructionCollector.CollectInstruction(new SshInstruction(
+                RetryPolicy.AllowRetries,
+                $"sudo chmod 777 ./{fileName}"));
         }
 
-        private async Task CreateFilesOnServerAsync(ISshClient sshClient)
+        public void Dispose()
         {
-            var files = this.Files;
-            if (files == null)
-                return;
-
-            foreach (var file in files)
-            {
-                await CreateSensitiveFileOnServerAsync(
-                    sshClient,
-                    file.Path,
-                    file.Contents);
-            }
-        }
-
-        private async Task RunContainersAsync(ISshClient sshClient)
-        {
-            if (this.InstanceName == null)
-                throw new InvalidOperationException("Could not find instance name.");
-
-            await AuthenticateDockerAsync(sshClient);
-
-            var dockerComposeFiles = GetDockerComposeYmlFiles();
-            var filesArgument = string.Join(' ', dockerComposeFiles
-                .Select(x => $"-f {x.FileName}"));
-
-            var buildArgumentsArgument = string.Join(' ', GetBuildArgumentAssignments()
-                .Select(x => $"--build-arg {x}"));
-
-            var environmentVariablesPrefix = string.Join(' ', GetBuildArgumentAssignments());
-
-            try
-            {
-                await sshClient.ExecuteCommandAsync(
-                    SshRetryPolicy.AllowRetries,
-                    $"cd dogger && {environmentVariablesPrefix} docker-compose {filesArgument} down --rmi all --volumes --remove-orphans");
-
-                await sshClient.ExecuteCommandAsync(
-                    SshRetryPolicy.AllowRetries,
-                    $"cd dogger && {environmentVariablesPrefix} docker-compose {filesArgument} pull --include-deps");
-
-                await sshClient.ExecuteCommandAsync(
-                    SshRetryPolicy.AllowRetries,
-                    $"cd dogger && {environmentVariablesPrefix} docker-compose {filesArgument} build --force-rm --parallel --no-cache {buildArgumentsArgument}");
-
-                await sshClient.ExecuteCommandAsync(
-                    SshRetryPolicy.ProhibitRetries,
-                    $"cd dogger && {environmentVariablesPrefix} docker-compose {filesArgument} --compatibility up --detach --remove-orphans --always-recreate-deps --force-recreate --renew-anon-volumes");
-            }
-            catch (SshCommandExecutionException ex) when (ex.Result.ExitCode == 1)
-            {
-                await this.mediator.Send(new ServerDeploymentFailedEvent(
-                    this.InstanceName,
-                    ex.Result.Text));
-
-                throw new StageUpdateException(
-                    "Could not run containers: " + ex.Result.Text,
-                    ex,
-                    new BadRequestObjectResult(
-                        new ValidationProblemDetails()
-                        {
-                            Type = "DOCKER_COMPOSE_UP_FAIL",
-                            Title = ex.Result.Text
-                        }));
-            }
-        }
-
-        private string[] GetBuildArgumentAssignments()
-        {
-            return this.BuildArguments == null
-                ? Array.Empty<string>()
-                : this.BuildArguments
-                    .Select(x => $"{x.Key}={x.Value}")
-                    .ToArray();
-        }
-
-        private async Task AuthenticateDockerAsync(ISshClient sshClient)
-        {
-            var authenticationArguments = this.Authentication;
-            if (authenticationArguments == null)
-                return;
-
-            foreach (var authenticationArgument in authenticationArguments)
-            {
-                await sshClient.ExecuteCommandAsync(
-                    SshRetryPolicy.AllowRetries,
-                    "echo @password | docker login -u @username --password-stdin @registryHostName",
-                    new Dictionary<string, string?>()
-                    {
-                        {
-                            "username", authenticationArgument.Username
-                        },
-                        {
-                            "password", authenticationArgument.Password
-                        },
-                        {
-                            "registryHostName", authenticationArgument.RegistryHostName
-                        }
-                    });
-            }
-        }
-
-        private async Task OpenExposedFirewallPortsOnInstanceAsync()
-        {
-            if (this.DockerComposeYmlContents == null)
-                throw new InvalidOperationException("No Docker Compose contents were found.");
-
-            if (this.InstanceName == null)
-                throw new InvalidOperationException("No instance name was found.");
-
-            this.description = "Opening firewall for exposed ports and protocols";
-
-            var necessaryPorts = await this.mediator.Send(new GetNecessaryInstanceFirewallPortsQuery(this.InstanceName));
-
-            var portsToOpen = new HashSet<ExposedPortRange>(necessaryPorts);
-
-            foreach (var dockerComposeYmlContent in this.DockerComposeYmlContents)
-            {
-                var dockerComposeParser = this.dockerComposeParserFactory.Create(dockerComposeYmlContent);
-                var ports = dockerComposeParser.GetExposedHostPorts();
-                foreach (var port in ports)
-                    portsToOpen.Add(port);
-            }
-
-            await this.mediator.Send(new OpenFirewallPortsCommand(
-                this.InstanceName,
-                portsToOpen));
-        }
-
-        private async Task CreateDockerComposeYmlFilesOnServerAsync(ISshClient sshClient)
-        {
-            var files = GetDockerComposeYmlFiles();
-            foreach (var file in files)
-            {
-                await CreateSensitiveFileOnServerAsync(
-                    sshClient,
-                    file.FileName,
-                    file.Contents);
-            }
-        }
-
-        private IEnumerable<FileContents> GetDockerComposeYmlFiles()
-        {
-            if (this.DockerComposeYmlContents == null)
-                throw new InvalidOperationException("Docker Compose YML contents must be set.");
-
-            var offset = 1;
-            foreach (var dockerComposeYmlContent in this.DockerComposeYmlContents)
-            {
-                yield return new FileContents(
-                    $"docker-compose-{offset++}.yml",
-                    dockerComposeYmlContent);
-            }
-        }
-
-        private static async Task CreateSensitiveFileOnServerAsync(
-            ISshClient sshClient,
-            string fileName,
-            string contents)
-        {
-            var lineFeedString = Guid
-                .NewGuid()
-                .ToString()
-                .Replace("-", "", StringComparison.InvariantCulture);
-            if (contents.Contains(lineFeedString, StringComparison.InvariantCulture))
-                throw new InvalidOperationException("Escape sequence detected in sensitive file.");
-
-            if (fileName.Contains("/", StringComparison.InvariantCulture))
-            {
-                var folderPath = fileName.Substring(0, fileName.LastIndexOf('/'));
-                await EnsureDirectoryAsync(sshClient, $"./dogger/{folderPath}");
-            }
-
-            await sshClient.ExecuteCommandAsync(
-                SshRetryPolicy.AllowRetries,
-                $"cat > ./dogger/{fileName} <<-'{lineFeedString}'\n@@fileContents\n{lineFeedString}",
-                new Dictionary<string, string?>()
-                {
-                    { "fileContents", contents }
-                });
-
-            await SetUserPermissionsOnPathAsync(sshClient, $"dogger/{fileName}");
-        }
-
-        private static async Task SetUserPermissionsOnPathAsync(ISshClient sshClient, string fileName)
-        {
-            await sshClient.ExecuteCommandAsync(
-                SshRetryPolicy.AllowRetries,
-                $"sudo chmod 777 ./{fileName}");
-        }
-
-        readonly struct FileContents
-        {
-            public FileContents(string fileName, string contents)
-            {
-                this.FileName = fileName;
-                this.Contents = contents;
-            }
-
-            public string FileName { get; }
-            public string Contents { get; }
         }
     }
 }
