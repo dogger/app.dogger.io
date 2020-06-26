@@ -18,43 +18,9 @@ namespace Dogger.Domain.Services.Provisioning.Stages.CreateLightsailInstance
 
     public class CreateLightsailInstanceStage : ICreateLightsailInstanceStage
     {
-        private readonly IMediator mediator;
-        private readonly ILightsailOperationService lightsailOperationService;
-        private readonly IAmazonLightsail amazonLightsailClient;
-        private readonly ILogger logger;
-
-        private Instance? createdInstance;
-        private string[]? currentOperationIds;
-
         public string? PlanId { get; set; }
 
         public Models.Instance? DatabaseInstance { get; set; }
-
-        public string Description
-        {
-            get; private set;
-        }
-
-        public Instance CreatedLightsailInstance
-        {
-            get => this.createdInstance ??
-                throw new InvalidOperationException("The state did not create an instance.");
-            private set => this.createdInstance = value;
-        }
-
-        public CreateLightsailInstanceStage(
-            IMediator mediator,
-            ILightsailOperationService lightsailOperationService,
-            IAmazonLightsail amazonLightsailClient,
-            ILogger logger)
-        {
-            this.mediator = mediator;
-            this.lightsailOperationService = lightsailOperationService;
-            this.amazonLightsailClient = amazonLightsailClient;
-            this.logger = logger;
-
-            this.Description = "Provisioning AWS Lightsail instance";
-        }
 
         public async Task<ProvisioningStateUpdateResult> UpdateAsync()
         {
@@ -76,7 +42,7 @@ namespace Dogger.Domain.Services.Provisioning.Stages.CreateLightsailInstance
                 this.logger.Error("Got error code {ErrorCode} while trying to provision instance.", failedOperation.ErrorCode);
                 this.Description = "Could not provision instance.";
 
-                throw new StateUpdateException($"Got error code {failedOperation.ErrorCode} while trying to provision instance.");
+                throw new StageUpdateException($"Got error code {failedOperation.ErrorCode} while trying to provision instance.");
             }
 
             if (operations.All(x => x.Status == OperationStatus.NotStarted))

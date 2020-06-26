@@ -28,9 +28,9 @@ namespace Dogger.Domain.Services.Provisioning
 
         public bool IsFailed => Exception != null;
 
-        public StateUpdateException? Exception { get; set; }
+        public StageUpdateException? Exception { get; set; }
 
-        public IProvisioningStateFlow Flow { get; }
+        public IProvisioningStageFlow Flow { get; }
         public IProvisioningStateFactory StateFactory { get; }
         public IServiceScope ServiceScope { get; }
 
@@ -49,7 +49,7 @@ namespace Dogger.Domain.Services.Provisioning
         }
 
         public ProvisioningJob(
-            IProvisioningStateFlow flow,
+            IProvisioningStageFlow flow,
             IServiceScope serviceScope)
         {
             this.Flow = flow;

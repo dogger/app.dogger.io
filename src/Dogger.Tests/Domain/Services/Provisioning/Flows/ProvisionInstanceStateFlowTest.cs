@@ -21,7 +21,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
         public async Task GetInitialState_ValuesGiven_TransfersValuesToInitialState()
         {
             //Arrange
-            var flow = new ProvisionInstanceStateFlow(
+            var flow = new ProvisionInstanceStageFlow(
                 "some-plan-id",
                 new Dogger.Domain.Models.Instance()
                 {
@@ -52,7 +52,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             //Arrange
             var fakeUserId = Guid.NewGuid();
 
-            var flow = new ProvisionInstanceStateFlow(
+            var flow = new ProvisionInstanceStageFlow(
                 "some-plan-id",
                 new Dogger.Domain.Models.Instance()
                 {
@@ -74,7 +74,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             });
 
             //Act
-            var state = await flow.GetNextStateAsync(new NextStateContext(
+            var state = await flow.GetNextStateAsync(new NextStageContext(
                 fakeMediator,
                 stateFactory,
                 fakeState)) as IInstallSoftwareOnInstanceStage;
@@ -93,7 +93,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             //Arrange
             var fakeUserId = Guid.NewGuid();
 
-            var flow = new ProvisionInstanceStateFlow(
+            var flow = new ProvisionInstanceStageFlow(
                 "some-plan-id",
                 new Dogger.Domain.Models.Instance()
                 {
@@ -112,7 +112,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             fakeState.IpAddress.Returns("127.0.0.1");
 
             //Act
-            var state = await flow.GetNextStateAsync(new NextStateContext(
+            var state = await flow.GetNextStateAsync(new NextStageContext(
                 fakeMediator,
                 stateFactory,
                 fakeState)) as ICompleteInstanceSetupStage;
@@ -131,7 +131,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
         public async Task GetNextState_FromCompleteInstanceSetupState_ReturnsNull()
         {
             //Arrange
-            var flow = new ProvisionInstanceStateFlow(
+            var flow = new ProvisionInstanceStageFlow(
                 "some-plan-id",
                 new Dogger.Domain.Models.Instance()
                 {
@@ -145,7 +145,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             var fakeMediator = Substitute.For<IMediator>();
 
             //Act
-            var state = await flow.GetNextStateAsync(new NextStateContext(
+            var state = await flow.GetNextStateAsync(new NextStageContext(
                 fakeMediator,
                 stateFactory,
                 fakeState));
@@ -159,7 +159,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
         public async Task GetNextState_FromUnknownState_ThrowsException()
         {
             //Arrange
-            var flow = new ProvisionInstanceStateFlow(
+            var flow = new ProvisionInstanceStageFlow(
                 "some-plan-id",
                 new Dogger.Domain.Models.Instance()
                 {
@@ -173,8 +173,8 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             var fakeMediator = Substitute.For<IMediator>();
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<UnknownFlowStateException>(async () => 
-                await flow.GetNextStateAsync(new NextStateContext(
+            var exception = await Assert.ThrowsExceptionAsync<UnknownFlowStageException>(async () => 
+                await flow.GetNextStateAsync(new NextStageContext(
                     fakeMediator,
                     stateFactory,
                     fakeState)));

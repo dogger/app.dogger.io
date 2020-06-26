@@ -34,7 +34,7 @@ namespace Dogger.Tests.Controllers
 
             fakeServiceScope.ServiceProvider.Returns(fakeServiceProvider);
 
-            var fakeProvisioningStateFlow = Substitute.For<IProvisioningStateFlow>();
+            var fakeProvisioningStateFlow = Substitute.For<IProvisioningStageFlow>();
 
             var provisioningJob = new ProvisioningJob(
                 fakeProvisioningStateFlow,
@@ -99,13 +99,13 @@ namespace Dogger.Tests.Controllers
 
             fakeServiceScope.ServiceProvider.Returns(fakeServiceProvider);
 
-            var fakeProvisioningStateFlow = Substitute.For<IProvisioningStateFlow>();
+            var fakeProvisioningStateFlow = Substitute.For<IProvisioningStageFlow>();
 
             var provisioningJob = new ProvisioningJob(
                 fakeProvisioningStateFlow,
                 fakeServiceScope)
             {
-                Exception = new StateUpdateException("dummy", new ConflictResult())
+                Exception = new StageUpdateException("dummy", new ConflictResult())
             };
             await provisioningJob.InitializeAsync();
 

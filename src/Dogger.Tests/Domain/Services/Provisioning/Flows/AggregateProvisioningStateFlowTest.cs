@@ -21,11 +21,11 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
                 Substitute.For<IMediator>(),
                 Substitute.For<IProvisioningStateFactory>());
 
-            var fakeProvisioningStateFlow = Substitute.For<IProvisioningStateFlow>();
+            var fakeProvisioningStateFlow = Substitute.For<IProvisioningStageFlow>();
 
             var fakeInitialState = await fakeProvisioningStateFlow.GetInitialStateAsync(context);
 
-            var flow = new AggregateProvisioningStateFlow(fakeProvisioningStateFlow);
+            var flow = new AggregateProvisioningStageFlow(fakeProvisioningStateFlow);
 
             //Act
             var initialState = await flow.GetInitialStateAsync(context);
@@ -43,19 +43,19 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
                 Substitute.For<IMediator>(),
                 Substitute.For<IProvisioningStateFactory>());
 
-            var nextStateContext = new NextStateContext(
+            var nextStateContext = new NextStageContext(
                 Substitute.For<IMediator>(),
                 Substitute.For<IProvisioningStateFactory>(),
                 Substitute.For<IProvisioningStage>());
 
-            var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStateFlow>();
+            var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStageFlow>();
             fakeProvisioningStateFlow1
                 .GetNextStateAsync(nextStateContext)
                 .Returns((IProvisioningStage)null);
 
-            var fakeProvisioningStateFlow2 = Substitute.For<IProvisioningStateFlow>();
+            var fakeProvisioningStateFlow2 = Substitute.For<IProvisioningStageFlow>();
 
-            var flow = new AggregateProvisioningStateFlow(
+            var flow = new AggregateProvisioningStageFlow(
                 fakeProvisioningStateFlow1,
                 fakeProvisioningStateFlow2);
 
@@ -74,17 +74,17 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
         public async Task GetNextState_CurrentFlowIsFirstFlowAndNotFinished_ReturnsNextStateOfFirstFlow()
         {
             //Arrange
-            var nextStateContext = new NextStateContext(
+            var nextStateContext = new NextStageContext(
                 Substitute.For<IMediator>(),
                 Substitute.For<IProvisioningStateFactory>(),
                 Substitute.For<IProvisioningStage>());
 
-            var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStateFlow>();
-            var fakeProvisioningStateFlow2 = Substitute.For<IProvisioningStateFlow>();
+            var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStageFlow>();
+            var fakeProvisioningStateFlow2 = Substitute.For<IProvisioningStageFlow>();
 
             var fakeNextState = await fakeProvisioningStateFlow1.GetNextStateAsync(nextStateContext);
 
-            var flow = new AggregateProvisioningStateFlow(
+            var flow = new AggregateProvisioningStageFlow(
                 fakeProvisioningStateFlow1,
                 fakeProvisioningStateFlow2);
 
@@ -100,24 +100,24 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
         public async Task GetNextState_CurrentFlowIsFirstFlowAndFinished_ReturnsInitialStateOfSecondFlow()
         {
             //Arrange
-            var nextStateContext = new NextStateContext(
+            var nextStateContext = new NextStageContext(
                 Substitute.For<IMediator>(),
                 Substitute.For<IProvisioningStateFactory>(),
                 Substitute.For<IProvisioningStage>());
 
-            var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStateFlow>();
+            var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStageFlow>();
             fakeProvisioningStateFlow1
                 .GetNextStateAsync(nextStateContext)
                 .Returns((IProvisioningStage)null);
 
-            var fakeProvisioningStateFlow2 = Substitute.For<IProvisioningStateFlow>();
+            var fakeProvisioningStateFlow2 = Substitute.For<IProvisioningStageFlow>();
 
             var fakeInitialSecondFlowState = Substitute.For<IProvisioningStage>();
             fakeProvisioningStateFlow2
                 .GetInitialStateAsync(Arg.Any<InitialStateContext>())
                 .Returns(fakeInitialSecondFlowState);
 
-            var flow = new AggregateProvisioningStateFlow(
+            var flow = new AggregateProvisioningStageFlow(
                 fakeProvisioningStateFlow1,
                 fakeProvisioningStateFlow2);
 
@@ -133,17 +133,17 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
         public async Task GetNextState_CurrentFlowIsFinalFlowAndFinished_ReturnsNull()
         {
             //Arrange
-            var nextStateContext = new NextStateContext(
+            var nextStateContext = new NextStageContext(
                 Substitute.For<IMediator>(),
                 Substitute.For<IProvisioningStateFactory>(),
                 Substitute.For<IProvisioningStage>());
 
-            var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStateFlow>();
+            var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStageFlow>();
             fakeProvisioningStateFlow1
                 .GetNextStateAsync(nextStateContext)
                 .Returns((IProvisioningStage)null);
 
-            var flow = new AggregateProvisioningStateFlow(
+            var flow = new AggregateProvisioningStageFlow(
                 fakeProvisioningStateFlow1);
 
             //Act

@@ -23,7 +23,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             //Arrange
             var buildArguments = new Dictionary<string, string>();
 
-            var flow = new DeployToClusterStateFlow(
+            var flow = new DeployToClusterStageFlow(
                 "127.0.0.1",
                 new[]
                 {
@@ -63,7 +63,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
         public async Task GetNextState_FromRunDockerComposeOnInstanceState_ReturnsNull()
         {
             //Arrange
-            var flow = new DeployToClusterStateFlow(
+            var flow = new DeployToClusterStageFlow(
                 "127.0.0.1",
                 new[]
                 {
@@ -77,7 +77,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             var fakeMediator = Substitute.For<IMediator>();
 
             //Act
-            var state = await flow.GetNextStateAsync(new NextStateContext(
+            var state = await flow.GetNextStateAsync(new NextStageContext(
                 fakeMediator,
                 stateFactory,
                 fakeState));

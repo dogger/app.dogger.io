@@ -7,7 +7,7 @@ using Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance;
 
 namespace Dogger.Domain.Services.Provisioning.Flows
 {
-    public class ProvisionInstanceStateFlow : IProvisioningStateFlow
+    public class ProvisionInstanceStageFlow : IProvisioningStageFlow
     {
         private readonly string planId;
         private readonly Models.Instance databaseInstance;
@@ -17,7 +17,7 @@ namespace Dogger.Domain.Services.Provisioning.Flows
         public string PlanId => this.planId;
         public Models.Instance DatabaseInstance => this.databaseInstance;
 
-        public ProvisionInstanceStateFlow(
+        public ProvisionInstanceStageFlow(
             string planId,
             Models.Instance databaseInstance)
         {
@@ -36,7 +36,7 @@ namespace Dogger.Domain.Services.Provisioning.Flows
         }
 
         public async Task<IProvisioningStage?> GetNextStateAsync(
-            NextStateContext context)
+            NextStageContext context)
         {
             switch (context.CurrentStage)
             {
@@ -50,7 +50,7 @@ namespace Dogger.Domain.Services.Provisioning.Flows
                     return null;
 
                 default:
-                    throw new UnknownFlowStateException($"Could not determine the next state for a state of type {context.CurrentStage.GetType().FullName}.");
+                    throw new UnknownFlowStageException($"Could not determine the next state for a state of type {context.CurrentStage.GetType().FullName}.");
             }
         }
 

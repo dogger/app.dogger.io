@@ -146,7 +146,7 @@ namespace Dogger.Domain.Services.Provisioning.Stages.RunDockerComposeOnInstance
                     this.InstanceName,
                     ex.Result.Text));
 
-                throw new StateUpdateException(
+                throw new StageUpdateException(
                     "Could not run containers: " + ex.Result.Text,
                     ex,
                     new BadRequestObjectResult(

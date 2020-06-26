@@ -48,7 +48,7 @@ namespace Dogger.Domain.Services.Provisioning
         }
 
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "The IServiceScope is disposed once the job has finished running in this case.")]
-        public async Task<IProvisioningJob> ScheduleJobAsync(IProvisioningStateFlow flow)
+        public async Task<IProvisioningJob> ScheduleJobAsync(IProvisioningStageFlow flow)
         {
             var scope = this.serviceProvider.CreateScope();
 
@@ -100,7 +100,7 @@ namespace Dogger.Domain.Services.Provisioning
                     }
                     else
                     {
-                        var nextState = await job.Flow.GetNextStateAsync(new NextStateContext(
+                        var nextState = await job.Flow.GetNextStateAsync(new NextStageContext(
                             job.Mediator,
                             job.StateFactory,
                             job.CurrentStage));
@@ -123,9 +123,9 @@ namespace Dogger.Domain.Services.Provisioning
                     this.logger.Error(ex, "An error occured while trying to switch state with the message {ExceptionMessage}.", ex.Message);
 
                     job.Dispose();
-                    job.Exception = ex is StateUpdateException suex ?
+                    job.Exception = ex is StageUpdateException suex ?
                         suex :
-                        new StateUpdateException(
+                        new StageUpdateException(
                             "A generic error occured while trying to switch state.",
                             ex);
                 }

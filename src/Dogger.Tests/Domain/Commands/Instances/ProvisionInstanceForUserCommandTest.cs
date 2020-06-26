@@ -216,7 +216,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             //Arrange
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             fakeProvisioningService
-                .ScheduleJobAsync(Arg.Any<IProvisioningStateFlow>())
+                .ScheduleJobAsync(Arg.Any<IProvisioningStageFlow>())
                 .Throws(new TestException());
 
             await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()

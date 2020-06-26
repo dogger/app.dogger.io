@@ -2,6 +2,6 @@
 {
     public interface IProvisioningStateContext
     {
-        public IProvisioningStage CurrentStage { set; }
+        IInstruction CurrentInstruction { get; set; }
     }
 }

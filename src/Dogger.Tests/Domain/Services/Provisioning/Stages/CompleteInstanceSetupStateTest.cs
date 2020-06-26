@@ -39,7 +39,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
             state.IpAddress = "some-ip-address";
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<StateUpdateException>(async () =>
+            var exception = await Assert.ThrowsExceptionAsync<StageUpdateException>(async () =>
                 await state.InitializeAsync());
 
             //Assert

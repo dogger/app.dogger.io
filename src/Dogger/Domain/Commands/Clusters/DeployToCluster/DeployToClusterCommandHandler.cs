@@ -82,7 +82,7 @@ namespace Dogger.Domain.Commands.Clusters.DeployToCluster
 
             var instance = cluster.Instances.Single();
 
-            return await this.provisioningService.ScheduleJobAsync(new DeployToClusterStateFlow(
+            return await this.provisioningService.ScheduleJobAsync(new DeployToClusterStageFlow(
                 instance.Name,
                 request.DockerComposeYmlContents)
             {

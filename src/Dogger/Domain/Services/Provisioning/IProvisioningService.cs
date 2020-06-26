@@ -6,7 +6,7 @@ namespace Dogger.Domain.Services.Provisioning
 {
     public interface IProvisioningService : IHostedService
     {
-        Task<IProvisioningJob> ScheduleJobAsync(IProvisioningStateFlow flow);
+        Task<IProvisioningJob> ScheduleJobAsync(IProvisioningStageFlow flow);
 
         Task<IProvisioningJob?> GetJobByIdAsync(string jobId);
 

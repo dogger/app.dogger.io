@@ -19,7 +19,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning
             //Arrange
             var fakeInitialState = Substitute.For<IProvisioningStage>();
 
-            var fakeFlow = Substitute.For<IProvisioningStateFlow>();
+            var fakeFlow = Substitute.For<IProvisioningStageFlow>();
             fakeFlow
                 .GetInitialStateAsync(Arg.Any<InitialStateContext>())
                 .Returns(fakeInitialState);
@@ -42,7 +42,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning
             //Arrange
             var fakeInitialState = Substitute.For<IProvisioningStage>();
 
-            var fakeFlow = Substitute.For<IProvisioningStateFlow>();
+            var fakeFlow = Substitute.For<IProvisioningStageFlow>();
             fakeFlow
                 .GetInitialStateAsync(Arg.Any<InitialStateContext>())
                 .Returns(fakeInitialState);

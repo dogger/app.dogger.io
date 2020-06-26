@@ -6,19 +6,19 @@ using Dogger.Domain.Services.Provisioning.Stages;
 
 namespace Dogger.Domain.Services.Provisioning.Flows
 {
-    public class AggregateProvisioningStateFlow : IProvisioningStateFlow
+    public class AggregateProvisioningStageFlow : IProvisioningStageFlow
     {
-        private readonly IList<IProvisioningStateFlow> flows;
+        private readonly IList<IProvisioningStageFlow> flows;
 
-        private readonly IProvisioningStateFlow lastFlow;
-        private readonly IProvisioningStateFlow firstFlow;
+        private readonly IProvisioningStageFlow lastFlow;
+        private readonly IProvisioningStageFlow firstFlow;
 
-        private IProvisioningStateFlow currentFlow;
+        private IProvisioningStageFlow currentFlow;
 
-        public IProvisioningStateFlow[] Flows => this.flows.ToArray();
+        public IProvisioningStageFlow[] Flows => this.flows.ToArray();
 
-        public AggregateProvisioningStateFlow(
-            params IProvisioningStateFlow[] flows)
+        public AggregateProvisioningStageFlow(
+            params IProvisioningStageFlow[] flows)
         {
             this.flows = flows.ToList();
             this.currentFlow = this.firstFlow = flows.FirstOrDefault();
@@ -33,7 +33,7 @@ namespace Dogger.Domain.Services.Provisioning.Flows
             return await this.firstFlow.GetInitialStateAsync(context);
         }
 
-        public async Task<IProvisioningStage?> GetNextStateAsync(NextStateContext context)
+        public async Task<IProvisioningStage?> GetNextStateAsync(NextStageContext context)
         {
             var nextState = await this.currentFlow.GetNextStateAsync(context);
             if (nextState != null)
@@ -51,7 +51,7 @@ namespace Dogger.Domain.Services.Provisioning.Flows
                     context.StateFactory));
         }
 
-        public TFlow GetFlowOfType<TFlow>(int index) where TFlow : IProvisioningStateFlow
+        public TFlow GetFlowOfType<TFlow>(int index) where TFlow : IProvisioningStageFlow
         {
             return (TFlow)this.flows[index];
         }

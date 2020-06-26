@@ -10,7 +10,7 @@ namespace Dogger.Domain.Services.Provisioning
 
         string Id { get; }
 
-        StateUpdateException? Exception { get; set; }
-        IProvisioningStage CurrentStage { get; set; }
+        StageUpdateException? Exception { get; set; }
+        IInstruction CurrentInstruction { get; set; }
     }
 }

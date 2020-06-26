@@ -66,7 +66,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
             await state.InitializeAsync();
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<StateUpdateException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<StageUpdateException>(async () => 
                 await state.UpdateAsync());
 
             //Assert

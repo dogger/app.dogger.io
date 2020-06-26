@@ -101,15 +101,15 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
                         configuration),
                     cancellationToken);
 
-                var flowsToUse = new List<IProvisioningStateFlow>();
+                var flowsToUse = new List<IProvisioningStageFlow>();
                 if (!instance.IsProvisioned)
                 {
-                    flowsToUse.Add(new ProvisionInstanceStateFlow(
+                    flowsToUse.Add(new ProvisionInstanceStageFlow(
                         settings.PlanId,
                         instance));
                 }
 
-                flowsToUse.Add(new DeployToClusterStateFlow(
+                flowsToUse.Add(new DeployToClusterStageFlow(
                     instance.Name,
                     context.DockerComposeYmlContents)
                 {
@@ -122,7 +122,7 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
                 });
 
                 await provisioningService.ScheduleJobAsync(
-                    new AggregateProvisioningStateFlow(flowsToUse.ToArray()));
+                    new AggregateProvisioningStageFlow(flowsToUse.ToArray()));
             }
             catch (PullDogPoolSizeExceededException ex)
             {

@@ -83,11 +83,11 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
             var dockerFiles = GetDockerFiles(this.configuration, dogfeedOptions);
 
             return await this.provisioningService.ScheduleJobAsync(
-                new AggregateProvisioningStateFlow(
-                    new ProvisionInstanceStateFlow(
+                new AggregateProvisioningStageFlow(
+                    new ProvisionInstanceStageFlow(
                         firstCapablePlan.Id,
                         instance),
-                    new DeployToClusterStateFlow(
+                    new DeployToClusterStageFlow(
                         request.InstanceName,
                         new[] { dockerComposeYmlContents })
                     {

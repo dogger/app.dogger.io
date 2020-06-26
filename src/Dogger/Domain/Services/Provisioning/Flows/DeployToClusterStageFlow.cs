@@ -8,7 +8,7 @@ using Dogger.Domain.Services.Provisioning.Stages.RunDockerComposeOnInstance;
 
 namespace Dogger.Domain.Services.Provisioning.Flows
 {
-    public class DeployToClusterStateFlow : IProvisioningStateFlow
+    public class DeployToClusterStageFlow : IProvisioningStageFlow
     {
         public string InstanceName { get; }
         public string[] DockerComposeYmlContents { get; }
@@ -16,7 +16,7 @@ namespace Dogger.Domain.Services.Provisioning.Flows
         public IEnumerable<InstanceDockerFile>? Files { get; set; }
         public IDictionary<string, string>? BuildArguments { get; set; }
 
-        public DeployToClusterStateFlow(
+        public DeployToClusterStageFlow(
             string instanceName,
             string[] dockerComposeYmlContents)
         {
@@ -42,7 +42,7 @@ namespace Dogger.Domain.Services.Provisioning.Flows
             });
         }
 
-        public async Task<IProvisioningStage?> GetNextStateAsync(NextStateContext context)
+        public async Task<IProvisioningStage?> GetNextStateAsync(NextStageContext context)
         {
             return null;
         }
