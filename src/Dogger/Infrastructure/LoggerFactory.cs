@@ -48,16 +48,11 @@ namespace Dogger.Infrastructure
                     FailureCallback = e => Console.WriteLine($"Unable to log message with template {e.MessageTemplate}"),
                     EmitEventFailure =
                         EmitEventFailureHandling.WriteToSelfLog |
-                        EmitEventFailureHandling.WriteToFailureSink |
                         EmitEventFailureHandling.RaiseCallback,
-                    FailureSink = new SlackSink(
-                        slackWebhookUrl,
-                        default(SlackSink.RenderMessageMethod),
-                        default,
-                        default,
-                        default),
                     NumberOfReplicas = 0,
                     NumberOfShards = 1,
+                    BatchPostingLimit = 1,
+                    
                     MinimumLogEventLevel = LogEventLevel.Verbose,
                     DetectElasticsearchVersion = false,
                     AutoRegisterTemplate = true,
@@ -65,10 +60,6 @@ namespace Dogger.Infrastructure
                     RegisterTemplateFailure = RegisterTemplateRecovery.IndexAnyway,
                     ModifyConnectionSettings = x => x
                         .BasicAuthentication("elastic", "elastic")
-                        .RequestTimeout(TimeSpan.FromMinutes(1))
-                        .MaxRetryTimeout(TimeSpan.FromHours(1))
-                        .MaximumRetries(1000)
-                        .ThrowExceptions()
                         .ServerCertificateValidationCallback((a, b, c, d) => true),
                     ConnectionTimeout = TimeSpan.FromMinutes(15)
                 })

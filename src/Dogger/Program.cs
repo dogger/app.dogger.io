@@ -85,6 +85,7 @@ namespace Dogger
 
         public static IHostBuilder CreateDoggerHostBuilder(IConfiguration? configuration, string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     if (configuration != null)
@@ -100,8 +101,7 @@ namespace Dogger
                 .ConfigureServices((context, services) =>
                 {
                     IocRegistry.RegisterDelayedHostedServices(services);
-                })
-                .UseSerilog();
+                });
 
         /// <summary>
         /// Used by Entity Framework when running console commands for migrations etc. It must have this signature.

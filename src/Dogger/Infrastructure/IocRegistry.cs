@@ -268,7 +268,7 @@ namespace Dogger.Infrastructure
                             .ConfigureWarnings(w => w
                                 .Ignore(InMemoryEventId.TransactionIgnoredWarning));
                     }
-                }, 
+                },
                 ServiceLifetime.Scoped,
                 ServiceLifetime.Scoped);
 
