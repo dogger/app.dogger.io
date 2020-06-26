@@ -15,16 +15,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dogger.Domain.Services.Provisioning.Stages.RunDockerComposeOnInstance
 {
-    public class RunDockerComposeOnInstanceStage : SshInstanceStage, IRunDockerComposeOnInstanceStage
+    public class RunDockerComposeOnInstanceStage : IRunDockerComposeOnInstanceStage
     {
-        private readonly IMediator mediator;
-        private readonly IDockerComposeParserFactory dockerComposeParserFactory;
-
-        private string description;
-
-        public override string Description => this.description;
-
-        public override string? IpAddress { get; set; }
         public string? InstanceName { get; set; }
 
         public IDictionary<string, string>? BuildArguments { get; set; }
@@ -33,17 +25,6 @@ namespace Dogger.Domain.Services.Provisioning.Stages.RunDockerComposeOnInstance
 
         [NotLogged]
         public IEnumerable<IDockerAuthenticationArguments>? Authentication { get; set; }
-
-        public RunDockerComposeOnInstanceStage(
-            ISshClientFactory sshClientFactory,
-            IMediator mediator,
-            IDockerComposeParserFactory dockerComposeParserFactory) : base(sshClientFactory)
-        {
-            this.mediator = mediator;
-            this.dockerComposeParserFactory = dockerComposeParserFactory;
-
-            this.description = "Installing your services using Docker Compose";
-        }
 
         protected override async Task<ProvisioningStateUpdateResult> OnUpdateAsync(ISshClient sshClient)
         {
