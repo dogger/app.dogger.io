@@ -34,7 +34,7 @@ namespace Dogger.Controllers.Webhooks.Handlers
             if (settings == null)
                 return;
 
-            foreach (var repository in settings.Repositories)
+            foreach (var repository in settings.Repositories.ToArray())
             {
                 if (repository.GitHubInstallationId != payload.Installation.Id)
                     continue;

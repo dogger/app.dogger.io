@@ -35,7 +35,7 @@ namespace Dogger.Controllers.Webhooks.Handlers
                 new GetPullDogSettingsByGitHubInstallationIdQuery(
                     payload.Installation.Id));
             if (settings == null)
-                throw new InvalidOperationException("Could not find the given repository.");
+                throw new InvalidOperationException($"Could not find Pull Dog settings for an installation ID of {payload.Installation.Id}.");
 
             if (payload.RepositoriesRemoved != null)
             {
