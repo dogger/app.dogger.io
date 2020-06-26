@@ -42,26 +42,28 @@ namespace Dogger.Infrastructure
 
             SelfLog.Enable(Console.Error);
 
-            Sink = new ElasticsearchSink(new ElasticsearchSinkOptions(new Uri("https://elasticsearch:9200"))
+            if (Sink == null)
             {
-                FailureCallback = e => Console.WriteLine($"Unable to log message with template {e.MessageTemplate}"),
-                EmitEventFailure =
-                    EmitEventFailureHandling.WriteToSelfLog |
-                    EmitEventFailureHandling.RaiseCallback,
-                NumberOfReplicas = 0,
-                NumberOfShards = 1,
-                BatchPostingLimit = 1,
-
-                MinimumLogEventLevel = LogEventLevel.Verbose,
-                DetectElasticsearchVersion = false,
-                AutoRegisterTemplate = true,
-                AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
-                RegisterTemplateFailure = RegisterTemplateRecovery.IndexAnyway,
-                ModifyConnectionSettings = x => x
-                    .BasicAuthentication("elastic", "elastic")
-                    .ServerCertificateValidationCallback((a, b, c, d) => true),
-                ConnectionTimeout = TimeSpan.FromMinutes(15)
-            });
+                Sink = new ElasticsearchSink(new ElasticsearchSinkOptions(new Uri("https://elasticsearch:9200"))
+                {
+                    FailureCallback = e => Console.WriteLine($"Unable to log message with template {e.MessageTemplate}"),
+                    EmitEventFailure =
+                        EmitEventFailureHandling.WriteToSelfLog |
+                        EmitEventFailureHandling.RaiseCallback,
+                    NumberOfReplicas = 0,
+                    NumberOfShards = 1,
+                    BatchPostingLimit = 1,
+                    MinimumLogEventLevel = LogEventLevel.Verbose,
+                    DetectElasticsearchVersion = false,
+                    AutoRegisterTemplate = true,
+                    AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
+                    RegisterTemplateFailure = RegisterTemplateRecovery.IndexAnyway,
+                    ModifyConnectionSettings = x => x
+                        .BasicAuthentication("elastic", "elastic")
+                        .ServerCertificateValidationCallback((a, b, c, d) => true),
+                    ConnectionTimeout = TimeSpan.FromMinutes(15)
+                });
+            }
 
             var slackWebhookUrl = configuration["Slack:IncomingUrl"];
             return CreateBaseLoggingConfiguration()
