@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Destructurama;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -12,7 +9,7 @@ using Serilog.Events;
 using Serilog.Sinks.Elasticsearch;
 using Serilog.Sinks.Slack.Core;
 
-namespace Dogger.Infrastructure
+namespace Dogger.Infrastructure.Logging
 {
     public static class LoggerFactory
     {

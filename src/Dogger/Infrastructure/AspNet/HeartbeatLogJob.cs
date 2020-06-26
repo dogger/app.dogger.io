@@ -7,6 +7,7 @@ using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Queries.Instances.GetExpiredInstances;
+using Dogger.Infrastructure.Logging;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

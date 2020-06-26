@@ -1,4 +1,4 @@
-﻿using Dogger.Domain.Services.Provisioning.States;
+﻿using Dogger.Domain.Services.Provisioning.Stages;
 
 namespace Dogger.Domain.Services.Provisioning
 {
@@ -11,6 +11,6 @@ namespace Dogger.Domain.Services.Provisioning
         string Id { get; }
 
         StateUpdateException? Exception { get; set; }
-        IProvisioningState CurrentState { get; set; }
+        IProvisioningStage CurrentStage { get; set; }
     }
 }

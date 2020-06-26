@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Services.Provisioning.Arguments;
-using Dogger.Domain.Services.Provisioning.States;
-using Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance;
+using Dogger.Domain.Services.Provisioning.Stages;
+using Dogger.Domain.Services.Provisioning.Stages.RunDockerComposeOnInstance;
 
 namespace Dogger.Domain.Services.Provisioning.Flows
 {
@@ -24,14 +24,14 @@ namespace Dogger.Domain.Services.Provisioning.Flows
             this.DockerComposeYmlContents = dockerComposeYmlContents;
         }
 
-        public async Task<IProvisioningState> GetInitialStateAsync(InitialStateContext context)
+        public async Task<IProvisioningStage> GetInitialStateAsync(InitialStateContext context)
         {
             var amazonInstance = await context.Mediator.Send(
                 new GetLightsailInstanceByNameQuery(InstanceName));
             if (amazonInstance == null)
                 throw new InvalidOperationException("Instance was not found.");
 
-            return context.StateFactory.Create<RunDockerComposeOnInstanceState>(state =>
+            return context.StateFactory.Create<RunDockerComposeOnInstanceStage>(state =>
             {
                 state.BuildArguments = BuildArguments;
                 state.DockerComposeYmlContents = DockerComposeYmlContents;
@@ -42,7 +42,7 @@ namespace Dogger.Domain.Services.Provisioning.Flows
             });
         }
 
-        public async Task<IProvisioningState?> GetNextStateAsync(NextStateContext context)
+        public async Task<IProvisioningStage?> GetNextStateAsync(NextStateContext context)
         {
             return null;
         }

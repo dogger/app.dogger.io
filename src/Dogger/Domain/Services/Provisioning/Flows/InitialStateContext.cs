@@ -1,4 +1,4 @@
-﻿using Dogger.Domain.Services.Provisioning.States;
+﻿using Dogger.Domain.Services.Provisioning.Stages;
 using MediatR;
 
 namespace Dogger.Domain.Services.Provisioning.Flows

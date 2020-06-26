@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dogger.Domain.Services.Provisioning.States;
+using Dogger.Domain.Services.Provisioning.Stages;
 
 namespace Dogger.Domain.Services.Provisioning.Flows
 {
@@ -25,7 +25,7 @@ namespace Dogger.Domain.Services.Provisioning.Flows
             this.lastFlow = flows.LastOrDefault();
         }
 
-        public async Task<IProvisioningState> GetInitialStateAsync(InitialStateContext context)
+        public async Task<IProvisioningStage> GetInitialStateAsync(InitialStateContext context)
         {
             if (this.firstFlow != this.currentFlow)
                 throw new InvalidOperationException("The first flow is not the active flow, so the initial state can't be fetched.");
@@ -33,7 +33,7 @@ namespace Dogger.Domain.Services.Provisioning.Flows
             return await this.firstFlow.GetInitialStateAsync(context);
         }
 
-        public async Task<IProvisioningState?> GetNextStateAsync(NextStateContext context)
+        public async Task<IProvisioningStage?> GetNextStateAsync(NextStateContext context)
         {
             var nextState = await this.currentFlow.GetNextStateAsync(context);
             if (nextState != null)

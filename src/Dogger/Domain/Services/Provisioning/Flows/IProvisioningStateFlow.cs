@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
-using Dogger.Domain.Services.Provisioning.States;
+using Dogger.Domain.Services.Provisioning.Stages;
 
 namespace Dogger.Domain.Services.Provisioning.Flows
 {
     public interface IProvisioningStateFlow
     {
-        Task<IProvisioningState> GetInitialStateAsync(InitialStateContext context);
-        Task<IProvisioningState?> GetNextStateAsync(NextStateContext context);
+        Task<IProvisioningStage> GetInitialStateAsync(InitialStateContext context);
+        Task<IProvisioningStage?> GetNextStateAsync(NextStateContext context);
     }
 
 }

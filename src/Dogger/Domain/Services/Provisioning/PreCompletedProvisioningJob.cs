@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Dogger.Domain.Services.Provisioning.States;
+using Dogger.Domain.Services.Provisioning.Stages;
 
 namespace Dogger.Domain.Services.Provisioning
 {
@@ -20,13 +20,13 @@ namespace Dogger.Domain.Services.Provisioning
             set => throw new InvalidOperationException("Can't set exception on a pre-completed provisioning job.");
         }
 
-        public IProvisioningState CurrentState
+        public IProvisioningStage CurrentStage
         {
-            get => new CompletedProvisioningState();
+            get => new CompletedProvisioningStage();
             set => throw new InvalidOperationException("Can't set state on a pre-completed provisioning job.");
         }
 
-        private class CompletedProvisioningState : IProvisioningState
+        private class CompletedProvisioningStage : IProvisioningStage
         {
             public string Description => string.Empty;
 

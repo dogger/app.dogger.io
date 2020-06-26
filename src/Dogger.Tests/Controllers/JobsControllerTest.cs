@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Dogger.Controllers.Jobs;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
-using Dogger.Domain.Services.Provisioning.States;
+using Dogger.Domain.Services.Provisioning.Stages;
 using Dogger.Infrastructure;
 using Dogger.Tests.TestHelpers;
 using MediatR;

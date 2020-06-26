@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Services.Provisioning.Flows;
-using Dogger.Domain.Services.Provisioning.States;
+using Dogger.Domain.Services.Provisioning.Stages;
 using Dogger.Infrastructure.Time;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -87,12 +87,12 @@ namespace Dogger.Domain.Services.Provisioning
             while (this.jobQueue.Count > 0)
             {
                 var job = this.jobQueue.Dequeue();
-                if (job.CurrentState == null)
+                if (job.CurrentStage == null)
                     throw new InvalidOperationException("A job's state was not set.");
 
                 try
                 {
-                    var result = await job.CurrentState.UpdateAsync();
+                    var result = await job.CurrentStage.UpdateAsync();
                     if (result == ProvisioningStateUpdateResult.InProgress)
                     {
                         this.jobQueue.Enqueue(job);
@@ -103,7 +103,7 @@ namespace Dogger.Domain.Services.Provisioning
                         var nextState = await job.Flow.GetNextStateAsync(new NextStateContext(
                             job.Mediator,
                             job.StateFactory,
-                            job.CurrentState));
+                            job.CurrentStage));
                         if (nextState == null)
                         {
                             job.IsSucceeded = true;
@@ -113,7 +113,7 @@ namespace Dogger.Domain.Services.Provisioning
                         {
                             await nextState.InitializeAsync();
 
-                            job.CurrentState = nextState;
+                            job.CurrentStage = nextState;
                             this.jobQueue.Enqueue(job);
                         }
                     }

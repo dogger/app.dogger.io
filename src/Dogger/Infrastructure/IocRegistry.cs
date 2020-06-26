@@ -15,10 +15,10 @@ using Dogger.Domain.Services.Amazon.Identity;
 using Dogger.Domain.Services.Amazon.Lightsail;
 using Dogger.Domain.Services.Dogfeeding;
 using Dogger.Domain.Services.Provisioning;
-using Dogger.Domain.Services.Provisioning.States.CompleteInstanceSetup;
-using Dogger.Domain.Services.Provisioning.States.CreateLightsailInstance;
-using Dogger.Domain.Services.Provisioning.States.InstallSoftwareOnInstance;
-using Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance;
+using Dogger.Domain.Services.Provisioning.Stages.CompleteInstanceSetup;
+using Dogger.Domain.Services.Provisioning.Stages.CreateLightsailInstance;
+using Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance;
+using Dogger.Domain.Services.Provisioning.Stages.RunDockerComposeOnInstance;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Domain.Services.PullDog.GitHub;
 using Dogger.Infrastructure.AspNet;
@@ -370,10 +370,10 @@ namespace Dogger.Infrastructure
             services.AddSingleton<ProvisioningService>();
             services.AddSingleton<IProvisioningService>(x => x.GetRequiredService<ProvisioningService>());
 
-            services.AddTransient<CreateLightsailInstanceState>();
-            services.AddTransient<InstallSoftwareOnInstanceState>();
-            services.AddTransient<RunDockerComposeOnInstanceState>();
-            services.AddTransient<CompleteInstanceSetupState>();
+            services.AddTransient<CreateLightsailInstanceStage>();
+            services.AddTransient<InstallSoftwareOnInstanceStage>();
+            services.AddTransient<RunDockerComposeOnInstanceStage>();
+            services.AddTransient<CompleteInstanceSetupStage>();
         }
 
         [ExcludeFromCodeCoverage]

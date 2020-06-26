@@ -8,7 +8,7 @@ namespace Dogger.Controllers.Jobs
         public JobsMappingProfile()
         {
             CreateMap<ProvisioningJob, JobStatusResponse>()
-                .ForMember(x => x.StateDescription, x => x.MapFrom(y => y.CurrentState!.Description));
+                .ForMember(x => x.StateDescription, x => x.MapFrom(y => y.CurrentStage!.Description));
 
             CreateMap<PreCompletedProvisioningJob, JobStatusResponse>()
                 .ForMember(x => x.StateDescription, x => x.MapFrom(y => string.Empty));

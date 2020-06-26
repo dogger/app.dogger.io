@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dogger.Domain.Services.Provisioning.States;
-using Dogger.Domain.Services.Provisioning.States.CompleteInstanceSetup;
-using Dogger.Domain.Services.Provisioning.States.CreateLightsailInstance;
-using Dogger.Domain.Services.Provisioning.States.InstallSoftwareOnInstance;
+using Dogger.Domain.Services.Provisioning.Stages;
+using Dogger.Domain.Services.Provisioning.Stages.CompleteInstanceSetup;
+using Dogger.Domain.Services.Provisioning.Stages.CreateLightsailInstance;
+using Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance;
 
 namespace Dogger.Domain.Services.Provisioning.Flows
 {
@@ -25,55 +25,55 @@ namespace Dogger.Domain.Services.Provisioning.Flows
             this.databaseInstance = databaseInstance;
         }
 
-        public async Task<IProvisioningState> GetInitialStateAsync(
+        public async Task<IProvisioningStage> GetInitialStateAsync(
             InitialStateContext context)
         {
-            return context.StateFactory.Create<CreateLightsailInstanceState>(state =>
+            return context.StateFactory.Create<CreateLightsailInstanceStage>(state =>
             {
                 state.DatabaseInstance = this.databaseInstance;
                 state.PlanId = this.planId;
             });
         }
 
-        public async Task<IProvisioningState?> GetNextStateAsync(
+        public async Task<IProvisioningStage?> GetNextStateAsync(
             NextStateContext context)
         {
-            switch (context.CurrentState)
+            switch (context.CurrentStage)
             {
-                case ICreateLightsailInstanceState createLightsailInstanceState:
+                case ICreateLightsailInstanceStage createLightsailInstanceState:
                     return TransitionFromCreateToInstall(context.StateFactory, createLightsailInstanceState);
 
-                case IInstallSoftwareOnInstanceState installDockerOnInstanceState:
+                case IInstallSoftwareOnInstanceStage installDockerOnInstanceState:
                     return TransitionFromInstallToComplete(context.StateFactory, installDockerOnInstanceState);
 
-                case ICompleteInstanceSetupState _:
+                case ICompleteInstanceSetupStage _:
                     return null;
 
                 default:
-                    throw new UnknownFlowStateException($"Could not determine the next state for a state of type {context.CurrentState.GetType().FullName}.");
+                    throw new UnknownFlowStateException($"Could not determine the next state for a state of type {context.CurrentStage.GetType().FullName}.");
             }
         }
 
-        private IProvisioningState? TransitionFromInstallToComplete(
+        private IProvisioningStage? TransitionFromInstallToComplete(
             IProvisioningStateFactory stateFactory, 
-            IInstallSoftwareOnInstanceState installSoftwareOnInstanceState)
+            IInstallSoftwareOnInstanceStage installSoftwareOnInstanceStage)
         {
-            return stateFactory.Create<CompleteInstanceSetupState>(state =>
+            return stateFactory.Create<CompleteInstanceSetupStage>(state =>
             {
-                state.IpAddress = installSoftwareOnInstanceState.IpAddress;
+                state.IpAddress = installSoftwareOnInstanceStage.IpAddress;
 
                 state.UserId = UserId;
                 state.InstanceName = DatabaseInstance.Name;
             });
         }
 
-        private IProvisioningState TransitionFromCreateToInstall(
+        private IProvisioningStage TransitionFromCreateToInstall(
             IProvisioningStateFactory stateFactory, 
-            ICreateLightsailInstanceState createLightsailInstanceState)
+            ICreateLightsailInstanceStage createLightsailInstanceStage)
         {
-            return stateFactory.Create<InstallSoftwareOnInstanceState>(state =>
+            return stateFactory.Create<InstallSoftwareOnInstanceStage>(state =>
             {
-                state.IpAddress = createLightsailInstanceState.CreatedLightsailInstance.PublicIpAddress;
+                state.IpAddress = createLightsailInstanceStage.CreatedLightsailInstance.PublicIpAddress;
 
                 state.InstanceName = DatabaseInstance.Name;
                 state.UserId = UserId;

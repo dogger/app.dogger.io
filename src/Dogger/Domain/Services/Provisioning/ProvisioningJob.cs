@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dogger.Domain.Services.Provisioning.Flows;
-using Dogger.Domain.Services.Provisioning.States;
+using Dogger.Domain.Services.Provisioning.Stages;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,7 +12,7 @@ namespace Dogger.Domain.Services.Provisioning
     {
         public IMediator Mediator { get; }
 
-        private IProvisioningState? state;
+        private IProvisioningStage? state;
 
         public string Id
         {
@@ -34,11 +34,11 @@ namespace Dogger.Domain.Services.Provisioning
         public IProvisioningStateFactory StateFactory { get; }
         public IServiceScope ServiceScope { get; }
 
-        public IProvisioningState CurrentState
+        public IProvisioningStage CurrentStage
         {
             get => 
                 this.state ?? 
-                throw new InvalidOperationException("CurrentState has not been initialized on the job.");
+                throw new InvalidOperationException("CurrentStage has not been initialized on the job.");
             set
             {
                 if (this.state != null && this.state != value)

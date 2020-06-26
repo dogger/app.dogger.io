@@ -1,4 +1,4 @@
-﻿using Dogger.Domain.Services.Provisioning.States;
+﻿using Dogger.Domain.Services.Provisioning.Stages;
 using MediatR;
 
 namespace Dogger.Domain.Services.Provisioning.Flows
@@ -8,15 +8,15 @@ namespace Dogger.Domain.Services.Provisioning.Flows
         public NextStateContext(
             IMediator mediator,
             IProvisioningStateFactory stateFactory, 
-            IProvisioningState currentState)
+            IProvisioningStage currentStage)
         {
             this.Mediator = mediator;
             this.StateFactory = stateFactory;
-            this.CurrentState = currentState;
+            this.CurrentStage = currentStage;
         }
 
         public IProvisioningStateFactory StateFactory { get; }
         public IMediator Mediator { get; }
-        public IProvisioningState CurrentState { get; }
+        public IProvisioningStage CurrentStage { get; }
     }
 }

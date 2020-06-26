@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Destructurama;
 using Dogger.Domain.Models;
 using Dogger.Infrastructure.Database;
+using Dogger.Infrastructure.Logging;
 using FluffySpoon.AspNet.NGrok;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
