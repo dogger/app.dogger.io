@@ -2,10 +2,8 @@
 using System.Diagnostics;
 using Destructurama;
 using Dogger.Infrastructure.Logging;
-using Elasticsearch.Net;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.Elasticsearch;
