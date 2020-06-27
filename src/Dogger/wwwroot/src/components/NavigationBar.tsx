@@ -35,6 +35,10 @@ export const NavigationBar = (props: { onThemeToggle: () => void }) => {
           Docs
         </Button>
 
+        <Button color="inherit" href="https://github.com/dogger/dogger.io/issues/new" rel="nofollow">
+          Contact
+        </Button>
+
         <Box style={{
           marginLeft: 12,
           width: 35,
