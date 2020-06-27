@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using Polly;
 using Renci.SshNet;
@@ -54,14 +55,8 @@ namespace Dogger.Infrastructure.Ssh
 
         public async Task TransferFileAsync(string filePath, byte[] contents)
         {
-            await using var stream = new MemoryStream(contents);
-            await Task.Factory
-                .FromAsync(
-                    this.sftpClient.BeginUploadFile(
-                        stream, 
-                        filePath),
-                    this.sftpClient.EndUploadFile,
-                    TaskCreationOptions.AttachedToParent);
+            await using var stream = this.sftpClient.Create(filePath);
+            await stream.WriteAsync(contents, CancellationToken.None);
         }
 
         private async Task ConnectSshAsync()

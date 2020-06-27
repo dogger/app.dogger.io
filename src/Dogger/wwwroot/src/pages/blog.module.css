@@ -1,8 +1,9 @@
 .blog {
-    max-width: 800px;
+    max-width: min(800px, 100vw);
     margin-left: auto;
     margin-right: auto;
     padding-bottom: 70px;
+    padding: 0 24px;
 }
 
 .blog h1 {
@@ -27,6 +28,33 @@
     margin-bottom: 8px;
 }
 
+.blog p {
+    font-size: 18px;
+    line-height: 150%;
+}
+
+@media (max-width: 400px) {
+    .blog h1 {
+        font-size: 40px;
+    }
+
+    .blog h2 {
+        font-size: 30px;
+    }
+    
+    .blog h3 {
+        font-size: 25px;
+    }
+    
+    .blog h4 {
+        font-size: 20px;
+    }
+
+    .blog p {
+        font-size: 14px;
+    }
+}
+
 .blog img {
     box-shadow: 0px 0px 28px 6px rgba(0,0,0,0.05) !important;
 
@@ -34,11 +62,21 @@
     border-width: 1 !important;
     border-color: rgba(0,0,0,0.05) !important;
     border-style: solid !important;
+
+    max-width: 100%;
 }
 
-.blog p {
-    font-size: 18px;
-    line-height: 150%;
+.blog img, .blog .gatsby-resp-image-background-image, .blog pre {
+    max-width: 100%;
+}
+
+.blog pre {
+    overflow-x: scroll;
+    margin-right: -24px;
+    margin-left: -24px;
+    padding-left: 24px;
+    padding-right: 24px;
+    max-width: 100vw;
 }
 
 .blog pre code {

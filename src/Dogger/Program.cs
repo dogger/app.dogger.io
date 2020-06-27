@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Dogger.Infrastructure.Database;
+using Dogger.Infrastructure.Logging;
 using FluffySpoon.AspNet.NGrok;
 using Serilog;
 
