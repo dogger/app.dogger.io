@@ -146,7 +146,10 @@ namespace Dogger
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
-                    builder => builder.WithOrigins("https://dogger.io"));
+                    builder => builder
+                        .WithOrigins("https://dogger.io")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
             });
 
             services.AddResponseCompression(options =>

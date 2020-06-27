@@ -137,31 +137,37 @@ namespace Dogger.Infrastructure
                     return new GitHubClient(new ProductHeaderValue("pull-dog"));
                 }
 
-                var privateKeySource = new StringPrivateKeySource(
-                    privateKey);
-
-                var tokenFactory = new GitHubJwtFactory(
-                    privateKeySource,
-                    new GitHubJwtFactoryOptions()
-                    {
-                        AppIntegrationId = int.Parse(
-                            configuration["GitHub:PullDog:AppIdentifier"],
-                            CultureInfo.InvariantCulture),
-                        ExpirationSeconds = 60 * 5
-                    });
-
-                var token = tokenFactory.CreateEncodedJwtToken();
-                return new GitHubClient(new ProductHeaderValue("pull-dog"))
-                {
-                    Credentials = new Credentials(
-                        token,
-                        AuthenticationType.Bearer)
-                };
+                return ConstructGitHubClientWithPrivateKey(configuration, privateKey);
             });
 
             services.AddTransient<IGitHubClientFactory, GitHubClientFactory>();
             services.AddTransient<IPullDogRepositoryClientFactory, GitHubPullDogRepositoryClientFactory>();
             services.AddTransient<IPullDogFileCollectorFactory, PullDogFileCollectorFactory>();
+        }
+
+        [ExcludeFromCodeCoverage]
+        private static IGitHubClient ConstructGitHubClientWithPrivateKey(IConfiguration configuration, string privateKey)
+        {
+            var privateKeySource = new StringPrivateKeySource(
+                privateKey);
+
+            var tokenFactory = new GitHubJwtFactory(
+                privateKeySource,
+                new GitHubJwtFactoryOptions()
+                {
+                    AppIntegrationId = int.Parse(
+                        configuration["GitHub:PullDog:AppIdentifier"],
+                        CultureInfo.InvariantCulture),
+                    ExpirationSeconds = 60 * 5
+                });
+
+            var token = tokenFactory.CreateEncodedJwtToken();
+            return new GitHubClient(new ProductHeaderValue("pull-dog"))
+            {
+                Credentials = new Credentials(
+                    token,
+                    AuthenticationType.Bearer)
+            };
         }
 
         private static void ConfigureSlack(
