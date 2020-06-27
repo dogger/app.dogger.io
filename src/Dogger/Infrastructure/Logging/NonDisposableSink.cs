@@ -7,14 +7,11 @@ using Serilog.Events;
 
 namespace Dogger.Infrastructure.Logging
 {
-    [Obsolete("Only used temporarily for debugging. Should be removed when this issue is solved: https://github.com/dogger/dogger.io/issues/372")]
-    public class DisposableBugLoggerProxy : ILogEventSink, IDisposable
+    public class NonDisposableSink : ILogEventSink, IDisposable
     {
         private readonly ILogEventSink inner;
 
-        public bool IsDisposed { get; set; }
-
-        public DisposableBugLoggerProxy(
+        public NonDisposableSink(
             ILogEventSink inner)
         {
             this.inner = inner;
@@ -27,7 +24,6 @@ namespace Dogger.Infrastructure.Logging
 
         public void Dispose()
         {
-            IsDisposed = true;
         }
     }
 }
