@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using Dogger.Domain.Services.Provisioning.Instructions.Models;
 using Serilog;
 using Polly;
 using Renci.SshNet.Common;
@@ -52,12 +53,12 @@ namespace Dogger.Infrastructure.Ssh
         }
 
         public async Task<string> ExecuteCommandAsync(
-            SshRetryPolicy retryPolicy,
+            RetryPolicy retryPolicy,
             string commandText,
             Dictionary<string, string?>? arguments = null)
         {
             AsyncPolicy policy = Policy.NoOpAsync();
-            if (retryPolicy == SshRetryPolicy.AllowRetries)
+            if (retryPolicy == RetryPolicy.AllowRetries)
             {
                 policy = Policy
                     .Handle<SshCommandExecutionException>()

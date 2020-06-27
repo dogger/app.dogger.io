@@ -50,7 +50,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning
             var createdJob = await provisioningService.ScheduleJobAsync(Substitute.For<IProvisioningStageFlow>());
 
             //Act
-            var job = await provisioningService.GetJobByIdAsync(createdJob.Id);
+            var job = await provisioningService.GetJobById(createdJob.Id);
 
             //Assert
             Assert.IsNotNull(job);
@@ -65,7 +65,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning
             var provisioningService = serviceProvider.GetRequiredService<IProvisioningService>();
 
             //Act
-            var job = await provisioningService.GetJobByIdAsync("non-existing-id");
+            var job = await provisioningService.GetJobById("non-existing-id");
 
             //Assert
             Assert.IsNull(job);
@@ -85,13 +85,13 @@ namespace Dogger.Tests.Domain.Services.Provisioning
 
             var fakeFlow = Substitute.For<IProvisioningStageFlow>();
             fakeFlow
-                .GetInitialStateAsync(Arg.Any<InitialStateContext>())
+                .GetInitialState(Arg.Any<InitialStateContext>())
                 .Returns(fakeInitialState);
 
             var createdJob = await provisioningService.ScheduleJobAsync(fakeFlow);
 
             //Act
-            var job = await provisioningService.GetJobByIdAsync(createdJob.Id);
+            var job = await provisioningService.GetJobById(createdJob.Id);
 
             //Assert
             var state = job.CurrentStage;
@@ -211,11 +211,11 @@ namespace Dogger.Tests.Domain.Services.Provisioning
 
             var fakeFlow = Substitute.For<IProvisioningStageFlow>();
             fakeFlow
-                .GetInitialStateAsync(Arg.Any<InitialStateContext>())
+                .GetInitialState(Arg.Any<InitialStateContext>())
                 .Returns(fakeJobState);
 
             fakeFlow
-                .GetNextStateAsync(Arg.Any<NextStageContext>())
+                .GetNextState(Arg.Any<NextStageContext>())
                 .Returns((IProvisioningStage)null);
 
             var createdJob = await provisioningService.ScheduleJobAsync(fakeFlow);
@@ -250,11 +250,11 @@ namespace Dogger.Tests.Domain.Services.Provisioning
 
             var fakeFlow = Substitute.For<IProvisioningStageFlow>();
             fakeFlow
-                .GetInitialStateAsync(Arg.Any<InitialStateContext>())
+                .GetInitialState(Arg.Any<InitialStateContext>())
                 .Returns(fakeInitialState);
 
             fakeFlow
-                .GetNextStateAsync(Arg.Is<NextStageContext>(args =>
+                .GetNextState(Arg.Is<NextStageContext>(args =>
                     args.CurrentStage == fakeInitialState))
                 .Returns((IProvisioningStage)null);
 
@@ -297,17 +297,17 @@ namespace Dogger.Tests.Domain.Services.Provisioning
 
             var fakeFlow = Substitute.For<IProvisioningStageFlow>();
             fakeFlow
-                .GetInitialStateAsync(Arg.Any<InitialStateContext>())
+                .GetInitialState(Arg.Any<InitialStateContext>())
                 .Returns(fakeInitialState);
 
             fakeFlow
-                .GetNextStateAsync(Arg.Is<NextStageContext>(args => 
+                .GetNextState(Arg.Is<NextStageContext>(args => 
                     args.CurrentStage == fakeInitialState))
                 .Returns(
                     fakeNextState);
 
             fakeFlow
-                .GetNextStateAsync(Arg.Is<NextStageContext>(args =>
+                .GetNextState(Arg.Is<NextStageContext>(args =>
                     args.CurrentStage == fakeNextState))
                 .Returns((IProvisioningStage)null);
 
@@ -355,11 +355,11 @@ namespace Dogger.Tests.Domain.Services.Provisioning
 
             var fakeFlow = Substitute.For<IProvisioningStageFlow>();
             fakeFlow
-                .GetInitialStateAsync(Arg.Any<InitialStateContext>())
+                .GetInitialState(Arg.Any<InitialStateContext>())
                 .Returns(fakeJobState);
 
             fakeFlow
-                .GetNextStateAsync(Arg.Any<NextStageContext>())
+                .GetNextState(Arg.Any<NextStageContext>())
                 .Returns(
                     fakeJobState,
                     (IProvisioningStage)null);

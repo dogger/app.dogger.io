@@ -68,9 +68,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionInstanceForUser
             {
                 Name = $"{request.User.Id}_{Guid.NewGuid()}",
                 Cluster = cluster,
-                IsProvisioned = false,
-                PlanId = request.Plan.Id,
-                Type = InstanceType.DockerCompose
+                PlanId = request.Plan.Id
             };
 
             cluster.Instances.Add(instance);

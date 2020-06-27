@@ -23,12 +23,12 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
 
             var fakeProvisioningStateFlow = Substitute.For<IProvisioningStageFlow>();
 
-            var fakeInitialState = await fakeProvisioningStateFlow.GetInitialStateAsync(context);
+            var fakeInitialState = await fakeProvisioningStateFlow.GetInitialState(context);
 
             var flow = new AggregateProvisioningStageFlow(fakeProvisioningStateFlow);
 
             //Act
-            var initialState = await flow.GetInitialStateAsync(context);
+            var initialState = await flow.GetInitialState(context);
 
             //Assert
             Assert.AreSame(fakeInitialState, initialState);
@@ -50,7 +50,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
 
             var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStageFlow>();
             fakeProvisioningStateFlow1
-                .GetNextStateAsync(nextStateContext)
+                .GetNextState(nextStateContext)
                 .Returns((IProvisioningStage)null);
 
             var fakeProvisioningStateFlow2 = Substitute.For<IProvisioningStageFlow>();
@@ -59,11 +59,11 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
                 fakeProvisioningStateFlow1,
                 fakeProvisioningStateFlow2);
 
-            await flow.GetNextStateAsync(nextStateContext);
+            await flow.GetNextState(nextStateContext);
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
-                await flow.GetInitialStateAsync(initialStateContext));
+                await flow.GetInitialState(initialStateContext));
 
             //Assert
             Assert.IsNotNull(exception);
@@ -82,14 +82,14 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStageFlow>();
             var fakeProvisioningStateFlow2 = Substitute.For<IProvisioningStageFlow>();
 
-            var fakeNextState = await fakeProvisioningStateFlow1.GetNextStateAsync(nextStateContext);
+            var fakeNextState = await fakeProvisioningStateFlow1.GetNextState(nextStateContext);
 
             var flow = new AggregateProvisioningStageFlow(
                 fakeProvisioningStateFlow1,
                 fakeProvisioningStateFlow2);
 
             //Act
-            var nextState = await flow.GetNextStateAsync(nextStateContext);
+            var nextState = await flow.GetNextState(nextStateContext);
 
             //Assert
             Assert.AreSame(fakeNextState, nextState);
@@ -107,14 +107,14 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
 
             var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStageFlow>();
             fakeProvisioningStateFlow1
-                .GetNextStateAsync(nextStateContext)
+                .GetNextState(nextStateContext)
                 .Returns((IProvisioningStage)null);
 
             var fakeProvisioningStateFlow2 = Substitute.For<IProvisioningStageFlow>();
 
             var fakeInitialSecondFlowState = Substitute.For<IProvisioningStage>();
             fakeProvisioningStateFlow2
-                .GetInitialStateAsync(Arg.Any<InitialStateContext>())
+                .GetInitialState(Arg.Any<InitialStateContext>())
                 .Returns(fakeInitialSecondFlowState);
 
             var flow = new AggregateProvisioningStageFlow(
@@ -122,7 +122,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
                 fakeProvisioningStateFlow2);
 
             //Act
-            var nextState = await flow.GetNextStateAsync(nextStateContext);
+            var nextState = await flow.GetNextState(nextStateContext);
 
             //Assert
             Assert.AreSame(fakeInitialSecondFlowState, nextState);
@@ -140,14 +140,14 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
 
             var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStageFlow>();
             fakeProvisioningStateFlow1
-                .GetNextStateAsync(nextStateContext)
+                .GetNextState(nextStateContext)
                 .Returns((IProvisioningStage)null);
 
             var flow = new AggregateProvisioningStageFlow(
                 fakeProvisioningStateFlow1);
 
             //Act
-            var nextState = await flow.GetNextStateAsync(nextStateContext);
+            var nextState = await flow.GetNextState(nextStateContext);
 
             //Assert
             Assert.IsNull(nextState);

@@ -43,7 +43,7 @@ namespace Dogger.Tests.Controllers
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             fakeProvisioningService
-                .GetJobByIdAsync("some-job-id")
+                .GetJobById("some-job-id")
                 .Returns(provisioningJob);
 
             var mapper = AutoMapperFactory.CreateValidMapper();
@@ -66,7 +66,7 @@ namespace Dogger.Tests.Controllers
             //Arrange
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             fakeProvisioningService
-                .GetJobByIdAsync(Arg.Any<string>())
+                .GetJobById(Arg.Any<string>())
                 .Returns((ProvisioningJob)null);
 
             var mapper = AutoMapperFactory.CreateValidMapper();
@@ -111,7 +111,7 @@ namespace Dogger.Tests.Controllers
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             fakeProvisioningService
-                .GetJobByIdAsync("some-job-id")
+                .GetJobById("some-job-id")
                 .Returns(provisioningJob);
 
             var mapper = AutoMapperFactory.CreateValidMapper();

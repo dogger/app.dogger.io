@@ -8,7 +8,7 @@ namespace Dogger.Domain.Services.Provisioning
     {
         Task<IProvisioningJob> ScheduleJobAsync(IProvisioningStageFlow flow);
 
-        Task<IProvisioningJob?> GetJobByIdAsync(string jobId);
+        IProvisioningJob? GetJobById(string jobId);
 
         Task ProcessPendingJobsAsync();
 

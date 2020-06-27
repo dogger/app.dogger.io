@@ -17,7 +17,6 @@ namespace Dogger.Domain.Services.Provisioning
         public const string CompletedJobId = "J_SUCCEEDED";
 
         private readonly ITime time;
-        private readonly IServiceProvider serviceProvider;
 
         private readonly ILogger logger;
 
@@ -26,34 +25,28 @@ namespace Dogger.Domain.Services.Provisioning
 
         public ProvisioningService(
             ITime time,
-            IServiceProvider serviceProvider,
             ILogger logger)
         {
             this.time = time;
-            this.serviceProvider = serviceProvider;
             this.logger = logger;
 
             this.jobQueue = new Queue<ProvisioningJob>();
             this.jobsByIds = new ConcurrentDictionary<string, ProvisioningJob>();
         }
 
-        public Task<IProvisioningJob?> GetJobByIdAsync(string jobId)
+        public IProvisioningJob? GetJobById(string jobId)
         {
             if (jobId == CompletedJobId)
-                return Task.FromResult<IProvisioningJob?>(GetCompletedJob());
+                return GetCompletedJob();
 
-            return this.jobsByIds.TryGetValue(jobId, out var job) ? 
-                Task.FromResult<IProvisioningJob?>(job) : 
-                Task.FromResult<IProvisioningJob?>(null);
+            return this.jobsByIds.TryGetValue(jobId, out var job) ? job : null;
         }
 
-        [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "The IServiceScope is disposed once the job has finished running in this case.")]
         public async Task<IProvisioningJob> ScheduleJobAsync(IProvisioningStageFlow flow)
         {
-            var scope = this.serviceProvider.CreateScope();
+            var initialState = flow.GetInitialState().
 
             var job = new ProvisioningJob(flow, scope);
-            await job.InitializeAsync();
 
             if (!this.jobsByIds.TryAdd(job.Id, job))
                 throw new InvalidOperationException("Could not add job to concurrent dictionary.");
@@ -100,7 +93,7 @@ namespace Dogger.Domain.Services.Provisioning
                     }
                     else
                     {
-                        var nextState = await job.Flow.GetNextStateAsync(new NextStageContext(
+                        var nextState = await job.Flow.GetNextState(new NextStageContext(
                             job.Mediator,
                             job.StateFactory,
                             job.CurrentStage));

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dogger.Domain.Services.Provisioning.Stages;
-using Dogger.Domain.Services.Provisioning.Stages.CompleteInstanceSetup;
 using Dogger.Domain.Services.Provisioning.Stages.CreateLightsailInstance;
 using Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance;
 
@@ -25,59 +24,31 @@ namespace Dogger.Domain.Services.Provisioning.Flows
             this.databaseInstance = databaseInstance;
         }
 
-        public async Task<IProvisioningStage> GetInitialStateAsync(
-            InitialStateContext context)
+        public IProvisioningStage GetInitialState(
+            IProvisioningStateFactory stateFactory)
         {
-            return context.StateFactory.Create<CreateLightsailInstanceStage>(state =>
+            return stateFactory.Create<CreateLightsailInstanceStage>(state =>
             {
                 state.DatabaseInstance = this.databaseInstance;
                 state.PlanId = this.planId;
             });
         }
 
-        public async Task<IProvisioningStage?> GetNextStateAsync(
-            NextStageContext context)
+        public IProvisioningStage? GetNextState(
+            IProvisioningStage currentStage,
+            IProvisioningStateFactory stateFactory)
         {
-            switch (context.CurrentStage)
+            switch (currentStage)
             {
-                case ICreateLightsailInstanceStage createLightsailInstanceState:
-                    return TransitionFromCreateToInstall(context.StateFactory, createLightsailInstanceState);
+                case ICreateLightsailInstanceStage _:
+                    return stateFactory.Create<InstallSoftwareOnInstanceStage>();
 
-                case IInstallSoftwareOnInstanceStage installDockerOnInstanceState:
-                    return TransitionFromInstallToComplete(context.StateFactory, installDockerOnInstanceState);
-
-                case ICompleteInstanceSetupStage _:
+                case IInstallSoftwareOnInstanceStage _:
                     return null;
 
                 default:
-                    throw new UnknownFlowStageException($"Could not determine the next state for a state of type {context.CurrentStage.GetType().FullName}.");
+                    throw new UnknownFlowStageException($"Could not determine the next state for a state of type {currentStage.GetType().FullName}.");
             }
-        }
-
-        private IProvisioningStage? TransitionFromInstallToComplete(
-            IProvisioningStateFactory stateFactory, 
-            IInstallSoftwareOnInstanceStage installSoftwareOnInstanceStage)
-        {
-            return stateFactory.Create<CompleteInstanceSetupStage>(state =>
-            {
-                state.IpAddress = installSoftwareOnInstanceStage.IpAddress;
-
-                state.UserId = UserId;
-                state.InstanceName = DatabaseInstance.Name;
-            });
-        }
-
-        private IProvisioningStage TransitionFromCreateToInstall(
-            IProvisioningStateFactory stateFactory, 
-            ICreateLightsailInstanceStage createLightsailInstanceStage)
-        {
-            return stateFactory.Create<InstallSoftwareOnInstanceStage>(state =>
-            {
-                state.IpAddress = createLightsailInstanceStage.CreatedLightsailInstance.PublicIpAddress;
-
-                state.InstanceName = DatabaseInstance.Name;
-                state.UserId = UserId;
-            });
         }
     }
 }

@@ -21,10 +21,6 @@ namespace Dogger.Controllers.Plans
             CreateMap<ProvisioningJob, PlanProvisionResponse>()
                 .ForMember(x => x.Status, x => x.MapFrom(y => y))
                 .ForMember(x => x.JobId, x => x.MapFrom(y => y.Id));
-
-            CreateMap<PreCompletedProvisioningJob, PlanProvisionResponse>()
-                .ForMember(x => x.Status, x => x.MapFrom(y => y))
-                .ForMember(x => x.JobId, x => x.MapFrom(y => y.Id));
         }
     }
 }

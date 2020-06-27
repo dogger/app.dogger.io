@@ -67,9 +67,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
             {
                 Name = request.InstanceName,
                 Cluster = cluster,
-                IsProvisioned = false,
-                PlanId = firstCapablePlan.Id,
-                Type = InstanceType.DockerCompose
+                PlanId = firstCapablePlan.Id
             };
 
             cluster.Instances.Add(instance);

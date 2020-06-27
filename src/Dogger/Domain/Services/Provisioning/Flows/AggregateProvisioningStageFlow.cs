@@ -25,17 +25,21 @@ namespace Dogger.Domain.Services.Provisioning.Flows
             this.lastFlow = flows.LastOrDefault();
         }
 
-        public async Task<IProvisioningStage> GetInitialStateAsync(InitialStateContext context)
+        public IProvisioningStage GetInitialState(IProvisioningStateFactory stateFactory)
         {
             if (this.firstFlow != this.currentFlow)
                 throw new InvalidOperationException("The first flow is not the active flow, so the initial state can't be fetched.");
 
-            return await this.firstFlow.GetInitialStateAsync(context);
+            return this.firstFlow.GetInitialState(stateFactory);
         }
 
-        public async Task<IProvisioningStage?> GetNextStateAsync(NextStageContext context)
+        public IProvisioningStage? GetNextState(
+            IProvisioningStage currentStage,
+            IProvisioningStateFactory stateFactory)
         {
-            var nextState = await this.currentFlow.GetNextStateAsync(context);
+            var nextState = this.currentFlow.GetNextState(
+                currentStage,
+                stateFactory);
             if (nextState != null)
                 return nextState;
 
@@ -45,10 +49,8 @@ namespace Dogger.Domain.Services.Provisioning.Flows
             var currentFlowIndex = this.flows.IndexOf(this.currentFlow);
             this.currentFlow = this.flows[currentFlowIndex + 1];
 
-            return await this.currentFlow.GetInitialStateAsync(
-                new InitialStateContext(
-                    context.Mediator,
-                    context.StateFactory));
+            return this.currentFlow.GetInitialState(
+                stateFactory);
         }
 
         public TFlow GetFlowOfType<TFlow>(int index) where TFlow : IProvisioningStageFlow

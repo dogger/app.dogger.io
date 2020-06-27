@@ -15,7 +15,6 @@ using Dogger.Domain.Services.Amazon.Identity;
 using Dogger.Domain.Services.Amazon.Lightsail;
 using Dogger.Domain.Services.Dogfeeding;
 using Dogger.Domain.Services.Provisioning;
-using Dogger.Domain.Services.Provisioning.Stages.CompleteInstanceSetup;
 using Dogger.Domain.Services.Provisioning.Stages.CreateLightsailInstance;
 using Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance;
 using Dogger.Domain.Services.Provisioning.Stages.RunDockerComposeOnInstance;

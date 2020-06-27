@@ -24,25 +24,14 @@ namespace Dogger.Domain.Services.Provisioning.Flows
             this.DockerComposeYmlContents = dockerComposeYmlContents;
         }
 
-        public async Task<IProvisioningStage> GetInitialStateAsync(InitialStateContext context)
+        public IProvisioningStage GetInitialState(IProvisioningStateFactory stateFactory)
         {
-            var amazonInstance = await context.Mediator.Send(
-                new GetLightsailInstanceByNameQuery(InstanceName));
-            if (amazonInstance == null)
-                throw new InvalidOperationException("Instance was not found.");
-
-            return context.StateFactory.Create<RunDockerComposeOnInstanceStage>(state =>
-            {
-                state.BuildArguments = BuildArguments;
-                state.DockerComposeYmlContents = DockerComposeYmlContents;
-                state.InstanceName = InstanceName;
-                state.IpAddress = amazonInstance.PublicIpAddress;
-                state.Authentication = Authentication;
-                state.Files = this.Files;
-            });
+            return stateFactory.Create<RunDockerComposeOnInstanceStage>();
         }
 
-        public async Task<IProvisioningStage?> GetNextStateAsync(NextStageContext context)
+        public IProvisioningStage? GetNextState(
+            IProvisioningStage currentStage,
+            IProvisioningStateFactory stateFactory)
         {
             return null;
         }

@@ -45,7 +45,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
                 });
 
             //Act
-            var state = await flow.GetInitialStateAsync(new InitialStateContext(
+            var state = await flow.GetInitialState(new InitialStateContext(
                 fakeMediator,
                 stateFactory)) as IRunDockerComposeOnInstanceStage;
 
@@ -77,7 +77,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             var fakeMediator = Substitute.For<IMediator>();
 
             //Act
-            var state = await flow.GetNextStateAsync(new NextStageContext(
+            var state = await flow.GetNextState(new NextStageContext(
                 fakeMediator,
                 stateFactory,
                 fakeState));

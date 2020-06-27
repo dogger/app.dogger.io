@@ -5,8 +5,8 @@ namespace Dogger.Domain.Services.Provisioning.Flows
 {
     public interface IProvisioningStageFlow
     {
-        Task<IProvisioningStage> GetInitialStateAsync(IProvisioningStateFactory stateFactory);
-        Task<IProvisioningStage?> GetNextStateAsync(
+        IProvisioningStage GetInitialState(IProvisioningStateFactory stateFactory);
+        IProvisioningStage? GetNextState(
             IProvisioningStage currentStage,
             IProvisioningStateFactory stateFactory);
     }

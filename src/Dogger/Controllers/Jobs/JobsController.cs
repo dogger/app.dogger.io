@@ -29,7 +29,7 @@ namespace Dogger.Controllers.Jobs
         [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Status(string jobId)
         {
-            var job = await this.provisioningService.GetJobByIdAsync(jobId);
+            var job = await this.provisioningService.GetJobById(jobId);
             if (job == null)
                 return NotFound("Job not found.");
 
