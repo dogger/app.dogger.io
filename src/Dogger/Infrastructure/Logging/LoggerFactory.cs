@@ -42,7 +42,7 @@ namespace Dogger.Infrastructure
                 .WriteTo.Console()
                 .WriteTo.Slack(slackWebhookUrl, restrictedToMinimumLevel: LogEventLevel.Error)
                 .WriteTo.Sink(
-                    new NonDisposableSink(
+                    new NonDisposableSinkProxy(
                         new ElasticsearchSink(
                             new ElasticsearchSinkOptions(new Uri("https://elasticsearch:9200"))
                             {
