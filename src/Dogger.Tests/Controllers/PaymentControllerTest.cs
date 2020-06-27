@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Dogger.Controllers.Payment;
-using Dogger.Domain.Commands.Payment;
 using Dogger.Domain.Commands.Payment.SetActivePaymentMethodForUser;
 using Dogger.Domain.Queries.Payment;
 using Dogger.Infrastructure;

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Instances.GetInstanceByName;
 using Dogger.Infrastructure.Docker.Yml;
 using MediatR;

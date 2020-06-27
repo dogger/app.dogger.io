@@ -1,5 +1,4 @@
 ﻿using System;
-using Dogger.Domain.Models;
 using Dogger.Domain.Services.PullDog;
 
 namespace Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest

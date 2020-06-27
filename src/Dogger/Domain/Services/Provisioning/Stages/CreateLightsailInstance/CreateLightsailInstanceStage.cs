@@ -1,18 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
-using Dogger.Domain.Commands.Amazon.Lightsail.OpenFirewallPorts;
-using Dogger.Domain.Events.ServerProvisioningStarted;
-using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
-using Dogger.Domain.Queries.Instances.GetNecessaryInstanceFirewallPorts;
-using Dogger.Domain.Services.Amazon.Lightsail;
 using Dogger.Domain.Services.Provisioning.Instructions;
-using MediatR;
-using Serilog;
-using Instance = Amazon.Lightsail.Model.Instance;
 
 namespace Dogger.Domain.Services.Provisioning.Stages.CreateLightsailInstance
 {
@@ -31,7 +21,7 @@ namespace Dogger.Domain.Services.Provisioning.Stages.CreateLightsailInstance
             this.amazonLightsailInstructionFactory = amazonLightsailInstructionFactory;
         }
 
-        public void CollectInstructions(IInstructionGroupCollector instructionCollector)
+        public void AddInstructionsTo(IBlueprintBuilder blueprintBuilder)
         {
             if (this.PlanId == null)
                 throw new InvalidOperationException("Plan ID is not set.");
@@ -39,8 +29,8 @@ namespace Dogger.Domain.Services.Provisioning.Stages.CreateLightsailInstance
             if (this.DatabaseInstance == null)
                 throw new InvalidOperationException("Database instance is not set.");
 
-            using var createInstanceGroup = instructionCollector.CollectGroup("Creating AWS Lightsail instance");
-            createInstanceGroup.CollectInstructionWithSignal(
+            using var createInstanceGroup = blueprintBuilder.AddGroup("Creating AWS Lightsail instance");
+            createInstanceGroup.AddInstructionWithSignal(
                 "create-instance",
                 this.amazonLightsailInstructionFactory.Create(
                     new CreateInstancesRequest()

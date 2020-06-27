@@ -2,14 +2,12 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dogger.Domain.Services.Provisioning.Flows;
+using Dogger.Domain.Models;
 using Dogger.Domain.Services.Provisioning.Instructions;
 using Dogger.Domain.Services.Provisioning.Stages;
 using Dogger.Infrastructure.Time;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 namespace Dogger.Domain.Services.Provisioning
@@ -20,7 +18,7 @@ namespace Dogger.Domain.Services.Provisioning
 
         private readonly ITime time;
         private readonly ILogger logger;
-        private readonly IInstructionGroupCollectorFactory instructionGroupCollectorFactory;
+        private readonly IBlueprintBuilderFactory instructionGroupCollectorFactory;
 
         private readonly Queue<ProvisioningJob> jobQueue;
         private readonly ConcurrentDictionary<string, ProvisioningJob> jobsByIds;
@@ -28,7 +26,7 @@ namespace Dogger.Domain.Services.Provisioning
         public ProvisioningService(
             ITime time,
             ILogger logger,
-            IInstructionGroupCollectorFactory instructionGroupCollectorFactory)
+            IBlueprintBuilderFactory instructionGroupCollectorFactory)
         {
             this.time = time;
             this.logger = logger;
@@ -47,13 +45,12 @@ namespace Dogger.Domain.Services.Provisioning
         }
 
         public IProvisioningJob ScheduleJob(
-            params Func<IProvisioningStageFactory, IProvisioningStage>[] stageFactories)
+            Blueprint blueprint,
+            ScheduleJobOptions? options = null)
         {
-            var collector = instructionGroupCollectorFactory.Create();
-            collector.CollectFromStages(stageFactories);
-
-            var instructions = collector.RetrieveCollectedInstructions();
-            var job = new ProvisioningJob(instructions[0]);
+            var job = new ProvisioningJob(
+                blueprint,
+                options);
 
             if (!this.jobsByIds.TryAdd(job.Id, job))
                 throw new InvalidOperationException("Could not add job to concurrent dictionary.");

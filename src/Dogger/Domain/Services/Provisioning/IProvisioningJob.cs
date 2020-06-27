@@ -12,6 +12,8 @@ namespace Dogger.Domain.Services.Provisioning
         string Id { get; }
 
         StageUpdateException? Exception { get; set; }
-        IInstruction CurrentInstruction { get; set; }
+
+        IInstruction? CurrentInstruction { get; }
+        IInstruction? IterateToNextInstruction();
     }
 }

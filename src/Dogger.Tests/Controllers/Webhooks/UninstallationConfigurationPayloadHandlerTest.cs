@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dogger.Controllers.Webhooks;
 using Dogger.Controllers.Webhooks.Handlers;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
-using Dogger.Domain.Commands.PullDog.EnsurePullDogRepository;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
 using Dogger.Tests.TestHelpers;

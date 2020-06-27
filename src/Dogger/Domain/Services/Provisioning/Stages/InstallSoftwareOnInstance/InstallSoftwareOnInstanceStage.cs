@@ -1,45 +1,39 @@
-﻿using System;
-using System.Threading.Tasks;
-using Dogger.Domain.Models;
-using Dogger.Domain.Queries.Instances.GetInstanceByName;
-using Dogger.Domain.Services.Provisioning.Instructions;
+﻿using Dogger.Domain.Services.Provisioning.Instructions;
 using Dogger.Domain.Services.Provisioning.Instructions.Models;
-using Dogger.Infrastructure.Ssh;
-using MediatR;
 
 namespace Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance
 {
     public class InstallSoftwareOnInstanceStage : IInstallSoftwareOnInstanceStage
     {
-        public void CollectInstructions(IInstructionGroupCollector instructionCollector)
+        public void AddInstructionsTo(IBlueprintBuilder blueprintBuilder)
         {
-            CollectInstallDockerInstructions(instructionCollector
-                .CollectGroup("Installing Docker Engine"));
+            CollectInstallDockerInstructions(blueprintBuilder
+                .AddGroup("Installing Docker Engine"));
 
-            CollectInstallDockerComposeInstructions(instructionCollector
-                .CollectGroup("Installing Docker Compose"));
+            CollectInstallDockerComposeInstructions(blueprintBuilder
+                .AddGroup("Installing Docker Compose"));
 
-            CollectConfigureDockerDaemonInstructions(instructionCollector
-                .CollectGroup("Configuring Docker Daemon"));
+            CollectConfigureDockerDaemonInstructions(blueprintBuilder
+                .AddGroup("Configuring Docker Daemon"));
 
-            CollectConfigurePostInstallInstructions(instructionCollector
-                .CollectGroup("Finalizing Docker installation"));
+            CollectConfigurePostInstallInstructions(blueprintBuilder
+                .AddGroup("Finalizing Docker installation"));
 
             CollectSetSystemConfigurationValueInstructions(
-                instructionCollector, 
+                blueprintBuilder, 
                 "vm.max_map_count", "262144");
         }
 
         private static void CollectSetSystemConfigurationValueInstructions(
-            IInstructionGroupCollector instructionCollector,
+            IBlueprintBuilder instructionCollector,
             string key,
             string value)
         {
-            instructionCollector.CollectInstruction(new SshInstruction(
+            instructionCollector.AddInstruction(new SshInstruction(
                 RetryPolicy.AllowRetries,
                 $"sudo sysctl -w {key}={value}"));
 
-            instructionCollector.CollectInstruction(new SshInstruction(
+            instructionCollector.AddInstruction(new SshInstruction(
                 RetryPolicy.AllowRetries,
                 $"sudo bash -c \"echo '{key}={value}' >> /etc/sysctl.conf\""));
         }
@@ -47,21 +41,21 @@ namespace Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance
         /// <summary>
         /// These sets of commands are taken from https://docs.docker.com/engine/install/linux-postinstall/
         /// </summary>
-        private static void CollectConfigurePostInstallInstructions(IInstructionGroupCollector instructionCollector)
+        private static void CollectConfigurePostInstallInstructions(IBlueprintBuilder instructionCollector)
         {
-            instructionCollector.CollectInstruction(new SshInstruction(
+            instructionCollector.AddInstruction(new SshInstruction(
                 RetryPolicy.AllowRetries,
                 "sudo usermod -aG docker $USER"));
 
             //verify that we can run docker without root access.
-            instructionCollector.CollectInstruction(new SshInstruction(
+            instructionCollector.AddInstruction(new SshInstruction(
                 RetryPolicy.AllowRetries,
                 "docker --version"));
         }
 
-        private static void CollectConfigureDockerDaemonInstructions(IInstructionGroupCollector instructionCollector)
+        private static void CollectConfigureDockerDaemonInstructions(IBlueprintBuilder instructionCollector)
         {
-            instructionCollector.CollectInstruction(new SshInstruction(
+            instructionCollector.AddInstruction(new SshInstruction(
                 RetryPolicy.AllowRetries,
                 "sudo systemctl enable docker"));
         }
@@ -69,7 +63,7 @@ namespace Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance
         /// <summary>
         /// These sets of commands are taken from https://docs.docker.com/compose/install/
         /// </summary>
-        private static void CollectInstallDockerComposeInstructions(IInstructionGroupCollector instructionCollector)
+        private static void CollectInstallDockerComposeInstructions(IBlueprintBuilder instructionCollector)
         {
             CollectSshCommands(
                 instructionCollector,
@@ -84,7 +78,7 @@ namespace Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance
         /// <summary>
         /// These sets of commands are taken from https://docs.docker.com/install/linux/docker-ce/ubuntu/.
         /// </summary>
-        private static void CollectInstallDockerInstructions(IInstructionGroupCollector instructionCollector)
+        private static void CollectInstallDockerInstructions(IBlueprintBuilder instructionCollector)
         {
             //SET UP THE REPOSITORY
             CollectSshCommands(
@@ -111,13 +105,13 @@ namespace Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance
         }
 
         private static void CollectSshCommands(
-            IInstructionGroupCollector instructionCollector,
+            IBlueprintBuilder instructionCollector,
             RetryPolicy retryPolicy,
             string[] commands)
         {
             foreach (var command in commands)
             {
-                instructionCollector.CollectInstruction(new SshInstruction(
+                instructionCollector.AddInstruction(new SshInstruction(
                     retryPolicy,
                     command));
             }

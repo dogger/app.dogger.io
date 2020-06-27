@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Destructurama.Attributed;
+using Dogger.Domain.Services.Provisioning.Instructions.Models;
 
 namespace Dogger.Domain.Models
 {
@@ -21,6 +22,7 @@ namespace Dogger.Domain.Models
         public PullDogSettings? PullDogSettings { get; set; }
         public Guid? PullDogSettingsId { get; set; }
 
-        public string Json { get; set; } = null!;
+        [NotLogged] 
+        public InstructionGroup[] InstructionGroups { get; set; } = null!;
     }
 }

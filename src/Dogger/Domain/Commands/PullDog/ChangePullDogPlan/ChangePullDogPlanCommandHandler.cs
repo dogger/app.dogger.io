@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
 using Dogger.Domain.Commands.PullDog.DeleteAllPullDogInstancesForUser;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Plans.GetDemoPlan;
-using Dogger.Domain.Queries.Plans.GetPlanById;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
-using Dogger.Domain.Queries.Users.GetUserById;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

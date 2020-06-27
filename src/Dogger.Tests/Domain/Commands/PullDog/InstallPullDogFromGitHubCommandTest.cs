@@ -19,7 +19,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Octokit;
-using Plan = Octokit.Plan;
 using User = Octokit.User;
 
 namespace Dogger.Tests.Domain.Commands.PullDog

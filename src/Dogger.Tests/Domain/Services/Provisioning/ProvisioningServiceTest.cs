@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
 using Dogger.Domain.Services.Provisioning;
-using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Domain.Services.Provisioning.Stages;
 using Dogger.Tests.TestHelpers;
 using Microsoft.Extensions.DependencyInjection;

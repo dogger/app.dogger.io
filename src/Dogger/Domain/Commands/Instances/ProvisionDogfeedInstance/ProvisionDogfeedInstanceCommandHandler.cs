@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Clusters.EnsureClusterWithId;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Arguments;
-using Dogger.Domain.Services.Provisioning.Flows;
+using Dogger.Domain.Services.Provisioning.Instructions;
 using Dogger.Infrastructure.AspNet.Options.Dogfeed;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -24,10 +23,10 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
         private readonly IProvisioningService provisioningService;
         private readonly IMediator mediator;
         private readonly IConfiguration configuration;
+        private readonly ILogger logger;
+        private readonly IBlueprintFactory blueprintFactory;
 
         private readonly IOptionsMonitor<DogfeedOptions> dogfeedOptionsMonitor;
-
-        private readonly ILogger logger;
 
         private readonly DataContext dataContext;
 
@@ -35,13 +34,15 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
             IProvisioningService provisioningService,
             IMediator mediator,
             IConfiguration configuration,
-            IOptionsMonitor<DogfeedOptions> dogfeedOptionsMonitor,
             ILogger logger,
+            IBlueprintFactory blueprintFactory,
+            IOptionsMonitor<DogfeedOptions> dogfeedOptionsMonitor,
             DataContext dataContext)
         {
             this.provisioningService = provisioningService;
             this.mediator = mediator;
             this.logger = logger;
+            this.blueprintFactory = blueprintFactory;
             this.dataContext = dataContext;
             this.configuration = configuration;
             this.dogfeedOptionsMonitor = dogfeedOptionsMonitor;
@@ -60,7 +61,9 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
             if (dockerHubOptions.Password == null)
                 throw new InvalidOperationException("Could not find Docker Hub password.");
 
-            var cluster = await mediator.Send(new EnsureClusterWithIdCommand(DataContext.DoggerClusterId), cancellationToken);
+            var cluster = await mediator.Send(
+                new EnsureClusterWithIdCommand(DataContext.DoggerClusterId), 
+                cancellationToken);
 
             var firstCapablePlan = await GetDogfeedingPlanAsync();
             var instance = new Instance()
@@ -80,22 +83,19 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
 
             var dockerFiles = GetDockerFiles(this.configuration, dogfeedOptions);
 
-            return await this.provisioningService.ScheduleJob(
-                new AggregateProvisioningStageFlow(
-                    new ProvisionInstanceStageFlow(
-                        firstCapablePlan.Id,
-                        instance),
-                    new DeployToClusterStageFlow(
-                        request.InstanceName,
-                        new[] { dockerComposeYmlContents })
-                    {
-                        Files = dockerFiles,
-                        Authentication = new[] {
-                            new DockerAuthenticationArguments(
-                                username: dockerHubOptions.Username,
-                                password: dockerHubOptions.Password)
-                        }
-                    }));
+            var blueprint = this.blueprintFactory.Create(
+                firstCapablePlan.Id,
+                instance);
+
+            return this.provisioningService.ScheduleJob(
+                blueprint,
+                new ScheduleJobOptions(dockerComposeYmlContents)
+                {
+                    Files = dockerFiles,
+                    Authentication = new DockerAuthenticationArguments(
+                        username: dockerHubOptions.Username,
+                        password: dockerHubOptions.Password)
+                });
         }
 
         private async Task<Plan> GetDogfeedingPlanAsync()

@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Clusters.EnsureClusterForUser;
-using Dogger.Domain.Helpers;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.Provisioning;
-using Dogger.Domain.Services.Provisioning.Flows;
+using Dogger.Domain.Services.Provisioning.Instructions;
 using MediatR;
 using Slack.Webhooks;
 
@@ -17,6 +16,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionInstanceForUser
         private readonly IProvisioningService provisioningService;
         private readonly ISlackClient slackClient;
         private readonly IMediator mediator;
+        private readonly IBlueprintFactory blueprintFactory;
 
         private readonly DataContext dataContext;
 
@@ -24,11 +24,13 @@ namespace Dogger.Domain.Commands.Instances.ProvisionInstanceForUser
             IProvisioningService provisioningService,
             ISlackClient slackClient,
             IMediator mediator,
+            IBlueprintFactory blueprintFactory,
             DataContext dataContext)
         {
             this.provisioningService = provisioningService;
             this.slackClient = slackClient;
             this.mediator = mediator;
+            this.blueprintFactory = blueprintFactory;
             this.dataContext = dataContext;
         }
 
@@ -76,10 +78,13 @@ namespace Dogger.Domain.Commands.Instances.ProvisionInstanceForUser
 
             await this.dataContext.SaveChangesAsync(cancellationToken);
 
-            return await this.provisioningService.ScheduleJob(
-                new ProvisionInstanceStageFlow(
-                    request.Plan.Id,
-                    instance)
+            var blueprint = this.blueprintFactory.Create(
+                request.Plan.Id,
+                instance);
+
+            return this.provisioningService.ScheduleJob(
+                blueprint,
+                new ScheduleJobOptions()
                 {
                     UserId = request.User.Id
                 });

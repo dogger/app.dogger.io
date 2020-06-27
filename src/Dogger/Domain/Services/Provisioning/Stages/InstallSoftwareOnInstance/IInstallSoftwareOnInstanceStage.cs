@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance
+﻿namespace Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance
 {
     public interface IInstallSoftwareOnInstanceStage : IProvisioningStage
     {

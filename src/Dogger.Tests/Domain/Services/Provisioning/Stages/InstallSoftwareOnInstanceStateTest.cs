@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dogger.Domain.Services.Provisioning.Stages;
-using Dogger.Domain.Services.Provisioning.Stages.CompleteInstanceSetup;
 using Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance;
 using Dogger.Infrastructure.Ssh;
 using Dogger.Tests.TestHelpers;

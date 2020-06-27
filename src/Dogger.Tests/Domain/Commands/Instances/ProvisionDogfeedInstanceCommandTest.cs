@@ -6,7 +6,6 @@ using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.Provisioning;
-using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Tests.TestHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -189,12 +188,6 @@ namespace Dogger.Tests.Domain.Commands.Instances
                         }
                     }
                 });
-        }
-
-        private static ProvisionInstanceStageFlow GetProvisionInstanceStateFlow(
-            AggregateProvisioningStageFlow flow)
-        {
-            return (ProvisionInstanceStageFlow)flow.Flows[0];
         }
     }
 }

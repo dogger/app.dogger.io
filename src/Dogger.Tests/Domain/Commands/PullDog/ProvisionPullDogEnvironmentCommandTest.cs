@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
@@ -10,7 +9,6 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest;
 using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
 using Dogger.Domain.Services.Provisioning;
-using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Docker.Yml;
 using Dogger.Tests.TestHelpers;

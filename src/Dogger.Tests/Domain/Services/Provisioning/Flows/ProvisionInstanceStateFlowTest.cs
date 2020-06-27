@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Amazon.Lightsail.Model;
-using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Domain.Services.Provisioning.Stages;
 using Dogger.Domain.Services.Provisioning.Stages.CreateLightsailInstance;
 using Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance;

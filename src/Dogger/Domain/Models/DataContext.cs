@@ -2,9 +2,9 @@
 using System.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Dogger.Domain.Services.Provisioning.Instructions.Models;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure;
 
@@ -83,6 +83,13 @@ namespace Dogger.Domain.Models
                 .HasConversion(
                     x => JsonSerializer.Serialize(x, JsonFactory.GetOptions()),
                     x => JsonSerializer.Deserialize<ConfigurationFileOverride>(x, JsonFactory.GetOptions()));
+
+            modelBuilder
+                .Entity<Blueprint>()
+                .Property(x => x.InstructionGroups)
+                .HasConversion(
+                    x => JsonSerializer.Serialize(x, JsonFactory.GetOptions()),
+                    x => JsonSerializer.Deserialize<InstructionGroup[]>(x, JsonFactory.GetOptions()));
 
             modelBuilder
                 .Entity<PullDogPullRequest>()

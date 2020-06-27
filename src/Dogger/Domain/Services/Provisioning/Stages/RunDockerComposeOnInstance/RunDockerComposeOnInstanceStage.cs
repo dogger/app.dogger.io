@@ -1,53 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Destructurama.Attributed;
-using Dogger.Domain.Commands.Amazon.Lightsail.OpenFirewallPorts;
-using Dogger.Domain.Events.ServerDeploymentCompleted;
-using Dogger.Domain.Events.ServerDeploymentFailed;
-using Dogger.Domain.Queries.Instances.GetNecessaryInstanceFirewallPorts;
-using Dogger.Domain.Services.Provisioning.Arguments;
-using Dogger.Domain.Services.Provisioning.Instructions;
+﻿using Dogger.Domain.Services.Provisioning.Instructions;
 using Dogger.Domain.Services.Provisioning.Instructions.Models;
-using Dogger.Infrastructure.Docker.Yml;
-using Dogger.Infrastructure.Ssh;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Dogger.Domain.Services.Provisioning.Stages.RunDockerComposeOnInstance
 {
     public class RunDockerComposeOnInstanceStage : IRunDockerComposeOnInstanceStage
     {
-        public void CollectInstructions(IInstructionGroupCollector instructionCollector)
+        public void AddInstructionsTo(IBlueprintBuilder blueprintBuilder)
         {
-            CollectClearExistingFilesInstructions(instructionCollector);
+            CollectClearExistingFilesInstructions(blueprintBuilder);
 
-            instructionCollector.CollectInstructionWithSignal("docker-compose");
-            instructionCollector.CollectInstructionWithSignal("open-firewall");
+            blueprintBuilder.AddInstructionWithSignal("docker-compose");
+            blueprintBuilder.AddInstructionWithSignal("open-firewall");
         }
 
         private static void CollectClearExistingFilesInstructions(
-            IInstructionGroupCollector instructionCollector)
+            IBlueprintBuilder instructionCollector)
         {
             CollectRemoveDirectoryInstructions(instructionCollector, "dogger");
             CollectEnsureDirectoryInstructions(instructionCollector, "dogger");
         }
 
         private static void CollectRemoveDirectoryInstructions(
-            IInstructionGroupCollector instructionCollector,
+            IBlueprintBuilder instructionCollector,
             string path)
         {
-            instructionCollector.CollectInstruction(new SshInstruction(
+            instructionCollector.AddInstruction(new SshInstruction(
                 RetryPolicy.AllowRetries,
                 $"sudo rm ./{path} -rf"));
         }
 
         private static void CollectEnsureDirectoryInstructions(
-            IInstructionGroupCollector instructionCollector,
+            IBlueprintBuilder instructionCollector,
             string path)
         {
-            instructionCollector.CollectInstruction(new SshInstruction(
+            instructionCollector.AddInstruction(new SshInstruction(
                 RetryPolicy.AllowRetries,
                 $"mkdir -m 777 -p ./{path}"));
 
@@ -55,10 +41,10 @@ namespace Dogger.Domain.Services.Provisioning.Stages.RunDockerComposeOnInstance
         }
 
         private static void CollectSetUserPermissionsOnPathInstructions(
-            IInstructionGroupCollector instructionCollector,
+            IBlueprintBuilder instructionCollector,
             string fileName)
         {
-            instructionCollector.CollectInstruction(new SshInstruction(
+            instructionCollector.AddInstruction(new SshInstruction(
                 RetryPolicy.AllowRetries,
                 $"sudo chmod 777 ./{fileName}"));
         }

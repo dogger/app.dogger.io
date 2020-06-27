@@ -5,7 +5,5 @@
     {
         RetryPolicy RetryPolicy { get; }
         string Type { get; }
-
-        InstructionGroup Group { get; }
     }
 }

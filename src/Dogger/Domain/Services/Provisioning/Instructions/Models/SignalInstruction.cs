@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Dogger.Domain.Services.Provisioning.Instructions.Models
+﻿namespace Dogger.Domain.Services.Provisioning.Instructions.Models
 {
     public class SignalInstruction : IInstructionWithSignal
     {

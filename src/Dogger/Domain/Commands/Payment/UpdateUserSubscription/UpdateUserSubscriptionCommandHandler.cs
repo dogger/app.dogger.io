@@ -5,14 +5,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
-using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Queries.Plans.GetSupportedPullDogPlans;
 using Dogger.Infrastructure.Time;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Polly;
 using Stripe;
-using Plan = Dogger.Domain.Queries.Plans.GetSupportedPlans.Plan;
 
 namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
 {

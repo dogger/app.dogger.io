@@ -6,7 +6,6 @@ using Dogger.Domain.Commands.Amazon.Lightsail.OpenFirewallPorts;
 using Dogger.Domain.Queries.Instances.GetNecessaryInstanceFirewallPorts;
 using Dogger.Domain.Services.Provisioning.Arguments;
 using Dogger.Domain.Services.Provisioning.Stages;
-using Dogger.Domain.Services.Provisioning.Stages.CompleteInstanceSetup;
 using Dogger.Domain.Services.Provisioning.Stages.RunDockerComposeOnInstance;
 using Dogger.Infrastructure.Docker.Yml;
 using Dogger.Infrastructure.Ssh;
