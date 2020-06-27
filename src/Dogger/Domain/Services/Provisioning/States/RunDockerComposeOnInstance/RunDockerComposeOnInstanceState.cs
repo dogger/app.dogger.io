@@ -261,7 +261,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
             await sshClient.TransferFileAsync(
                 SshRetryPolicy.AllowRetries,
-                filePath,
+                $"dogger/{filePath}",
                 contents);
 
             await SetUserPermissionsOnPathAsync(sshClient, $"dogger/{filePath}");
