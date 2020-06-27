@@ -35,7 +35,7 @@ export const NavigationBar = (props: { onThemeToggle: () => void }) => {
           Docs
         </Button>
 
-        <Button color="inherit" href="https://github.com/dogger/dogger.io/issues/new" rel="nofollow">
+        <Button color="inherit" target="_blank" href="https://github.com/dogger/dogger.io/issues/new" rel="nofollow">
           Contact
         </Button>
 

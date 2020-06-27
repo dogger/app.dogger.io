@@ -72,7 +72,8 @@ namespace Dogger.Domain.Services.PullDog
         {
             var paths = new HashSet<string>()
             {
-                ".env"
+                string.Empty,
+                ".env",
             };
 
             foreach (var dockerComposeYmlContent in dockerComposeYmlContents)
