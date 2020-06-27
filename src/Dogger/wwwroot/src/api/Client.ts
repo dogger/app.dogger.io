@@ -50,8 +50,8 @@ class CachedDoggerConfigurationParameters extends DoggerConfigurationParameters 
 }
 
 export const apiClient = new GeneralApi(new Configuration(new DoggerConfigurationParameters()));
-export const cachedApiClient = apiClient;
-// export const cachedApiClient = new GeneralApi(new Configuration(new CachedDoggerConfigurationParameters()));
+// export const cachedApiClient = apiClient;
+export const cachedApiClient = new GeneralApi(new Configuration(new CachedDoggerConfigurationParameters()));
 
 export function withAuthenticatedApiClient<T>(action: (signal: AbortSignal) => Promise<T>)
 {
