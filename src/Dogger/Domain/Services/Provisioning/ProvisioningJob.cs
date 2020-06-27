@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Dogger.Domain.Services.Provisioning
 {
 
-    public class ProvisioningJob : IProvisioningStateContext, IProvisioningJob
+    public class ProvisioningJob : IProvisioningStageContext, IProvisioningJob
     {
         public string Id
         {

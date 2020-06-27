@@ -46,7 +46,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
 
             var fakeMediator = Substitute.For<IMediator>();
             
-            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStateFactory>();
+            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStageFactory>();
             fakeProvisioningStateFactory
                 .Create<CompleteInstanceSetupStage>()
                 .Returns(new CompleteInstanceSetupStage(
@@ -87,7 +87,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
 
             var fakeMediator = Substitute.For<IMediator>();
 
-            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStateFactory>();
+            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStageFactory>();
             fakeProvisioningStateFactory
                 .Create<CompleteInstanceSetupStage>()
                 .Returns(new CompleteInstanceSetupStage(

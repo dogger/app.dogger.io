@@ -26,12 +26,12 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
 
             await using var environment = await IntegrationTestEnvironment.CreateAsync();
 
-            var stateFactory = new ProvisioningStateFactory(environment.ServiceProvider);
+            var stateFactory = new ProvisioningStageFactory(environment.ServiceProvider);
 
             //Act
             var stateInstances = stateTypes
-                .Select(stateType => typeof(IProvisioningStateFactory)
-                    .GetMethod(nameof(IProvisioningStateFactory.Create))
+                .Select(stateType => typeof(IProvisioningStageFactory)
+                    .GetMethod(nameof(IProvisioningStageFactory.Create))
                     ?.MakeGenericMethod(stateType))
                 .Where(createMethod => createMethod != null)
                 .Select(createMethod => createMethod

@@ -28,7 +28,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
                 });
 
             var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
-            var stateFactory = new ProvisioningStateFactory(serviceProvider);
+            var stateFactory = new ProvisioningStageFactory(serviceProvider);
 
             var fakeMediator = Substitute.For<IMediator>();
 
@@ -60,7 +60,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             };
 
             var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
-            var stateFactory = new ProvisioningStateFactory(serviceProvider);
+            var stateFactory = new ProvisioningStageFactory(serviceProvider);
 
             var fakeState = Substitute.For<ICreateLightsailInstanceStage>();
 
@@ -86,7 +86,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
                 });
 
             var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
-            var stateFactory = new ProvisioningStateFactory(serviceProvider);
+            var stateFactory = new ProvisioningStageFactory(serviceProvider);
 
             var fakeState = Substitute.For<InstallSoftwareOnInstanceStage>();
 
@@ -112,7 +112,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
                 });
 
             var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
-            var stateFactory = new ProvisioningStateFactory(serviceProvider);
+            var stateFactory = new ProvisioningStageFactory(serviceProvider);
 
             var fakeState = Substitute.For<IProvisioningStage>();
 

@@ -248,7 +248,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
                     }
                 });
 
-            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStateFactory>();
+            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStageFactory>();
             fakeProvisioningStateFactory
                 .Create<InstallSoftwareOnInstanceStage>()
                 .Returns(new InstallSoftwareOnInstanceStage(
@@ -363,7 +363,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
                     }
                 });
 
-            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStateFactory>();
+            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStageFactory>();
             fakeProvisioningStateFactory
                 .Create<InstallSoftwareOnInstanceStage>()
                 .Returns(new InstallSoftwareOnInstanceStage(
@@ -436,7 +436,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
                     }
                 });
 
-            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStateFactory>();
+            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStageFactory>();
             fakeProvisioningStateFactory
                 .Create<InstallSoftwareOnInstanceStage>()
                 .Returns(new InstallSoftwareOnInstanceStage(

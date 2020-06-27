@@ -34,7 +34,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             };
 
             var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
-            var stateFactory = new ProvisioningStateFactory(serviceProvider);
+            var stateFactory = new ProvisioningStageFactory(serviceProvider);
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
@@ -71,7 +71,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
                 });
 
             var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
-            var stateFactory = new ProvisioningStateFactory(serviceProvider);
+            var stateFactory = new ProvisioningStageFactory(serviceProvider);
 
             var fakeState = Substitute.For<IRunDockerComposeOnInstanceStage>();
             var fakeMediator = Substitute.For<IMediator>();

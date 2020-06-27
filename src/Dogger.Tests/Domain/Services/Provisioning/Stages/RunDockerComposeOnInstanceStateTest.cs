@@ -61,7 +61,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
                 .CreateForLightsailInstanceAsync("ip-address")
                 .Returns(fakeSshClient);
 
-            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStateFactory>();
+            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStageFactory>();
             fakeProvisioningStateFactory
                 .Create<CompleteInstanceSetupStage>()
                 .Returns(new CompleteInstanceSetupStage(
@@ -150,7 +150,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
                 .CreateForLightsailInstanceAsync("ip-address")
                 .Returns(fakeSshClient);
 
-            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStateFactory>();
+            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStageFactory>();
             fakeProvisioningStateFactory
                 .Create<CompleteInstanceSetupStage>()
                 .Returns(new CompleteInstanceSetupStage(
@@ -230,7 +230,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
                 .CreateForLightsailInstanceAsync("ip-address")
                 .Returns(fakeSshClient);
 
-            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStateFactory>();
+            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStageFactory>();
             fakeProvisioningStateFactory
                 .Create<CompleteInstanceSetupStage>()
                 .Returns(new CompleteInstanceSetupStage(
@@ -295,7 +295,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
                 .CreateForLightsailInstanceAsync("ip-address")
                 .Returns(fakeSshClient);
 
-            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStateFactory>();
+            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStageFactory>();
             fakeProvisioningStateFactory
                 .Create<CompleteInstanceSetupStage>()
                 .Returns(new CompleteInstanceSetupStage(
@@ -348,7 +348,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
                 .CreateForLightsailInstanceAsync("ip-address")
                 .Returns(fakeSshClient);
 
-            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStateFactory>();
+            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStageFactory>();
             fakeProvisioningStateFactory
                 .Create<CompleteInstanceSetupStage>()
                 .Returns(new CompleteInstanceSetupStage(
@@ -412,7 +412,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
                 .CreateForLightsailInstanceAsync("ip-address")
                 .Returns(fakeSshClient);
 
-            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStateFactory>();
+            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStageFactory>();
             fakeProvisioningStateFactory
                 .Create<CompleteInstanceSetupStage>()
                 .Returns(new CompleteInstanceSetupStage(
@@ -480,7 +480,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
                 .CreateForLightsailInstanceAsync("ip-address")
                 .Returns(fakeSshClient);
 
-            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStateFactory>();
+            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStageFactory>();
             fakeProvisioningStateFactory
                 .Create<CompleteInstanceSetupStage>()
                 .Returns(new CompleteInstanceSetupStage(

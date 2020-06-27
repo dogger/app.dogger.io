@@ -3,11 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Dogger.Domain.Services.Provisioning.Stages
 {
-    public class ProvisioningStateFactory : IProvisioningStateFactory
+    public class ProvisioningStageFactory : IProvisioningStageFactory
     {
         private readonly IServiceProvider serviceProvider;
 
-        public ProvisioningStateFactory(
+        public ProvisioningStageFactory(
             IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;

@@ -19,7 +19,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             //Arrange
             var context = new InitialStateContext(
                 Substitute.For<IMediator>(),
-                Substitute.For<IProvisioningStateFactory>());
+                Substitute.For<IProvisioningStageFactory>());
 
             var fakeProvisioningStateFlow = Substitute.For<IProvisioningStageFlow>();
 
@@ -41,11 +41,11 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             //Arrange
             var initialStateContext = new InitialStateContext(
                 Substitute.For<IMediator>(),
-                Substitute.For<IProvisioningStateFactory>());
+                Substitute.For<IProvisioningStageFactory>());
 
             var nextStateContext = new NextStageContext(
                 Substitute.For<IMediator>(),
-                Substitute.For<IProvisioningStateFactory>(),
+                Substitute.For<IProvisioningStageFactory>(),
                 Substitute.For<IProvisioningStage>());
 
             var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStageFlow>();
@@ -76,7 +76,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             //Arrange
             var nextStateContext = new NextStageContext(
                 Substitute.For<IMediator>(),
-                Substitute.For<IProvisioningStateFactory>(),
+                Substitute.For<IProvisioningStageFactory>(),
                 Substitute.For<IProvisioningStage>());
 
             var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStageFlow>();
@@ -102,7 +102,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             //Arrange
             var nextStateContext = new NextStageContext(
                 Substitute.For<IMediator>(),
-                Substitute.For<IProvisioningStateFactory>(),
+                Substitute.For<IProvisioningStageFactory>(),
                 Substitute.For<IProvisioningStage>());
 
             var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStageFlow>();
@@ -135,7 +135,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Flows
             //Arrange
             var nextStateContext = new NextStageContext(
                 Substitute.For<IMediator>(),
-                Substitute.For<IProvisioningStateFactory>(),
+                Substitute.For<IProvisioningStageFactory>(),
                 Substitute.For<IProvisioningStage>());
 
             var fakeProvisioningStateFlow1 = Substitute.For<IProvisioningStageFlow>();
