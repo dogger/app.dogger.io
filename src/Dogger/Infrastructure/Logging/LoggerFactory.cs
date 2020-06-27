@@ -44,7 +44,7 @@ namespace Dogger.Infrastructure
 
             SelfLog.Enable(Console.Error);
 
-            if (Sink == null || Sink.IsDisposed)
+            if (Sink == null)
             {
                 Sink = new DisposableBugLoggerProxy(
                     new ElasticsearchSink(
