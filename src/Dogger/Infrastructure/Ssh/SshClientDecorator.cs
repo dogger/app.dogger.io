@@ -61,6 +61,9 @@ namespace Dogger.Infrastructure.Ssh
 
         private async Task ConnectSshAsync()
         {
+            if (this.sshClient.IsConnected)
+                return;
+
             await Task.Factory.StartNew(
                 this.sshClient.Connect,
                 default,
@@ -70,6 +73,9 @@ namespace Dogger.Infrastructure.Ssh
 
         private async Task ConnectSftpAsync()
         {
+            if (this.sftpClient.IsConnected)
+                return;
+
             await Task.Factory.StartNew(
                 this.sftpClient.Connect,
                 default,
