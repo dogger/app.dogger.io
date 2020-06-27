@@ -52,19 +52,28 @@ namespace Dogger.Infrastructure.Ssh
             await policy.ExecuteAsync(client.ConnectAsync);
         }
 
+        public async Task TransferFileAsync(
+            SshRetryPolicy retryPolicy,
+            string filePath,
+            byte[] contents)
+        {
+            var policy = GetPollyPolicyFromSshRetryPolicy(retryPolicy);
+            this.logger.Debug("Transfering file {FilePath}.", filePath);
+
+            await policy.ExecuteAsync(async () =>
+                await this.client.TransferFileAsync(
+                    filePath,
+                    contents));
+
+            this.logger.Debug("File {FilePath} transferred.", filePath);
+        }
+
         public async Task<string> ExecuteCommandAsync(
             RetryPolicy retryPolicy,
             string commandText,
             Dictionary<string, string?>? arguments = null)
         {
-            AsyncPolicy policy = Policy.NoOpAsync();
-            if (retryPolicy == RetryPolicy.AllowRetries)
-            {
-                policy = Policy
-                    .Handle<SshCommandExecutionException>()
-                    .WaitAndRetryAsync(10, i => TimeSpan.FromSeconds(i * 5));
-            }
-
+            var policy = GetPollyPolicyFromSshRetryPolicy(retryPolicy);
             this.logger.Debug("Executing {CommandText}.", commandText);
 
             var commandResult = await policy.ExecuteAsync(async () =>
@@ -95,6 +104,19 @@ namespace Dogger.Infrastructure.Ssh
             }
 
             return commandResult.Text;
+        }
+
+        private static AsyncPolicy GetPollyPolicyFromSshRetryPolicy(SshRetryPolicy retryPolicy)
+        {
+            AsyncPolicy policy = Policy.NoOpAsync();
+            if (retryPolicy == SshRetryPolicy.AllowRetries)
+            {
+                policy = Policy
+                    .Handle<SshCommandExecutionException>()
+                    .WaitAndRetryAsync(10, i => TimeSpan.FromSeconds(i * 5));
+            }
+
+            return policy;
         }
 
         private static string StripSensitiveText(string text, Dictionary<string, string?>? arguments)

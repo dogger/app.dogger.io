@@ -454,7 +454,7 @@ const App = ({data}) => {
                     <Grid item xs={12} sm={6} md={4}>
                         <BenefitGridItem
                             title="Starts free"
-                            description={<>Don't have many pull requests open that require testing at the same time? The free plan will suffice.</>}
+                            description={<>There's a free plan available, and we <a target="_blank" href="/blog/pull-dog-is-practically-non-profit">earn less than $1 a month</a> on the paid plans.</>}
                             icon={<MoneyOff className={styles.accentColor} style={{ fontSize: 80 }} />}
                         />
                     </Grid>
@@ -468,7 +468,7 @@ const App = ({data}) => {
                     <Grid item xs={12} sm={6} md={4}>
                         <BenefitGridItem
                             title="Fully open source"
-                            description={<>We love open source. Everything we make at Dogger (including Pull Dog) is <a rel="nofollow" target="_blank" href="https://github.com/dogger">100% open source</a>.</>}
+                            description={<>We love open source. Everything we make at Dogger is <a rel="nofollow" target="_blank" href="https://github.com/dogger">fully open source</a>.</>}
                             icon={<GitHub className={styles.accentColor} style={{ fontSize: 80 }} />}
                         />
                     </Grid>

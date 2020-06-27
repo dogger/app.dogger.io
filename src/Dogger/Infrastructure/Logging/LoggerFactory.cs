@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Destructurama;
-using Dogger.Infrastructure.Logging;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Debugging;
@@ -11,6 +11,7 @@ using Serilog.Sinks.Slack.Core;
 
 namespace Dogger.Infrastructure.Logging
 {
+    [ExcludeFromCodeCoverage]
     public static class LoggerFactory
     {
         private static LoggerConfiguration CreateBaseLoggingConfiguration()
@@ -22,17 +23,28 @@ namespace Dogger.Infrastructure.Logging
                 .MinimumLevel.Override("Microsoft.Extensions.Http", LogEventLevel.Information);
         }
 
-        public static ILogger BuildDogfeedLogger()
+        public static LoggerConfiguration BuildDogfeedLogConfiguration()
         {
             return CreateBaseLoggingConfiguration()
-                .WriteTo.Console()
+                .WriteTo.Console();
+        }
+
+        public static ILogger BuildDogfeedLogger()
+        {
+            return BuildDogfeedLogConfiguration()
                 .CreateLogger();
         }
 
         public static ILogger BuildWebApplicationLogger(IConfiguration configuration)
         {
+            return BuildWebApplicationLogConfiguration(configuration)
+                .CreateLogger();
+        }
+
+        public static LoggerConfiguration BuildWebApplicationLogConfiguration(IConfiguration configuration)
+        {
             if (Debugger.IsAttached)
-                return BuildDogfeedLogger();
+                return BuildDogfeedLogConfiguration();
 
             SelfLog.Enable(Console.Error);
 
@@ -42,7 +54,7 @@ namespace Dogger.Infrastructure.Logging
                 .WriteTo.Console()
                 .WriteTo.Slack(slackWebhookUrl, restrictedToMinimumLevel: LogEventLevel.Error)
                 .WriteTo.Sink(
-                    new NonDisposableSink(
+                    new NonDisposableSinkProxy(
                         new ElasticsearchSink(
                             new ElasticsearchSinkOptions(new Uri("https://elasticsearch:9200"))
                             {
@@ -62,8 +74,7 @@ namespace Dogger.Infrastructure.Logging
                                 ModifyConnectionSettings = x => x
                                     .BasicAuthentication("elastic", "elastic")
                                     .ServerCertificateValidationCallback((a, b, c, d) => true)
-                            })))
-                .CreateLogger();
+                            })));
         }
     }
 }

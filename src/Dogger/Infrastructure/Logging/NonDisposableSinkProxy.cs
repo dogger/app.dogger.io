@@ -4,11 +4,11 @@ using Serilog.Events;
 
 namespace Dogger.Infrastructure.Logging
 {
-    public class NonDisposableSink : ILogEventSink, IDisposable
+    public class NonDisposableSinkProxy : ILogEventSink, IDisposable
     {
         private readonly ILogEventSink inner;
 
-        public NonDisposableSink(
+        public NonDisposableSinkProxy(
             ILogEventSink inner)
         {
             this.inner = inner;
@@ -16,7 +16,7 @@ namespace Dogger.Infrastructure.Logging
 
         public void Emit(LogEvent logEvent)
         {
-            inner.Emit(logEvent);
+            this.inner.Emit(logEvent);
         }
 
         public void Dispose()

@@ -7,5 +7,6 @@ namespace Dogger.Infrastructure.Ssh
     {
         Task<SshCommandResult> ExecuteCommandAsync(string text);
         Task ConnectAsync();
+        Task TransferFileAsync(string filePath, byte[] contents);
     }
 }

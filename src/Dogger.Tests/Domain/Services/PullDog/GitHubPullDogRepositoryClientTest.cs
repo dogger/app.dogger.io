@@ -24,7 +24,6 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             var client = new GitHubPullDogRepositoryClient(
                 fakeGitHubClient,
-                Substitute.For<ILogger>(),
                 new GitReference(
                     default,
                     default,
@@ -123,7 +122,6 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             var client = new GitHubPullDogRepositoryClient(
                 fakeGitHubClient,
-                Substitute.For<ILogger>(),
                 new GitReference(
                     default,
                     default,
@@ -232,7 +230,6 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             var client = new GitHubPullDogRepositoryClient(
                 fakeGitHubClient,
-                Substitute.For<ILogger>(),
                 new GitReference(
                     default,
                     default,
@@ -368,7 +365,6 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             var client = new GitHubPullDogRepositoryClient(
                 fakeGitHubClient,
-                Substitute.For<ILogger>(),
                 new GitReference(
                     default,
                     default,

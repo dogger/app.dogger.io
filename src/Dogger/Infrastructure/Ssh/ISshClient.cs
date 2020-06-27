@@ -7,6 +7,11 @@ namespace Dogger.Infrastructure.Ssh
 {
     public interface ISshClient : IDisposable
     {
+        Task TransferFileAsync(
+            RetryPolicy retryPolicy,
+            string filePath,
+            byte[] contents);
+
         Task<string> ExecuteCommandAsync(
             RetryPolicy retryPolicy, 
             string commandText,

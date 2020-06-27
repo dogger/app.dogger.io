@@ -143,6 +143,15 @@ namespace Dogger
                 configuration.RootPath = "wwwroot/build";
             });
 
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder => builder
+                        .WithOrigins("https://dogger.io")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+            });
+
             services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
@@ -191,6 +200,8 @@ namespace Dogger
             app.UseExceptionHandler("/errors/details");
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthentication();
             app.UseAuthorization();

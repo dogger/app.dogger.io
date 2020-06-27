@@ -10,11 +10,11 @@ namespace Dogger.Domain.Services.Provisioning.Arguments
         public string Path { get; }
 
         [NotLogged]
-        public string Contents { get; }
+        public byte[] Contents { get; }
 
         public InstanceDockerFile(
             string path,
-            string contents)
+            byte[] contents)
         {
             this.Path = path;
             this.Contents = contents;

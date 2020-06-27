@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Amazon.Lightsail.OpenFirewallPorts;
 using Dogger.Domain.Queries.Instances.GetNecessaryInstanceFirewallPorts;
@@ -369,7 +370,7 @@ namespace Dogger.Tests.Domain.Services.Provisioning.Stages
             {
                 new InstanceDockerFile(
                     "some-file-name", 
-                    "some-file-contents")
+                    Encoding.UTF8.GetBytes("some-file-contents"))
             };
             state.DockerComposeYmlContents = new[]
             {

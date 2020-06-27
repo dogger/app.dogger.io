@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
@@ -126,7 +127,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .Files
                     .Any(x =>
                         x.Path == "env/dogger.env" &&
-                        x.Contents == "FOO=some-value")));
+                        Encoding.UTF8.GetString(x.Contents) == "FOO=some-value")));
         }
 
         [TestMethod]
