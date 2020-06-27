@@ -122,9 +122,5 @@ namespace Dogger.Domain.Services.Provisioning.Stages.InstallSoftwareOnInstance
                     command));
             }
         }
-
-        public void Dispose()
-        {
-        }
     }
 }

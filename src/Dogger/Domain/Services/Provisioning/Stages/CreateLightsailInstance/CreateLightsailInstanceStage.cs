@@ -78,9 +78,5 @@ namespace Dogger.Domain.Services.Provisioning.Stages.CreateLightsailInstance
                         }
                     }));
         }
-
-        public void Dispose()
-        {
-        }
     }
 }

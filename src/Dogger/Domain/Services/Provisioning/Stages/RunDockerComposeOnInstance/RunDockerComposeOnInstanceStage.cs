@@ -62,9 +62,5 @@ namespace Dogger.Domain.Services.Provisioning.Stages.RunDockerComposeOnInstance
                 RetryPolicy.AllowRetries,
                 $"sudo chmod 777 ./{fileName}"));
         }
-
-        public void Dispose()
-        {
-        }
     }
 }
