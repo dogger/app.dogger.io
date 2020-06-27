@@ -28,9 +28,6 @@ namespace Dogger.Infrastructure.Ssh
 
         public async Task<SshCommandResult> ExecuteCommandAsync(string text)
         {
-            if (!this.sshClient.IsConnected)
-                throw new InvalidOperationException("Not connected to SSH.");
-
             using var command = this.sshClient.CreateCommand(text);
             command.CommandTimeout = TimeSpan.FromMinutes(15);
 
@@ -58,9 +55,6 @@ namespace Dogger.Infrastructure.Ssh
 
         public async Task TransferFileAsync(string filePath, byte[] contents)
         {
-            if (!this.sftpClient.IsConnected)
-                throw new InvalidOperationException("Not connected to SFTP.");
-
             await using var stream = new MemoryStream(contents);
             await Task.Factory
                 .FromAsync(

@@ -60,6 +60,6 @@ namespace Dogger.Tests.Infrastructure.Logging
                 .Dispose();
         }
 
-        interface ITestSink : IDisposable, ILogEventSink {}
+        public interface ITestSink : IDisposable, ILogEventSink {}
     }
 }
