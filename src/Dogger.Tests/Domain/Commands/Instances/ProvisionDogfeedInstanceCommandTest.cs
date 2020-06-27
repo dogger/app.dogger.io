@@ -46,7 +46,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             //Assert
             await fakeProvisioningService
                 .Received(1)
-                .ScheduleJobAsync(
+                .ScheduleJob(
                     Arg.Is<AggregateProvisioningStageFlow>(arguments => GetProvisionInstanceStateFlow(arguments)
                         .PlanId == "some-plan-id"));
         }
@@ -78,7 +78,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             //Assert
             await fakeProvisioningService
                 .Received(1)
-                .ScheduleJobAsync(
+                .ScheduleJob(
                     Arg.Is<AggregateProvisioningStageFlow>(arguments => GetProvisionInstanceStateFlow(arguments)
                         .DatabaseInstance.Name == "some-instance-name"));
         }
@@ -123,7 +123,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             //Assert
             await fakeProvisioningService
                 .Received(1)
-                .ScheduleJobAsync(Arg.Is<AggregateProvisioningStageFlow>(arg => ((DeployToClusterStageFlow)arg.Flows[1])
+                .ScheduleJob(Arg.Is<AggregateProvisioningStageFlow>(arg => ((DeployToClusterStageFlow)arg.Flows[1])
                     .Files
                     .Any(x =>
                         x.Path == "env/dogger.env" &&

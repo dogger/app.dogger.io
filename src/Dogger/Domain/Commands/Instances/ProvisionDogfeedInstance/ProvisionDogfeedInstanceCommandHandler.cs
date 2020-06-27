@@ -80,7 +80,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
 
             var dockerFiles = GetDockerFiles(this.configuration, dogfeedOptions);
 
-            return await this.provisioningService.ScheduleJobAsync(
+            return await this.provisioningService.ScheduleJob(
                 new AggregateProvisioningStageFlow(
                     new ProvisionInstanceStageFlow(
                         firstCapablePlan.Id,

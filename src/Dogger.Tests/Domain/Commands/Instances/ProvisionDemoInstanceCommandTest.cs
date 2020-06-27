@@ -245,7 +245,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             //Assert
             await fakeProvisioningService
                 .Received(1)
-                .ScheduleJobAsync(
+                .ScheduleJob(
                     Arg.Is<ProvisionInstanceStageFlow>(arguments =>
                         arguments.PlanId == "some-plan-id"));
         }
@@ -276,7 +276,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             //Assert
             await fakeProvisioningService
                 .Received(1)
-                .ScheduleJobAsync(
+                .ScheduleJob(
                     Arg.Is<ProvisionInstanceStageFlow>(arguments =>
                         arguments.DatabaseInstance.Name == "demo"));
         }

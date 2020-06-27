@@ -121,7 +121,7 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
                     BuildArguments = configuration.BuildArguments
                 });
 
-                await provisioningService.ScheduleJobAsync(
+                await provisioningService.ScheduleJob(
                     new AggregateProvisioningStageFlow(flowsToUse.ToArray()));
             }
             catch (PullDogPoolSizeExceededException ex)

@@ -2,9 +2,11 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Services.Provisioning.Flows;
+using Dogger.Domain.Services.Provisioning.Instructions;
 using Dogger.Domain.Services.Provisioning.Stages;
 using Dogger.Infrastructure.Time;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,18 +19,20 @@ namespace Dogger.Domain.Services.Provisioning
         public const string CompletedJobId = "J_SUCCEEDED";
 
         private readonly ITime time;
-
         private readonly ILogger logger;
+        private readonly IInstructionGroupCollectorFactory instructionGroupCollectorFactory;
 
         private readonly Queue<ProvisioningJob> jobQueue;
         private readonly ConcurrentDictionary<string, ProvisioningJob> jobsByIds;
 
         public ProvisioningService(
             ITime time,
-            ILogger logger)
+            ILogger logger,
+            IInstructionGroupCollectorFactory instructionGroupCollectorFactory)
         {
             this.time = time;
             this.logger = logger;
+            this.instructionGroupCollectorFactory = instructionGroupCollectorFactory;
 
             this.jobQueue = new Queue<ProvisioningJob>();
             this.jobsByIds = new ConcurrentDictionary<string, ProvisioningJob>();
@@ -42,11 +46,14 @@ namespace Dogger.Domain.Services.Provisioning
             return this.jobsByIds.TryGetValue(jobId, out var job) ? job : null;
         }
 
-        public async Task<IProvisioningJob> ScheduleJobAsync(IProvisioningStageFlow flow)
+        public IProvisioningJob ScheduleJob(
+            params Func<IProvisioningStageFactory, IProvisioningStage>[] stageFactories)
         {
-            var initialState = flow.GetInitialState().
+            var collector = instructionGroupCollectorFactory.Create();
+            collector.CollectFromStages(stageFactories);
 
-            var job = new ProvisioningJob(flow, scope);
+            var instructions = collector.RetrieveCollectedInstructions();
+            var job = new ProvisioningJob(instructions[0]);
 
             if (!this.jobsByIds.TryAdd(job.Id, job))
                 throw new InvalidOperationException("Could not add job to concurrent dictionary.");

@@ -57,7 +57,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             //Assert
             await fakeProvisioningService
                 .Received(1)
-                .ScheduleJobAsync(Arg.Is<DeployToClusterStageFlow>(args =>
+                .ScheduleJob(Arg.Is<DeployToClusterStageFlow>(args =>
                     args.InstanceName == "some-instance-name"));
         }
 
@@ -254,7 +254,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             //Assert
             await fakeProvisioningService
                 .Received(1)
-                .ScheduleJobAsync(Arg.Is<DeployToClusterStageFlow>(args =>
+                .ScheduleJob(Arg.Is<DeployToClusterStageFlow>(args =>
                     args.InstanceName == "some-instance-name"));
         }
 

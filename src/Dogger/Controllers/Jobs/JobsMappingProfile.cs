@@ -9,9 +9,6 @@ namespace Dogger.Controllers.Jobs
         {
             CreateMap<ProvisioningJob, JobStatusResponse>()
                 .ForMember(x => x.StateDescription, x => x.MapFrom(y => y.CurrentInstruction.Description));
-
-            CreateMap<PreCompletedProvisioningJob, JobStatusResponse>()
-                .ForMember(x => x.StateDescription, x => x.MapFrom(y => string.Empty));
         }
     }
 }

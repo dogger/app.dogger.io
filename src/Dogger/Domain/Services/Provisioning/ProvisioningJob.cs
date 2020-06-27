@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Domain.Services.Provisioning.Instructions.Models;
 using Dogger.Domain.Services.Provisioning.Stages;
 using MediatR;
@@ -9,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Dogger.Domain.Services.Provisioning
 {
 
-    public class ProvisioningJob : IProvisioningStageContext, IProvisioningJob
+    public class ProvisioningJob : IProvisioningJob
     {
         public string Id
         {
