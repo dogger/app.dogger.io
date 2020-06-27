@@ -41,12 +41,18 @@
     line-height: 150%;
 }
 
+.blog pre code {
+    padding: 12px;
+    margin: 0;
+}
+
 .blog code {
     background-color: #333;
     border: 1px solid black;
     border-radius: 5px;
 
-    padding: 12px;
+    padding: 0 6px;
+    margin: 0 3px;
     color: white;
     display: inline-block;
 }

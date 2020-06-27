@@ -48,9 +48,8 @@ namespace Dogger.Infrastructure.Ssh
 
         public async Task ConnectAsync()
         {
-            await Task.WhenAll(
-                ConnectSshAsync(),
-                ConnectSftpAsync());
+            await ConnectSshAsync();
+            await ConnectSftpAsync();
         }
 
         public async Task TransferFileAsync(string filePath, byte[] contents)
