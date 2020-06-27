@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dogger.Controllers.Webhooks;
 using Dogger.Controllers.Webhooks.Handlers;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;

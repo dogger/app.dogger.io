@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dogger.Domain.Commands.Clusters.EnsureClusterWithId;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
-using Dogger.Domain.Models;
-using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Queries.Instances.GetExpiredInstances;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;

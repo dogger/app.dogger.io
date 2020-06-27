@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Dogger.Controllers.Webhooks;
 using Dogger.Controllers.Webhooks.Handlers;
@@ -16,14 +15,12 @@ using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using Serilog;
 
 namespace Dogger.Tests.Controllers.Webhooks
 {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Dogger.Infrastructure.AspNet.Options;

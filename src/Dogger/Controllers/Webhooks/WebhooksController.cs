@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
-using Serilog;
 using Serilog.Context;
 
 namespace Dogger.Controllers.Webhooks

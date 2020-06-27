@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Destructurama;
 using Dogger.Infrastructure.Logging;
-using Elasticsearch.Net;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.Elasticsearch;

@@ -1,10 +1,7 @@
-﻿using System.Data;
-using System.Diagnostics;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Dogger.Infrastructure.Mediatr.Database
 {

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.AddPullDogToGitHubRepositories;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
-using Dogger.Domain.Commands.PullDog.EnsurePullDogRepository;
 using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
 using MediatR;
 

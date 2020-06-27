@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Instances.ProvisionInstanceForUser;
-using Dogger.Domain.Commands.Payment;
 using Dogger.Domain.Commands.Payment.SetActivePaymentMethodForUser;
 using Dogger.Domain.Commands.Users.CreateUserForIdentity;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Clusters.EnsureClusterWithId;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;

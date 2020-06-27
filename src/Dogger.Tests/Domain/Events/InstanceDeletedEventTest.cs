@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Events.InstanceDeleted;
 using Dogger.Domain.Models;

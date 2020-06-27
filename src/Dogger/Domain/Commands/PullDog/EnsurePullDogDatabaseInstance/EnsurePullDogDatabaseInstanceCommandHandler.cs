@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest;
 using MediatR;

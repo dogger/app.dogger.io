@@ -1,6 +1,4 @@
-﻿using Amazon.Lightsail.Model;
-
-namespace Dogger.Controllers.Plans
+﻿namespace Dogger.Controllers.Plans
 {
     public class PlanResponse
     {

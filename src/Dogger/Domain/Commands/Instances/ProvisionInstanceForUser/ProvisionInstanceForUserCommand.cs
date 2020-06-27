@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using Amazon.Lightsail.Model;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Services.Provisioning;
