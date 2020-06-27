@@ -151,7 +151,6 @@ namespace Dogger
             });
 
             services.AddHostedService<InstanceCleanupJob>();
-            services.AddHostedService<HeartbeatLogJob>();
         }
 
         private static void ConfigureSwagger(IServiceCollection services)
