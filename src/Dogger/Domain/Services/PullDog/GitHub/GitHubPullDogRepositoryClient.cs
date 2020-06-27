@@ -11,17 +11,13 @@ namespace Dogger.Domain.Services.PullDog.GitHub
     public class GitHubPullDogRepositoryClient : IPullDogRepositoryClient
     {
         private readonly IGitHubClient gitHubClient;
-        private readonly ILogger logger;
-
         private readonly GitReference gitReference;
 
         public GitHubPullDogRepositoryClient(
             IGitHubClient gitHubClient,
-            ILogger logger,
             GitReference gitReference)
         {
             this.gitHubClient = gitHubClient;
-            this.logger = logger;
             this.gitReference = gitReference;
         }
 
@@ -47,7 +43,9 @@ namespace Dogger.Domain.Services.PullDog.GitHub
                     .Where(content => content.Type.Value == ContentType.File)
                     .Select(content => new RepositoryFile(
                         content.Path,
-                        content.Content))
+                        content.EncodedContent == null ? 
+                            Array.Empty<byte>() :
+                            Convert.FromBase64String(content.EncodedContent)))
                     .ToArray();
 
                 var subDirectoryFiles = await Task.WhenAll(contents
@@ -73,7 +71,7 @@ namespace Dogger.Domain.Services.PullDog.GitHub
                                 name,
                                 file.Path,
                                 reference);
-                        file.Contents = Encoding.UTF8.GetString(bytes);
+                        file.Contents = bytes;
 
                         return file;
                     }));

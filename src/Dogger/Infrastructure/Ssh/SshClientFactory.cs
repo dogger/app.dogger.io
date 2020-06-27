@@ -50,8 +50,8 @@ namespace Dogger.Infrastructure.Ssh
 
             var client = new SshClient(
                 new SshClientDecorator(
-                    new Renci.SshNet.SshClient(
-                        connectionInfo)), 
+                    new Renci.SshNet.SshClient(connectionInfo),
+                    new Renci.SshNet.SftpClient(connectionInfo)),
                 this.logger);
 
             var policy = Policy
@@ -65,7 +65,7 @@ namespace Dogger.Infrastructure.Ssh
                         return TimeSpan.FromSeconds(retryAttempt);
                     });
 
-            await policy.ExecuteAsync(async () => 
+            await policy.ExecuteAsync(async () =>
                 await client.ConnectAsync());
 
             return client;

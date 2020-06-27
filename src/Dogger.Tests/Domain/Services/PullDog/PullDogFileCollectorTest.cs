@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Docker.Yml;
@@ -22,7 +23,9 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 .GetFilesForPathAsync("pull-dog.json")
                 .Returns(new[]
                 {
-                    new RepositoryFile("pull-dog.json", "{}") 
+                    new RepositoryFile(
+                        "pull-dog.json", 
+                        Encoding.UTF8.GetBytes("{}")) 
                 });
 
             var client = new PullDogFileCollector(
@@ -87,7 +90,9 @@ namespace Dogger.Tests.Domain.Services.PullDog
             fakePullDogRepositoryClient
                 .GetFilesForPathAsync("pull-dog.json")
                 .Returns(new [] {
-                    new RepositoryFile("pull-dog.json", "{}")
+                    new RepositoryFile(
+                        "pull-dog.json",
+                        Encoding.UTF8.GetBytes("{}"))
                 });
 
             var client = new PullDogFileCollector(
@@ -111,14 +116,18 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 .GetFilesForPathAsync("foo")
                 .Returns(new[]
                 {
-                    new RepositoryFile("foo", "foo-contents")
+                    new RepositoryFile(
+                        "foo",
+                        Encoding.UTF8.GetBytes("foo-contents"))
                 });
 
             fakePullDogRepositoryClient
                 .GetFilesForPathAsync("bar")
                 .Returns(new[]
                 {
-                    new RepositoryFile("bar", "bar-contents")
+                    new RepositoryFile(
+                        "bar",
+                        Encoding.UTF8.GetBytes("bar-contents"))
                 });
 
             var client = new PullDogFileCollector(
@@ -149,35 +158,45 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 .GetFilesForPathAsync(Path.Join("relative", "dir", "some-docker-compose.yml"))
                 .Returns(new[]
                 {
-                    new RepositoryFile("dummy", "some-docker-compose-contents")
+                    new RepositoryFile(
+                        "dummy",
+                        Encoding.UTF8.GetBytes("some-docker-compose-contents"))
                 });
 
             fakePullDogRepositoryClient
                 .GetFilesForPathAsync(Path.Join("relative", "dir", "some-volume-path"))
                 .Returns(new[]
                 {
-                    new RepositoryFile("dummy", "dummy")
+                    new RepositoryFile(
+                        "dummy",
+                        Encoding.UTF8.GetBytes("dummy"))
                 });
 
             fakePullDogRepositoryClient
                 .GetFilesForPathAsync(Path.Join("relative", "dir", "some-environment-file-path"))
                 .Returns(new[]
                 {
-                    new RepositoryFile("dummy", "dummy")
+                    new RepositoryFile(
+                        "dummy",
+                        Encoding.UTF8.GetBytes("dummy"))
                 });
 
             fakePullDogRepositoryClient
                 .GetFilesForPathAsync(Path.Join("relative", "dir", "some-dockerfile-path"))
                 .Returns(new[]
                 {
-                    new RepositoryFile("dummy", "dummy")
+                    new RepositoryFile(
+                        "dummy",
+                        Encoding.UTF8.GetBytes("dummy"))
                 });
 
             fakePullDogRepositoryClient
                 .GetFilesForPathAsync(Path.Join("relative", "dir", "some-additional-path"))
                 .Returns(new[]
                 {
-                    new RepositoryFile("dummy", "dummy")
+                    new RepositoryFile(
+                        "dummy",
+                        Encoding.UTF8.GetBytes("dummy"))
                 });
 
             var fakeDockerComposeParserFactory = Substitute.For<IDockerComposeParserFactory>();

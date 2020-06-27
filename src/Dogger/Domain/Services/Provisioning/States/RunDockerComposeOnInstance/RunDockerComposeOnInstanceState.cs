@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Destructurama.Attributed;
 using Dogger.Domain.Commands.Amazon.Lightsail.OpenFirewallPorts;
@@ -228,7 +229,8 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
                 await CreateSensitiveFileOnServerAsync(
                     sshClient,
                     file.FileName,
-                    file.Contents);
+                    Encoding.UTF8.GetBytes(
+                        file.Contents));
             }
         }
 
@@ -248,31 +250,21 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
         private static async Task CreateSensitiveFileOnServerAsync(
             ISshClient sshClient,
-            string fileName,
-            string contents)
+            string filePath,
+            byte[] contents)
         {
-            var lineFeedString = Guid
-                .NewGuid()
-                .ToString()
-                .Replace("-", "", StringComparison.InvariantCulture);
-            if (contents.Contains(lineFeedString, StringComparison.InvariantCulture))
-                throw new InvalidOperationException("Escape sequence detected in sensitive file.");
-
-            if (fileName.Contains("/", StringComparison.InvariantCulture))
+            if (filePath.Contains("/", StringComparison.InvariantCulture))
             {
-                var folderPath = fileName.Substring(0, fileName.LastIndexOf('/'));
+                var folderPath = filePath.Substring(0, filePath.LastIndexOf('/'));
                 await EnsureDirectoryAsync(sshClient, $"./dogger/{folderPath}");
             }
 
-            await sshClient.ExecuteCommandAsync(
+            await sshClient.TransferFileAsync(
                 SshRetryPolicy.AllowRetries,
-                $"cat > ./dogger/{fileName} <<-'{lineFeedString}'\n@@fileContents\n{lineFeedString}",
-                new Dictionary<string, string?>()
-                {
-                    { "fileContents", contents }
-                });
+                filePath,
+                contents);
 
-            await SetUserPermissionsOnPathAsync(sshClient, $"dogger/{fileName}");
+            await SetUserPermissionsOnPathAsync(sshClient, $"dogger/{filePath}");
         }
 
         private static async Task SetUserPermissionsOnPathAsync(ISshClient sshClient, string fileName)
