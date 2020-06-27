@@ -8,5 +8,7 @@ namespace Dogger.Tests.Infrastructure.Logging
     [TestClass]
     public class LoggerFactoryTest
     {
+        [TestMethod]
+
     }
 }
