@@ -1,4 +1,3 @@
 {
-  "dockerComposeYmlFilePaths": [ "src/docker-compose.pull-dog.yml" ],
-  "isLazy": true 
+  "dockerComposeYmlFilePaths": [ "src/docker-compose.pull-dog.yml" ] 
 }
