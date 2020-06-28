@@ -49,7 +49,7 @@
     "react-scripts": "^3.4.1",
     "typescript": "^3.8.3",
     "webfontloader": "^1.6.28",
-    "yaml": "1.9.2"
+    "yaml": "1.10.0"
   },
   "scripts": {
     "build": "gatsby build",
