@@ -25,9 +25,7 @@ using System.Text.Json.Serialization;
 using Dogger.Infrastructure.AspNet.Health;
 using FluffySpoon.AspNet.NGrok;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.FileProviders;
 
 namespace Dogger
 {
@@ -138,11 +136,6 @@ namespace Dogger
 
             services.AddHealthChecks();
 
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "wwwroot/build";
-            });
-
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
@@ -174,22 +167,8 @@ namespace Dogger
             });
         }
 
-        private static void AddCacheHeaders(StaticFileResponseContext context, TimeSpan duration)
-        {
-            context.Context.Response.Headers.Append(
-                "Cache-Control",
-                "public,max-age=" + (int)duration.TotalSeconds);
-
-            context.Context.Response.Headers.Append(
-                "Expires",
-                DateTime.UtcNow
-                    .Add(duration)
-                    .ToString("R", CultureInfo.InvariantCulture));
-        }
-
         public static void Configure(
-            IApplicationBuilder app,
-            IHostEnvironment environment)
+            IApplicationBuilder app)
         {
             app.UseForwardedHeaders();
 
@@ -250,52 +229,6 @@ namespace Dogger
                     .MapControllers()
                     .RequireAuthorization();
             });
-
-            if (ShouldUseSpaServices(environment))
-            {
-                app.UseWhen(
-                    IsNonApiGetRequest,
-                    a => a.UseSpaStaticFiles());
-
-                app.UseWhen(
-                    IsNonApiGetRequest, a => a
-                        .UseSpa(spa =>
-                        {
-                            spa.Options.SourcePath = "wwwroot";
-                            spa.UseProxyToSpaDevelopmentServer("http://localhost:9000/");
-                        }));
-            }
-            else if (!EnvironmentHelper.IsRunningInTest)
-            {
-                app.UseWhen(IsNonApiGetRequest, a =>
-                {
-                    app.UseDefaultFiles(new DefaultFilesOptions()
-                    {
-                        FileProvider = GetPublicRootFileProvider()
-                    });
-                    a.UseStaticFiles(new StaticFileOptions()
-                    {
-                        FileProvider = GetPublicRootFileProvider(),
-                        OnPrepareResponse = staticFileResponseContext =>
-                        {
-                            AddCacheHeaders(staticFileResponseContext, TimeSpan.FromDays(365));
-                        }
-                    });
-                });
-            }
-        }
-
-        private static PhysicalFileProvider GetPublicRootFileProvider()
-        {
-            return new PhysicalFileProvider(Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "wwwroot",
-                "public"));
-        }
-
-        private static bool ShouldUseSpaServices(IHostEnvironment environment)
-        {
-            return environment.IsDevelopment() && !EnvironmentHelper.IsRunningInTest;
         }
 
         private static bool IsWebhookRequest(HttpContext context)
@@ -303,13 +236,6 @@ namespace Dogger
             return context.Request.Path.StartsWithSegments(
                 "/api/webhooks",
                 StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        private static bool IsNonApiGetRequest(HttpContext httpContext)
-        {
-            return
-                httpContext.Request.Method == HttpMethods.Get &&
-                !httpContext.Request.Path.StartsWithSegments("/api", StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }
