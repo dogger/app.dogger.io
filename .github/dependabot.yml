@@ -1,19 +1,10 @@
 version: 2
 updates:
-- package-ecosystem: npm
-  directory: "/src/Dogger/wwwroot"
-  schedule:
-    interval: live
-  open-pull-requests-limit: 10
-  automerged_updates:
-    - match:
-        dependency_type: "all"
-        update_type: "all"
 - package-ecosystem: nuget
   directory: "/"
   schedule:
     interval: live
-  open-pull-requests-limit: 10
+  open-pull-requests-limit: 1
   automerged_updates:
     - match:
         dependency_type: "all"
