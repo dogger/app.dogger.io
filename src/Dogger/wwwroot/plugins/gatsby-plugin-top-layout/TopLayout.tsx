@@ -13,6 +13,16 @@ import { auth0Config, onRedirectCallback } from '../../src/setup/auth';
 
 import {Helmet} from "react-helmet";
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.ready
+    .then(registration => {
+      registration.unregister();
+    })
+    .catch(error => {
+      console.error(error.message);
+    });
+}
+
 export default ({children}: PropsWithChildren<any>) => {
   const themeFromStorage = typeof localStorage !== "undefined" && localStorage.getItem("theme");
 
