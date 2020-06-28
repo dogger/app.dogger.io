@@ -468,7 +468,7 @@ const App = ({data}) => {
                     <Grid item xs={12} sm={6} md={4}>
                         <BenefitGridItem
                             title="Fully open source"
-                            description={<>We love open source. Everything we make at Dogger is <a rel="nofollow" target="_blank" href="https://github.com/dogger">fully open source</a>.</>}
+                            description={<>We love open source. Everything we make at Dogger is <a rel="nofollow noopener noreferrer" target="_blank" href="https://github.com/dogger">fully open source</a>.</>}
                             icon={<GitHub className={styles.accentColor} style={{ fontSize: 80 }} />}
                         />
                     </Grid>
