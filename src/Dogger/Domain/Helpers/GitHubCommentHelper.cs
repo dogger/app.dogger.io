@@ -9,7 +9,7 @@ namespace Dogger.Domain.Helpers
     {
         public static string RenderSpoiler(string title, string content)
         {
-            return $"<details>\n<summary>**{title}**</summary>\n\n{content}\n</details>";
+            return $"<details>\n<summary><b>{title}</b></summary>\n\n{content}\n</details>";
         }
     }
 }
