@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dogger.Domain.Helpers;
 using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.GitHub;
@@ -62,7 +63,7 @@ namespace Dogger.Domain.Commands.PullDog.UpsertPullRequestComment
                     x.User.Id == 64746321) :
                 null;
 
-            var requestContent = $"\\*Ruff\\* :dog: {request.Content}\n\nReact on this comment to leave anonymous feedback.\n- :+1: to say _good dog_ :meat_on_bone:\n- :-1: to say _bad dog_ :bone:\n\n{RenderSpoiler("Commands", "- `@pull-dog up` to reprovision or provision the server.\n- `@pull-dog down` to delete the provisioned server.")}";
+            var requestContent = $"\\*Ruff\\* :dog: {request.Content}\n\nReact on this comment to leave anonymous feedback.\n- :+1: to say _good dog_ :meat_on_bone:\n- :-1: to say _bad dog_ :bone:\n\n{GitHubCommentHelper.RenderSpoiler("Commands", "- `@pull-dog up` to reprovision or provision the server.\n- `@pull-dog down` to delete the provisioned server.")}";
             if (existingBotComment == null)
             {
                 await client
@@ -85,11 +86,6 @@ namespace Dogger.Domain.Commands.PullDog.UpsertPullRequestComment
             }
 
             return Unit.Value;
-        }
-
-        private static string RenderSpoiler(string title, string content)
-        {
-            return $"<details>\n<summary>{title}</summary>\n\n{content}\n</details>";
         }
     }
 }

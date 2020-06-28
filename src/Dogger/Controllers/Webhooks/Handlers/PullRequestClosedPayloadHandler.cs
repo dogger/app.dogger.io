@@ -18,7 +18,9 @@ namespace Dogger.Controllers.Webhooks.Handlers
 
         public bool CanHandle(WebhookPayload payload)
         {
-            return payload.Action == "closed";
+            return 
+                payload.Action == "closed" &&
+                payload.PullRequest?.User?.Type != "Bot";
         }
 
         public async Task HandleAsync(WebhookPayloadContext context)

@@ -8,5 +8,7 @@ namespace Dogger.Controllers.Webhooks
         public string? Login { get; set; }
 
         public long Id { get; set; }
+
+        public string? Type { get; set; }
     }
 }
