@@ -36,7 +36,7 @@
     "gatsby-source-filesystem": "^2.3.10",
     "gatsby-transformer-remark": "^2.8.14",
     "gatsby-transformer-sharp": "^2.5.3",
-    "history": "^4.10.1",
+    "history": "^5.0.0",
     "http-status-codes": "^1.4.0",
     "material-ui": "^0.20.2",
     "moment": "^2.26.0",
