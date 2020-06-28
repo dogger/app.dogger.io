@@ -40,14 +40,6 @@ namespace Dogger.Domain.Services.PullDog
                 dockerComposeFileContents);
             allFiles.AddRange(dockerFiles);
 
-            if (configuration.AdditionalPaths != null)
-            {
-                var additionalFiles = await GetFilesFromPathsAsync(
-                    dockerComposeYmlDirectoryPath,
-                    configuration.AdditionalPaths);
-                allFiles.AddRange(additionalFiles);
-            }
-
             return new RepositoryPullDogFileContext(
                 dockerComposeFileContents,
                 allFiles.ToArray());

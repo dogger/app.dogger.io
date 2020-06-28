@@ -114,51 +114,6 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task Handle_ConfigurationOverridePresentWithAdditionalPaths_OverridesExistingAdditionalPaths()
-        {
-            //Arrange
-            var fakePullDogPullRequest = new PullDogPullRequest()
-            {
-                ConfigurationOverride = new ConfigurationFileOverride()
-                {
-                    AdditionalPaths = new []
-                    {
-                        "some-new-value"
-                    }
-                }
-            };
-
-            var fakeConfiguration = new ConfigurationFile()
-            {
-                AdditionalPaths = new[]
-                {
-                    "some-old-value"
-                }
-            };
-
-            var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
-
-            var fakePullDogFileCollector = await fakePullDogFileCollectorFactory.CreateAsync(fakePullDogPullRequest);
-            fakePullDogFileCollector
-                .GetConfigurationFileAsync()
-                .Returns(fakeConfiguration);
-
-            var handler = new GetConfigurationForPullRequestQueryHandler(
-                fakePullDogFileCollectorFactory);
-
-            //Act
-            var configuration = await handler.Handle(
-                new GetConfigurationForPullRequestQuery(
-                    fakePullDogPullRequest),
-                default);
-
-            //Assert
-            var path = configuration.AdditionalPaths!.Single();
-            Assert.AreEqual("some-new-value", path);
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
         public async Task Handle_ConfigurationOverridePresentWithConversationMode_OverridesExistingConversationMode()
         {
             //Arrange

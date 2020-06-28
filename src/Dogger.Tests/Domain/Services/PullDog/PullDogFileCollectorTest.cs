@@ -236,15 +236,11 @@ namespace Dogger.Tests.Domain.Services.PullDog
                     DockerComposeYmlFilePaths = new[]
                     {
                         Path.Join("relative", "dir", "some-docker-compose.yml")
-                    },
-                    AdditionalPaths = new []
-                    {
-                        Path.Join("relative", "dir", "some-additional-path")
                     }
                 });
 
             //Assert
-            Assert.AreEqual(4, context.Files.Length);
+            Assert.AreEqual(3, context.Files.Length);
         }
     }
 }
