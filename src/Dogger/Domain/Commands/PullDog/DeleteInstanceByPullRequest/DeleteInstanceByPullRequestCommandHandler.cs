@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
-using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

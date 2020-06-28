@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Clusters.EnsureClusterWithId;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
@@ -77,7 +77,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
 
             await this.dataContext.SaveChangesAsync(cancellationToken);
 
-            var dockerComposeYmlContents = SanitizeFileContentsFromConfiguration(dogfeedOptions.DockerComposeYmlContents);
+            var dockerComposeYmlContents = SanitizeFileContentsFromConfigurationAsString(dogfeedOptions.DockerComposeYmlContents);
             logger.Debug("Docker Compose YML file contents are {DockerComposeYmlFileContents}.", dockerComposeYmlContents);
 
             var dockerFiles = GetDockerFiles(this.configuration, dogfeedOptions);
@@ -159,25 +159,25 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
                     })),
                 new InstanceDockerFile(
                     "certs/admin.key",
-                    SanitizeFileContentsFromConfiguration(elasticsearchOptions.AdminKeyContents)),
+                    SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.AdminKeyContents)),
                 new InstanceDockerFile(
                     "certs/admin.pem",
-                    SanitizeFileContentsFromConfiguration(elasticsearchOptions.AdminPemContents)),
+                    SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.AdminPemContents)),
                 new InstanceDockerFile(
                     "certs/node.key",
-                    SanitizeFileContentsFromConfiguration(elasticsearchOptions.NodeKeyContents)),
+                    SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.NodeKeyContents)),
                 new InstanceDockerFile(
                     "certs/node.pem",
-                    SanitizeFileContentsFromConfiguration(elasticsearchOptions.NodePemContents)),
+                    SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.NodePemContents)),
                 new InstanceDockerFile(
                     "certs/root-ca.key",
-                    SanitizeFileContentsFromConfiguration(elasticsearchOptions.RootCaKeyContents)),
+                    SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.RootCaKeyContents)),
                 new InstanceDockerFile(
                     "certs/root-ca.pem",
-                    SanitizeFileContentsFromConfiguration(elasticsearchOptions.RootCaPemContents)),
+                    SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.RootCaPemContents)),
                 new InstanceDockerFile(
                     "config/elasticsearch.yml",
-                    SanitizeFileContentsFromConfiguration(elasticsearchOptions.ConfigurationYmlContents))
+                    SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.ConfigurationYmlContents))
             };
         }
 
@@ -204,19 +204,29 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
             return instanceEnvironmentVariableFile;
         }
 
-        static string FormatEnvironmentVariableFileContentsFromValues(Dictionary<string, string> values)
+        private static byte[] FormatEnvironmentVariableFileContentsFromValues(Dictionary<string, string> values)
         {
-            return string.Join('\n', values
-                .Select(keyPair =>
-                    keyPair.Key + "=" + keyPair.Value));
+            return Encoding.UTF8.GetBytes(
+                string.Join('\n', values
+                    .Select(keyPair =>
+                        keyPair.Key + "=" + keyPair.Value)));
         }
 
-        private static string SanitizeFileContentsFromConfiguration(string? contents)
+        private static string SanitizeFileContentsFromConfigurationAsString(string? contents)
         {
             if (contents == null)
                 throw new ArgumentNullException(nameof(contents));
 
             return contents.Replace("\\n", "\n", StringComparison.InvariantCulture);
+        }
+
+        private static byte[] SanitizeFileContentsFromConfigurationAsBytes(string? contents)
+        {
+            var text = SanitizeFileContentsFromConfigurationAsString(contents);
+            if (text == null)
+                return Array.Empty<byte>();
+
+            return Encoding.UTF8.GetBytes(text);
         }
     }
 }

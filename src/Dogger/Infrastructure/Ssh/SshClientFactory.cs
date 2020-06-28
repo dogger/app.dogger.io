@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Dogger.Infrastructure.AspNet.Options;
@@ -51,8 +50,8 @@ namespace Dogger.Infrastructure.Ssh
 
             var client = new SshClient(
                 new SshClientDecorator(
-                    new Renci.SshNet.SshClient(
-                        connectionInfo)), 
+                    new Renci.SshNet.SshClient(connectionInfo),
+                    new Renci.SshNet.SftpClient(connectionInfo)),
                 this.logger);
 
             var policy = Policy
@@ -66,7 +65,7 @@ namespace Dogger.Infrastructure.Ssh
                         return TimeSpan.FromSeconds(retryAttempt);
                     });
 
-            await policy.ExecuteAsync(async () => 
+            await policy.ExecuteAsync(async () =>
                 await client.ConnectAsync());
 
             return client;

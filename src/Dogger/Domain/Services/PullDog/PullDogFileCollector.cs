@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Dogger.Infrastructure;
 using Dogger.Infrastructure.Docker.Yml;
 
 namespace Dogger.Domain.Services.PullDog
 {
-
     public class PullDogFileCollector : IPullDogFileCollector
     {
         private readonly IPullDogRepositoryClient client;
@@ -71,17 +70,24 @@ namespace Dogger.Domain.Services.PullDog
             string dockerComposeYmlDirectoryPath,
             string[] dockerComposeYmlContents)
         {
-            var paths = new List<string>()
+            var paths = new HashSet<string>()
             {
-                ".env"
+                string.Empty,
+                ".env",
             };
 
             foreach (var dockerComposeYmlContent in dockerComposeYmlContents)
             {
                 var parser = this.dockerComposeParserFactory.Create(dockerComposeYmlContent);
-                paths.AddRange(parser.GetVolumePaths());
-                paths.AddRange(parser.GetEnvironmentFilePaths());
-                paths.AddRange(parser.GetDockerfilePaths());
+
+                foreach (var path in parser.GetVolumePaths())
+                    paths.Add(path);
+
+                foreach (var path in parser.GetEnvironmentFilePaths())
+                    paths.Add(path);
+
+                foreach (var path in parser.GetDockerfilePaths())
+                    paths.Add(path);
             }
 
             var pathContents = await GetFilesFromPathsAsync(
@@ -124,7 +130,8 @@ namespace Dogger.Domain.Services.PullDog
                 .ToArray();
         }
 
-        private async Task<string[]?> GetDockerComposeYmlContentsFromRepositoryAsync(ConfigurationFile configurationFile)
+        private async Task<string[]?> GetDockerComposeYmlContentsFromRepositoryAsync(
+            ConfigurationFile configurationFile)
         {
             if (configurationFile.DockerComposeYmlFilePaths == null)
                 return null;
@@ -134,7 +141,10 @@ namespace Dogger.Domain.Services.PullDog
                 .Select(this.client.GetFilesForPathAsync));
             return contents
                 .SelectMany(files => files)
-                .Select(file => file.Contents)
+                .Select(file => Encoding
+                    .UTF8
+                    .GetString(
+                        file.Contents))
                 .ToArray();
         }
     }

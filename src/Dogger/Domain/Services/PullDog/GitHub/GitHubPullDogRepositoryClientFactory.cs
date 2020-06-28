@@ -10,14 +10,11 @@ namespace Dogger.Domain.Services.PullDog.GitHub
     public class GitHubPullDogRepositoryClientFactory : IPullDogRepositoryClientFactory
     {
         private readonly IGitHubClientFactory gitHubClientFactory;
-        private readonly ILogger logger;
 
         public GitHubPullDogRepositoryClientFactory(
-            IGitHubClientFactory gitHubClientFactory,
-            ILogger logger)
+            IGitHubClientFactory gitHubClientFactory)
         {
             this.gitHubClientFactory = gitHubClientFactory;
-            this.logger = logger;
         }
 
         public async Task<IPullDogRepositoryClient> CreateAsync(
@@ -36,7 +33,6 @@ namespace Dogger.Domain.Services.PullDog.GitHub
 
             return new GitHubPullDogRepositoryClient(
                 gitHubClient,
-                logger,
                 gitHubPullRequest.Head);
         }
     }

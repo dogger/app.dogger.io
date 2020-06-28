@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Instances.GetInstanceByName;
-using Dogger.Domain.Queries.Users.GetUserById;
-using Dogger.Infrastructure.Time;
 using MediatR;
-using Polly;
-using Stripe;
 
 namespace Dogger.Domain.Commands.Instances.RegisterInstanceAsProvisioned
 {

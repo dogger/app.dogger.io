@@ -8,7 +8,6 @@ using Dogger.Tests.TestHelpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 // ReSharper disable CheckNamespace

@@ -1,5 +1,4 @@
-﻿using Amazon.Lightsail.Model;
-using Dogger.Domain.Queries.Plans.GetSupportedPlans;
+﻿using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using MediatR;
 
 namespace Dogger.Domain.Queries.Plans.GetDemoPlan

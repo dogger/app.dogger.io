@@ -20,8 +20,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
         {
             //Arrange
             var factory = new GitHubPullDogRepositoryClientFactory(
-                Substitute.For<IGitHubClientFactory>(),
-                Substitute.For<ILogger>());
+                Substitute.For<IGitHubClientFactory>());
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
@@ -52,8 +51,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 .Returns(new PullRequest());
 
             var factory = new GitHubPullDogRepositoryClientFactory(
-                fakeGitHubClientFactory,
-                Substitute.For<ILogger>());
+                fakeGitHubClientFactory);
 
             //Act
             var client = await factory.CreateAsync(new PullDogPullRequest()

@@ -1,6 +1,4 @@
-﻿using Amazon.Lightsail.Model;
-using AutoMapper;
-using Dogger.Domain.Helpers;
+﻿using AutoMapper;
 using Dogger.Domain.Services.Provisioning;
 
 namespace Dogger.Controllers.Plans

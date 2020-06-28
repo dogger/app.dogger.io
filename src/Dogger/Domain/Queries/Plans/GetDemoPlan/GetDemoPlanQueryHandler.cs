@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Amazon.Lightsail.Model;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using MediatR;
 

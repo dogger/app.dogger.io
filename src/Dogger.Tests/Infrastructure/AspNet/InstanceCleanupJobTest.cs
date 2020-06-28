@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dogger.Domain.Commands.Clusters.EnsureClusterWithId;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
-using Dogger.Domain.Models;
-using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Queries.Instances.GetExpiredInstances;
 using Dogger.Infrastructure.AspNet;
 using Dogger.Infrastructure.Time;
@@ -13,7 +9,6 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using Instance = Amazon.Lightsail.Model.Instance;
 
 namespace Dogger.Tests.Infrastructure.AspNet
 {

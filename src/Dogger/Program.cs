@@ -8,17 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Destructurama;
-using Dogger.Domain.Models;
 using Dogger.Infrastructure.Database;
+using Dogger.Infrastructure.Logging;
 using FluffySpoon.AspNet.NGrok;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Serilog.Core;
-using Serilog.Debugging;
-using Serilog.Events;
-using Serilog.Sinks.Elasticsearch;
-using Serilog.Sinks.Slack.Core;
 
 namespace Dogger
 {

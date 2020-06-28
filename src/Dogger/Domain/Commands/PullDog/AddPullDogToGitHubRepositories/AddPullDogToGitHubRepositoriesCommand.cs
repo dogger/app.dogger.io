@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Data;
 using Dogger.Domain.Models;
 using Dogger.Infrastructure.Mediatr.Database;
 using MediatR;

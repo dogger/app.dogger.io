@@ -14,7 +14,6 @@ using Microsoft.Extensions.Hosting;
 using Dogger.Infrastructure;
 using FluffySpoon.AspNet.NGrok;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 

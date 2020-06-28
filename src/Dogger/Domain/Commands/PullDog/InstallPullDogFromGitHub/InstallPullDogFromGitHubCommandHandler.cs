@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Auth0.CreateAuth0User;
 using Dogger.Domain.Commands.PullDog.AddPullDogToGitHubRepositories;
-using Dogger.Domain.Commands.PullDog.EnsurePullDogRepository;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Auth0.GetAuth0UserFromEmails;

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,7 +19,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
-using System.Reflection;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -145,13 +143,21 @@ namespace Dogger
                 configuration.RootPath = "wwwroot/build";
             });
 
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder => builder
+                        .WithOrigins("https://dogger.io")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+            });
+
             services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
             });
 
             services.AddHostedService<InstanceCleanupJob>();
-            services.AddHostedService<HeartbeatLogJob>();
         }
 
         private static void ConfigureSwagger(IServiceCollection services)
@@ -194,6 +200,8 @@ namespace Dogger
             app.UseExceptionHandler("/errors/details");
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthentication();
             app.UseAuthorization();

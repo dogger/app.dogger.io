@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
-using Serilog;
+using Serilog.Context;
 
 namespace Dogger.Controllers.Webhooks
 {
@@ -73,37 +73,45 @@ namespace Dogger.Controllers.Webhooks
             if (@event == null)
                 throw new InvalidOperationException("Event is not set.");
 
-            foreach (var handler in this.configurationPayloadHandlers)
+            using (LogContext.PushProperty("GitHubInstallationId", payload.Installation.Id))
+            using (LogContext.PushProperty("GitHubEvent", @event))
             {
-                if (handler.Event != @event)
-                    continue;
+                foreach (var handler in this.configurationPayloadHandlers)
+                {
+                    if (handler.Event != @event)
+                        continue;
 
-                if(!handler.CanHandle(payload))
-                    continue;
+                    if (!handler.CanHandle(payload))
+                        continue;
 
-                await handler.HandleAsync(payload);
+                    await handler.HandleAsync(payload);
 
-                return Ok();
+                    return Ok();
+                }
+
+                var context = await GetWebhookPayloadContextAsync(payload);
+                if (context == null)
+                    return NoContent();
+
+                using (LogContext.PushProperty("GitHubRepositoryHandle", context.Repository.Handle))
+                using (LogContext.PushProperty("GitHubPullRequestHandle", context.PullRequest.Handle))
+                {
+                    var foundHandler = false;
+                    foreach (var handler in this.genericPayloadHandlers)
+                    {
+                        if (handler.Event != @event)
+                            continue;
+
+                        if (!handler.CanHandle(payload))
+                            continue;
+
+                        await handler.HandleAsync(context);
+                        foundHandler = true;
+                    }
+
+                    return foundHandler ? (IActionResult)Ok() : (IActionResult)NoContent();
+                }
             }
-
-            var context = await GetWebhookPayloadContextAsync(payload);
-            if (context == null)
-                return NoContent();
-
-            var foundHandler = false;
-            foreach (var handler in this.genericPayloadHandlers)
-            {
-                if (handler.Event != @event)
-                    continue;
-
-                if (!handler.CanHandle(payload))
-                    continue;
-
-                await handler.HandleAsync(context);
-                foundHandler = true;
-            }
-
-            return foundHandler ? (IActionResult) Ok() : (IActionResult) NoContent();
         }
 
         private async Task<WebhookPayloadContext?> GetWebhookPayloadContextAsync(WebhookPayload payload)
