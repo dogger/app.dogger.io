@@ -23,7 +23,7 @@
     <PackageReference Include="AWSSDK.ECR" Version="3.3.105.23" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.101" />
     <PackageReference Include="AWSSDK.IdentityManagement" Version="3.3.106.14" />
-    <PackageReference Include="AWSSDK.Lightsail" Version="3.3.105.12" />
+    <PackageReference Include="AWSSDK.Lightsail" Version="3.3.105.13" />
     <PackageReference Include="awssdk.securitytoken" Version="3.3.105.23" />
     <PackageReference Include="Destructurama.Attributed" Version="2.0.0" />
     <PackageReference Include="docker.dotnet" Version="3.125.2" />
