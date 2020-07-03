@@ -34,6 +34,14 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance
             var user = settings.User;
 
             var expiryDuration = request.Configuration.Expiry;
+
+            var isDemoPlan = settings.PoolSize == 0;
+            var maximumDemoExpiryTime = TimeSpan.FromMinutes(55);
+            if (isDemoPlan && expiryDuration > maximumDemoExpiryTime)
+            {
+                expiryDuration = maximumDemoExpiryTime;
+            }
+
             var expiryTime = expiryDuration.TotalMinutes < 1 ?
                 (DateTime?)null :
                 DateTime.UtcNow.Add(expiryDuration);
@@ -46,7 +54,11 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance
                         x.PullDogPullRequest == pullRequest);
                 if (existingInstance != null)
                 {
-                    existingInstance.ExpiresAtUtc = expiryTime;
+                    if (!isDemoPlan || existingInstance.ExpiresAtUtc == null)
+                    {
+                        existingInstance.ExpiresAtUtc = expiryTime;
+                    }
+
                     return existingInstance;
                 }
 
