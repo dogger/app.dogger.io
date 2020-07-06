@@ -46,7 +46,7 @@ namespace Dogger.Tests.Infrastructure.Mediatr
                     await dataContext.Clusters.CountAsync());
 
                 Assert.AreEqual(1, clusterCount1);
-                Assert.AreEqual(0, clusterCount2);
+                Assert.AreEqual(2, clusterCount2);
             }));
         }
 
