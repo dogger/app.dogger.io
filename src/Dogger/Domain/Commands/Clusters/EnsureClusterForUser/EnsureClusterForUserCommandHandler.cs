@@ -30,6 +30,7 @@ namespace Dogger.Domain.Commands.Clusters.EnsureClusterForUser
                     x.Id,
                     x.Name
                 })
+                .AllowIdentityMatch()
                 .RunAsync(cancellationToken);
             await this.dataContext.SaveChangesAsync(cancellationToken);
 
