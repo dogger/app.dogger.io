@@ -30,6 +30,7 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest
                     x.Handle,
                     x.PullDogRepositoryId
                 })
+                .NoUpdate()
                 .AllowIdentityMatch()
                 .RunAsync(cancellationToken);
             await this.dataContext.SaveChangesAsync(cancellationToken);
