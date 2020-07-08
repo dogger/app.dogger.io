@@ -19,7 +19,20 @@ namespace Dogger.Domain.Commands.Clusters.EnsureClusterWithId
 
         public async Task<Cluster> Handle(EnsureClusterWithIdCommand request, CancellationToken cancellationToken)
         {
-            var existingCluster = await this.dataContext
+            await this.dataContext
+                .Clusters
+                .Upsert(new Cluster
+                {
+                    Id = request.Id
+                })
+                .On(x => new
+                {
+                    x.Id
+                })
+                .RunAsync(cancellationToken);
+            await this.dataContext.SaveChangesAsync(cancellationToken);
+
+            var cluster = await this.dataContext
                 .Clusters
                 .Include(x => x.User)
                 .Include(x => x.Instances)
@@ -27,18 +40,8 @@ namespace Dogger.Domain.Commands.Clusters.EnsureClusterWithId
                 .ThenInclude(x => x!.PullDogRepository)
                 .ThenInclude(x => x.PullDogSettings)
                 .Where(x => x.Id == request.Id)
-                .FirstOrDefaultAsync(cancellationToken);
-            if (existingCluster != null)
-                return existingCluster;
-
-            var newCluster = new Cluster
-            {
-                Id = request.Id
-            };
-            await this.dataContext.Clusters.AddAsync(newCluster, cancellationToken);
-            await this.dataContext.SaveChangesAsync(cancellationToken);
-
-            return newCluster;
+                .SingleAsync(cancellationToken);
+            return cluster;
         }
     }
 }

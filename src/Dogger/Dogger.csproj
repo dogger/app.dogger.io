@@ -27,6 +27,7 @@
     <PackageReference Include="awssdk.securitytoken" Version="3.3.105.23" />
     <PackageReference Include="Destructurama.Attributed" Version="2.0.0" />
     <PackageReference Include="docker.dotnet" Version="3.125.2" />
+    <PackageReference Include="FlexLabs.EntityFrameworkCore.Upsert" Version="3.1.0" />
     <PackageReference Include="FluffySpoon.AspNet.NGrok" Version="1.75.0" />
     <PackageReference Include="Flurl.Http" Version="2.4.2" />
     <PackageReference Include="GitHubJwt" Version="0.0.4" />

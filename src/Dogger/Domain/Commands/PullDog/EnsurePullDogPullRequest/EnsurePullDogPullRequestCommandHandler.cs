@@ -18,30 +18,33 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest
 
         public async Task<PullDogPullRequest> Handle(EnsurePullDogPullRequestCommand request, CancellationToken cancellationToken)
         {
-            var existingPullRequest = await this.dataContext
+            await this.dataContext
+                .PullDogPullRequests
+                .Upsert(new PullDogPullRequest()
+                {
+                    Handle = request.PullRequestHandle,
+                    PullDogRepositoryId = request.Repository.Id
+                })
+                .On(x => new
+                {
+                    x.Handle,
+                    x.PullDogRepositoryId
+                })
+                .RunAsync(cancellationToken);
+            await this.dataContext.SaveChangesAsync(cancellationToken);
+
+            var pullRequest = await this.dataContext
                 .PullDogPullRequests
                 .Include(x => x.Instance)
                 .Include(x => x.PullDogRepository)
                 .ThenInclude(x => x.PullDogSettings)
                 .ThenInclude(x => x.User)
-                .FirstOrDefaultAsync(
-                    pullRequest => 
-                        pullRequest.Handle == request.PullRequestHandle &&
-                        pullRequest.PullDogRepository == request.Repository,
+                .SingleAsync(
+                    pr => 
+                        pr.Handle == request.PullRequestHandle &&
+                        pr.PullDogRepository == request.Repository,
                     cancellationToken);
-            if (existingPullRequest != null)
-                return existingPullRequest;
-            
-            var newPullRequest = new PullDogPullRequest()
-            {
-                Handle = request.PullRequestHandle,
-                PullDogRepository = request.Repository
-            };
-
-            await this.dataContext.PullDogPullRequests.AddAsync(newPullRequest, cancellationToken);
-            await this.dataContext.SaveChangesAsync(cancellationToken);
-
-            return newPullRequest;
+            return pullRequest;
         }
     }
 }
