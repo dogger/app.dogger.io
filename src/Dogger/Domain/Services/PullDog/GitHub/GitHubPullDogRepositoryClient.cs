@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,14 +32,11 @@ namespace Dogger.Domain.Services.PullDog.GitHub
                 var name = headRepository.Name;
                 var reference = this.gitReference.Ref;
 
-                var contents = await gitHubClient
-                    .Repository
-                    .Content
-                    .GetAllContentsByRef(
-                        owner,
-                        name,
-                        path,
-                        reference);
+                var contents = await GetRepositoryContentsAsync(
+                    path, 
+                    owner, 
+                    name, 
+                    reference);
                 var resultingFiles = contents
                     .Where(content => content.Type.Value == ContentType.File)
                     .Select(content => new RepositoryFile(
@@ -79,6 +77,35 @@ namespace Dogger.Domain.Services.PullDog.GitHub
             catch (NotFoundException)
             {
                 return Array.Empty<RepositoryFile>();
+            }
+        }
+
+        private async Task<IReadOnlyList<RepositoryContent>> GetRepositoryContentsAsync(
+            string path, 
+            string owner, 
+            string name, 
+            string reference)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return await this.gitHubClient
+                    .Repository
+                    .Content
+                    .GetAllContentsByRef(
+                        owner,
+                        name,
+                        reference);
+            }
+            else
+            {
+                return await this.gitHubClient
+                    .Repository
+                    .Content
+                    .GetAllContentsByRef(
+                        owner,
+                        name,
+                        path,
+                        reference);
             }
         }
 
