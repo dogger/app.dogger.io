@@ -63,7 +63,7 @@ namespace Dogger.Domain.Commands.PullDog.UpsertPullRequestComment
                     x.User.Id == 64746321) :
                 null;
 
-            var requestContent = $"\\*Ruff\\* :dog: {request.Content}\n\nReact on this comment to leave anonymous feedback.\n- :+1: to say _good dog_ :meat_on_bone:\n- :-1: to say _bad dog_ :bone:\n\n{GitHubCommentHelper.RenderSpoiler("Commands", "- `@pull-dog up` to reprovision or provision the server.\n- `@pull-dog down` to delete the provisioned server.")}";
+            var requestContent = $"\\*Ruff\\* :dog: {request.Content}\n\n{GitHubCommentHelper.RenderSpoiler("What is this?", "<a href=\"https://dogger.io\" target=\"_blank\">Pull Dog</a> is a GitHub app that makes test environments for your pull requests using Docker, from a `docker-compose.yml` file you specify. It takes 57 seconds to set up (we checked!) and there's a free plan available.\n\nVisit <a href=\"https://dogger.io\" target=\"_blank\">our website</a> to learn more.")}{GitHubCommentHelper.RenderSpoiler("Commands", "- `@pull-dog up` to reprovision or provision the server.\n- `@pull-dog down` to delete the provisioned server.")}";
             if (existingBotComment == null)
             {
                 await client
