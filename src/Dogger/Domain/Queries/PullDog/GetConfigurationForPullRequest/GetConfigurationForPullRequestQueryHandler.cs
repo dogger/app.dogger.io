@@ -43,9 +43,6 @@ namespace Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest
             if (configurationOverride.BuildArguments != null)
                 configuration.BuildArguments = configurationOverride.BuildArguments;
 
-            if (configurationOverride.AdditionalPaths != null)
-                configuration.AdditionalPaths = configurationOverride.AdditionalPaths;
-
             if (configurationOverride.ConversationMode != default)
                 configuration.ConversationMode = configurationOverride.ConversationMode;
 

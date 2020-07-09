@@ -27,6 +27,7 @@ namespace Dogger.Tests.Domain.Events
             await handler.Handle(
                 new ServerDeploymentFailedEvent(
                     "some-instance-name",
+                    "dummy",
                     "dummy"),
                 default);
 
@@ -58,6 +59,7 @@ namespace Dogger.Tests.Domain.Events
             await handler.Handle(
                 new ServerDeploymentFailedEvent(
                     "some-instance-name",
+                    "dummy",
                     "dummy"),
                 default);
 
@@ -92,6 +94,7 @@ namespace Dogger.Tests.Domain.Events
             await handler.Handle(
                 new ServerDeploymentFailedEvent(
                     "some-instance-name",
+                    "dummy",
                     "dummy"),
                 default);
 

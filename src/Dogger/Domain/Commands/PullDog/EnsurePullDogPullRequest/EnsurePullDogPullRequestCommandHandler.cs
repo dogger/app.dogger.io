@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using MediatR;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest
@@ -18,30 +19,42 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest
 
         public async Task<PullDogPullRequest> Handle(EnsurePullDogPullRequestCommand request, CancellationToken cancellationToken)
         {
-            var existingPullRequest = await this.dataContext
+            var existingPullRequest = await GetExistingPullRequestAsync(request, cancellationToken);
+            if (existingPullRequest != null)
+                return existingPullRequest;
+
+            try
+            {
+                var newPullRequest = new PullDogPullRequest()
+                {
+                    Handle = request.PullRequestHandle,
+                    PullDogRepository = request.Repository
+                };
+
+                await this.dataContext.PullDogPullRequests.AddAsync(newPullRequest, cancellationToken);
+                await this.dataContext.SaveChangesAsync(cancellationToken);
+
+                return newPullRequest;
+            }
+            catch (DbUpdateException ex) when (ex.IsUniqueConstraintViolation())
+            {
+                return await GetExistingPullRequestAsync(request, cancellationToken);
+            }
+        }
+
+        private async Task<PullDogPullRequest> GetExistingPullRequestAsync(EnsurePullDogPullRequestCommand request, CancellationToken cancellationToken)
+        {
+            return await this.dataContext
                 .PullDogPullRequests
                 .Include(x => x.Instance)
                 .Include(x => x.PullDogRepository)
                 .ThenInclude(x => x.PullDogSettings)
                 .ThenInclude(x => x.User)
                 .FirstOrDefaultAsync(
-                    pullRequest => 
+                    pullRequest =>
                         pullRequest.Handle == request.PullRequestHandle &&
                         pullRequest.PullDogRepository == request.Repository,
                     cancellationToken);
-            if (existingPullRequest != null)
-                return existingPullRequest;
-            
-            var newPullRequest = new PullDogPullRequest()
-            {
-                Handle = request.PullRequestHandle,
-                PullDogRepository = request.Repository
-            };
-
-            await this.dataContext.PullDogPullRequests.AddAsync(newPullRequest, cancellationToken);
-            await this.dataContext.SaveChangesAsync(cancellationToken);
-
-            return newPullRequest;
         }
     }
 }

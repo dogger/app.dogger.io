@@ -40,14 +40,6 @@ namespace Dogger.Domain.Services.PullDog
                 dockerComposeFileContents);
             allFiles.AddRange(dockerFiles);
 
-            if (configuration.AdditionalPaths != null)
-            {
-                var additionalFiles = await GetFilesFromPathsAsync(
-                    dockerComposeYmlDirectoryPath,
-                    configuration.AdditionalPaths);
-                allFiles.AddRange(additionalFiles);
-            }
-
             return new RepositoryPullDogFileContext(
                 dockerComposeFileContents,
                 allFiles.ToArray());
@@ -72,10 +64,10 @@ namespace Dogger.Domain.Services.PullDog
         {
             var paths = new HashSet<string>()
             {
-                string.Empty,
-                ".env",
+                ".env"
             };
 
+            var allDockerfilePaths = new HashSet<string>();
             foreach (var dockerComposeYmlContent in dockerComposeYmlContents)
             {
                 var parser = this.dockerComposeParserFactory.Create(dockerComposeYmlContent);
@@ -87,8 +79,14 @@ namespace Dogger.Domain.Services.PullDog
                     paths.Add(path);
 
                 foreach (var path in parser.GetDockerfilePaths())
-                    paths.Add(path);
+                    allDockerfilePaths.Add(path);
             }
+
+            if (allDockerfilePaths.Count > 0)
+                paths.Add(string.Empty);
+
+            foreach (var path in allDockerfilePaths)
+                paths.Add(path);
 
             var pathContents = await GetFilesFromPathsAsync(
                 dockerComposeYmlDirectoryPath,

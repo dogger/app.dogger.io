@@ -24,7 +24,7 @@ namespace Dogger.Domain.Events.InstanceDeleted
             await this.mediator.Send(
                 new UpsertPullRequestCommentCommand(
                     pullRequest,
-                    "The test environment for this pull request has been destroyed :boom: This may have happened explicitly via a command, or because the pull request was closed."),
+                    "The test environment for this pull request has been destroyed :boom: This may have happened explicitly via a command, because the environment expired, or because the pull request was closed."),
                 cancellationToken);
 
             return Unit.Value;

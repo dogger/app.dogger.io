@@ -81,6 +81,7 @@ namespace Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest
             var offendingPullRequests = cluster
                 .Instances
                 .Select(x => x.PullDogPullRequest!)
+                .Where(x => x != null)
                 .ToArray();
             return offendingPullRequests;
         }

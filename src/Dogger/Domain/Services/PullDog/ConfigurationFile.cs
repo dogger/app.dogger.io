@@ -17,7 +17,6 @@ namespace Dogger.Domain.Services.PullDog
     {
         public IDictionary<string, string>? BuildArguments { get; set; }
         public string[]? DockerComposeYmlFilePaths { get; set; }
-        public string[]? AdditionalPaths { get; set; }
 
         public TimeSpan Expiry { get; set; }
         public ConversationMode ConversationMode { get; set; }

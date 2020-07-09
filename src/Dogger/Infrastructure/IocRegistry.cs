@@ -254,7 +254,7 @@ namespace Dogger.Infrastructure
             IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddDbContext<DataContext>(
+            services.AddDbContextPool<DataContext>(
                 optionsBuilder =>
                 {
                     var connectionString = configuration["Sql:ConnectionString"];
@@ -275,8 +275,7 @@ namespace Dogger.Infrastructure
                                 .Ignore(InMemoryEventId.TransactionIgnoredWarning));
                     }
                 },
-                ServiceLifetime.Scoped,
-                ServiceLifetime.Scoped);
+                1);
 
             services.AddScoped<IDatabaseMigrator, DatabaseMigrator>();
         }

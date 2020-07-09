@@ -192,7 +192,7 @@ namespace Dogger.Tests.Controllers.Webhooks
 
             //Act
             await handler.HandleAsync(new WebhookPayloadContext(
-                null!,
+                new WebhookPayload(), 
                 null!,
                 databaseRepository,
                 new PullDogPullRequest()

@@ -2,40 +2,18 @@ name: Docker
 
 on:
   push:
-    # Publish `master` as Docker `latest` image.
     branches:
       - master
 
-    # Publish `v1.2.3` tags as releases.
     tags:
       - v*
 
-  # Run tests for any PRs.
   pull_request:
 
-env:
-  IMAGE_NAME: dogger
-
 jobs:
-
-  dependabot:
-    if: contains(github.head_ref, 'dependabot') == true
-    name: Check if compilation succeeds
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Compile dogger.io
-        working-directory: ./src
-        run: |
-          docker build . --file Dogger/Dockerfile
-
   test:
     name: Run all tests
     runs-on: ubuntu-latest
-    if: contains(github.head_ref, 'dependabot') == false
 
     steps:      
       - name: 'Block concurrent executions'
@@ -59,8 +37,8 @@ jobs:
         with:
           file: ./src/TestResults/coverage.opencover.xml
 
-  publish-dogger-io:
-    name: Publish dogger-io
+  publish-app-dogger-io:
+    name: Publish app-dogger-io
     needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && contains(github.ref, 'master')
@@ -72,7 +50,7 @@ jobs:
       - name: Build Dockerfile
         working-directory: ./src
         run: |
-          docker build . --file Dogger/Dockerfile --tag dogger-image --build-arg STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY_LIVE }}
+          docker build . --file Dogger/Dockerfile --tag dogger-image
 
       - name: Tag Docker image
         run: |
@@ -86,16 +64,16 @@ jobs:
           echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
           docker push ffmathy/dogger:latest
 
-  deploy-dogger-io:
-    name: Deploy dogger-io
-    needs: [publish-dogger-io]
+  deploy-app-dogger-io:
+    name: Deploy app-dogger-io
+    needs: [publish-app-dogger-io]
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Deploy to dogger.io
+      - name: Deploy to app.dogger.io
         working-directory: ./src
         run: |
           echo "Starting dogfeed process."

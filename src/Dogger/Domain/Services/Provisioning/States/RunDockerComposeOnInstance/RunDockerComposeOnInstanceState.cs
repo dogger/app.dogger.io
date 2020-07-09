@@ -143,9 +143,14 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             }
             catch (SshCommandExecutionException ex) when (ex.Result.ExitCode == 1)
             {
+                var listFilesDump = await sshClient.ExecuteCommandAsync(
+                    SshRetryPolicy.AllowRetries,
+                    $"cd dogger && ls -R");
+
                 await this.mediator.Send(new ServerDeploymentFailedEvent(
                     InstanceName,
-                    ex.Result.Text));
+                    ex.Result.Text,
+                    listFilesDump));
 
                 throw new StateUpdateException(
                     "Could not run containers: " + ex.Result.Text,

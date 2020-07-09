@@ -83,6 +83,9 @@ namespace Dogger.Domain.Commands.Instances.DeleteInstanceByName
             var cluster = instance.Cluster;
             cluster.Instances.Remove(instance);
 
+            if (instance.PullDogPullRequest != null)
+                this.dataContext.PullDogPullRequests.Remove(instance.PullDogPullRequest);
+
             if (cluster.Instances.Count == 0)
                 this.dataContext.Clusters.Remove(cluster);
 

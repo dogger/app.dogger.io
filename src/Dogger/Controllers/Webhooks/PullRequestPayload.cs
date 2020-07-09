@@ -14,5 +14,7 @@ namespace Dogger.Controllers.Webhooks
         public HeadPayload? Head { get; set; }
 
         public bool Draft { get; set; }
+
+        public UserPayload? User { get; set; }
     }
 }
