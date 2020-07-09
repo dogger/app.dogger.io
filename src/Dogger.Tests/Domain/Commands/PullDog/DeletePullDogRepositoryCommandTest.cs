@@ -14,6 +14,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
     public class DeletePullDogRepositoryCommandTest
     {
         [TestMethod]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_PullDogRepositoryWithPullRequestPresentInDatabase_DeletesBothRepositoryAndPullRequests()
         {
             //Arrange
@@ -63,6 +64,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_MatchingAndUnmatchingRepositoriesPresent_DeletesMatchingRepository()
         {
             //Arrange

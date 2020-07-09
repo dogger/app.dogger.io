@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure;
+using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Dogger.Tests.Infrastructure
@@ -11,6 +12,7 @@ namespace Dogger.Tests.Infrastructure
     public class JsonFactoryTest
     {
         [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
         public async Task Serialize_ConfigurationFileWithExpiryInMinutes_SerializesCorrectly()
         {
             //Arrange
@@ -27,6 +29,7 @@ namespace Dogger.Tests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
         public async Task Serialize_ConfigurationFileWithExpiryInDays_SerializesCorrectly()
         {
             //Arrange
@@ -43,6 +46,7 @@ namespace Dogger.Tests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
         public async Task Serialize_ConfigurationFileWithExpiryInMoreThanAYear_SerializesCorrectly()
         {
             //Arrange
@@ -59,6 +63,7 @@ namespace Dogger.Tests.Infrastructure
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
         public async Task Serialize_ConfigurationFileWithNoExpiry_SerializesCorrectly()
         {
             //Arrange

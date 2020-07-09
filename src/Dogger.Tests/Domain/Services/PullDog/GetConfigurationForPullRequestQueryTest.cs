@@ -16,7 +16,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
     {
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task Handle_ConfigurationFileNotPresent_ReturnsNull()
+        public async Task Handle_ConfigurationFileNotPresent_ReturnsDefaultConfiguration()
         {
             //Arrange
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
@@ -31,7 +31,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 default);
 
             //Assert
-            Assert.IsNull(configuration);
+            Assert.IsNotNull(configuration?.DockerComposeYmlFilePaths);
+            Assert.AreEqual("docker-compose.yml", configuration.DockerComposeYmlFilePaths[0]);
         }
 
         [TestMethod]

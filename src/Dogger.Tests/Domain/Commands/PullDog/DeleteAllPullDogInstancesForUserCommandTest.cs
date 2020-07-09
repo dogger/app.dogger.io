@@ -15,6 +15,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
     public class DeleteAllPullDogInstancesForUserCommandTest
     {
         [TestMethod]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_InstancesWithoutPullRequestPresent_NothingIsDeleted()
         {
             //Arrange
@@ -56,6 +57,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_InstancesWithPullRequestsForDifferentUser_NothingIsDeleted()
         {
             //Arrange
@@ -117,6 +119,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_InstancesPresentWithPullRequestForUser_DeleteCommandsAreFiredForRelevantInstances()
         {
             //Arrange

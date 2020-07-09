@@ -4,6 +4,7 @@ using Amazon.Lightsail.Model;
 using Dogger.Domain.Queries.Plans.GetPlanById;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
+using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -14,6 +15,7 @@ namespace Dogger.Tests.Domain.Queries.Plans
     public class GetPullDogPlanFromSettingsTest
     {
         [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
         public async Task Handle_DoggerPlanNotFound_ReturnsNull()
         {
             //Arrange
@@ -37,6 +39,7 @@ namespace Dogger.Tests.Domain.Queries.Plans
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
         public async Task Handle_DoggerPlanFoundButMatchingPullDogPlanNotFound_ReturnsNull()
         {
             //Arrange
@@ -64,6 +67,7 @@ namespace Dogger.Tests.Domain.Queries.Plans
         }
 
         [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
         public async Task Handle_PullDogPlanFound_ReturnsMatchingPlan()
         {
             //Arrange

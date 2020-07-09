@@ -21,7 +21,7 @@ namespace Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest
 
             var configuration = await client.GetConfigurationFileAsync();
             if (configuration == null)
-                return null;
+                return GetDefaultConfiguration();
 
             var configurationOverride = request.PullRequest.ConfigurationOverride;
             if (configurationOverride == null)
@@ -32,6 +32,17 @@ namespace Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest
                 configuration);
 
             return configuration;
+        }
+
+        private static ConfigurationFile GetDefaultConfiguration()
+        {
+            return new ConfigurationFile()
+            {
+                DockerComposeYmlFilePaths = new []
+                {
+                    "docker-compose.yml"
+                }
+            };
         }
 
         private static void ApplyOverridesToConfiguration(

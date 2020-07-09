@@ -13,6 +13,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
     public class AddPullDogToGitHubRepositoriesCommandTest
     {
         [TestMethod]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_MultipleRepositoryIdsSpecified_RepositoriesAdded()
         {
             //Arrange

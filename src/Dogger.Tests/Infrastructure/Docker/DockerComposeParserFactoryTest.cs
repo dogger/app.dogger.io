@@ -1,4 +1,5 @@
 ﻿using Dogger.Infrastructure.Docker.Yml;
+using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Dogger.Tests.Infrastructure.Docker
@@ -7,6 +8,7 @@ namespace Dogger.Tests.Infrastructure.Docker
     public class DockerComposeParserFactoryTest
     {
         [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
         public void Create_DockerComposeContentsGiven_CreatesDockerComposeParser()
         {
             //Arrange
