@@ -32,7 +32,7 @@ namespace Dogger.Infrastructure.Ssh
 
         public async Task ConnectAsync()
         {
-            const int totalWaitTimeInSeconds = 5 * 60;
+            const int totalWaitTimeInSeconds = 3 * 60;
             const int retryIntervalInSeconds = 10;
 
             var policy = Policy
