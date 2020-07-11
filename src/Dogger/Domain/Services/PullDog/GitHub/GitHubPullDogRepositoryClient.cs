@@ -57,7 +57,7 @@ namespace Dogger.Domain.Services.PullDog.GitHub
                     .Union(subDirectoryFilesNormalized)
                     .Select(async file =>
                     {
-                        if (file.Contents != null)
+                        if (file.Contents.Length > 0)
                             return file;
 
                         var bytes = await this
