@@ -39,8 +39,8 @@ namespace Dogger.Tests.Domain.Events
 
             await fakeMediator
                 .Received(1)
-                .Send(Arg.Is<DeleteInstanceByNameCommand>(args =>
-                    args.Name == "some-instance-name"));
+                .Send(Arg.Is<SetInstanceExpiryCommand>(args =>
+                    args.InstanceName == "some-instance-name"));
         }
 
         [TestMethod]
