@@ -36,11 +36,6 @@ namespace Dogger.Tests.Domain.Events
             await fakeMediator
                 .DidNotReceive()
                 .Send(Arg.Any<UpsertPullRequestCommentCommand>());
-
-            await fakeMediator
-                .Received(1)
-                .Send(Arg.Is<SetInstanceExpiryCommand>(args =>
-                    args.InstanceName == "some-instance-name"));
         }
 
         [TestMethod]
