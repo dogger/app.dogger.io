@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
+using Dogger.Domain.Commands.Instances.SetInstanceExpiry;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Events.ServerDeploymentFailed;
 using Dogger.Domain.Models;
@@ -70,8 +71,8 @@ namespace Dogger.Tests.Domain.Events
 
             await fakeMediator
                 .Received(1)
-                .Send(Arg.Is<DeleteInstanceByNameCommand>(args =>
-                    args.Name == "some-instance-name"));
+                .Send(Arg.Is<SetInstanceExpiryCommand>(args =>
+                    args.InstanceName == "some-instance-name"));
         }
 
         [TestMethod]
@@ -105,8 +106,8 @@ namespace Dogger.Tests.Domain.Events
 
             await fakeMediator
                 .Received(1)
-                .Send(Arg.Is<DeleteInstanceByNameCommand>(args =>
-                    args.Name == "some-instance-name"));
+                .Send(Arg.Is<SetInstanceExpiryCommand>(args =>
+                    args.InstanceName == "some-instance-name"));
         }
     }
 }
