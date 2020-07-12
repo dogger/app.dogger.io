@@ -95,26 +95,36 @@ namespace Dogger.Domain.Services.Provisioning
                     var result = await job.CurrentState.UpdateAsync();
                     if (result == ProvisioningStateUpdateResult.InProgress)
                     {
+                        this.logger.Debug("Job is still in progress.");
+
                         this.jobQueue.Enqueue(job);
                         await this.time.WaitAsync(1000);
                     }
                     else
                     {
+                        this.logger.Debug("Switching job to next state.");
+
                         var nextState = await job.Flow.GetNextStateAsync(new NextStateContext(
                             job.Mediator,
                             job.StateFactory,
                             job.CurrentState));
                         if (nextState == null)
                         {
+                            this.logger.Information("Job has succeeded.");
+
                             job.IsSucceeded = true;
                             job.Dispose();
                         }
                         else
                         {
+                            this.logger.Debug("Job is initializing.");
+
                             await nextState.InitializeAsync();
 
                             job.CurrentState = nextState;
                             this.jobQueue.Enqueue(job);
+
+                            this.logger.Information("Job has initialized.");
                         }
                     }
                 }
