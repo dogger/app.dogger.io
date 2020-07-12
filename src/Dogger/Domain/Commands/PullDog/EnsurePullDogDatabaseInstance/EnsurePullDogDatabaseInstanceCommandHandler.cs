@@ -64,7 +64,7 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance
 
                 var newInstance = new Instance()
                 {
-                    Name = $"pull-dog_{user.Id}_{Guid.NewGuid()}",
+                    Name = $"pull-dog_{user.Id}_{request.PullRequest.Id}",
                     Cluster = cluster,
                     IsProvisioned = false,
                     PlanId = settings.PlanId,

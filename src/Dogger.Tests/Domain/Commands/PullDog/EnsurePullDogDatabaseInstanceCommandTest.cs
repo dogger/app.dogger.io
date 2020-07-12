@@ -143,12 +143,12 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 var refreshedOldInstance = await dataContext
                     .Instances
                     .AsNoTracking()
-                    .SingleOrDefaultAsync(x =>
-                        x.Name == oldInstance.Name &&
-                        x.Id == oldInstance.Id &&
-                        x.ExpiresAtUtc < DateTime.UtcNow.AddHours(1) &&
-                        x.ExpiresAtUtc > DateTime.UtcNow.AddMinutes(50));
-                Assert.IsNotNull(refreshedOldInstance);
+                    .SingleAsync();
+
+                Assert.AreEqual(oldInstance.Name, refreshedOldInstance.Name);
+                Assert.AreEqual(oldInstance.Id, refreshedOldInstance.Id);
+                Assert.IsTrue(refreshedOldInstance.ExpiresAtUtc < DateTime.UtcNow.AddHours(1));
+                Assert.IsTrue(refreshedOldInstance.ExpiresAtUtc > DateTime.UtcNow.AddMinutes(50));
             });
         }
 
