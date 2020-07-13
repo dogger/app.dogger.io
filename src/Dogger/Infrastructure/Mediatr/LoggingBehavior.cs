@@ -6,6 +6,7 @@ using Serilog;
 namespace Dogger.Infrastructure.Mediatr
 {
     public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+        where TRequest : notnull
     {
         private readonly ILogger logger;
 
