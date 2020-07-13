@@ -10,7 +10,7 @@ namespace Dogger.Tests.Infrastructure.Docker
     {
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public void GetDockerfilePaths_DockerfilePathGiven_ReturnsDockerfilePath()
+        public void GetDockerfilePaths_DockerfilePathGivenInObjectForm_ReturnsDockerfilePath()
         {
             //Arrange
             var dockerComposeYmlContents = @$"
@@ -31,6 +31,29 @@ services:
             //Assert
             Assert.AreEqual(1, filePaths.Length);
             Assert.AreEqual("foo", filePaths[0]);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public void GetDockerfilePaths_DockerfilePathGivenInStringForm_ReturnsDockerfilePath()
+        {
+            //Arrange
+            var dockerComposeYmlContents = @$"
+version: '3.6'
+
+services:
+  elasticsearch_searchguard_1:
+    build: .
+";
+
+            var parser = new DockerComposeParser(dockerComposeYmlContents);
+
+            //Act
+            var filePaths = parser.GetDockerfilePaths().ToArray();
+
+            //Assert
+            Assert.AreEqual(1, filePaths.Length);
+            Assert.AreEqual("./Dockerfile", filePaths[0]);
         }
 
         [TestMethod]
