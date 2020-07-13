@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Dogger.Infrastructure;
 using Dogger.Infrastructure.Docker.Yml;
+using Serilog;
 
 namespace Dogger.Domain.Services.PullDog
 {
@@ -14,13 +15,16 @@ namespace Dogger.Domain.Services.PullDog
     {
         private readonly IPullDogRepositoryClient client;
         private readonly IDockerComposeParserFactory dockerComposeParserFactory;
+        private readonly ILogger logger;
 
         public PullDogFileCollector(
             IPullDogRepositoryClient client,
-            IDockerComposeParserFactory dockerComposeParserFactory)
+            IDockerComposeParserFactory dockerComposeParserFactory,
+            ILogger logger)
         {
             this.client = client;
             this.dockerComposeParserFactory = dockerComposeParserFactory;
+            this.logger = logger;
         }
 
         public async Task<RepositoryPullDogFileContext?> GetRepositoryFileContextFromConfiguration(ConfigurationFile configuration)
@@ -87,6 +91,8 @@ namespace Dogger.Domain.Services.PullDog
 
             foreach (var path in allDockerfilePaths)
                 paths.Add(path);
+
+            logger.Debug("Will collect {@FilePaths} from the repository.", paths.ToArray());
 
             var pathContents = await GetFilesFromPathsAsync(
                 dockerComposeYmlDirectoryPath,

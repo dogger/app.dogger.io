@@ -5,6 +5,7 @@ using Dogger.Infrastructure.Docker.Yml;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using Serilog;
 
 namespace Dogger.Tests.Domain.Services.PullDog
 {
@@ -21,7 +22,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             var factory = new PullDogFileCollectorFactory(
                 fakePullDogRepositoryClientFactory,
-                fakeDockerComposeParserFactory);
+                fakeDockerComposeParserFactory,
+                Substitute.For<ILogger>());
 
             var pullDogPullRequest = new PullDogPullRequest();
 
