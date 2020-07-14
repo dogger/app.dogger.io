@@ -41,7 +41,7 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance
 
             var isDemoPlan = settings.PoolSize == 0;
             var maximumDemoExpiryTime = TimeSpan.FromMinutes(55);
-            if (isDemoPlan && expiryDuration > maximumDemoExpiryTime)
+            if (isDemoPlan && (expiryDuration > maximumDemoExpiryTime || expiryDuration.TotalMinutes < 1))
             {
                 expiryDuration = maximumDemoExpiryTime;
             }
