@@ -7,6 +7,7 @@ using Dogger.Infrastructure.Docker.Yml;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using Serilog;
 
 namespace Dogger.Tests.Domain.Services.PullDog
 {
@@ -30,7 +31,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             var client = new PullDogFileCollector(
                 fakePullDogRepositoryClient,
-                Substitute.For<IDockerComposeParserFactory>());
+                Substitute.For<IDockerComposeParserFactory>(),
+                Substitute.For<ILogger>());
 
             //Act
             var configurationFile = await client.GetConfigurationFileAsync();
@@ -51,7 +53,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             var client = new PullDogFileCollector(
                 fakePullDogRepositoryClient,
-                Substitute.For<IDockerComposeParserFactory>());
+                Substitute.For<IDockerComposeParserFactory>(),
+                Substitute.For<ILogger>());
 
             //Act
             var configurationFile = await client.GetConfigurationFileAsync();
@@ -72,7 +75,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             var client = new PullDogFileCollector(
                 fakePullDogRepositoryClient,
-                Substitute.For<IDockerComposeParserFactory>());
+                Substitute.For<IDockerComposeParserFactory>(),
+                Substitute.For<ILogger>());
 
             //Act
             var composeContents = await client.GetRepositoryFileContextFromConfiguration(new ConfigurationFile());
@@ -97,7 +101,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             var client = new PullDogFileCollector(
                 fakePullDogRepositoryClient,
-                Substitute.For<IDockerComposeParserFactory>());
+                Substitute.For<IDockerComposeParserFactory>(),
+                Substitute.For<ILogger>());
 
             //Act
             var dockerComposeYmlContents = await client.GetRepositoryFileContextFromConfiguration(new ConfigurationFile());
@@ -132,7 +137,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             var client = new PullDogFileCollector(
                 fakePullDogRepositoryClient,
-                Substitute.For<IDockerComposeParserFactory>());
+                Substitute.For<IDockerComposeParserFactory>(),
+                Substitute.For<ILogger>());
 
             //Act
             var context = await client.GetRepositoryFileContextFromConfiguration(new ConfigurationFile()
@@ -227,7 +233,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             var client = new PullDogFileCollector(
                 fakePullDogRepositoryClient,
-                fakeDockerComposeParserFactory);
+                fakeDockerComposeParserFactory,
+                Substitute.For<ILogger>());
 
             //Act
             var context = await client.GetRepositoryFileContextFromConfiguration(

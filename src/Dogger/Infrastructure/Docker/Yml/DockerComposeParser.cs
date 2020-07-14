@@ -107,24 +107,39 @@ namespace Dogger.Infrastructure.Docker.Yml
             var result = new List<string>();
             foreach (var environmentFileElement in GetServiceElementProperties("build"))
             {
-                if (environmentFileElement.ValueKind != JsonValueKind.Object)
-                    continue;
-
-                var foundDockerfileReference = false;
-                foreach (var property in environmentFileElement.EnumerateObject())
+                if (environmentFileElement.ValueKind == JsonValueKind.Object)
                 {
-                    if (property.Value.ValueKind != JsonValueKind.String)
-                        continue;
-
-                    if (property.Name == "dockerfile")
+                    var foundDockerfileReference = false;
+                    foreach (var property in environmentFileElement.EnumerateObject())
                     {
-                        foundDockerfileReference = true;
-                        result.Add(property.Value.GetString());
-                    }
-                }
+                        if (property.Value.ValueKind != JsonValueKind.String)
+                            continue;
 
-                if(!foundDockerfileReference)
-                    result.Add("Dockerfile");
+                        if (property.Name == "dockerfile")
+                        {
+                            foundDockerfileReference = true;
+                            result.Add(property.Value.GetString());
+                        }
+                    }
+
+                    if (!foundDockerfileReference)
+                    {
+                        result.Add("Dockerfile");
+                    }
+                } else if (environmentFileElement.ValueKind == JsonValueKind.String)
+                {
+                    var contextPath = environmentFileElement.GetString();
+
+                    var dockerfilePath = Path
+                        .Join(
+                            contextPath,
+                            "Dockerfile")
+                        .Replace(
+                            "\\", "/", 
+                            StringComparison.InvariantCulture);
+
+                    result.Add(dockerfilePath);
+                }
             }
 
             return result;

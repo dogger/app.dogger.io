@@ -5,7 +5,8 @@ using MediatR;
 
 namespace Dogger.Infrastructure.Mediatr.Database
 {
-    public class DatabaseTransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    public class DatabaseTransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> 
+        where TRequest : notnull
     {
         private readonly DataContext dataContext;
 

@@ -87,7 +87,71 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_ExistingClusterInstanceFoundAndDemoUser_ReducesExpiryToAnHour()
+        public async Task Handle_ExistingClusterInstanceFoundAndDemoUserWithNoExpiry_ReducesExpiryToAnHour()
+        {
+            //Arrange
+            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+
+            var pullDogPullRequest = new PullDogPullRequest()
+            {
+                Handle = "dummy",
+                PullDogRepository = new PullDogRepository()
+                {
+                    Handle = "dummy",
+                    PullDogSettings = new PullDogSettings()
+                    {
+                        User = new User()
+                        {
+                            StripeCustomerId = "dummy"
+                        },
+                        PoolSize = 0,
+                        PlanId = "dummy",
+                        EncryptedApiKey = Array.Empty<byte>()
+                    }
+                }
+            };
+
+            var oldInstance = new Instance()
+            {
+                Name = "existing-instance",
+                PlanId = "dummy",
+                PullDogPullRequest = pullDogPullRequest,
+                Cluster = new Cluster()
+                {
+                    Id = DataContext.PullDogDemoClusterId
+                }
+            };
+
+            await environment.DataContext.Instances.AddAsync(oldInstance);
+            await environment.DataContext.SaveChangesAsync();
+
+            //Act
+            var instance = await environment.Mediator.Send(new EnsurePullDogDatabaseInstanceCommand(
+                pullDogPullRequest,
+                new ConfigurationFile()));
+
+            //Assert
+            Assert.AreSame(instance, oldInstance);
+            Assert.AreEqual(instance.Name, oldInstance.Name);
+            Assert.AreEqual(instance.Id, oldInstance.Id);
+
+            await environment.WithFreshDataContext(async dataContext =>
+            {
+                var refreshedOldInstance = await dataContext
+                    .Instances
+                    .AsNoTracking()
+                    .SingleAsync();
+
+                Assert.AreEqual(oldInstance.Name, refreshedOldInstance.Name);
+                Assert.AreEqual(oldInstance.Id, refreshedOldInstance.Id);
+                Assert.IsTrue(refreshedOldInstance.ExpiresAtUtc < DateTime.UtcNow.AddHours(1));
+                Assert.IsTrue(refreshedOldInstance.ExpiresAtUtc > DateTime.UtcNow.AddMinutes(50));
+            });
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.IntegrationCategory)]
+        public async Task Handle_ExistingClusterInstanceFoundAndDemoUserWithMoreThanOneHourExpiry_ReducesExpiryToAnHour()
         {
             //Arrange
             await using var environment = await IntegrationTestEnvironment.CreateAsync();
@@ -143,12 +207,12 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 var refreshedOldInstance = await dataContext
                     .Instances
                     .AsNoTracking()
-                    .SingleOrDefaultAsync(x =>
-                        x.Name == oldInstance.Name &&
-                        x.Id == oldInstance.Id &&
-                        x.ExpiresAtUtc < DateTime.UtcNow.AddHours(1) &&
-                        x.ExpiresAtUtc > DateTime.UtcNow.AddMinutes(50));
-                Assert.IsNotNull(refreshedOldInstance);
+                    .SingleAsync();
+
+                Assert.AreEqual(oldInstance.Name, refreshedOldInstance.Name);
+                Assert.AreEqual(oldInstance.Id, refreshedOldInstance.Id);
+                Assert.IsTrue(refreshedOldInstance.ExpiresAtUtc < DateTime.UtcNow.AddHours(1));
+                Assert.IsTrue(refreshedOldInstance.ExpiresAtUtc > DateTime.UtcNow.AddMinutes(50));
             });
         }
 

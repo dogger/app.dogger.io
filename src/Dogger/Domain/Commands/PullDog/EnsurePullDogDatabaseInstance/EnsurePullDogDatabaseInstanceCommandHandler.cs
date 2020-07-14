@@ -5,20 +5,24 @@ using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest;
 using MediatR;
+using Microsoft.Extensions.Hosting;
 
 namespace Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance
 {
     public class EnsurePullDogDatabaseInstanceCommandHandler : IRequestHandler<EnsurePullDogDatabaseInstanceCommand, Instance>
     {
         private readonly IMediator mediator;
+        private readonly IHostEnvironment hostEnvironment;
 
         private readonly DataContext dataContext;
 
         public EnsurePullDogDatabaseInstanceCommandHandler(
             IMediator mediator,
+            IHostEnvironment hostEnvironment,
             DataContext dataContext)
         {
             this.mediator = mediator;
+            this.hostEnvironment = hostEnvironment;
             this.dataContext = dataContext;
         }
 
@@ -37,7 +41,7 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance
 
             var isDemoPlan = settings.PoolSize == 0;
             var maximumDemoExpiryTime = TimeSpan.FromMinutes(55);
-            if (isDemoPlan && expiryDuration > maximumDemoExpiryTime)
+            if (isDemoPlan && (expiryDuration > maximumDemoExpiryTime || expiryDuration.TotalMinutes < 1))
             {
                 expiryDuration = maximumDemoExpiryTime;
             }
@@ -64,7 +68,7 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance
 
                 var newInstance = new Instance()
                 {
-                    Name = $"pull-dog_{user.Id}_{Guid.NewGuid()}",
+                    Name = $"{hostEnvironment.EnvironmentName}_pull-dog_{user.Id}_{request.PullRequest.Id}",
                     Cluster = cluster,
                     IsProvisioned = false,
                     PlanId = settings.PlanId,
