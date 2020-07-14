@@ -166,25 +166,9 @@ namespace Dogger.Domain.Services.Provisioning.States.CreateLightsailInstance
                 return ProvisioningStateUpdateResult.InProgress;
             }
 
-            await OpenNecessaryFirewallPortsOnInstanceAsync();
-
             this.CreatedLightsailInstance = instance;
 
             return ProvisioningStateUpdateResult.Succeeded;
-        }
-
-        private async Task OpenNecessaryFirewallPortsOnInstanceAsync()
-        {
-            if (this.DatabaseInstance?.Name == null)
-                throw new InvalidOperationException("No instance name was found.");
-
-            this.Description = "Opening firewall for exposed ports and protocols";
-
-            var portsToOpen = await this.mediator.Send(new GetNecessaryInstanceFirewallPortsQuery(this.DatabaseInstance.Name));
-
-            await this.mediator.Send(new OpenFirewallPortsCommand(
-                this.DatabaseInstance.Name,
-                portsToOpen));
         }
 
         public void Dispose()
