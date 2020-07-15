@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -76,7 +77,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
 
             await this.dataContext.SaveChangesAsync(cancellationToken);
 
-            var dockerFiles = GetDockerFiles(this.configuration, dogfeedOptions);
+            var dockerFiles = await GetDockerFilesAsync(this.configuration, dogfeedOptions);
 
             return await this.provisioningService.ScheduleJobAsync(
                 new AggregateProvisioningStateFlow(
@@ -109,7 +110,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
         /// <summary>
         /// Makes the job create a file on the disk called environment-variables.env, which is then referenced by docker-compose.deploy.yml.
         /// </summary>
-        private static InstanceDockerFile[] GetDockerFiles(
+        private static async Task<InstanceDockerFile[]> GetDockerFilesAsync(
             IConfiguration configuration,
             DogfeedOptions options)
         {
@@ -117,13 +118,16 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
             if (elasticsearchOptions == null)
                 throw new InvalidOperationException("Could not find Elasticsearch options.");
 
+            if (options.DockerComposeYmlFilePaths == null)
+                throw new InvalidOperationException("Could not find Docker Compose YML contents.");
+
             var instanceEnvironmentVariableFile = GetInstanceEnvironmentVariableFile(configuration);
 
             var elasticsearchInstancePassword =
                 elasticsearchOptions.InstancePassword ??
                 throw new InvalidOperationException("No Elasticsearch instance password was specified.");
 
-            return new[]
+            var files = new List<InstanceDockerFile>()
             {
                 instanceEnvironmentVariableFile,
                 new InstanceDockerFile(
@@ -175,6 +179,15 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
                     "config/elasticsearch.yml",
                     SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.ConfigurationYmlContents))
             };
+
+            foreach (var ymlFilePath in options.DockerComposeYmlFilePaths)
+            {
+                files.Add(new InstanceDockerFile(
+                    ymlFilePath,
+                    await File.ReadAllBytesAsync(ymlFilePath)));
+            }
+
+            return files.ToArray();
         }
 
         private static InstanceDockerFile GetInstanceEnvironmentVariableFile(IConfiguration configuration)
