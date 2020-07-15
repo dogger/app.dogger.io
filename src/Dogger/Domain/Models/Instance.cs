@@ -19,8 +19,6 @@ namespace Dogger.Domain.Models
         [NotLogged]
         public PullDogPullRequest? PullDogPullRequest { get; set; }
 
-        public InstanceType Type { get; set; }
-
         public string Name { get; set; }
 
         public string PlanId { get; set; }

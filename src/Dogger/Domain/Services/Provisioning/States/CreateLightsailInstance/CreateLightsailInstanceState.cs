@@ -4,10 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
-using Dogger.Domain.Commands.Amazon.Lightsail.OpenFirewallPorts;
 using Dogger.Domain.Events.ServerProvisioningStarted;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
-using Dogger.Domain.Queries.Instances.GetNecessaryInstanceFirewallPorts;
 using Dogger.Domain.Services.Amazon.Lightsail;
 using MediatR;
 using Serilog;
@@ -166,25 +164,9 @@ namespace Dogger.Domain.Services.Provisioning.States.CreateLightsailInstance
                 return ProvisioningStateUpdateResult.InProgress;
             }
 
-            await OpenNecessaryFirewallPortsOnInstanceAsync();
-
             this.CreatedLightsailInstance = instance;
 
             return ProvisioningStateUpdateResult.Succeeded;
-        }
-
-        private async Task OpenNecessaryFirewallPortsOnInstanceAsync()
-        {
-            if (this.DatabaseInstance?.Name == null)
-                throw new InvalidOperationException("No instance name was found.");
-
-            this.Description = "Opening firewall for exposed ports and protocols";
-
-            var portsToOpen = await this.mediator.Send(new GetNecessaryInstanceFirewallPortsQuery(this.DatabaseInstance.Name));
-
-            await this.mediator.Send(new OpenFirewallPortsCommand(
-                this.DatabaseInstance.Name,
-                portsToOpen));
         }
 
         public void Dispose()

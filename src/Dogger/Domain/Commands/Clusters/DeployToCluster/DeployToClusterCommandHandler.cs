@@ -44,7 +44,7 @@ namespace Dogger.Domain.Commands.Clusters.DeployToCluster
                 {
                     await this.slackClient.PostAsync(new SlackMessage()
                     {
-                        Text = $"A demo instance is being requested.\n\n```\n{string.Join("\n\n", request.DockerComposeYmlContents)}\n```",
+                        Text = $"A demo instance is being requested.",
                         Attachments = new List<SlackAttachment>()
                         {
                             new SlackAttachment()
@@ -84,7 +84,7 @@ namespace Dogger.Domain.Commands.Clusters.DeployToCluster
 
             return await this.provisioningService.ScheduleJobAsync(new DeployToClusterStateFlow(
                 instance.Name,
-                request.DockerComposeYmlContents)
+                request.DockerComposeYmlFilePaths)
             {
                 Files = request
                     .Files

@@ -29,13 +29,18 @@ namespace Dogger.Domain.Services.PullDog
 
         public async Task<RepositoryPullDogFileContext?> GetRepositoryFileContextFromConfiguration(ConfigurationFile configuration)
         {
-            var dockerComposeFileContents = await GetDockerComposeYmlContentsFromRepositoryAsync(configuration);
+            if (configuration.DockerComposeYmlFilePaths == null)
+                return null;
+
+            var dockerComposeFileContents = await GetDockerComposeYmlContentsFromRepositoryAsync(configuration.DockerComposeYmlFilePaths);
             if (dockerComposeFileContents == null)
                 return null;
 
-            var dockerComposeYmlDirectoryPath = Path.GetDirectoryName(configuration
-                .DockerComposeYmlFilePaths
-                .First()) ?? string.Empty;
+            var dockerComposeYmlDirectoryPath = 
+                Path.GetDirectoryName(configuration
+                    .DockerComposeYmlFilePaths
+                    .First()) ?? 
+                string.Empty;
 
             var allFiles = new List<RepositoryFile>();
 
@@ -45,7 +50,7 @@ namespace Dogger.Domain.Services.PullDog
             allFiles.AddRange(dockerFiles);
 
             return new RepositoryPullDogFileContext(
-                dockerComposeFileContents,
+                configuration.DockerComposeYmlFilePaths,
                 allFiles.ToArray());
         }
 
@@ -135,13 +140,9 @@ namespace Dogger.Domain.Services.PullDog
         }
 
         private async Task<string[]?> GetDockerComposeYmlContentsFromRepositoryAsync(
-            ConfigurationFile configurationFile)
+            string[] dockerComposeYmlFilePaths)
         {
-            if (configurationFile.DockerComposeYmlFilePaths == null)
-                return null;
-
-            var contents = await Task.WhenAll(configurationFile
-                .DockerComposeYmlFilePaths
+            var contents = await Task.WhenAll(dockerComposeYmlFilePaths
                 .Select(this.client.GetFilesForPathAsync));
             return contents
                 .SelectMany(files => files)

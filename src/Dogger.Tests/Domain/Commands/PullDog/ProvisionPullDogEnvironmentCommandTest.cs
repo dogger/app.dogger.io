@@ -225,7 +225,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Received(1)
                 .ScheduleJobAsync(
                     Arg.Is<AggregateProvisioningStateFlow>(args =>
-                        args.GetFlowOfType<DeployToClusterStateFlow>(1).DockerComposeYmlContents.Single() == "some-docker-compose-contents"));
+                        args.GetFlowOfType<DeployToClusterStateFlow>(1).DockerComposeYmlFilePaths.Single() == "some-docker-compose-contents"));
         }
 
         [TestMethod]

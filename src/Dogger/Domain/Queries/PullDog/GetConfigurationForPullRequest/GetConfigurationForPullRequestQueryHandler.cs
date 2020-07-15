@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest
 {
-    public class GetConfigurationForPullRequestQueryHandler : IRequestHandler<GetConfigurationForPullRequestQuery, ConfigurationFile?>
+    public class GetConfigurationForPullRequestQueryHandler : IRequestHandler<GetConfigurationForPullRequestQuery, ConfigurationFile>
     {
         private readonly IPullDogFileCollectorFactory pullDogFileCollectorFactory;
 
@@ -15,7 +15,7 @@ namespace Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest
             this.pullDogFileCollectorFactory = pullDogFileCollectorFactory;
         }
 
-        public async Task<ConfigurationFile?> Handle(GetConfigurationForPullRequestQuery request, CancellationToken cancellationToken)
+        public async Task<ConfigurationFile> Handle(GetConfigurationForPullRequestQuery request, CancellationToken cancellationToken)
         {
             var client = await this.pullDogFileCollectorFactory.CreateAsync(request.PullRequest);
 

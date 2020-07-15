@@ -2,14 +2,14 @@
 {
     public class RepositoryPullDogFileContext
     {
-        public string[] DockerComposeYmlContents { get; }
+        public string[] DockerComposeYmlFilePaths { get; }
         public RepositoryFile[] Files { get; }
 
         public RepositoryPullDogFileContext(
-            string[] dockerComposeYmlContents,
+            string[] dockerComposeYmlFilePaths,
             RepositoryFile[] files)
         {
-            this.DockerComposeYmlContents = dockerComposeYmlContents;
+            this.DockerComposeYmlFilePaths = dockerComposeYmlFilePaths;
             this.Files = files;
         }
     }

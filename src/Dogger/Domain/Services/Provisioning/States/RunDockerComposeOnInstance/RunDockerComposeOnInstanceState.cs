@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Destructurama.Attributed;
 using Dogger.Domain.Commands.Amazon.Lightsail.OpenFirewallPorts;
 using Dogger.Domain.Events.ServerDeploymentCompleted;
 using Dogger.Domain.Events.ServerDeploymentFailed;
-using Dogger.Domain.Queries.Instances.GetNecessaryInstanceFirewallPorts;
 using Dogger.Domain.Services.Provisioning.Arguments;
 using Dogger.Infrastructure.Docker.Yml;
 using Dogger.Infrastructure.Ssh;
@@ -29,7 +27,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
         public string? InstanceName { get; set; }
 
         public IDictionary<string, string>? BuildArguments { get; set; }
-        public string[]? DockerComposeYmlContents { get; set; }
+        public string[]? DockerComposeYmlFilePaths { get; set; }
         public IEnumerable<InstanceDockerFile>? Files { get; set; }
 
         [NotLogged]
@@ -48,13 +46,13 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
         protected override async Task<ProvisioningStateUpdateResult> OnUpdateAsync(ISshClient sshClient)
         {
-            if (this.DockerComposeYmlContents == null)
-                throw new InvalidOperationException("Docker Compose contents must be set.");
+            if (this.DockerComposeYmlFilePaths == null)
+                throw new InvalidOperationException("Docker Compose file paths must be set.");
 
-            await OpenExposedFirewallPortsOnInstanceAsync();
             await ClearExistingDoggerFilesAsync(sshClient);
             await CreateFilesOnServerAsync(sshClient);
-            await CreateDockerComposeYmlFilesOnServerAsync(sshClient);
+
+            await OpenExposedFirewallPortsOnInstanceAsync(sshClient);
             await RunContainersAsync(sshClient);
 
             await SendServerDeploymentCompletedEventAsync();
@@ -114,10 +112,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
             await AuthenticateDockerAsync(sshClient);
 
-            var dockerComposeFiles = GetDockerComposeYmlFiles();
-            var filesArgument = string.Join(' ', dockerComposeFiles
-                .Select(x => $"-f {x.FileName}"));
-
+            var filesArgument = GetDockerComposeFileArgumentsCommandLineString();
             var buildArgumentsArgument = string.Join(' ', GetBuildArgumentAssignments()
                 .Select(x => $"--build-arg {x}"));
 
@@ -199,58 +194,61 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             }
         }
 
-        private async Task OpenExposedFirewallPortsOnInstanceAsync()
+        private async Task OpenExposedFirewallPortsOnInstanceAsync(ISshClient sshClient)
         {
-            if (this.DockerComposeYmlContents == null)
-                throw new InvalidOperationException("No Docker Compose contents were found.");
+            if (this.DockerComposeYmlFilePaths == null)
+                throw new InvalidOperationException("No Docker Compose file paths were found.");
 
             if (this.InstanceName == null)
                 throw new InvalidOperationException("No instance name was found.");
 
             this.description = "Opening firewall for exposed ports and protocols";
 
-            var necessaryPorts = await this.mediator.Send(new GetNecessaryInstanceFirewallPortsQuery(InstanceName));
+            var mergedDockerComposeYmlContents = await GetMergedDockerComposeYmlFileContentsAsync(sshClient);
+            var dockerComposeParser = this.dockerComposeParserFactory.Create(mergedDockerComposeYmlContents);
 
-            var portsToOpen = new HashSet<ExposedPortRange>(necessaryPorts);
-
-            foreach (var dockerComposeYmlContent in this.DockerComposeYmlContents)
+            var portsToOpen = new HashSet<ExposedPortRange>()
             {
-                var dockerComposeParser = this.dockerComposeParserFactory.Create(dockerComposeYmlContent);
-                var ports = dockerComposeParser.GetExposedHostPorts();
-                foreach (var port in ports)
-                    portsToOpen.Add(port);
-            }
+                GetSshPort()
+            };
+
+            var ports = dockerComposeParser.GetExposedHostPorts();
+            foreach (var port in ports)
+                portsToOpen.Add(port);
 
             await this.mediator.Send(new OpenFirewallPortsCommand(
                 this.InstanceName,
                 portsToOpen));
         }
 
-        private async Task CreateDockerComposeYmlFilesOnServerAsync(ISshClient sshClient)
+        private async Task<string> GetMergedDockerComposeYmlFileContentsAsync(ISshClient sshClient)
         {
-            var files = GetDockerComposeYmlFiles();
-            foreach (var file in files)
-            {
-                await CreateSensitiveFileOnServerAsync(
-                    sshClient,
-                    file.FileName,
-                    Encoding.UTF8.GetBytes(
-                        file.Contents));
-            }
+            var dockerComposeYmlFilePathArguments = GetDockerComposeFileArgumentsCommandLineString();
+
+            var mergedDockerComposeContents = await sshClient.ExecuteCommandAsync(
+                SshRetryPolicy.AllowRetries,
+                $"docker-compose {dockerComposeYmlFilePathArguments} config");
+            if (mergedDockerComposeContents == null)
+                throw new InvalidOperationException("Expected a response from merging Docker Compose contents.");
+            return mergedDockerComposeContents;
         }
 
-        private IEnumerable<FileContents> GetDockerComposeYmlFiles()
+        private string GetDockerComposeFileArgumentsCommandLineString()
         {
-            if (this.DockerComposeYmlContents == null)
-                throw new InvalidOperationException("Docker Compose YML contents must be set.");
+            return string.Join(' ', this.DockerComposeYmlFilePaths
+                .Select(filePath => $"-f {filePath}"));
+        }
 
-            var offset = 1;
-            foreach (var dockerComposeYmlContent in this.DockerComposeYmlContents)
+        /// <summary>
+        /// If we don't include the SSH port, we can't control the instance.
+        /// </summary>
+        private static ExposedPort GetSshPort()
+        {
+            return new ExposedPort()
             {
-                yield return new FileContents(
-                    $"docker-compose-{offset++}.yml",
-                    dockerComposeYmlContent);
-            }
+                Port = 22,
+                Protocol = SocketProtocol.Tcp
+            };
         }
 
         private static async Task CreateSensitiveFileOnServerAsync(
@@ -277,18 +275,6 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
                 $"sudo chmod 777 ./{fileName}");
-        }
-
-        readonly struct FileContents
-        {
-            public FileContents(string fileName, string contents)
-            {
-                this.FileName = fileName;
-                this.Contents = contents;
-            }
-
-            public string FileName { get; }
-            public string Contents { get; }
         }
     }
 }

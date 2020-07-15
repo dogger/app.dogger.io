@@ -7,7 +7,6 @@ using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Octokit;
-using Serilog;
 
 namespace Dogger.Tests.Domain.Services.PullDog
 {

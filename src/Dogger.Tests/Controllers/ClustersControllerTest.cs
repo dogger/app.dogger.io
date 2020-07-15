@@ -141,7 +141,7 @@ namespace Dogger.Tests.Controllers
             //Act
             var result = await controller.DeployDemo(new DeployToClusterRequest()
             {
-                DockerComposeYmlContents = new[] { "some-docker-compose-contents" }
+                DockerComposeYmlFilePaths = new[] { "some-docker-compose-contents" }
             });
 
             //Assert
@@ -192,7 +192,7 @@ namespace Dogger.Tests.Controllers
             //Act
             var result = await controller.DeployDemo(new DeployToClusterRequest()
             {
-                DockerComposeYmlContents = new[] { "some-docker-compose-contents" }
+                DockerComposeYmlFilePaths = new[] { "some-docker-compose-contents" }
             });
 
             //Assert
@@ -358,7 +358,7 @@ namespace Dogger.Tests.Controllers
             //Act
             var result = await controller.Deploy(new DeployToClusterRequest()
             {
-                DockerComposeYmlContents = new[] { "some-docker-compose-contents" }
+                DockerComposeYmlFilePaths = new[] { "some-docker-compose-contents" }
             });
 
             //Assert
@@ -408,7 +408,7 @@ namespace Dogger.Tests.Controllers
             //Act
             var result = await controller.Deploy(new DeployToClusterRequest()
             {
-                DockerComposeYmlContents = new[] { "some-docker-compose-contents" }
+                DockerComposeYmlFilePaths = new[] { "some-docker-compose-contents" }
             });
 
             //Assert
@@ -460,7 +460,7 @@ namespace Dogger.Tests.Controllers
             //Act
             var result = await controller.Deploy(new DeployToClusterRequest()
             {
-                DockerComposeYmlContents = new[] { "some-docker-compose-contents" }
+                DockerComposeYmlFilePaths = new[] { "some-docker-compose-contents" }
             });
 
             //Assert
@@ -508,7 +508,7 @@ namespace Dogger.Tests.Controllers
             //Act
             var result = await controller.Deploy(new DeployToClusterRequest()
             {
-                DockerComposeYmlContents = new[] { "some-docker-compose-contents" }
+                DockerComposeYmlFilePaths = new[] { "some-docker-compose-contents" }
             });
 
             //Assert

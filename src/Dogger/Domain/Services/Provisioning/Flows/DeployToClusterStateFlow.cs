@@ -11,17 +11,17 @@ namespace Dogger.Domain.Services.Provisioning.Flows
     public class DeployToClusterStateFlow : IProvisioningStateFlow
     {
         public string InstanceName { get; }
-        public string[] DockerComposeYmlContents { get; }
+        public string[] DockerComposeYmlFilePaths { get; }
         public IEnumerable<IDockerAuthenticationArguments>? Authentication { get; set; }
         public IEnumerable<InstanceDockerFile>? Files { get; set; }
         public IDictionary<string, string>? BuildArguments { get; set; }
 
         public DeployToClusterStateFlow(
             string instanceName,
-            string[] dockerComposeYmlContents)
+            string[] dockerComposeYmlFilePaths)
         {
             this.InstanceName = instanceName;
-            this.DockerComposeYmlContents = dockerComposeYmlContents;
+            this.DockerComposeYmlFilePaths = dockerComposeYmlFilePaths;
         }
 
         public async Task<IProvisioningState> GetInitialStateAsync(InitialStateContext context)
@@ -34,7 +34,7 @@ namespace Dogger.Domain.Services.Provisioning.Flows
             return context.StateFactory.Create<RunDockerComposeOnInstanceState>(state =>
             {
                 state.BuildArguments = BuildArguments;
-                state.DockerComposeYmlContents = DockerComposeYmlContents;
+                state.DockerComposeYmlFilePaths = this.DockerComposeYmlFilePaths;
                 state.InstanceName = InstanceName;
                 state.IpAddress = amazonInstance.PublicIpAddress;
                 state.Authentication = Authentication;

@@ -118,7 +118,7 @@ namespace Dogger.Domain.Services.Provisioning
                         else
                         {
                             this.logger.Debug("Job is initializing.");
-
+                            
                             await nextState.InitializeAsync();
 
                             job.CurrentState = nextState;

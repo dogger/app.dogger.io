@@ -4,10 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
-using Dogger.Domain.Commands.Amazon.Lightsail.OpenFirewallPorts;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
-using Dogger.Domain.Queries.Instances.GetNecessaryInstanceFirewallPorts;
 using Dogger.Domain.Services.Amazon.Lightsail;
 using Dogger.Domain.Services.Provisioning.States;
 using Dogger.Domain.Services.Provisioning.States.CreateLightsailInstance;
@@ -325,79 +323,6 @@ namespace Dogger.Tests.Domain.Provisioning.States
                     args.Tags.Any(x => x.Key == "StripePlanId" && x.Value == "some-plan-id") &&
                     args.Tags.Any(x => x.Key == "ClusterId" && x.Value == fakeClusterId.ToString()) &&
                     args.Tags.Any(x => x.Key == "InstanceId" && x.Value == fakeInstanceId.ToString())));
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
-        public async Task Update_AllOperationsSucceededAndInstanceRunning_OpensNecessaryPorts()
-        {
-            //Arrange
-            var fakeAmazonLightsail = Substitute.For<IAmazonLightsail>();
-            fakeAmazonLightsail
-                .CreateInstancesAsync(Arg.Any<CreateInstancesRequest>())
-                .Returns(new CreateInstancesResponse()
-                {
-                    Operations = new List<Operation>()
-                });
-
-            var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
-            fakeLightsailOperationService
-                .GetOperationsFromIdsAsync(Arg.Any<IEnumerable<string>>())
-                .Returns(new[]
-                {
-                    new Operation()
-                    {
-                        Status = OperationStatus.Succeeded
-                    }
-                });
-
-            var fakeMediator = Substitute.For<IMediator>();
-            fakeMediator
-                .Send(Arg.Is<GetLightsailInstanceByNameQuery>(arg =>
-                    arg.Name == "some-instance-name"))
-                .Returns(new Instance()
-                {
-                    State = new InstanceState()
-                    {
-                        Name = "running"
-                    }
-                });
-
-            var fakeProvisioningStateFactory = Substitute.For<IProvisioningStateFactory>();
-            fakeProvisioningStateFactory
-                .Create<InstallSoftwareOnInstanceState>()
-                .Returns(new InstallSoftwareOnInstanceState(
-                    Substitute.For<ISshClientFactory>(),
-                    Substitute.For<IMediator>()));
-
-            var serviceProvider = TestServiceProviderFactory.CreateUsingStartup(services =>
-            {
-                services.AddSingleton(fakeAmazonLightsail);
-                services.AddSingleton(fakeLightsailOperationService);
-                services.AddSingleton(fakeMediator);
-            });
-
-            var state = serviceProvider.GetRequiredService<CreateLightsailInstanceState>();
-            state.PlanId = "dummy";
-            state.DatabaseInstance = new Dogger.Domain.Models.Instance()
-            {
-                Name = "some-instance-name",
-                Cluster = new Cluster()
-            };
-
-            await state.InitializeAsync();
-
-            //Act
-            await state.UpdateAsync();
-
-            //Assert
-            await fakeMediator
-                .Received(1)
-                .Send(Arg.Any<GetNecessaryInstanceFirewallPortsQuery>());
-
-            await fakeMediator
-                .Received(1)
-                .Send(Arg.Any<OpenFirewallPortsCommand>());
         }
 
         [TestMethod]

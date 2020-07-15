@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
-using Dogger.Domain.Queries.Instances.GetInstanceByName;
 using Dogger.Infrastructure.Ssh;
 using MediatR;
 
@@ -37,22 +35,11 @@ namespace Dogger.Domain.Services.Provisioning.States.InstallSoftwareOnInstance
                 throw new InvalidOperationException($"Must provide IP address to {nameof(InstallSoftwareOnInstanceState)}");
 
             await InstallDockerAsync(sshClient);
+            await InstallDockerComposeAsync(sshClient);
+            await ConfigureDockerDaemonAsync(sshClient);
+            await ConfigurePostInstallAsync(sshClient);
 
-            var instance = InstanceName != null ? 
-                await this.mediator.Send(new GetInstanceByNameQuery(InstanceName)) :
-                null;
-            if (instance == null || instance.Type == InstanceType.DockerCompose)
-            {
-                await InstallDockerComposeAsync(sshClient);
-                await ConfigureDockerDaemonAsync(sshClient);
-                await ConfigurePostInstallAsync(sshClient);
-
-                await SetSystemConfigurationValueAsync(sshClient, "vm.max_map_count", "262144");
-            }
-            else
-            {
-                //await InstallKubernetesOnNodeAsync(sshClient, instance.Type);
-            }
+            await SetSystemConfigurationValueAsync(sshClient, "vm.max_map_count", "262144");
 
             return ProvisioningStateUpdateResult.Succeeded;
         }

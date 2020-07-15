@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Amazon.Lightsail.OpenFirewallPorts;
-using Dogger.Domain.Queries.Instances.GetNecessaryInstanceFirewallPorts;
 using Dogger.Domain.Services.Provisioning.Arguments;
 using Dogger.Domain.Services.Provisioning.States;
 using Dogger.Domain.Services.Provisioning.States.CompleteInstanceSetup;
@@ -80,7 +79,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
             var state = serviceProvider.GetRequiredService<RunDockerComposeOnInstanceState>();
             state.InstanceName = "some-instance-name";
             state.IpAddress = "ip-address";
-            state.DockerComposeYmlContents = new[]
+            state.DockerComposeYmlFilePaths = new[]
             {
                 "some-docker-compose-yml-contents"
             };
@@ -123,17 +122,6 @@ namespace Dogger.Tests.Domain.Provisioning.States
                 .Returns(fakeDockerComposeParser);
 
             var fakeMediator = Substitute.For<IMediator>();
-            fakeMediator
-                .Send(Arg.Any<GetNecessaryInstanceFirewallPortsQuery>())
-                .Returns(new[]
-                {
-                    new ExposedPortRange()
-                    {
-                        Protocol = SocketProtocol.Tcp,
-                        FromPort = 1000,
-                        ToPort = 1001
-                    }
-                });
 
             var fakeSshClient = Substitute.For<ISshClient>();
             fakeSshClient
@@ -169,7 +157,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
             var state = serviceProvider.GetRequiredService<RunDockerComposeOnInstanceState>();
             state.IpAddress = "ip-address";
             state.InstanceName = "some-instance-name";
-            state.DockerComposeYmlContents = new[]
+            state.DockerComposeYmlFilePaths = new[]
             {
                 "some-docker-compose-yml-contents"
             };
@@ -214,17 +202,6 @@ namespace Dogger.Tests.Domain.Provisioning.States
                 .Returns(fakeDockerComposeParser);
 
             var fakeMediator = Substitute.For<IMediator>();
-            fakeMediator
-                .Send(Arg.Any<GetNecessaryInstanceFirewallPortsQuery>())
-                .Returns(new[]
-                {
-                    new ExposedPortRange()
-                    {
-                        Protocol = SocketProtocol.Tcp,
-                        FromPort = 1000,
-                        ToPort = 1001
-                    }
-                });
 
             var fakeSshClient = Substitute.For<ISshClient>();
             fakeSshClientFactory
@@ -257,7 +234,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
                     RegistryHostName = "some-registry"
                 }
             };
-            state.DockerComposeYmlContents = new[]
+            state.DockerComposeYmlFilePaths = new[]
             {
                 "some-docker-compose-yml-contents"
             };
@@ -314,7 +291,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
             var state = serviceProvider.GetRequiredService<RunDockerComposeOnInstanceState>();
             state.IpAddress = "ip-address";
             state.InstanceName = "some-instance-name";
-            state.DockerComposeYmlContents = new[]
+            state.DockerComposeYmlFilePaths = new[]
             {
                 "some-docker-compose-yml-contents"
             };
@@ -373,7 +350,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
                     "some-file-name", 
                     Encoding.UTF8.GetBytes("some-file-contents"))
             };
-            state.DockerComposeYmlContents = new[]
+            state.DockerComposeYmlFilePaths = new[]
             {
                 "some-docker-compose-yml-contents"
             };
@@ -439,7 +416,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
                     RegistryHostName = "some-registry"
                 }
             };
-            state.DockerComposeYmlContents = new[]
+            state.DockerComposeYmlFilePaths = new[]
             {
                 "some-docker-compose-yml-contents"
             };
@@ -499,7 +476,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
             var state = serviceProvider.GetRequiredService<RunDockerComposeOnInstanceState>();
             state.IpAddress = "ip-address";
             state.InstanceName = "some-instance-name";
-            state.DockerComposeYmlContents = new[]
+            state.DockerComposeYmlFilePaths = new[]
             {
                 "some-docker-compose-yml-contents"
             };
