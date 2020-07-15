@@ -85,7 +85,7 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
                 await this.mediator.Send(
                     new UpsertPullRequestCommentCommand(
                         pullRequest,
-                        "I wasn't able to find any Docker Compose files in your repository at any of the given paths in the `pull-dog.json` configuration file :weary: Make sure the given paths are correct."),
+                        "I wasn't able to find any Docker Compose files in your repository at any of the given paths in the `pull-dog.json` configuration file, or the default `docker-compose.yml` file :weary: Make sure the given paths are correct."),
                     cancellationToken);
                 return Unit.Value;
             }
@@ -111,7 +111,7 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
 
                 flowsToUse.Add(new DeployToClusterStateFlow(
                     instance.Name,
-                    context.DockerComposeYmlContents)
+                    context.DockerComposeYmlFilePaths)
                 {
                     Files = context
                         .Files

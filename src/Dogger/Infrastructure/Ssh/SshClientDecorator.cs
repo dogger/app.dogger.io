@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using Polly;
 using Renci.SshNet;
-using Renci.SshNet.Common;
-using Serilog;
 
 namespace Dogger.Infrastructure.Ssh
 {

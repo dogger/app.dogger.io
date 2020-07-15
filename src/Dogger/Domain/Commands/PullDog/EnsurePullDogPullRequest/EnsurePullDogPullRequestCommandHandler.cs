@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using MediatR;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest

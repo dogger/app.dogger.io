@@ -50,7 +50,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
         public async Task<IProvisioningJob> Handle(ProvisionDogfeedInstanceCommand request, CancellationToken cancellationToken)
         {
             var dogfeedOptions = this.dogfeedOptionsMonitor.CurrentValue;
-            if (dogfeedOptions.DockerComposeYmlContents == null)
+            if (dogfeedOptions.DockerComposeYmlFilePaths == null)
                 throw new InvalidOperationException("Could not find Docker Compose YML contents.");
 
             var dockerHubOptions = dogfeedOptions.DockerHub;
@@ -68,17 +68,13 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
                 Name = request.InstanceName,
                 Cluster = cluster,
                 IsProvisioned = false,
-                PlanId = firstCapablePlan.Id,
-                Type = InstanceType.DockerCompose
+                PlanId = firstCapablePlan.Id
             };
 
             cluster.Instances.Add(instance);
             await this.dataContext.Instances.AddAsync(instance, cancellationToken);
 
             await this.dataContext.SaveChangesAsync(cancellationToken);
-
-            var dockerComposeYmlContents = SanitizeFileContentsFromConfigurationAsString(dogfeedOptions.DockerComposeYmlContents);
-            logger.Debug("Docker Compose YML file contents are {DockerComposeYmlFileContents}.", dockerComposeYmlContents);
 
             var dockerFiles = GetDockerFiles(this.configuration, dogfeedOptions);
 
@@ -89,7 +85,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
                         instance),
                     new DeployToClusterStateFlow(
                         request.InstanceName,
-                        new[] { dockerComposeYmlContents })
+                        dogfeedOptions.DockerComposeYmlFilePaths)
                     {
                         Files = dockerFiles,
                         Authentication = new[] {

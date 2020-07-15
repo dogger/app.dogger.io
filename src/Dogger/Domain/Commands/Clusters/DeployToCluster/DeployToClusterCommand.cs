@@ -10,16 +10,16 @@ namespace Dogger.Domain.Commands.Clusters.DeployToCluster
     public class DeployToClusterCommand : IRequest<IProvisioningJob>
     {
         public DeployToClusterCommand(
-            string[] dockerComposeYmlContents)
+            string[] dockerComposeYmlFilePaths)
         {
-            this.DockerComposeYmlContents = dockerComposeYmlContents;
+            this.DockerComposeYmlFilePaths = dockerComposeYmlFilePaths;
         }
 
         public Guid? UserId { get; set; }
 
         public Guid? ClusterId { get; set; }
 
-        public string[] DockerComposeYmlContents { get; }
+        public string[] DockerComposeYmlFilePaths { get; }
 
         public IEnumerable<IDockerAuthenticationArguments>? Authentication { get; set; }
 

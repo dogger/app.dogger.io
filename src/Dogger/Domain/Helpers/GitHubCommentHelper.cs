@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Dogger.Domain.Helpers
+﻿namespace Dogger.Domain.Helpers
 {
     public static class GitHubCommentHelper
     {

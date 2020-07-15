@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Infrastructure.GitHub;
-using Serilog;
 
 namespace Dogger.Domain.Services.PullDog.GitHub
 {

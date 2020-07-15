@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest
 {
-    public class GetConfigurationForPullRequestQuery : IRequest<ConfigurationFile?>
+    public class GetConfigurationForPullRequestQuery : IRequest<ConfigurationFile>
     {
         public PullDogPullRequest PullRequest { get; }
 

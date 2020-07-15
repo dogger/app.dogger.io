@@ -53,7 +53,7 @@ namespace Dogger.Tests.Domain.Provisioning.Flows
             Assert.IsNotNull(state);
 
             Assert.AreEqual("127.0.0.1", state.IpAddress);
-            Assert.AreEqual("some-docker-compose-contents", state.DockerComposeYmlContents?.Single());
+            Assert.AreEqual("some-docker-compose-contents", state.DockerComposeYmlFilePaths?.Single());
 
             Assert.AreSame(buildArguments, state.BuildArguments);
         }

@@ -139,7 +139,7 @@ namespace Dogger.Controllers.Clusters
                 var login = await this.mediator.Send(new GetRepositoryLoginForUserQuery(repositoryResponse.ReadUser));
 
                 var job = await this.mediator.Send(new DeployToClusterCommand(
-                    request.DockerComposeYmlContents)
+                    request.DockerComposeYmlFilePaths)
                 {
                     ClusterId = clusterId,
                     UserId = userId,

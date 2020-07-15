@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Commands.Instances.SetInstanceExpiry;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Events.ServerDeploymentFailed;

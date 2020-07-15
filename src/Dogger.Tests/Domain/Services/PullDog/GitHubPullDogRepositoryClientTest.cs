@@ -7,7 +7,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Octokit;
-using Serilog;
 using User = Octokit.User;
 
 namespace Dogger.Tests.Domain.Services.PullDog

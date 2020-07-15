@@ -72,7 +72,6 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance
                     Cluster = cluster,
                     IsProvisioned = false,
                     PlanId = settings.PlanId,
-                    Type = InstanceType.DockerCompose,
                     PullDogPullRequest = pullRequest,
                     ExpiresAtUtc = expiryTime
                 };

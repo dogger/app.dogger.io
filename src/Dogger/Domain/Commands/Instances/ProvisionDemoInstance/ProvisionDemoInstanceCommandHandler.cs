@@ -75,7 +75,6 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDemoInstance
                 Cluster = cluster,
                 IsProvisioned = false,
                 PlanId = plan.Id,
-                Type = InstanceType.DockerCompose,
                 ExpiresAtUtc = DateTime.UtcNow.AddMinutes(30)
             };
 

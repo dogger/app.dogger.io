@@ -7,7 +7,7 @@ namespace Dogger.Controllers.Clusters
     [ExcludeFromCodeCoverage]
     public class DeployToClusterRequest
     {
-        public string[] DockerComposeYmlContents { get; set; }
+        public string[] DockerComposeYmlFilePaths { get; set; }
         public FileRequest[]? Files { get; set; }
     }
 
