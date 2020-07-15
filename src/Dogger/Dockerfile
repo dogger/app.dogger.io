@@ -4,8 +4,6 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build-dotnet
-WORKDIR /
-COPY ./docker-compose.deploy.yml ./src/docker-compose.deploy.yml
 WORKDIR /src
 COPY ["Dogger/Dogger.csproj", "Dogger/"]
 RUN dotnet tool restore
@@ -20,4 +18,5 @@ RUN dotnet publish "Dogger.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish-dotnet /app/publish .
+COPY --from=build-dotnet /src/docker-compose.deploy.yml .
 ENTRYPOINT ["dotnet", "Dogger.dll"]
