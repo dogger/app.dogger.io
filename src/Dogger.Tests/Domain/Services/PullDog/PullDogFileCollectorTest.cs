@@ -25,8 +25,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 .Returns(new[]
                 {
                     new RepositoryFile(
-                        "pull-dog.json", 
-                        Encoding.UTF8.GetBytes("{}")) 
+                        "pull-dog.json",
+                        Encoding.UTF8.GetBytes("{}"))
                 });
 
             var client = new PullDogFileCollector(
@@ -65,7 +65,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task GetRepositoryFileContextFromConfiguration_ConfigurationFileNotPresent_ReturnsNull()
+        public async Task GetRepositoryFilesFromConfiguration_ConfigurationFileNotPresent_ReturnsNull()
         {
             //Arrange
             var fakePullDogRepositoryClient = Substitute.For<IPullDogRepositoryClient>();
@@ -79,7 +79,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 Substitute.For<ILogger>());
 
             //Act
-            var composeContents = await client.GetRepositoryFileContextFromConfiguration(new ConfigurationFile());
+            var composeContents = await client.GetRepositoryFilesFromConfiguration(new ConfigurationFile(Array.Empty<string>()));
 
             //Assert
             Assert.IsNull(composeContents);
@@ -87,13 +87,13 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task GetRepositoryFileContextFromConfiguration_NoDockerComposeFilePathsPresent_ReturnsNull()
+        public async Task GetRepositoryFilesFromConfiguration_NoDockerComposeFilePathsPresent_ReturnsNull()
         {
             //Arrange
             var fakePullDogRepositoryClient = Substitute.For<IPullDogRepositoryClient>();
             fakePullDogRepositoryClient
                 .GetFilesForPathAsync("pull-dog.json")
-                .Returns(new [] {
+                .Returns(new[] {
                     new RepositoryFile(
                         "pull-dog.json",
                         Encoding.UTF8.GetBytes("{}"))
@@ -105,7 +105,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 Substitute.For<ILogger>());
 
             //Act
-            var dockerComposeYmlContents = await client.GetRepositoryFileContextFromConfiguration(new ConfigurationFile());
+            var dockerComposeYmlContents = await client.GetRepositoryFilesFromConfiguration(new ConfigurationFile(Array.Empty<string>()));
 
             //Assert
             Assert.IsNull(dockerComposeYmlContents);
@@ -113,50 +113,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task GetRepositoryFileContextFromConfiguration_ValidConfigurationWithPaths_ReturnsPathContents()
-        {
-            //Arrange
-            var fakePullDogRepositoryClient = Substitute.For<IPullDogRepositoryClient>();
-            fakePullDogRepositoryClient
-                .GetFilesForPathAsync("foo")
-                .Returns(new[]
-                {
-                    new RepositoryFile(
-                        "foo",
-                        Encoding.UTF8.GetBytes("foo-contents"))
-                });
-
-            fakePullDogRepositoryClient
-                .GetFilesForPathAsync("bar")
-                .Returns(new[]
-                {
-                    new RepositoryFile(
-                        "bar",
-                        Encoding.UTF8.GetBytes("bar-contents"))
-                });
-
-            var client = new PullDogFileCollector(
-                fakePullDogRepositoryClient,
-                Substitute.For<IDockerComposeParserFactory>(),
-                Substitute.For<ILogger>());
-
-            //Act
-            var context = await client.GetRepositoryFileContextFromConfiguration(new ConfigurationFile()
-            {
-                DockerComposeYmlFilePaths = new[] { "foo", "bar" }
-            });
-
-            //Assert
-            Assert.IsNotNull(context);
-            Assert.AreEqual(2, context.DockerComposeYmlFilePaths.Length);
-
-            Assert.AreEqual("foo-contents", context.DockerComposeYmlFilePaths[0]);
-            Assert.AreEqual("bar-contents", context.DockerComposeYmlFilePaths[1]);
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
-        public async Task GetRepositoryFileContextFromConfiguration_DockerComposeYmlWithOneOfEachPathTypeAndRelativeDirectoryGiven_ReturnsProperPaths()
+        public async Task GetRepositoryFilesFromConfiguration_DockerComposeYmlWithOneOfEachPathTypeAndRelativeDirectoryGiven_ReturnsProperPaths()
         {
             //Arrange
             var fakePullDogRepositoryClient = Substitute.For<IPullDogRepositoryClient>();
@@ -237,17 +194,14 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 Substitute.For<ILogger>());
 
             //Act
-            var context = await client.GetRepositoryFileContextFromConfiguration(
-                new ConfigurationFile()
+            var files = await client.GetRepositoryFilesFromConfiguration(
+                new ConfigurationFile(new[]
                 {
-                    DockerComposeYmlFilePaths = new[]
-                    {
-                        Path.Join("relative", "dir", "some-docker-compose.yml")
-                    }
-                });
+                    Path.Join("relative", "dir", "some-docker-compose.yml")
+                }));
 
             //Assert
-            Assert.AreEqual(3, context.Files.Length);
+            Assert.AreEqual(3, files.Length);
         }
     }
 }

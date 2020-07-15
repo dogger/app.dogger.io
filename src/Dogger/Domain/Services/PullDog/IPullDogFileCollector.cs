@@ -6,6 +6,6 @@ namespace Dogger.Domain.Services.PullDog
     {
         Task<ConfigurationFile?> GetConfigurationFileAsync();
 
-        Task<RepositoryPullDogFileContext?> GetRepositoryFileContextFromConfiguration(ConfigurationFile configuration);
+        Task<RepositoryFile[]?> GetRepositoryFilesFromConfiguration(ConfigurationFile configuration);
     }
 }

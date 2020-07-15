@@ -326,7 +326,7 @@ namespace Dogger.Tests.Controllers
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task Deploy_NoClusterIdGiven_DeployToClusterCommandFiredNoClusterId()
+        public async Task Deploy_NoClusterIdGiven_DeployToClusterCommandFiredWithNoClusterId()
         {
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
@@ -368,6 +368,60 @@ namespace Dogger.Tests.Controllers
                 .Received(1)
                 .Send(Arg.Is<DeployToClusterCommand>(args =>
                     args.ClusterId == default));
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public async Task Deploy_WindowsPathSeparatorsInFiles_DeployToClusterCommandFiredWithUnixPathSeparatorsInFiles()
+        {
+            //Arrange
+            var fakeMediator = Substitute.For<IMediator>();
+            fakeMediator
+                .Send(Arg.Any<EnsureUserForIdentityCommand>())
+                .Returns(new User());
+
+            fakeMediator
+                .Send(Arg.Any<GetRepositoryLoginForUserQuery>())
+                .Returns(new RepositoryLoginResponse(
+                    "dummy",
+                    "dummy"));
+
+            fakeMediator
+                .Send(Arg.Any<EnsureRepositoryWithNameCommand>())
+                .Returns(new RepositoryResponse(
+                    "dummy",
+                    "dummy",
+                    new AmazonUser(),
+                    new AmazonUser()));
+
+            var fakeMapper = Substitute.For<IMapper>();
+
+            var controller = new ClustersController(
+                fakeMediator,
+                fakeMapper);
+            controller.FakeAuthentication("some-identity-name");
+
+            //Act
+            var result = await controller.Deploy(new DeployToClusterRequest()
+            {
+                DockerComposeYmlFilePaths = new[] { "some-docker-compose-contents" },
+                Files = new []
+                {
+                    new FileRequest()
+                    {
+                        Contents = Array.Empty<byte>(),
+                        Path = "some\\windows\\path\\separator\\path"
+                    }
+                }
+            });
+
+            //Assert
+            Assert.IsNotNull(result);
+
+            await fakeMediator
+                .Received(1)
+                .Send(Arg.Is<DeployToClusterCommand>(args =>
+                    args.Files.Single().Path == "some/windows/path/separator/path"));
         }
 
         [TestMethod]

@@ -112,11 +112,10 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
             await AuthenticateDockerAsync(sshClient);
 
-            var filesArgument = GetDockerComposeFileArgumentsCommandLineString();
-            var buildArgumentsArgument = string.Join(' ', GetBuildArgumentAssignments()
-                .Select(x => $"--build-arg {x}"));
+            var filesArgument = GetDockerComposeFilesCommandLineArgumentString();
+            var buildArgumentsArgument = PrependArgumentNameToStrings("--build-arg", GetBuildArgumentAssignments());
 
-            var environmentVariablesPrefix = string.Join(' ', GetBuildArgumentAssignments());
+            var environmentVariablesPrefix = GetEnvironmentVariablesCommandLinePrefixString();
 
             try
             {
@@ -140,7 +139,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             {
                 var listFilesDump = await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
-                    $"cd dogger && ls -R");
+                    "cd dogger && ls -R");
 
                 await this.mediator.Send(new ServerDeploymentFailedEvent(
                     InstanceName,
@@ -157,6 +156,19 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
                             Title = ex.Result.Text
                         }));
             }
+        }
+
+        private string GetDockerComposeFilesCommandLineArgumentString()
+        {
+            if (this.DockerComposeYmlFilePaths == null)
+                throw new InvalidOperationException("No Docker Compose file paths were found.");
+
+            return PrependArgumentNameToStrings("-f", this.DockerComposeYmlFilePaths);
+        }
+
+        private string GetEnvironmentVariablesCommandLinePrefixString()
+        {
+            return string.Join(' ', GetBuildArgumentAssignments());
         }
 
         private string[] GetBuildArgumentAssignments()
@@ -196,9 +208,6 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
         private async Task OpenExposedFirewallPortsOnInstanceAsync(ISshClient sshClient)
         {
-            if (this.DockerComposeYmlFilePaths == null)
-                throw new InvalidOperationException("No Docker Compose file paths were found.");
-
             if (this.InstanceName == null)
                 throw new InvalidOperationException("No instance name was found.");
 
@@ -223,20 +232,18 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
         private async Task<string> GetMergedDockerComposeYmlFileContentsAsync(ISshClient sshClient)
         {
-            var dockerComposeYmlFilePathArguments = GetDockerComposeFileArgumentsCommandLineString();
+            var dockerComposeYmlFilePathArguments = GetDockerComposeFilesCommandLineArgumentString();
+            var environmentVariablesPrefix = GetEnvironmentVariablesCommandLinePrefixString();
 
-            var mergedDockerComposeContents = await sshClient.ExecuteCommandAsync(
+            return await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
-                $"docker-compose {dockerComposeYmlFilePathArguments} config");
-            if (mergedDockerComposeContents == null)
-                throw new InvalidOperationException("Expected a response from merging Docker Compose contents.");
-            return mergedDockerComposeContents;
+                $"cd dogger && {environmentVariablesPrefix} docker-compose {dockerComposeYmlFilePathArguments} config");
         }
 
-        private string GetDockerComposeFileArgumentsCommandLineString()
+        private static string PrependArgumentNameToStrings(string argumentName, IEnumerable<string> arguments)
         {
-            return string.Join(' ', this.DockerComposeYmlFilePaths
-                .Select(filePath => $"-f {filePath}"));
+            return string.Join(' ', arguments
+                .Select(filePath => $"{argumentName} {filePath}"));
         }
 
         /// <summary>

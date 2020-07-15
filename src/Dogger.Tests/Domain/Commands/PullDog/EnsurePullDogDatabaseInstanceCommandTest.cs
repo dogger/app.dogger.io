@@ -62,7 +62,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Act
             var instance = await environment.Mediator.Send(new EnsurePullDogDatabaseInstanceCommand(
                 pullDogPullRequest,
-                new ConfigurationFile()
+                new ConfigurationFile(Array.Empty<string>())
                 {
                     Expiry = TimeSpan.FromDays(30)
                 }));
@@ -128,7 +128,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Act
             var instance = await environment.Mediator.Send(new EnsurePullDogDatabaseInstanceCommand(
                 pullDogPullRequest,
-                new ConfigurationFile()));
+                new ConfigurationFile(Array.Empty<string>())));
 
             //Assert
             Assert.AreSame(instance, oldInstance);
@@ -192,7 +192,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Act
             var instance = await environment.Mediator.Send(new EnsurePullDogDatabaseInstanceCommand(
                 pullDogPullRequest,
-                new ConfigurationFile()
+                new ConfigurationFile(Array.Empty<string>())
                 {
                     Expiry = TimeSpan.FromDays(30)
                 }));
@@ -254,7 +254,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Act
             var instance = await environment.Mediator.Send(new EnsurePullDogDatabaseInstanceCommand(
                 pullDogPullRequest,
-                new ConfigurationFile()
+                new ConfigurationFile(Array.Empty<string>())
                 {
                     Expiry = TimeSpan.FromDays(30)
                 }));
@@ -317,7 +317,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Act
             var instance = await environment.Mediator.Send(new EnsurePullDogDatabaseInstanceCommand(
                 pullDogPullRequest,
-                new ConfigurationFile()
+                new ConfigurationFile(Array.Empty<string>())
                 {
                     Expiry = TimeSpan.FromDays(30)
                 }));

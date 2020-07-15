@@ -11,6 +11,7 @@ using Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonUserWithName;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Amazon.ElasticContainerRegistry.GetRepositoryByName;
 using MediatR;
+using Microsoft.Extensions.Hosting;
 using IdentityTag = Amazon.IdentityManagement.Model.Tag;
 using EcrTag = Amazon.ECR.Model.Tag;
 
@@ -21,15 +22,18 @@ namespace Dogger.Domain.Commands.Amazon.ElasticContainerRegistry.EnsureRepositor
         private readonly IAmazonECR amazonEcr;
         private readonly IAmazonIdentityManagementService amazonIdentityManagementService;
         private readonly IMediator mediator;
+        private readonly IHostEnvironment hostEnvironment;
 
         public EnsureRepositoryWithNameCommandHandler(
             IAmazonECR amazonEcr,
             IAmazonIdentityManagementService amazonIdentityManagementService,
-            IMediator mediator)
+            IMediator mediator,
+            IHostEnvironment hostEnvironment)
         {
             this.amazonEcr = amazonEcr;
             this.amazonIdentityManagementService = amazonIdentityManagementService;
             this.mediator = mediator;
+            this.hostEnvironment = hostEnvironment;
         }
 
         public async Task<RepositoryResponse> Handle(EnsureRepositoryWithNameCommand request, CancellationToken cancellationToken)
@@ -87,7 +91,7 @@ namespace Dogger.Domain.Commands.Amazon.ElasticContainerRegistry.EnsureRepositor
             string[] permissions,
             CancellationToken cancellationToken)
         {
-            var user = await this.mediator.Send(new EnsureAmazonUserWithNameCommand($"{ecrUserType}-{request.Name}")
+            var user = await this.mediator.Send(new EnsureAmazonUserWithNameCommand($"{hostEnvironment.EnvironmentName}-{ecrUserType}-{request.Name}")
             {
                 UserId = request.UserId
             }, cancellationToken);

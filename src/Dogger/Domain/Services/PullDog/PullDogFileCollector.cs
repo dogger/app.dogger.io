@@ -27,13 +27,10 @@ namespace Dogger.Domain.Services.PullDog
             this.logger = logger;
         }
 
-        public async Task<RepositoryPullDogFileContext?> GetRepositoryFileContextFromConfiguration(ConfigurationFile configuration)
+        public async Task<RepositoryFile[]?> GetRepositoryFilesFromConfiguration(ConfigurationFile configuration)
         {
-            if (configuration.DockerComposeYmlFilePaths == null)
-                return null;
-
             var dockerComposeFileContents = await GetDockerComposeYmlContentsFromRepositoryAsync(configuration.DockerComposeYmlFilePaths);
-            if (dockerComposeFileContents == null)
+            if (dockerComposeFileContents.Length == 0)
                 return null;
 
             var dockerComposeYmlDirectoryPath = 
@@ -42,16 +39,9 @@ namespace Dogger.Domain.Services.PullDog
                     .First()) ?? 
                 string.Empty;
 
-            var allFiles = new List<RepositoryFile>();
-
-            var dockerFiles = await GetAllDockerFilesFromComposeContentsAsync(
+            return await GetAllDockerFilesFromComposeContentsAsync(
                 dockerComposeYmlDirectoryPath,
                 dockerComposeFileContents);
-            allFiles.AddRange(dockerFiles);
-
-            return new RepositoryPullDogFileContext(
-                configuration.DockerComposeYmlFilePaths,
-                allFiles.ToArray());
         }
 
         public async Task<ConfigurationFile?> GetConfigurationFileAsync()
@@ -139,7 +129,7 @@ namespace Dogger.Domain.Services.PullDog
                 .ToArray();
         }
 
-        private async Task<string[]?> GetDockerComposeYmlContentsFromRepositoryAsync(
+        private async Task<string[]> GetDockerComposeYmlContentsFromRepositoryAsync(
             string[] dockerComposeYmlFilePaths)
         {
             var contents = await Task.WhenAll(dockerComposeYmlFilePaths

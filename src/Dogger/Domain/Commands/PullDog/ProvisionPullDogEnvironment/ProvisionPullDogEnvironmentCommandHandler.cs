@@ -79,8 +79,8 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
             }
 
             var client = await pullDogFileCollectorFactory.CreateAsync(pullRequest);
-            var context = await client.GetRepositoryFileContextFromConfiguration(configuration);
-            if (context == null)
+            var files = await client.GetRepositoryFilesFromConfiguration(configuration);
+            if (files == null)
             {
                 await this.mediator.Send(
                     new UpsertPullRequestCommentCommand(
@@ -111,13 +111,11 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
 
                 flowsToUse.Add(new DeployToClusterStateFlow(
                     instance.Name,
-                    context.DockerComposeYmlFilePaths)
+                    configuration.DockerComposeYmlFilePaths)
                 {
-                    Files = context
-                        .Files
-                        .Select(file => new InstanceDockerFile(
-                            file.Path,
-                            file.Contents)),
+                    Files = files.Select(file => new InstanceDockerFile(
+                        file.Path,
+                        file.Contents)),
                     BuildArguments = configuration.BuildArguments
                 });
 
