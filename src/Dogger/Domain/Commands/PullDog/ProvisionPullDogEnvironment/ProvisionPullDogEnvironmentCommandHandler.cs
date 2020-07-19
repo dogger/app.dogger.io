@@ -7,6 +7,7 @@ using Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
 using Dogger.Domain.Commands.PullDog.OverrideConfigurationForPullRequest;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
+using Dogger.Domain.Helpers;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest;
 using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
@@ -82,10 +83,13 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
             var files = await client.GetRepositoryFilesFromConfiguration(configuration);
             if (files == null)
             {
+                var filePathsInCodeElement = configuration
+                    .DockerComposeYmlFilePaths
+                    .Select(x => $"`{x}`");
                 await this.mediator.Send(
                     new UpsertPullRequestCommentCommand(
                         pullRequest,
-                        "I wasn't able to find any Docker Compose files in your repository at any of the given paths in the `pull-dog.json` configuration file, or the default `docker-compose.yml` file :weary: Make sure the given paths are correct."),
+                        $"I wasn't able to find any Docker Compose files in your repository at any of the given paths in the `pull-dog.json` configuration file, or the default `docker-compose.yml` file :weary: Make sure the given paths are correct.\n\nFiles checked:\n{GitHubCommentHelper.RenderList(filePathsInCodeElement)}"),
                     cancellationToken);
                 return Unit.Value;
             }
