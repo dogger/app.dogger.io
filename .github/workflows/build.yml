@@ -84,7 +84,7 @@ jobs:
           echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
           
           docker run\
-            -v $(pwd):/source
+            -v $(pwd):/source\
             -e DOGFEED=true\
             -e DOGFEED_Aws__SecretAccessKey="${{ secrets.AWS_SECRET_ACCESS_KEY }}"\
             -e DOGFEED_Aws__AccessKeyId="${{ secrets.AWS_ACCESS_KEY_ID }}"\
