@@ -163,7 +163,9 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             if (this.DockerComposeYmlFilePaths == null)
                 throw new InvalidOperationException("No Docker Compose file paths were found.");
 
-            return PrependArgumentNameToStrings("-f", this.DockerComposeYmlFilePaths);
+            return PrependArgumentNameToStrings("-f", this
+                .DockerComposeYmlFilePaths
+                .Select(SanitizeRelativePath));
         }
 
         private string GetEnvironmentVariablesCommandLinePrefixString()
@@ -263,11 +265,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             string filePath,
             byte[] contents)
         {
-            while (filePath.Contains("//", StringComparison.InvariantCulture))
-                filePath = filePath.Replace("//", "/", StringComparison.InvariantCulture);
-
-            if (filePath.StartsWith("/", StringComparison.InvariantCulture))
-                filePath = filePath.Substring(1);
+            filePath = SanitizeRelativePath(filePath);
 
             if (filePath.Contains("/", StringComparison.InvariantCulture))
             {
@@ -281,6 +279,16 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
                 contents);
 
             await SetUserPermissionsOnPathAsync(sshClient, $"dogger/{filePath}");
+        }
+
+        private static string SanitizeRelativePath(string filePath)
+        {
+            while (filePath.Contains("//", StringComparison.InvariantCulture))
+                filePath = filePath.Replace("//", "/", StringComparison.InvariantCulture);
+
+            if (filePath.StartsWith("/", StringComparison.InvariantCulture))
+                filePath = filePath.Substring(1);
+            return filePath;
         }
 
         private static async Task SetUserPermissionsOnPathAsync(ISshClient sshClient, string fileName)
