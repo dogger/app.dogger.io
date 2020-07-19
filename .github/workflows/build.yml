@@ -30,7 +30,7 @@ jobs:
         working-directory: ./src
         run: |
           docker-compose --file docker-compose.test.yml build
-          docker-compose --file docker-compose.test.yml up --exit-code-from sut
+          #docker-compose --file docker-compose.test.yml up --exit-code-from sut
 
       - name: Code coverage reporting
         uses: codecov/codecov-action@v1
