@@ -89,7 +89,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
                         instance),
                     new DeployToClusterStateFlow(
                         request.InstanceName,
-                        dogfeedOptions.DockerComposeYmlFilePaths)
+                        SanitizeDockerComposeYmlFilePaths(dogfeedOptions.DockerComposeYmlFilePaths))
                     {
                         Files = dockerFiles,
                         Authentication = new[] {
@@ -98,6 +98,14 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
                                 password: dockerHubOptions.Password)
                         }
                     }));
+        }
+
+        private static string[] SanitizeDockerComposeYmlFilePaths(
+            string[] dogfeedOptionsDockerComposeYmlFilePaths)
+        {
+            return dogfeedOptionsDockerComposeYmlFilePaths
+                .Select(SanitizeDockerComposeYmlFilePath)
+                .ToArray();
         }
 
         private async Task<Plan> GetDogfeedingPlanAsync()
@@ -184,11 +192,16 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
             foreach (var ymlFilePath in options.DockerComposeYmlFilePaths)
             {
                 files.Add(new InstanceDockerFile(
-                    ymlFilePath,
+                    SanitizeDockerComposeYmlFilePath(ymlFilePath),
                     await file.ReadAllBytesAsync(ymlFilePath)));
             }
 
             return files.ToArray();
+        }
+
+        private static string SanitizeDockerComposeYmlFilePath(string ymlFilePath)
+        {
+            return Path.GetFileName(ymlFilePath);
         }
 
         private static InstanceDockerFile GetInstanceEnvironmentVariableFile(IConfiguration configuration)
