@@ -17,6 +17,5 @@ RUN dotnet publish "Dogger.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY ./docker-compose.deploy.yml ./
 COPY --from=publish-dotnet /app/publish .
 ENTRYPOINT ["dotnet", "Dogger.dll"]

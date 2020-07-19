@@ -84,13 +84,14 @@ jobs:
           echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
           
           docker run\
+            -v $(pwd):/source
             -e DOGFEED=true\
             -e DOGFEED_Aws__SecretAccessKey="${{ secrets.AWS_SECRET_ACCESS_KEY }}"\
             -e DOGFEED_Aws__AccessKeyId="${{ secrets.AWS_ACCESS_KEY_ID }}"\
             -e DOGFEED_Aws__LightsailPrivateKeyPem="${{ secrets.AWS_LIGHTSAIL_PRIVATE_KEY_PEM }}"\
             -e DOGFEED_Dogfeed__DockerHub__Username="${{ secrets.DOCKER_HUB_USERNAME }}"\
             -e DOGFEED_Dogfeed__DockerHub__Password="${{ secrets.DOCKER_HUB_PASSWORD }}"\
-            -e DOGFEED_Dogfeed__DockerComposeYmlFilePaths__0="src/docker-compose.deploy.yml"\
+            -e DOGFEED_Dogfeed__DockerComposeYmlFilePaths__0="source/docker-compose.deploy.yml"\
             -e DOGFEED_Dogfeed__Elasticsearch__InstancePassword="${{ secrets.ELK_PASSWORD }}"\
             -e DOGFEED_Dogfeed__Elasticsearch__ConfigurationYmlContents="${{ secrets.ELK_CONFIGURATION_YML_CONTENTS }}"\
             -e DOGFEED_Dogfeed__Elasticsearch__AdminKeyContents="${{ secrets.ELK_ADMIN_KEY_CONTENTS }}"\
