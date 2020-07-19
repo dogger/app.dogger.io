@@ -150,8 +150,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
             Assert.IsNotNull(context);
             Assert.AreEqual(2, context.DockerComposeYmlFilePaths.Length);
 
-            Assert.AreEqual("foo-contents", context.DockerComposeYmlFilePaths[0]);
-            Assert.AreEqual("bar-contents", context.DockerComposeYmlFilePaths[1]);
+            Assert.AreEqual("foo", context.DockerComposeYmlFilePaths[0]);
+            Assert.AreEqual("bar", context.DockerComposeYmlFilePaths[1]);
         }
 
         [TestMethod]
