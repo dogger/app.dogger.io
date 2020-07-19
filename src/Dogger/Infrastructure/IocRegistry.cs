@@ -31,6 +31,7 @@ using Dogger.Infrastructure.Docker.Engine;
 using Dogger.Infrastructure.Docker.Yml;
 using Dogger.Infrastructure.Encryption;
 using Dogger.Infrastructure.GitHub;
+using Dogger.Infrastructure.IO;
 using Dogger.Infrastructure.Mediatr;
 using Dogger.Infrastructure.Mediatr.Database;
 using Dogger.Infrastructure.Ssh;
@@ -47,6 +48,7 @@ using Serilog;
 using Octokit;
 using Slack.Webhooks;
 using Stripe;
+using File = Dogger.Infrastructure.IO.File;
 
 namespace Dogger.Infrastructure
 {
@@ -295,6 +297,8 @@ namespace Dogger.Infrastructure
         {
             services.AddSingleton<ISshClientFactory, SshClientFactory>();
             services.AddSingleton<IAesEncryptionHelper, AesEncryptionHelper>();
+
+            services.AddSingleton<IFile, File>();
 
             services.AddSingleton<ITime, Time.Time>();
             services.AddSingleton<ITimeProvider, TimeProvider>();
