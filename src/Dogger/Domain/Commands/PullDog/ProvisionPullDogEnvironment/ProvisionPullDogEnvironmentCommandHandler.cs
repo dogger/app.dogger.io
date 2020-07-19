@@ -130,7 +130,7 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
                 await this.mediator.Send(
                     new UpsertPullRequestCommentCommand(
                         pullRequest,
-                        $"It looks like you are currently using the maximum amount of concurrent test environments :tired_face:\n\nNo reason to panick though! You can [upgrade your plan](https://dogger.io/dashboard/pull-dog) to increase that limit, and our plans are quite cheap.\n\nThe following pull requests are currently using environments from your pool:\n{offendingPullRequestListText}"),
+                        $"It looks like you are currently using the maximum amount of concurrent test environments :tired_face:\n\nYou can [upgrade your plan](https://dogger.io/dashboard/pull-dog) to increase that limit, and our plans are quite cheap.\n\nThe following pull requests are using environments from your pool as of writing this comment (they may have since expired):\n{offendingPullRequestListText}"),
                     cancellationToken);
             }
             catch (PullDogDemoInstanceAlreadyProvisionedException ex)
