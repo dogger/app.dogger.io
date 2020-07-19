@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
+using Destructurama.Attributed;
 using Dogger.Domain.Events.ServerProvisioningStarted;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Services.Amazon.Lightsail;
@@ -13,7 +14,6 @@ using Instance = Amazon.Lightsail.Model.Instance;
 
 namespace Dogger.Domain.Services.Provisioning.States.CreateLightsailInstance
 {
-
     public class CreateLightsailInstanceState : ICreateLightsailInstanceState
     {
         private readonly IMediator mediator;
@@ -33,6 +33,7 @@ namespace Dogger.Domain.Services.Provisioning.States.CreateLightsailInstance
             get; private set;
         }
 
+        [NotLogged]
         public Instance CreatedLightsailInstance
         {
             get => this.createdInstance ??

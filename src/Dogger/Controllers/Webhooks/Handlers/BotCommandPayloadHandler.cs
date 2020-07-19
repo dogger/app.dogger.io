@@ -3,19 +3,23 @@ using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
 using MediatR;
+using Microsoft.Extensions.Hosting;
 
 namespace Dogger.Controllers.Webhooks.Handlers
 {
     public class BotCommandPayloadHandler : IWebhookPayloadHandler
     {
         private readonly IMediator mediator;
+        private readonly IHostEnvironment hostEnvironment;
 
         public string Event => "issue_comment";
 
         public BotCommandPayloadHandler(
-            IMediator mediator)
+            IMediator mediator,
+            IHostEnvironment hostEnvironment)
         {
             this.mediator = mediator;
+            this.hostEnvironment = hostEnvironment;
         }
 
         public bool CanHandle(WebhookPayload payload)
@@ -47,17 +51,28 @@ namespace Dogger.Controllers.Webhooks.Handlers
             }
         }
 
-        private static string? ExtractCommentTextFromPayload(WebhookPayload payload)
+        private string? ExtractCommentTextFromPayload(WebhookPayload payload)
         {
             var text = payload
-                .Comment
-                ?.Body
-                ?.Trim();
+                .Comment?
+                .Body?
+                .Trim();
+
+            var environmentNameSuffix = $" {this.hostEnvironment.EnvironmentName}";
+            if (text?.EndsWith(environmentNameSuffix, StringComparison.InvariantCultureIgnoreCase) == true)
+            {
+                text = text.Substring(0, text.LastIndexOf(
+                    environmentNameSuffix, 
+                    StringComparison.InvariantCultureIgnoreCase));
+            }
 
             while (text?.Contains("  ", StringComparison.InvariantCulture) == true)
                 text = text.Replace("  ", " ", StringComparison.InvariantCulture);
 
-            text = text?.ToLowerInvariant();
+            text = text?
+                .Trim()?
+                .ToLowerInvariant();
+
             return text;
         }
     }

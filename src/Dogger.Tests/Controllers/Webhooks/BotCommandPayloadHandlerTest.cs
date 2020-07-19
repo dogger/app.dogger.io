@@ -7,6 +7,7 @@ using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
 using Dogger.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 
@@ -22,7 +23,9 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            var handler = new BotCommandPayloadHandler(fakeMediator);
+            var handler = new BotCommandPayloadHandler(
+                fakeMediator,
+                Substitute.For<IHostEnvironment>());
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -46,7 +49,9 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            var handler = new BotCommandPayloadHandler(fakeMediator);
+            var handler = new BotCommandPayloadHandler(
+                fakeMediator,
+                Substitute.For<IHostEnvironment>());
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -70,7 +75,9 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            var handler = new BotCommandPayloadHandler(fakeMediator);
+            var handler = new BotCommandPayloadHandler(
+                fakeMediator,
+                Substitute.For<IHostEnvironment>());
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
@@ -92,12 +99,47 @@ namespace Dogger.Tests.Controllers.Webhooks
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
+        public async Task Handle_GoFetchCommandPresentWithEnvironmentName_ProvisionsPullDogEnvironment()
+        {
+            //Arrange
+            var fakeMediator = Substitute.For<IMediator>();
+
+            var fakeHostEnvironment = Substitute.For<IHostEnvironment>();
+            fakeHostEnvironment.EnvironmentName.Returns("environment");
+
+            var handler = new BotCommandPayloadHandler(
+                fakeMediator,
+                fakeHostEnvironment);
+
+            //Act
+            await handler.HandleAsync(new WebhookPayloadContext(
+                new WebhookPayload()
+                {
+                    Comment = new CommentPayload()
+                    {
+                        Body = "@pull-dog up environment"
+                    }
+                },
+                null!,
+                new PullDogRepository(),
+                new PullDogPullRequest()));
+
+            //Assert
+            await fakeMediator
+                .Received(1)
+                .Send(Arg.Any<ProvisionPullDogEnvironmentCommand>());
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
         public async Task Handle_GoFetchCommandPresent_ProvisionsPullDogEnvironment()
         {
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            var handler = new BotCommandPayloadHandler(fakeMediator);
+            var handler = new BotCommandPayloadHandler(
+                fakeMediator,
+                Substitute.For<IHostEnvironment>());
 
             //Act
             await handler.HandleAsync(new WebhookPayloadContext(
@@ -125,7 +167,9 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            var handler = new BotCommandPayloadHandler(fakeMediator);
+            var handler = new BotCommandPayloadHandler(
+                fakeMediator,
+                Substitute.For<IHostEnvironment>());
 
             //Act
             await handler.HandleAsync(new WebhookPayloadContext(

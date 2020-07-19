@@ -25,7 +25,7 @@ namespace Dogger.Tests.Infrastructure
             var json = JsonSerializer.Serialize(configurationFile, JsonFactory.GetOptions());
 
             //Assert
-            Assert.AreEqual(@"{""isLazy"":false,""expiry"":""00:01:00"",""conversationMode"":""singleComment""}", json);
+            Assert.AreEqual(@"{""isLazy"":false,""dockerComposeYmlFilePaths"":[""docker-compose.yml""],""expiry"":""00:01:00"",""conversationMode"":""singleComment""}", json);
         }
 
         [TestMethod]
@@ -33,7 +33,7 @@ namespace Dogger.Tests.Infrastructure
         public async Task Serialize_ConfigurationFileWithExpiryInDays_SerializesCorrectly()
         {
             //Arrange
-            var configurationFile = new ConfigurationFile()
+            var configurationFile = new ConfigurationFile(Array.Empty<string>())
             {
                 Expiry = TimeSpan.FromDays(1)
             };
@@ -42,7 +42,7 @@ namespace Dogger.Tests.Infrastructure
             var json = JsonSerializer.Serialize(configurationFile, JsonFactory.GetOptions());
 
             //Assert
-            Assert.AreEqual(@"{""isLazy"":false,""expiry"":""1.00:00:00"",""conversationMode"":""singleComment""}", json);
+            Assert.AreEqual(@"{""isLazy"":false,""dockerComposeYmlFilePaths"":[""docker-compose.yml""],""expiry"":""1.00:00:00"",""conversationMode"":""singleComment""}", json);
         }
 
         [TestMethod]
@@ -50,7 +50,7 @@ namespace Dogger.Tests.Infrastructure
         public async Task Serialize_ConfigurationFileWithExpiryInMoreThanAYear_SerializesCorrectly()
         {
             //Arrange
-            var configurationFile = new ConfigurationFile()
+            var configurationFile = new ConfigurationFile(Array.Empty<string>())
             {
                 Expiry = TimeSpan.FromDays(367)
             };
@@ -59,7 +59,7 @@ namespace Dogger.Tests.Infrastructure
             var json = JsonSerializer.Serialize(configurationFile, JsonFactory.GetOptions());
 
             //Assert
-            Assert.AreEqual(@"{""isLazy"":false,""expiry"":""367.00:00:00"",""conversationMode"":""singleComment""}", json);
+            Assert.AreEqual(@"{""isLazy"":false,""dockerComposeYmlFilePaths"":[""docker-compose.yml""],""expiry"":""367.00:00:00"",""conversationMode"":""singleComment""}", json);
         }
 
         [TestMethod]
@@ -67,13 +67,13 @@ namespace Dogger.Tests.Infrastructure
         public async Task Serialize_ConfigurationFileWithNoExpiry_SerializesCorrectly()
         {
             //Arrange
-            var configurationFile = new ConfigurationFile();
+            var configurationFile = new ConfigurationFile(Array.Empty<string>());
 
             //Act
             var json = JsonSerializer.Serialize(configurationFile, JsonFactory.GetOptions());
 
             //Assert
-            Assert.AreEqual(@"{""isLazy"":false,""expiry"":""00:00:00"",""conversationMode"":""singleComment""}", json);
+            Assert.AreEqual(@"{""isLazy"":false,""dockerComposeYmlFilePaths"":[""docker-compose.yml""],""expiry"":""00:00:00"",""conversationMode"":""singleComment""}", json);
         }
     }
 }

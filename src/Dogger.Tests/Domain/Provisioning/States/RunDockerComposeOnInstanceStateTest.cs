@@ -127,7 +127,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
             fakeSshClient
                 .ExecuteCommandAsync(
                     SshRetryPolicy.ProhibitRetries,
-                    Arg.Is<string>(arg => arg.Contains("docker-compose -f docker-compose-1.yml --compatibility up")),
+                    Arg.Is<string>(arg => arg.Contains("docker-compose -f some-docker-compose-yml-path --compatibility up")),
                     Arg.Any<Dictionary<string, string>>())
                 .Throws(new SshCommandExecutionException("dummy", new SshCommandResult()
                 {
@@ -159,7 +159,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
             state.InstanceName = "some-instance-name";
             state.DockerComposeYmlFilePaths = new[]
             {
-                "some-docker-compose-yml-contents"
+                "some-docker-compose-yml-path"
             };
 
             await state.InitializeAsync();
@@ -248,7 +248,6 @@ namespace Dogger.Tests.Domain.Provisioning.States
             await fakeMediator
                 .Received(1)
                 .Send(Arg.Is<OpenFirewallPortsCommand>(arg =>
-                    arg.Ports.Any(p => p.ToPort == 1001 && p.FromPort == 1000 && p.Protocol == SocketProtocol.Tcp) &&
                     arg.Ports.Any(p => p.ToPort == 1337 && p.FromPort == 1337 && p.Protocol == SocketProtocol.Tcp)));
         }
 

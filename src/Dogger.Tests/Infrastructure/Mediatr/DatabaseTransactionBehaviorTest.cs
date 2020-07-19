@@ -41,9 +41,7 @@ namespace Dogger.Tests.Infrastructure.Mediatr
                 await environment1.DataContext.SaveChangesAsync();
 
                 var clusterCount1 = await environment1.DataContext.Clusters.CountAsync();
-
-                var clusterCount2 = await environment2.WithFreshDataContext(async dataContext => 
-                    await dataContext.Clusters.CountAsync());
+                var clusterCount2 = await environment2.DataContext.Clusters.CountAsync();
 
                 Assert.AreEqual(1, clusterCount1);
                 Assert.AreEqual(0, clusterCount2);

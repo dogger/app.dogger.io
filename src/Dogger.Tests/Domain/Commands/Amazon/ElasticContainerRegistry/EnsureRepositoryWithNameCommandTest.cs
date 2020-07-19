@@ -12,6 +12,7 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Amazon.ElasticContainerRegistry.GetRepositoryByName;
 using Dogger.Tests.TestHelpers;
 using MediatR;
+using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -45,7 +46,8 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             var handler = new EnsureRepositoryWithNameCommandHandler(
                 fakeAmazonEcr,
                 Substitute.For<IAmazonIdentityManagementService>(),
-                fakeMediator);
+                fakeMediator,
+                Substitute.For<IHostEnvironment>());
 
             //Act
             var repository = await handler.Handle(
@@ -96,7 +98,8 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             var handler = new EnsureRepositoryWithNameCommandHandler(
                 fakeAmazonEcr,
                 Substitute.For<IAmazonIdentityManagementService>(),
-                fakeMediator);
+                fakeMediator,
+                Substitute.For<IHostEnvironment>());
 
             //Act
             var repository = await handler.Handle(
@@ -152,7 +155,8 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             var handler = new EnsureRepositoryWithNameCommandHandler(
                 fakeAmazonEcr,
                 Substitute.For<IAmazonIdentityManagementService>(),
-                fakeMediator);
+                fakeMediator,
+                Substitute.For<IHostEnvironment>());
 
             //Act
             var repository = await handler.Handle(
@@ -206,7 +210,8 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             var handler = new EnsureRepositoryWithNameCommandHandler(
                 fakeAmazonEcr,
                 Substitute.For<IAmazonIdentityManagementService>(),
-                fakeMediator);
+                fakeMediator,
+                Substitute.For<IHostEnvironment>());
 
             //Act
             var repository = await handler.Handle(
@@ -263,7 +268,8 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             var handler = new EnsureRepositoryWithNameCommandHandler(
                 fakeAmazonEcr,
                 Substitute.For<IAmazonIdentityManagementService>(),
-                fakeMediator);
+                fakeMediator,
+                Substitute.For<IHostEnvironment>());
 
             //Act
             var repository = await handler.Handle(
@@ -302,16 +308,20 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
                 .Returns(new AmazonUser());
 
             fakeMediator
-                .Send(Arg.Is<EnsureAmazonUserWithNameCommand>(args => args.Name == "ecr-read-some-repository-name"))
+                .Send(Arg.Is<EnsureAmazonUserWithNameCommand>(args => args.Name == "environment-ecr-read-some-repository-name"))
                 .Returns(new AmazonUser()
                 {
-                    Name = "ecr-read-some-repository-name"
+                    Name = "environment-ecr-read-some-repository-name"
                 });
+
+            var fakeHostEnvironment = Substitute.For<IHostEnvironment>();
+            fakeHostEnvironment.EnvironmentName.Returns("environment");
 
             var handler = new EnsureRepositoryWithNameCommandHandler(
                 fakeAmazonEcr,
                 fakeAmazonIdentityManagementService,
-                fakeMediator);
+                fakeMediator,
+                fakeHostEnvironment);
 
             //Act
             var repository = await handler.Handle(
@@ -324,12 +334,12 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             await fakeMediator
                 .Received(1)
                 .Send(Arg.Is<EnsureAmazonUserWithNameCommand>(args =>
-                    args.Name == "ecr-read-some-repository-name"));
+                    args.Name == "environment-ecr-read-some-repository-name"));
 
             await fakeAmazonIdentityManagementService
                 .Received(1)
                 .PutUserPolicyAsync(Arg.Is<PutUserPolicyRequest>(args =>
-                    args.UserName == "ecr-read-some-repository-name" &&
+                    args.UserName == "environment-ecr-read-some-repository-name" &&
                     args.PolicyDocument.Contains("ecr:BatchGetImage") &&
                     args.PolicyDocument.Contains("ecr:GetDownloadUrlForLayer") &&
                     args.PolicyDocument.Contains("arn:aws:ecr:*:715796587228:repository/some-repository-name")));
@@ -337,7 +347,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             await fakeAmazonIdentityManagementService
                 .Received(1)
                 .PutUserPolicyAsync(Arg.Is<PutUserPolicyRequest>(args =>
-                    args.UserName == "ecr-read-some-repository-name" &&
+                    args.UserName == "environment-ecr-read-some-repository-name" &&
                     args.PolicyDocument.Contains("ecr:GetAuthorizationToken")));
         }
 
@@ -365,16 +375,20 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
                 .Returns(new AmazonUser());
 
             fakeMediator
-                .Send(Arg.Is<EnsureAmazonUserWithNameCommand>(args => args.Name == "ecr-write-some-repository-name"))
+                .Send(Arg.Is<EnsureAmazonUserWithNameCommand>(args => args.Name == "environment-ecr-write-some-repository-name"))
                 .Returns(new AmazonUser()
                 {
-                    Name = "ecr-write-some-repository-name"
+                    Name = "environment-ecr-write-some-repository-name"
                 });
+
+            var fakeHostEnvironment = Substitute.For<IHostEnvironment>();
+            fakeHostEnvironment.EnvironmentName.Returns("environment");
 
             var handler = new EnsureRepositoryWithNameCommandHandler(
                 fakeAmazonEcr,
                 fakeAmazonIdentityManagementService,
-                fakeMediator);
+                fakeMediator,
+                fakeHostEnvironment);
 
             //Act
             var repository = await handler.Handle(
@@ -387,12 +401,12 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             await fakeMediator
                 .Received(1)
                 .Send(Arg.Is<EnsureAmazonUserWithNameCommand>(args =>
-                    args.Name == "ecr-write-some-repository-name"));
+                    args.Name == "environment-ecr-write-some-repository-name"));
 
             await fakeAmazonIdentityManagementService
                 .Received(1)
                 .PutUserPolicyAsync(Arg.Is<PutUserPolicyRequest>(args =>
-                    args.UserName == "ecr-write-some-repository-name" &&
+                    args.UserName == "environment-ecr-write-some-repository-name" &&
                     args.PolicyDocument.Contains("ecr:InitiateLayerUpload") &&
                     args.PolicyDocument.Contains("ecr:UploadLayerPart") &&
                     args.PolicyDocument.Contains("ecr:CompleteLayerUpload") &&
@@ -403,7 +417,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             await fakeAmazonIdentityManagementService
                 .Received(1)
                 .PutUserPolicyAsync(Arg.Is<PutUserPolicyRequest>(args =>
-                    args.UserName == "ecr-write-some-repository-name" &&
+                    args.UserName == "environment-ecr-write-some-repository-name" &&
                     args.PolicyDocument.Contains("ecr:GetAuthorizationToken")));
         }
 
@@ -434,7 +448,8 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             var handler = new EnsureRepositoryWithNameCommandHandler(
                 fakeAmazonEcr,
                 fakeAmazonIdentityManagementService,
-                fakeMediator);
+                fakeMediator,
+                Substitute.For<IHostEnvironment>());
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<TestException>(async () => 

@@ -138,6 +138,9 @@ namespace Dogger.Controllers.Clusters
                 });
                 var login = await this.mediator.Send(new GetRepositoryLoginForUserQuery(repositoryResponse.ReadUser));
 
+                if(request.Files != null)
+                    ConvertWindowsPathSeparatorsToUnixInFileRequests(request.Files);
+
                 var job = await this.mediator.Send(new DeployToClusterCommand(
                     request.DockerComposeYmlFilePaths)
                 {
@@ -177,6 +180,16 @@ namespace Dogger.Controllers.Clusters
                 {
                     Type = "TOO_BROAD"
                 });
+            }
+        }
+
+        private static void ConvertWindowsPathSeparatorsToUnixInFileRequests(FileRequest[] requests)
+        {
+            foreach (var request in requests)
+            {
+                request.Path = request
+                    .Path
+                    .Replace("\\", "/", StringComparison.InvariantCulture);
             }
         }
 

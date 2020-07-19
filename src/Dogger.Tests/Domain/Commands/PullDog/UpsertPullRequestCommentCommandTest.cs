@@ -144,7 +144,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
-                .Returns(new ConfigurationFile()
+                .Returns(new ConfigurationFile(Array.Empty<string>())
                 {
                     ConversationMode = ConversationMode.SingleComment
                 });
@@ -215,7 +215,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
-                .Returns(new ConfigurationFile()
+                .Returns(new ConfigurationFile(Array.Empty<string>())
                 {
                     ConversationMode = ConversationMode.MultipleComments
                 });

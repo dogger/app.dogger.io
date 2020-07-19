@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Services.PullDog;
 using MediatR;
@@ -21,7 +22,7 @@ namespace Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest
 
             var configuration = await client.GetConfigurationFileAsync();
             if (configuration == null)
-                return GetDefaultConfiguration();
+                return new ConfigurationFile(Array.Empty<string>());
 
             var configurationOverride = request.PullRequest.ConfigurationOverride;
             if (configurationOverride == null)
@@ -32,17 +33,6 @@ namespace Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest
                 configuration);
 
             return configuration;
-        }
-
-        private static ConfigurationFile GetDefaultConfiguration()
-        {
-            return new ConfigurationFile()
-            {
-                DockerComposeYmlFilePaths = new []
-                {
-                    "docker-compose.yml"
-                }
-            };
         }
 
         private static void ApplyOverridesToConfiguration(
