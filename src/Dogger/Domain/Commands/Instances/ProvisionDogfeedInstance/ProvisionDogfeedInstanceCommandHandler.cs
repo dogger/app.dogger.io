@@ -77,7 +77,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
 
             await this.dataContext.SaveChangesAsync(cancellationToken);
 
-            var dockerFiles = GetDockerFiles(this.configuration, dogfeedOptions);
+            var dockerFiles = await GetDockerFilesAsync(this.configuration, dogfeedOptions);
 
             return await this.provisioningService.ScheduleJobAsync(
                 new AggregateProvisioningStateFlow(
