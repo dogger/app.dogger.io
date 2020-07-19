@@ -263,6 +263,12 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             string filePath,
             byte[] contents)
         {
+            while (filePath.Contains("//", StringComparison.InvariantCulture))
+                filePath = filePath.Replace("//", "/", StringComparison.InvariantCulture);
+
+            if (filePath.StartsWith("/", StringComparison.InvariantCulture))
+                filePath = filePath.Substring(1);
+
             if (filePath.Contains("/", StringComparison.InvariantCulture))
             {
                 var folderPath = filePath.Substring(0, filePath.LastIndexOf('/'));
