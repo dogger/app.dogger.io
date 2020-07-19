@@ -12,6 +12,7 @@ using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Arguments;
 using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Infrastructure.AspNet.Options.Dogfeed;
+using Dogger.Infrastructure.IO;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -25,10 +26,10 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
         private readonly IProvisioningService provisioningService;
         private readonly IMediator mediator;
         private readonly IConfiguration configuration;
+        private readonly ILogger logger;
+        private readonly IFile file;
 
         private readonly IOptionsMonitor<DogfeedOptions> dogfeedOptionsMonitor;
-
-        private readonly ILogger logger;
 
         private readonly DataContext dataContext;
 
@@ -38,11 +39,13 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
             IConfiguration configuration,
             IOptionsMonitor<DogfeedOptions> dogfeedOptionsMonitor,
             ILogger logger,
+            IFile file,
             DataContext dataContext)
         {
             this.provisioningService = provisioningService;
             this.mediator = mediator;
             this.logger = logger;
+            this.file = file;
             this.dataContext = dataContext;
             this.configuration = configuration;
             this.dogfeedOptionsMonitor = dogfeedOptionsMonitor;
@@ -77,7 +80,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
 
             await this.dataContext.SaveChangesAsync(cancellationToken);
 
-            var dockerFiles = await GetDockerFilesAsync(this.configuration, dogfeedOptions);
+            var dockerFiles = await GetDockerFilesAsync(dogfeedOptions);
 
             return await this.provisioningService.ScheduleJobAsync(
                 new AggregateProvisioningStateFlow(
@@ -110,9 +113,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
         /// <summary>
         /// Makes the job create a file on the disk called environment-variables.env, which is then referenced by docker-compose.deploy.yml.
         /// </summary>
-        private static async Task<InstanceDockerFile[]> GetDockerFilesAsync(
-            IConfiguration configuration,
-            DogfeedOptions options)
+        private async Task<InstanceDockerFile[]> GetDockerFilesAsync(DogfeedOptions options)
         {
             var elasticsearchOptions = options.Elasticsearch;
             if (elasticsearchOptions == null)
@@ -184,7 +185,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
             {
                 files.Add(new InstanceDockerFile(
                     ymlFilePath,
-                    await File.ReadAllBytesAsync(ymlFilePath)));
+                    await file.ReadAllBytesAsync(ymlFilePath)));
             }
 
             return files.ToArray();
