@@ -8,6 +8,7 @@ using Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
+using Dogger.Infrastructure.IO;
 using Dogger.Tests.TestHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -30,12 +31,15 @@ namespace Dogger.Tests.Domain.Commands.Instances
             var fakeAmazonLightsail = Substitute.For<IAmazonLightsail>();
             FakeOutBundleFetching(fakeAmazonLightsail);
 
+            var fakeFile = Substitute.For<IFile>();
+
             await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
                     services.AddSingleton(fakeProvisioningService);
                     services.AddSingleton(fakeAmazonLightsail);
+                    services.AddSingleton(fakeFile);
                 }
             });
 
@@ -62,12 +66,15 @@ namespace Dogger.Tests.Domain.Commands.Instances
             var fakeAmazonLightsail = Substitute.For<IAmazonLightsail>();
             FakeOutBundleFetching(fakeAmazonLightsail);
 
+            var fakeFile = Substitute.For<IFile>();
+
             await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
                     services.AddSingleton(fakeProvisioningService);
                     services.AddSingleton(fakeAmazonLightsail);
+                    services.AddSingleton(fakeFile);
                 }
             });
 
@@ -99,6 +106,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     fakeConfigurationSection
                 });
 
+            var fakeFile = Substitute.For<IFile>();
+
             var fakeAmazonLightsail = Substitute.For<IAmazonLightsail>();
             FakeOutBundleFetching(fakeAmazonLightsail);
 
@@ -108,6 +117,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             {
                 IocConfiguration = services =>
                 {
+                    services.AddSingleton(fakeFile);
                     services.AddSingleton(fakeProvisioningService);
                     services.AddSingleton(fakeAmazonLightsail);
                 }
@@ -141,12 +151,15 @@ namespace Dogger.Tests.Domain.Commands.Instances
             var fakeAmazonLightsail = Substitute.For<IAmazonLightsail>();
             FakeOutBundleFetching(fakeAmazonLightsail);
 
+            var fakeFile = Substitute.For<IFile>();
+
             await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
                     services.AddSingleton(fakeProvisioningService);
                     services.AddSingleton(fakeAmazonLightsail);
+                    services.AddSingleton(fakeFile);
                 }
             });
 
