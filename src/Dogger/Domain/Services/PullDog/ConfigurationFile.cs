@@ -23,7 +23,7 @@ namespace Dogger.Domain.Services.PullDog
 
         public bool IsLazy { get; set; }
 
-        public string[] DockerComposeYmlFilePaths { get; }
+        public string[] DockerComposeYmlFilePaths { get; set; }
     }
 
     public class ConfigurationFileOverride : ConfigurationFileBase
