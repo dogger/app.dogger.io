@@ -21,9 +21,7 @@ namespace Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest
         {
             var client = await this.pullDogFileCollectorFactory.CreateAsync(request.PullRequest);
 
-            var configuration = await client.GetConfigurationFileAsync();
-            if (configuration == null)
-                return new ConfigurationFile();
+            var configuration = await client.GetConfigurationFileAsync() ?? new ConfigurationFile();
 
             var configurationOverride = request.PullRequest.ConfigurationOverride;
             if (configurationOverride == null)
