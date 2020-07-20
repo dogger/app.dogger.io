@@ -1,4 +1,5 @@
 {
   "dockerComposeYmlFilePaths": [ "src/docker-compose.pull-dog.yml" ],
-  "expiry": "0.00:45:00"
+  "expiry": "0.00:45:00",
+  "label": "pull-dog-environment-ready"
 }
