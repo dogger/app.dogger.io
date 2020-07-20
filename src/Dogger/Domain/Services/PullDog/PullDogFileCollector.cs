@@ -35,41 +35,19 @@ namespace Dogger.Domain.Services.PullDog
             if (dockerComposeFileContents.Length == 0)
                 return null;
 
-            var dockerComposeYmlDirectoryPath = 
+            var dockerComposeYmlDirectoryPath =
                 Path.GetDirectoryName(configuration
                     .DockerComposeYmlFilePaths
-                    .First()) ?? 
+                    .First()) ??
                 string.Empty;
 
-            return await GetAllDockerFilesFromComposeContentsAsync(
-                dockerComposeYmlDirectoryPath,
-                dockerComposeFileContents);
-        }
-
-        public async Task<ConfigurationFile?> GetConfigurationFileAsync()
-        {
-            var configurationFiles = await this.client.GetFilesForPathAsync("pull-dog.json");
-            var configurationFileEntry = configurationFiles.SingleOrDefault();
-            if (configurationFileEntry == null)
-                return null;
-
-            var configurationFile = JsonSerializer.Deserialize<ConfigurationFile>(
-                configurationFileEntry.Contents,
-                JsonFactory.GetOptions());
-            return configurationFile;
-        }
-
-        private async Task<RepositoryFile[]> GetAllDockerFilesFromComposeContentsAsync(
-            string dockerComposeYmlDirectoryPath,
-            string[] dockerComposeYmlContents)
-        {
             var paths = new HashSet<string>()
             {
                 ".env"
             };
 
             var allDockerfilePaths = new HashSet<string>();
-            foreach (var dockerComposeYmlContent in dockerComposeYmlContents)
+            foreach (var dockerComposeYmlContent in dockerComposeFileContents)
             {
                 var parser = this.dockerComposeParserFactory.Create(dockerComposeYmlContent);
 
@@ -89,6 +67,13 @@ namespace Dogger.Domain.Services.PullDog
             foreach (var path in allDockerfilePaths)
                 paths.Add(path);
 
+            foreach (var dockerComposeYmlFilePath in configuration.DockerComposeYmlFilePaths)
+            {
+                paths.Add(MakePathRelativeToDockerComposeContext(
+                    dockerComposeYmlFilePath,
+                    dockerComposeYmlDirectoryPath));
+            }
+
             logger.Debug("Will collect {@FilePaths} from the repository.", paths.ToArray());
 
             var pathContents = await GetFilesFromPathsAsync(
@@ -99,6 +84,19 @@ namespace Dogger.Domain.Services.PullDog
 
             return pathContents
                 .ToArray();
+        }
+
+        public async Task<ConfigurationFile?> GetConfigurationFileAsync()
+        {
+            var configurationFiles = await this.client.GetFilesForPathAsync("pull-dog.json");
+            var configurationFileEntry = configurationFiles.SingleOrDefault();
+            if (configurationFileEntry == null)
+                return null;
+
+            var configurationFile = JsonSerializer.Deserialize<ConfigurationFile>(
+                configurationFileEntry.Contents,
+                JsonFactory.GetOptions());
+            return configurationFile;
         }
 
         private async Task<RepositoryFile[]> GetFilesFromPathsAsync(
@@ -114,21 +112,29 @@ namespace Dogger.Domain.Services.PullDog
                 .SelectMany(x => x)
                 .Select(file =>
                 {
-                    var path = file.Path;
-                    if (path.StartsWith(dockerComposeYmlFolderPath, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        path = path
-                            .Substring(dockerComposeYmlFolderPath.Length)
-                            .TrimStart(
-                                Path.DirectorySeparatorChar,
-                                Path.AltDirectorySeparatorChar);
-                    }
+                    var path = MakePathRelativeToDockerComposeContext(
+                        file.Path, 
+                        dockerComposeYmlFolderPath);
 
                     return new RepositoryFile(
                         path,
                         file.Contents);
                 })
                 .ToArray();
+        }
+
+        private static string MakePathRelativeToDockerComposeContext(string path, string dockerComposeYmlFolderPath)
+        {
+            if (path.StartsWith(dockerComposeYmlFolderPath, StringComparison.InvariantCultureIgnoreCase))
+            {
+                path = path
+                    .Substring(dockerComposeYmlFolderPath.Length)
+                    .TrimStart(
+                        Path.DirectorySeparatorChar,
+                        Path.AltDirectorySeparatorChar);
+            }
+
+            return path;
         }
 
         private async Task<string[]> GetDockerComposeYmlContentsFromRepositoryAsync(

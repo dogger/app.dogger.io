@@ -154,7 +154,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 .Returns(new[]
                 {
                     new RepositoryFile(
-                        "dummy",
+                        Path.Join("relative", "dir", "some-docker-compose.yml"),
                         Encoding.UTF8.GetBytes("some-docker-compose-contents"))
                 });
 
@@ -163,7 +163,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 .Returns(new[]
                 {
                     new RepositoryFile(
-                        "dummy",
+                        Path.Join("relative", "dir", "some-volume-path"),
                         Encoding.UTF8.GetBytes("dummy"))
                 });
 
@@ -172,7 +172,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 .Returns(new[]
                 {
                     new RepositoryFile(
-                        "dummy",
+                        Path.Join("relative", "dir", "some-environment-file-path"),
                         Encoding.UTF8.GetBytes("dummy"))
                 });
 
@@ -181,7 +181,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 .Returns(new[]
                 {
                     new RepositoryFile(
-                        "dummy",
+                        Path.Join("relative", "dir", "some-dockerfile-path"),
                         Encoding.UTF8.GetBytes("dummy"))
                 });
 
@@ -190,7 +190,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 .Returns(new[]
                 {
                     new RepositoryFile(
-                        "dummy",
+                        Path.Join("relative", "dir", "some-additional-path"),
                         Encoding.UTF8.GetBytes("dummy"))
                 });
 
@@ -233,7 +233,12 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 }));
 
             //Assert
-            Assert.AreEqual(3, files.Length);
+            Assert.AreEqual(4, files.Length);
+
+            Assert.AreEqual("some-volume-path", files[0].Path);
+            Assert.AreEqual("some-environment-file-path", files[1].Path);
+            Assert.AreEqual("some-dockerfile-path", files[2].Path);
+            Assert.AreEqual("some-docker-compose.yml", files[3].Path);
         }
     }
 }
