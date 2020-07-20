@@ -115,7 +115,9 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
 
                 flowsToUse.Add(new DeployToClusterStateFlow(
                     instance.Name,
-                    configuration.DockerComposeYmlFilePaths)
+                    configuration
+                        .DockerComposeYmlFilePaths
+                        .ToArray())
                 {
                     Files = files.Select(file => new InstanceDockerFile(
                         file.Path,

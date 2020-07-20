@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace Dogger.Domain.Services.PullDog
 {
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class ConfigurationFile : ConfigurationFileBase
     {
-        private string[]? dockerComposeYmlFilePaths;
+        private List<string>? dockerComposeYmlFilePaths;
 
         public ConfigurationFile()
         {
         }
 
-        public ConfigurationFile(string[] dockerComposeYmlFilePaths) : this()
+        public ConfigurationFile(List<string> dockerComposeYmlFilePaths) : this()
         {
-            if (dockerComposeYmlFilePaths.Length == 0)
+            if (dockerComposeYmlFilePaths.Count == 0)
                 return;
 
             this.DockerComposeYmlFilePaths = dockerComposeYmlFilePaths;
@@ -23,9 +24,9 @@ namespace Dogger.Domain.Services.PullDog
 
         public bool IsLazy { get; set; }
 
-        public string[] DockerComposeYmlFilePaths
+        public List<string> DockerComposeYmlFilePaths
         {
-            get => this.dockerComposeYmlFilePaths ?? new[]
+            get => this.dockerComposeYmlFilePaths ?? new List<string>()
             {
                 "docker-compose.yml"
             };
@@ -35,7 +36,7 @@ namespace Dogger.Domain.Services.PullDog
 
     public class ConfigurationFileOverride : ConfigurationFileBase
     {
-        public string[]? DockerComposeYmlFilePaths { get; set; }
+        public List<string>? DockerComposeYmlFilePaths { get; set; }
     }
 
     public abstract class ConfigurationFileBase

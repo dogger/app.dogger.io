@@ -45,7 +45,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 ConfigurationOverride = null
             };
 
-            var fakeConfiguration = new ConfigurationFile(Array.Empty<string>());
+            var fakeConfiguration = new ConfigurationFile(new List<string>());
 
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
 
@@ -83,7 +83,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 }
             };
 
-            var fakeConfiguration = new ConfigurationFile(Array.Empty<string>())
+            var fakeConfiguration = new ConfigurationFile(new List<string>())
             {
                 BuildArguments = new Dictionary<string, string>()
                 {
@@ -126,7 +126,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 }
             };
 
-            var fakeConfiguration = new ConfigurationFile(Array.Empty<string>())
+            var fakeConfiguration = new ConfigurationFile(new List<string>())
             {
                 ConversationMode = ConversationMode.SingleComment
             };
@@ -164,7 +164,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 }
             };
 
-            var fakeConfiguration = new ConfigurationFile(Array.Empty<string>())
+            var fakeConfiguration = new ConfigurationFile(new List<string>())
             {
                 Expiry = TimeSpan.FromMinutes(1)
             };

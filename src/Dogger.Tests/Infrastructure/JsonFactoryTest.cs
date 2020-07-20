@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Dogger.Domain.Services.PullDog;
@@ -33,7 +34,7 @@ namespace Dogger.Tests.Infrastructure
         public async Task Serialize_ConfigurationFileWithExpiryInDays_SerializesCorrectly()
         {
             //Arrange
-            var configurationFile = new ConfigurationFile(Array.Empty<string>())
+            var configurationFile = new ConfigurationFile(new List<string>())
             {
                 Expiry = TimeSpan.FromDays(1)
             };
@@ -50,7 +51,7 @@ namespace Dogger.Tests.Infrastructure
         public async Task Serialize_ConfigurationFileWithExpiryInMoreThanAYear_SerializesCorrectly()
         {
             //Arrange
-            var configurationFile = new ConfigurationFile(Array.Empty<string>())
+            var configurationFile = new ConfigurationFile(new List<string>())
             {
                 Expiry = TimeSpan.FromDays(367)
             };
@@ -67,7 +68,7 @@ namespace Dogger.Tests.Infrastructure
         public async Task Serialize_ConfigurationFileWithNoExpiry_SerializesCorrectly()
         {
             //Arrange
-            var configurationFile = new ConfigurationFile(Array.Empty<string>());
+            var configurationFile = new ConfigurationFile(new List<string>());
 
             //Act
             var json = JsonSerializer.Serialize(configurationFile, JsonFactory.GetOptions());

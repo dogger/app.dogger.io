@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance;
 using Dogger.Domain.Models;
@@ -62,7 +63,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Act
             var instance = await environment.Mediator.Send(new EnsurePullDogDatabaseInstanceCommand(
                 pullDogPullRequest,
-                new ConfigurationFile(Array.Empty<string>())
+                new ConfigurationFile(new List<string>())
                 {
                     Expiry = TimeSpan.FromDays(30)
                 }));
@@ -128,7 +129,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Act
             var instance = await environment.Mediator.Send(new EnsurePullDogDatabaseInstanceCommand(
                 pullDogPullRequest,
-                new ConfigurationFile(Array.Empty<string>())));
+                new ConfigurationFile(new List<string>())));
 
             //Assert
             Assert.AreSame(instance, oldInstance);
@@ -192,7 +193,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Act
             var instance = await environment.Mediator.Send(new EnsurePullDogDatabaseInstanceCommand(
                 pullDogPullRequest,
-                new ConfigurationFile(Array.Empty<string>())
+                new ConfigurationFile(new List<string>())
                 {
                     Expiry = TimeSpan.FromDays(30)
                 }));
@@ -254,7 +255,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Act
             var instance = await environment.Mediator.Send(new EnsurePullDogDatabaseInstanceCommand(
                 pullDogPullRequest,
-                new ConfigurationFile(Array.Empty<string>())
+                new ConfigurationFile(new List<string>())
                 {
                     Expiry = TimeSpan.FromDays(30)
                 }));
@@ -317,7 +318,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Act
             var instance = await environment.Mediator.Send(new EnsurePullDogDatabaseInstanceCommand(
                 pullDogPullRequest,
-                new ConfigurationFile(Array.Empty<string>())
+                new ConfigurationFile(new List<string>())
                 {
                     Expiry = TimeSpan.FromDays(30)
                 }));

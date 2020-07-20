@@ -29,7 +29,9 @@ namespace Dogger.Domain.Services.PullDog
 
         public async Task<RepositoryFile[]?> GetRepositoryFilesFromConfiguration(ConfigurationFile configuration)
         {
-            var dockerComposeFileContents = await GetDockerComposeYmlContentsFromRepositoryAsync(configuration.DockerComposeYmlFilePaths);
+            var dockerComposeFileContents = await GetDockerComposeYmlContentsFromRepositoryAsync(configuration
+                .DockerComposeYmlFilePaths
+                .ToArray());
             if (dockerComposeFileContents.Length == 0)
                 return null;
 

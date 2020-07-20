@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dogger.Domain.Services.PullDog;
@@ -43,6 +45,36 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
+        public async Task GetConfigurationFile_FilePresentWithDockerComposeYmlPaths_ReturnsDeserializedFileWithProperPathSet()
+        {
+            //Arrange
+            var fakePullDogRepositoryClient = Substitute.For<IPullDogRepositoryClient>();
+            fakePullDogRepositoryClient
+                .GetFilesForPathAsync("pull-dog.json")
+                .Returns(new[]
+                {
+                    new RepositoryFile(
+                        "pull-dog.json",
+                        Encoding.UTF8.GetBytes(@"{
+                            ""dockerComposeYmlFilePaths"": [""some-docker-compose-file-path""]
+                        }"))
+                });
+
+            var client = new PullDogFileCollector(
+                fakePullDogRepositoryClient,
+                Substitute.For<IDockerComposeParserFactory>(),
+                Substitute.For<ILogger>());
+
+            //Act
+            var configurationFile = await client.GetConfigurationFileAsync();
+
+            //Assert
+            Assert.IsNotNull(configurationFile);
+            Assert.AreEqual("some-docker-compose-file-path", configurationFile.DockerComposeYmlFilePaths.Single());
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
         public async Task GetConfigurationFile_FileNotPresent_ReturnsNull()
         {
             //Arrange
@@ -79,7 +111,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 Substitute.For<ILogger>());
 
             //Act
-            var composeContents = await client.GetRepositoryFilesFromConfiguration(new ConfigurationFile(Array.Empty<string>()));
+            var composeContents = await client.GetRepositoryFilesFromConfiguration(new ConfigurationFile(new List<string>()));
 
             //Assert
             Assert.IsNull(composeContents);
@@ -105,7 +137,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 Substitute.For<ILogger>());
 
             //Act
-            var dockerComposeYmlContents = await client.GetRepositoryFilesFromConfiguration(new ConfigurationFile(Array.Empty<string>()));
+            var dockerComposeYmlContents = await client.GetRepositoryFilesFromConfiguration(new ConfigurationFile(new List<string>()));
 
             //Assert
             Assert.IsNull(dockerComposeYmlContents);
@@ -195,7 +227,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             //Act
             var files = await client.GetRepositoryFilesFromConfiguration(
-                new ConfigurationFile(new[]
+                new ConfigurationFile(new List<string>
                 {
                     Path.Join("relative", "dir", "some-docker-compose.yml")
                 }));

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Services.PullDog;
@@ -22,7 +23,7 @@ namespace Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest
 
             var configuration = await client.GetConfigurationFileAsync();
             if (configuration == null)
-                return new ConfigurationFile(Array.Empty<string>());
+                return new ConfigurationFile();
 
             var configurationOverride = request.PullRequest.ConfigurationOverride;
             if (configurationOverride == null)

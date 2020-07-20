@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Models;
@@ -144,7 +145,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
-                .Returns(new ConfigurationFile(Array.Empty<string>())
+                .Returns(new ConfigurationFile(new List<string>())
                 {
                     ConversationMode = ConversationMode.SingleComment
                 });
@@ -215,7 +216,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
-                .Returns(new ConfigurationFile(Array.Empty<string>())
+                .Returns(new ConfigurationFile(new List<string>())
                 {
                     ConversationMode = ConversationMode.MultipleComments
                 });

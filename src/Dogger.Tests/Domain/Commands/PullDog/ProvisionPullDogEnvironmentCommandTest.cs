@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance;
@@ -47,7 +48,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
-                .Returns(new ConfigurationFile(Array.Empty<string>()));
+                .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
@@ -110,7 +111,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
-                .Returns(new ConfigurationFile(Array.Empty<string>()));
+                .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
@@ -168,7 +169,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
-                .Returns(new ConfigurationFile(new[] { "some-docker-compose-path" }));
+                .Returns(new ConfigurationFile(new List<string> { "some-docker-compose-path" }));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
@@ -253,7 +254,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
-                .Returns(new ConfigurationFile(Array.Empty<string>()));
+                .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
@@ -262,7 +263,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakePullDogRepositoryClient = await fakePullDogFileCollectorFactory.CreateAsync(Arg.Any<PullDogPullRequest>());
             fakePullDogRepositoryClient
                 .GetConfigurationFileAsync()
-                .Returns(new ConfigurationFile(Array.Empty<string>()));
+                .Returns(new ConfigurationFile(new List<string>()));
 
             fakePullDogRepositoryClient
                 .GetRepositoryFilesFromConfiguration(Arg.Any<ConfigurationFile>())
@@ -311,7 +312,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
-                .Returns(new ConfigurationFile(Array.Empty<string>()));
+                .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
@@ -417,7 +418,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
-                .Returns(new ConfigurationFile(Array.Empty<string>()));
+                .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
@@ -478,7 +479,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
-                .Returns(new ConfigurationFile(Array.Empty<string>()));
+                .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
@@ -533,7 +534,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
-                .Returns(new ConfigurationFile(Array.Empty<string>())
+                .Returns(new ConfigurationFile(new List<string>())
                 {
                     IsLazy = true
                 });
