@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Dogger.Domain.Services.PullDog
 {
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class ConfigurationFile : ConfigurationFileBase
     {
+        private string[]? dockerComposeYmlFilePaths;
+
         public ConfigurationFile()
         {
-            DockerComposeYmlFilePaths = new[]
-            {
-                "docker-compose.yml"
-            };
         }
 
         public ConfigurationFile(string[] dockerComposeYmlFilePaths) : this()
@@ -23,7 +23,14 @@ namespace Dogger.Domain.Services.PullDog
 
         public bool IsLazy { get; set; }
 
-        public string[] DockerComposeYmlFilePaths { get; set; }
+        public string[] DockerComposeYmlFilePaths
+        {
+            get => this.dockerComposeYmlFilePaths ?? new[]
+            {
+                "docker-compose.yml"
+            };
+            set => this.dockerComposeYmlFilePaths = value;
+        }
     }
 
     public class ConfigurationFileOverride : ConfigurationFileBase
