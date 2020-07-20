@@ -24,6 +24,8 @@ namespace Dogger.Domain.Services.PullDog
 
         public bool IsLazy { get; set; }
 
+        public string? Label { get; set; }
+
         public List<string> DockerComposeYmlFilePaths
         {
             get => this.dockerComposeYmlFilePaths ?? new List<string>()
@@ -43,6 +45,7 @@ namespace Dogger.Domain.Services.PullDog
     {
         public IDictionary<string, string>? BuildArguments { get; set; }
 
+        public string? Label { get; set; }
         public TimeSpan Expiry { get; set; }
         public ConversationMode ConversationMode { get; set; }
     }

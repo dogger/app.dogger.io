@@ -188,5 +188,43 @@ namespace Dogger.Tests.Domain.Services.PullDog
             //Assert
             Assert.AreEqual(TimeSpan.FromMinutes(2), configuration.Expiry);
         }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public async Task Handle_ConfigurationOverridePresentWithLabel_OverridesExistingLabel()
+        {
+            //Arrange
+            var fakePullDogPullRequest = new PullDogPullRequest()
+            {
+                ConfigurationOverride = new ConfigurationFileOverride()
+                {
+                    Label = "new-label"
+                }
+            };
+
+            var fakeConfiguration = new ConfigurationFile(new List<string>())
+            {
+                Label = "existing-label"
+            };
+
+            var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
+
+            var fakePullDogFileCollector = await fakePullDogFileCollectorFactory.CreateAsync(fakePullDogPullRequest);
+            fakePullDogFileCollector
+                .GetConfigurationFileAsync()
+                .Returns(fakeConfiguration);
+
+            var handler = new GetConfigurationForPullRequestQueryHandler(
+                fakePullDogFileCollectorFactory);
+
+            //Act
+            var configuration = await handler.Handle(
+                new GetConfigurationForPullRequestQuery(
+                    fakePullDogPullRequest),
+                default);
+
+            //Assert
+            Assert.AreEqual("new-label", configuration.Label);
+        }
     }
 }

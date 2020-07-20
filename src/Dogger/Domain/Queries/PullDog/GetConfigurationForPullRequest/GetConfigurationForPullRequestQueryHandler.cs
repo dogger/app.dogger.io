@@ -48,6 +48,9 @@ namespace Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest
 
             if (configurationOverride.Expiry != default)
                 configuration.Expiry = configurationOverride.Expiry;
+
+            if (configurationOverride.Label != default)
+                configuration.Label = configurationOverride.Label;
         }
     }
 }

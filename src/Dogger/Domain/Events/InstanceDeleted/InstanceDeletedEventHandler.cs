@@ -1,6 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Dogger.Domain.Commands.PullDog.AddLabelToGitHubPullRequest;
+using Dogger.Domain.Commands.PullDog.RemoveLabelFromGitHubPullRequest;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
+using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
 using MediatR;
 
 namespace Dogger.Domain.Events.InstanceDeleted
@@ -26,6 +29,18 @@ namespace Dogger.Domain.Events.InstanceDeleted
                     pullRequest,
                     "The test environment for this pull request has been destroyed :boom: This may have happened explicitly via a command, because the environment expired, or because the pull request was closed."),
                 cancellationToken);
+
+            var configuration = await mediator.Send(
+                new GetConfigurationForPullRequestQuery(pullRequest),
+                cancellationToken);
+            if (configuration.Label != null)
+            {
+                await this.mediator.Send(
+                    new RemoveLabelFromGitHubPullRequestCommand(
+                        pullRequest,
+                        configuration.Label),
+                    cancellationToken);
+            }
 
             return Unit.Value;
         }
