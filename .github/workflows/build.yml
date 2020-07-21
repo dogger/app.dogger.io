@@ -54,15 +54,17 @@ jobs:
 
       - name: Tag Docker image
         run: |
-          docker tag dogger-image ffmathy/dogger:latest
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login -u ffMathy --password-stdin
+
+          docker tag dogger-image docker.pkg.github.com/dogger/app.dogger.io/dogger:${{github.ref}}
+          docker tag dogger-image docker.pkg.github.com/dogger/app.dogger.io/dogger:latest
 
       - name: Push Docker image to Docker Hub
         working-directory: ./src
         run: |
           echo "Pushing image to Docker Hub."
 
-          echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
-          docker push ffmathy/dogger:latest
+          docker push docker.pkg.github.com/dogger/app.dogger.io/dogger
 
   deploy-app-dogger-io:
     name: Deploy app-dogger-io
@@ -77,8 +79,8 @@ jobs:
         working-directory: ./src
         run: |
           echo "Starting dogfeed process."
-
-          echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+          
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login -u ffMathy --password-stdin
           
           docker run\
             -v $(pwd):/src\
@@ -117,4 +119,4 @@ jobs:
             -e INSTANCE_Auth0__ClientId="${{ secrets.AUTHZERO_CLIENT_ID }}"\
             -e INSTANCE_Auth0__ClientSecret="${{ secrets.AUTHZERO_CLIENT_SECRET }}"\
             -e INSTANCE_ASPNETCORE_ENVIRONMENT="Production"\
-            ffmathy/dogger:latest
+            docker.pkg.github.com/dogger/app.dogger.io/dogger:${{github.ref}}
