@@ -80,7 +80,7 @@ jobs:
         run: |
           echo "Starting dogfeed process."
           
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker login docker.pkg.github.com -u ffMathy --password-stdin
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ffMathy --password-stdin
           
           docker run\
             -v $(pwd):/src\
