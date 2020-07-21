@@ -54,9 +54,9 @@ jobs:
 
       - name: Tag Docker image
         run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login -u ffMathy --password-stdin
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ffMathy --password-stdin
 
-          docker tag dogger-image docker.pkg.github.com/dogger/app.dogger.io/dogger:${{github.ref}}
+          docker tag dogger-image docker.pkg.github.com/dogger/app.dogger.io/dogger:${{github.sha}}
           docker tag dogger-image docker.pkg.github.com/dogger/app.dogger.io/dogger:latest
 
       - name: Push Docker image to Docker Hub
@@ -119,4 +119,4 @@ jobs:
             -e INSTANCE_Auth0__ClientId="${{ secrets.AUTHZERO_CLIENT_ID }}"\
             -e INSTANCE_Auth0__ClientSecret="${{ secrets.AUTHZERO_CLIENT_SECRET }}"\
             -e INSTANCE_ASPNETCORE_ENVIRONMENT="Production"\
-            docker.pkg.github.com/dogger/app.dogger.io/dogger:${{github.ref}}
+            docker.pkg.github.com/dogger/app.dogger.io/dogger:${{github.sha}}
