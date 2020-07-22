@@ -5,12 +5,12 @@ namespace Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest
 {
     public class PullDogDemoInstanceAlreadyProvisionedException : Exception
     {
-        public PullRequestDetails[] OffendingPullRequests { get; }
+        public PullRequestDetails LatestOffendingPullRequest { get; }
 
         public PullDogDemoInstanceAlreadyProvisionedException(
-            PullRequestDetails[] offendingPullRequests)
+            PullRequestDetails offendingPullRequest)
         {
-            this.OffendingPullRequests = offendingPullRequests;
+            this.LatestOffendingPullRequest = offendingPullRequest;
         }
     }
 }

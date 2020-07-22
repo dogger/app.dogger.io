@@ -42,7 +42,7 @@ namespace Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest
                 if (HasExceededPoolSize(pullRequest, offendingPullRequests))
                 {
                     var details = await GetPullRequestDetailsFromPullRequestsAsync(offendingPullRequests);
-                    throw new PullDogDemoInstanceAlreadyProvisionedException(details);
+                    throw new PullDogDemoInstanceAlreadyProvisionedException(details.Last());
                 }
 
                 cluster.User = user;

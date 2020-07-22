@@ -16,104 +16,6 @@ namespace Dogger.Tests.Domain.Services.PullDog
     {
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task GetPullRequestDetails_PullRequestGiven_ReturnsProperFullNameFromReference()
-        {
-            //Arrange
-            var fakeGitHubClient = Substitute.For<IGitHubClient>();
-
-            var client = new GitHubPullDogRepositoryClient(
-                fakeGitHubClient,
-                new GitReference(
-                    default,
-                    default,
-                    default,
-                    "some-reference",
-                    default,
-                    default,
-                    new Repository(
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        new User(
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            "some-user-name",
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default,
-                            default),
-                        default,
-                        "some-repository-name",
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default)));
-
-            //Act
-            var details = client.GetPullRequestDetails(new PullDogPullRequest()
-            {
-                Handle = "some-handle"
-            });
-
-            //Assert
-            Assert.IsNotNull(details);
-            Assert.AreEqual("some-repository-name", details.RepositoryFullName);
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
         public async Task GetPullRequestDetails_PullRequestGiven_ReturnsProperLink()
         {
             //Arrange
@@ -207,7 +109,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             //Assert
             Assert.IsNotNull(details);
-            Assert.AreEqual("[some-repository-name: PR #some-handle](https://github.com/some-repository-name/pulls?q=is%3Apr+some-handle)", details.IndirectPullRequestCommentReference);
+            Assert.AreEqual("[some-repository-name: PR #some-handle](https://github.com/some-repository-name/pulls?q=is%3Apr+some-handle)", details.PullRequestCommentReference);
         }
 
         [TestMethod]

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Dogger.Domain.Models;
 
 namespace Dogger.Domain.Services.PullDog
@@ -7,6 +8,8 @@ namespace Dogger.Domain.Services.PullDog
     {
         Task<RepositoryFile[]> GetFilesForPathAsync(string path);
         PullRequestDetails GetPullRequestDetails(PullDogPullRequest pullRequest);
+
+        Uri? GetTestEnvironmentListUrl(ConfigurationFile configuration);
     }
 
 }

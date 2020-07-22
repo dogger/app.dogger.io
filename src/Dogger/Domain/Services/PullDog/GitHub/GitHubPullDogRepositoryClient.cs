@@ -117,9 +117,17 @@ namespace Dogger.Domain.Services.PullDog.GitHub
         {
             var repository = GetTargetRepository();
             return new PullRequestDetails(
-                repository.FullName,
-                $"[{repository.FullName}: PR #{pullRequest.Handle}](https://github.com/{repository.FullName}/pulls?q=is%3Apr+{pullRequest.Handle})",
-                $"#{pullRequest.Handle}");
+                $"[{repository.FullName}: PR #{pullRequest.Handle}](https://github.com/{repository.FullName}/pulls?q=is%3Apr+{pullRequest.Handle})");
+        }
+
+        public Uri? GetTestEnvironmentListUrl(ConfigurationFile configuration)
+        {
+            var label = configuration.Label;
+            if (label == null)
+                return null;
+
+            var repository = GetTargetRepository();
+            return new Uri($"https://github.com/{repository.FullName}/pulls?q=is%3Aopen+is%3Apr+label%3A{label}");
         }
     }
 }

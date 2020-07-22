@@ -25,10 +25,15 @@ namespace Dogger.Domain.Services.PullDog
         public async Task<IPullDogFileCollector> CreateAsync(PullDogPullRequest pullRequest)
         {
             var client = await factory.CreateAsync(pullRequest);
+            return Create(client);
+        }
+
+        public IPullDogFileCollector Create(IPullDogRepositoryClient client)
+        {
             return new PullDogFileCollector(
-                client, 
-                dockerComposeParserFactory, 
-                logger);
+                client,
+                this.dockerComposeParserFactory,
+                this.logger);
         }
     }
 }

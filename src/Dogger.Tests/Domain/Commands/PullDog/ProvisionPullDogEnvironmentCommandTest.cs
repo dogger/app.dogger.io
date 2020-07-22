@@ -53,9 +53,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
+            var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
-            var fakePullDogRepositoryClient = await fakePullDogFileCollectorFactory.CreateAsync(Arg.Any<PullDogPullRequest>());
-            fakePullDogRepositoryClient
+            var fakePullDogFileCollector = fakePullDogFileCollectorFactory.Create(Arg.Any<IPullDogRepositoryClient>());
+            fakePullDogFileCollector
                 .GetRepositoryFilesFromConfiguration(Arg.Any<ConfigurationFile>())
                 .Returns(Array.Empty<RepositoryFile>());
 
@@ -63,7 +64,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 fakeMediator,
                 fakeProvisioningService,
                 fakeSlackClient,
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                fakePullDogRepositoryClientFactory);
 
             //Act
             await handler.Handle(
@@ -116,9 +118,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
+            var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
-            var fakePullDogRepositoryClient = await fakePullDogFileCollectorFactory.CreateAsync(Arg.Any<PullDogPullRequest>());
-            fakePullDogRepositoryClient
+            var fakePullDogFileCollector = fakePullDogFileCollectorFactory.Create(Arg.Any<IPullDogRepositoryClient>());
+            fakePullDogFileCollector
                 .GetRepositoryFilesFromConfiguration(Arg.Any<ConfigurationFile>())
                 .Returns(Array.Empty<RepositoryFile>());
 
@@ -126,7 +129,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 fakeMediator, 
                 fakeProvisioningService, 
                 fakeSlackClient, 
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                fakePullDogRepositoryClientFactory);
 
             //Act
             await handler.Handle(
@@ -174,9 +178,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
+            var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
-            var fakePullDogRepositoryClient = await fakePullDogFileCollectorFactory.CreateAsync(Arg.Any<PullDogPullRequest>());
-            fakePullDogRepositoryClient
+            var fakePullDogFileCollector = fakePullDogFileCollectorFactory.Create(Arg.Any<IPullDogRepositoryClient>());
+            fakePullDogFileCollector
                 .GetRepositoryFilesFromConfiguration(Arg.Any<ConfigurationFile>())
                 .Returns(Array.Empty<RepositoryFile>());
 
@@ -184,7 +189,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 fakeMediator,
                 fakeProvisioningService,
                 fakeSlackClient,
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                fakePullDogRepositoryClientFactory);
 
             //Act
             await handler.Handle(
@@ -214,9 +220,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
+            var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
-            var fakePullDogRepositoryClient = await fakePullDogFileCollectorFactory.CreateAsync(Arg.Any<PullDogPullRequest>());
-            fakePullDogRepositoryClient
+            var fakePullDogFileCollector = fakePullDogFileCollectorFactory.Create(Arg.Any<IPullDogRepositoryClient>());
+            fakePullDogFileCollector
                 .GetRepositoryFilesFromConfiguration(Arg.Any<ConfigurationFile>())
                 .Returns(Array.Empty<RepositoryFile>());
 
@@ -224,7 +231,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 fakeMediator,
                 fakeProvisioningService,
                 fakeSlackClient,
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                fakePullDogRepositoryClientFactory);
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
@@ -259,13 +267,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
+            var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
-            var fakePullDogRepositoryClient = await fakePullDogFileCollectorFactory.CreateAsync(Arg.Any<PullDogPullRequest>());
-            fakePullDogRepositoryClient
+            var fakePullDogFileCollector = fakePullDogFileCollectorFactory.Create(Arg.Any<IPullDogRepositoryClient>());
+            fakePullDogFileCollector
                 .GetConfigurationFileAsync()
                 .Returns(new ConfigurationFile(new List<string>()));
 
-            fakePullDogRepositoryClient
+            fakePullDogFileCollector
                 .GetRepositoryFilesFromConfiguration(Arg.Any<ConfigurationFile>())
                 .Returns((RepositoryFile[])null);
 
@@ -273,7 +282,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 fakeMediator,
                 fakeProvisioningService,
                 fakeSlackClient,
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                fakePullDogRepositoryClientFactory);
 
             //Act
             await handler.Handle(
@@ -287,7 +297,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 default);
 
             //Assert
-            await fakePullDogRepositoryClient
+            await fakePullDogFileCollector
                 .Received(1)
                 .GetRepositoryFilesFromConfiguration(Arg.Any<ConfigurationFile>());
 
@@ -317,9 +327,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
+            var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
-            var fakePullDogRepositoryClient = await fakePullDogFileCollectorFactory.CreateAsync(Arg.Any<PullDogPullRequest>());
-            fakePullDogRepositoryClient
+            var fakePullDogFileCollector = fakePullDogFileCollectorFactory.Create(Arg.Any<IPullDogRepositoryClient>());
+            fakePullDogFileCollector
                 .GetRepositoryFilesFromConfiguration(Arg.Any<ConfigurationFile>())
                 .Returns(Array.Empty<RepositoryFile>());
 
@@ -327,7 +338,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 fakeMediator,
                 fakeProvisioningService,
                 fakeSlackClient,
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                fakePullDogRepositoryClientFactory);
 
             //Act
             await handler.Handle(
@@ -358,23 +370,20 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
-                .Send(Arg.Any<EnsurePullDogDatabaseInstanceCommand>())
-                .Throws(new PullDogDemoInstanceAlreadyProvisionedException(Array.Empty<PullRequestDetails>()));
-
-            fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
                 .Returns(new PullDogPullRequest());
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
+            var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
-            var fakePullDogRepositoryClient = await fakePullDogFileCollectorFactory.CreateAsync(Arg.Any<PullDogPullRequest>());
-            fakePullDogRepositoryClient
+            var fakePullDogFileCollector = fakePullDogFileCollectorFactory.Create(Arg.Any<IPullDogRepositoryClient>());
+            fakePullDogFileCollector
                 .GetConfigurationFileAsync()
                 .Returns((ConfigurationFile)null);
 
-            fakePullDogRepositoryClient
+            fakePullDogFileCollector
                 .GetRepositoryFilesFromConfiguration(Arg.Any<ConfigurationFile>())
                 .Returns(Array.Empty<RepositoryFile>());
 
@@ -382,7 +391,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 fakeMediator,
                 fakeProvisioningService,
                 fakeSlackClient,
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                fakePullDogRepositoryClientFactory);
 
             //Act
             await handler.Handle(
@@ -423,9 +433,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
+            var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
-            var fakePullDogRepositoryClient = await fakePullDogFileCollectorFactory.CreateAsync(Arg.Any<PullDogPullRequest>());
-            fakePullDogRepositoryClient
+            var fakePullDogFileCollector = fakePullDogFileCollectorFactory.Create(Arg.Any<IPullDogRepositoryClient>());
+            fakePullDogFileCollector
                 .GetRepositoryFilesFromConfiguration(Arg.Any<ConfigurationFile>())
                 .Returns(Array.Empty<RepositoryFile>());
 
@@ -433,7 +444,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 fakeMediator,
                 fakeProvisioningService,
                 fakeSlackClient,
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                fakePullDogRepositoryClientFactory);
 
             //Act
             await handler.Handle(
@@ -465,13 +477,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogDatabaseInstanceCommand>())
-                .Throws(new PullDogDemoInstanceAlreadyProvisionedException(new []
-                {
-                    new PullRequestDetails(
-                        "some-repository-name",
-                        "some-indirect-pull-request-link",
-                        "some-direct-pull-request-link")
-                }));
+                .Throws(new PullDogDemoInstanceAlreadyProvisionedException(new PullRequestDetails("some-direct-pull-request-link")));
 
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
@@ -484,9 +490,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
+            var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
-            var fakePullDogRepositoryClient = await fakePullDogFileCollectorFactory.CreateAsync(Arg.Any<PullDogPullRequest>());
-            fakePullDogRepositoryClient
+            var fakePullDogFileCollector = fakePullDogFileCollectorFactory.Create(Arg.Any<IPullDogRepositoryClient>());
+            fakePullDogFileCollector
                 .GetRepositoryFilesFromConfiguration(Arg.Any<ConfigurationFile>())
                 .Returns(Array.Empty<RepositoryFile>());
 
@@ -494,7 +501,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 fakeMediator,
                 fakeProvisioningService,
                 fakeSlackClient,
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                fakePullDogRepositoryClientFactory);
 
             //Act
             await handler.Handle(
@@ -525,10 +533,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
-                .Send(Arg.Any<EnsurePullDogDatabaseInstanceCommand>())
-                .Throws(new PullDogDemoInstanceAlreadyProvisionedException(Array.Empty<PullRequestDetails>()));
-
-            fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
                 .Returns(new PullDogPullRequest());
 
@@ -542,9 +546,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             var fakeSlackClient = Substitute.For<ISlackClient>();
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
+            var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
-            var fakePullDogRepositoryClient = await fakePullDogFileCollectorFactory.CreateAsync(Arg.Any<PullDogPullRequest>());
-            fakePullDogRepositoryClient
+            var fakePullDogFileCollector = fakePullDogFileCollectorFactory.Create(Arg.Any<IPullDogRepositoryClient>());
+            fakePullDogFileCollector
                 .GetRepositoryFilesFromConfiguration(Arg.Any<ConfigurationFile>())
                 .Returns(Array.Empty<RepositoryFile>());
 
@@ -552,7 +557,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 fakeMediator,
                 fakeProvisioningService,
                 fakeSlackClient,
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                fakePullDogRepositoryClientFactory);
 
             //Act
             await handler.Handle(

@@ -27,17 +27,20 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
         private readonly IProvisioningService provisioningService;
         private readonly ISlackClient slackClient;
         private readonly IPullDogFileCollectorFactory pullDogFileCollectorFactory;
+        private readonly IPullDogRepositoryClientFactory pullDogRepositoryClientFactory;
 
         public ProvisionPullDogEnvironmentCommandHandler(
             IMediator mediator,
             IProvisioningService provisioningService,
             ISlackClient slackClient,
-            IPullDogFileCollectorFactory pullDogFileCollectorFactory)
+            IPullDogFileCollectorFactory pullDogFileCollectorFactory,
+            IPullDogRepositoryClientFactory pullDogRepositoryClientFactory)
         {
             this.mediator = mediator;
             this.provisioningService = provisioningService;
             this.slackClient = slackClient;
             this.pullDogFileCollectorFactory = pullDogFileCollectorFactory;
+            this.pullDogRepositoryClientFactory = pullDogRepositoryClientFactory;
         }
 
         public async Task<Unit> Handle(ProvisionPullDogEnvironmentCommand request, CancellationToken cancellationToken)
@@ -79,8 +82,10 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
                 return Unit.Value;
             }
 
-            var client = await pullDogFileCollectorFactory.CreateAsync(pullRequest);
-            var files = await client.GetRepositoryFilesFromConfiguration(configuration);
+            var client = await pullDogRepositoryClientFactory.CreateAsync(pullRequest);
+            var fileCollector = pullDogFileCollectorFactory.Create(client);
+
+            var files = await fileCollector.GetRepositoryFilesFromConfiguration(configuration);
             if (files == null)
             {
                 var filePathsInCodeElement = configuration
@@ -94,9 +99,10 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
                 return Unit.Value;
             }
 
+            var settings = repository.PullDogSettings;
+
             try
             {
-                var settings = repository.PullDogSettings;
                 await ReportProvisioningToSlackAsync(request, settings);
 
                 var instance = await this.mediator.Send(
@@ -132,11 +138,20 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
             {
                 var offendingPullRequestListText = string.Join('\n', ex
                     .OffendingPullRequests
-                    .Select(x => $"- {x.DirectPullRequestCommentReference}"));
+                    .Select(x => $"- {x.PullRequestCommentReference}"));
+
+                var commentText = $"It looks like you are currently using the maximum amount of concurrent test environments :tired_face:\n\nYou can [upgrade your plan](https://dogger.io/dashboard/pull-dog) to increase that limit, and our plans are quite cheap.\n\nThe following pull requests are using environments from your pool as of writing this comment:\n{offendingPullRequestListText}";
+
+                var testEnvironmentListUrl = client.GetTestEnvironmentListUrl(configuration);
+                if (testEnvironmentListUrl != null)
+                {
+                    commentText += $"\n\n*You can also see a [live list]({testEnvironmentListUrl}) of all test environments if you wish.*";
+                }
+
                 await this.mediator.Send(
                     new UpsertPullRequestCommentCommand(
                         pullRequest,
-                        $"It looks like you are currently using the maximum amount of concurrent test environments :tired_face:\n\nYou can [upgrade your plan](https://dogger.io/dashboard/pull-dog) to increase that limit, and our plans are quite cheap.\n\nThe following pull requests are using environments from your pool as of writing this comment (they may have since expired):\n{offendingPullRequestListText}"),
+                        commentText),
                     cancellationToken);
             }
             catch (PullDogDemoInstanceAlreadyProvisionedException ex)
@@ -144,7 +159,7 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
                 await this.mediator.Send(
                     new UpsertPullRequestCommentCommand(
                         pullRequest,
-                        $"I tried to provision a test environment for your pull request, but there aren't enough free-plan servers available :tired_face:\n\nWe'll keep trying every time you open a new pull request in the future, but if you want to make sure to always have a test environment available, you need to [upgrade your plan](https://dogger.io/dashboard/pull-dog) to a paid plan.\n\nThe latest pull request that is currently using a demo server is: {ex.OffendingPullRequests.Last().IndirectPullRequestCommentReference}"),
+                        $"I tried to provision a test environment for your pull request, but there aren't enough free-plan servers available :tired_face:\n\nWe'll keep trying every time you open a new pull request in the future, but if you want to make sure to always have a test environment available, you need to [upgrade your plan](https://dogger.io/dashboard/pull-dog) to a paid plan.\n\nThe latest pull request that is currently using a demo server is: {ex.LatestOffendingPullRequest.PullRequestCommentReference}"),
                     cancellationToken);
             }
             catch (DockerComposeSyntaxErrorException)

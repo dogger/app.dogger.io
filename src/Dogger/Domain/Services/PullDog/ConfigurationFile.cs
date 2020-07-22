@@ -24,8 +24,6 @@ namespace Dogger.Domain.Services.PullDog
 
         public bool IsLazy { get; set; }
 
-        public string? Label { get; set; }
-
         public List<string> DockerComposeYmlFilePaths
         {
             get => this.dockerComposeYmlFilePaths ?? new List<string>()

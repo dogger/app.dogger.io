@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   dogger:
-    image: ffmathy/dogger:latest
+    image: docker.pkg.github.com/dogger/app.dogger.io/dogger:latest
     restart: always
     env_file:
      - ./env/dogger.env
