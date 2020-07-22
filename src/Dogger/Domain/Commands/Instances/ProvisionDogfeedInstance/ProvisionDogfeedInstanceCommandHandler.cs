@@ -57,13 +57,6 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
             if (dogfeedOptions.DockerComposeYmlFilePaths == null)
                 throw new InvalidOperationException("Could not find Docker Compose YML contents.");
 
-            var dockerHubOptions = dogfeedOptions.DockerHub;
-            if (dockerHubOptions?.Username == null)
-                throw new InvalidOperationException("Could not find Docker Hub username.");
-
-            if (dockerHubOptions.Password == null)
-                throw new InvalidOperationException("Could not find Docker Hub password.");
-
             var cluster = await mediator.Send(new EnsureClusterWithIdCommand(DataContext.DoggerClusterId), cancellationToken);
 
             var firstCapablePlan = await GetDogfeedingPlanAsync();
@@ -91,12 +84,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
                         request.InstanceName,
                         SanitizeDockerComposeYmlFilePaths(dogfeedOptions.DockerComposeYmlFilePaths))
                     {
-                        Files = dockerFiles,
-                        Authentication = new[] {
-                            new DockerAuthenticationArguments(
-                                username: dockerHubOptions.Username,
-                                password: dockerHubOptions.Password)
-                        }
+                        Files = dockerFiles
                     }));
         }
 

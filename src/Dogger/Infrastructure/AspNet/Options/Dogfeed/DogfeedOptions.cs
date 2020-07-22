@@ -7,7 +7,6 @@ namespace Dogger.Infrastructure.AspNet.Options.Dogfeed
     {
         public string[]? DockerComposeYmlFilePaths { get; set; }
 
-        public DockerHubOptions? DockerHub { get; set; }
         public DogfeedElasticsearchOptions? Elasticsearch { get; set; }
     }
 
