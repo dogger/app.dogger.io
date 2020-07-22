@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using Destructurama;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using Serilog.Configuration;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.Elasticsearch;
@@ -21,8 +20,7 @@ namespace Dogger.Infrastructure.Logging
                 .Destructure.UsingAttributes()
                 .MinimumLevel.Verbose()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .MinimumLevel.Override("Microsoft.Extensions.Http", LogEventLevel.Information)
-                .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information);
+                .MinimumLevel.Override("Microsoft.Extensions.Http", LogEventLevel.Information);
         }
 
         public static LoggerConfiguration BuildDogfeedLogConfiguration()
