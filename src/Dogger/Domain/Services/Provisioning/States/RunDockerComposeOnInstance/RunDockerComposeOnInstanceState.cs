@@ -119,22 +119,22 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             {
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
-                    $"cd dogger && @environmentVariablesPrefix docker-compose {filesArgument} down --rmi all --volumes --remove-orphans",
+                    $"cd dogger && @@environmentVariablesPrefix docker-compose {filesArgument} down --rmi all --volumes --remove-orphans",
                     GetEnvironmentVariablesCommandLinePrefixArguments());
 
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
-                    $"cd dogger && @environmentVariablesPrefix docker-compose {filesArgument} pull --include-deps",
+                    $"cd dogger && @@environmentVariablesPrefix docker-compose {filesArgument} pull --include-deps",
                     GetEnvironmentVariablesCommandLinePrefixArguments());
 
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
-                    $"cd dogger && @environmentVariablesPrefix docker-compose {filesArgument} build --force-rm --parallel --no-cache {buildArgumentsArgument}",
+                    $"cd dogger && @@environmentVariablesPrefix docker-compose {filesArgument} build --force-rm --parallel --no-cache {buildArgumentsArgument}",
                     GetEnvironmentVariablesCommandLinePrefixArguments());
 
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.ProhibitRetries,
-                    $"cd dogger && @environmentVariablesPrefix docker-compose {filesArgument} --compatibility up --detach --remove-orphans --always-recreate-deps --force-recreate --renew-anon-volumes",
+                    $"cd dogger && @@environmentVariablesPrefix docker-compose {filesArgument} --compatibility up --detach --remove-orphans --always-recreate-deps --force-recreate --renew-anon-volumes",
                     GetEnvironmentVariablesCommandLinePrefixArguments());
             }
             catch (SshCommandExecutionException ex) when (ex.Result.ExitCode == 1)
@@ -245,7 +245,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
             return await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
-                $"cd dogger && @environmentVariablesPrefix docker-compose {dockerComposeYmlFilePathArguments} config",
+                $"cd dogger && @@environmentVariablesPrefix docker-compose {dockerComposeYmlFilePathArguments} config",
                 GetEnvironmentVariablesCommandLinePrefixArguments());
         }
 
