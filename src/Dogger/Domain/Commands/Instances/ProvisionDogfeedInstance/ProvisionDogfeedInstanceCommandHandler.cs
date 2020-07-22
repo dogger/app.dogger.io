@@ -96,6 +96,9 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
                             new DockerAuthenticationArguments(
                                 username: dockerHubOptions.Username,
                                 password: dockerHubOptions.Password)
+                            {
+                                RegistryHostName = "docker.pkg.github.com"
+                            }
                         }
                     }));
         }
