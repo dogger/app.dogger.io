@@ -109,7 +109,7 @@ namespace Dogger.Domain.Services.Provisioning.States.CreateLightsailInstance
             var response = await this.amazonLightsailClient.CreateInstancesAsync(new CreateInstancesRequest()
             {
                 BundleId = this.PlanId,
-                KeyPairName = "dogger-2020-03-24",
+                KeyPairName = "dogger-2020-07-22",
                 InstanceNames = new[]
                 {
                     this.DatabaseInstance.Name
