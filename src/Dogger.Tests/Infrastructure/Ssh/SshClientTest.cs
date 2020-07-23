@@ -211,14 +211,6 @@ namespace Dogger.Tests.Infrastructure.Ssh
             fakeSecretsScanner
                 .Received(1)
                 .Scan("some-text");
-
-            fakeSecretsScanner
-                .Received(1)
-                .Scan("error-text");
-
-            fakeSecretsScanner
-                .Received(1)
-                .Scan("success-text");
         }
 
         [TestMethod]

@@ -86,7 +86,10 @@ namespace Dogger.Infrastructure.Ssh
             {
                 var result = await this.client.ExecuteCommandAsync(
                     GetSensitiveCommandText(commandText, arguments));
-                this.secretsScanner.Scan(result.Text);
+
+                var nonSensitiveText = dataSensitivity == SshResponseSensitivity.ContainsNoSensitiveData ? 
+                    result.Text : 
+                    string.Empty;
 
                 if (result.ExitCode != 0)
                 {
@@ -94,7 +97,7 @@ namespace Dogger.Infrastructure.Ssh
                         commandText,
                         result);
 
-                    this.logger.Debug(sshCommandExecutionException, "An error occured while executing the command {CommandText} with result {ExitCode}: {CommandResult}", commandText, result.ExitCode, StripSensitiveText(result.Text, arguments));
+                    this.logger.Debug(sshCommandExecutionException, "An error occured while executing the command {CommandText} with result {ExitCode}: {CommandResult}", commandText, result.ExitCode, StripSensitiveText(nonSensitiveText, arguments));
 
                     throw sshCommandExecutionException;
                 }
