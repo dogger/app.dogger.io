@@ -21,7 +21,7 @@ namespace Dogger.Tests.Infrastructure.Secrets
             var configuration = new ConfigurationBuilder()
                 .AddCommandLine(Array.Empty<string>())
                 .Build();
-            configuration["SOME_KEY"] = "SOME_SECRET";
+            configuration["SOME_KEY"] = "SOME_SECRET_VERY_LONG";
 
             var scanner = new SecretsScanner(
                 configuration,
@@ -29,7 +29,7 @@ namespace Dogger.Tests.Infrastructure.Secrets
 
             //Arrange
             var exception = Assert.ThrowsException<InvalidOperationException>(() =>
-                scanner.Scan("hello some_secret lol"));
+                scanner.Scan("hello some_secret_very_long lol"));
 
             //Assert
             Assert.IsNotNull(exception);
@@ -43,7 +43,7 @@ namespace Dogger.Tests.Infrastructure.Secrets
             var configuration = new ConfigurationBuilder()
                 .AddCommandLine(Array.Empty<string>())
                 .Build();
-            configuration["SOME_KEY"] = "SOME_SECRET";
+            configuration["SOME_KEY"] = "SOME_SECRET_VERY_LONG";
 
             var scanner = new SecretsScanner(
                 configuration,
