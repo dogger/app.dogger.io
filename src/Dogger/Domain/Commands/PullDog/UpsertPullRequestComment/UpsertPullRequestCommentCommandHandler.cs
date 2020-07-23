@@ -103,7 +103,7 @@ namespace Dogger.Domain.Commands.PullDog.UpsertPullRequestComment
                 pullRequest.ConfigurationOverride ?? new ConfigurationFileOverride(), 
                 JsonFactory.GetOptions());
 
-            return GitHubCommentHelper.RenderSpoiler("Troubleshooting", GitHubCommentHelper.RenderSpoiler("Configuration", $"**Initial**\n{GitHubCommentHelper.RenderCodeBlock("json", configurationJson)}\n\n**Lazy override**\n{GitHubCommentHelper.RenderCodeBlock("json", configurationOverrideJson)}"));
+            return GitHubCommentHelper.RenderSpoiler("Troubleshooting", $"Need help? Don't hesitate to <a href=\"https://github.com/dogger/app.dogger.io/issues/new\">file an issue</a> in our repository.{GitHubCommentHelper.RenderSpoiler("Configuration", $"**Initial**\n{GitHubCommentHelper.RenderCodeBlock("json", configurationJson)}\n\n**Lazy override**\n{GitHubCommentHelper.RenderCodeBlock("json", configurationOverrideJson)}")}");
         }
 
         private static string RenderCommandsSection()
