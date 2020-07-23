@@ -51,10 +51,12 @@ namespace Dogger.Domain.Services.Provisioning.States.InstallSoftwareOnInstance
         {
             await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
+                SshResponseSensitivity.ContainsNoSensitiveData,
                 $"sudo sysctl -w {key}={value}");
 
             await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
+                SshResponseSensitivity.ContainsNoSensitiveData,
                 $"sudo bash -c \"echo '{key}={value}' >> /etc/sysctl.conf\"");
         }
 
@@ -67,39 +69,15 @@ namespace Dogger.Domain.Services.Provisioning.States.InstallSoftwareOnInstance
 
             await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
+                SshResponseSensitivity.ContainsNoSensitiveData,
                 "sudo usermod -aG docker $USER");
 
             //verify that we can run docker without root access.
             await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
+                SshResponseSensitivity.ContainsNoSensitiveData,
                 "docker --version");
         }
-
-        //private async Task InstallKubernetesOnNodeAsync(
-        //    ISshClient sshClient, 
-        //    InstanceType instanceType)
-        //{
-        //    await InstallKubernetesToolsAsync(sshClient);
-
-        //    switch (instanceType)
-        //    {
-        //        case InstanceType.KubernetesControlPlane:
-        //            await InitializeKubernetesControlPlaneNodeAsync(sshClient);
-        //            break;
-
-        //        case InstanceType.KubernetesWorker:
-        //            await InitializeKubernetesWorkerNodeAsync(sshClient);
-        //            break;
-
-        //        default:
-        //            throw new InvalidOperationException("Unknown instance type.");
-        //    }
-        //}
-
-        //private async Task InitializeKubernetesWorkerNodeAsync(ISshClient sshClient)
-        //{
-        //    throw new NotImplementedException("Kubernetes worker support has not been created yet.");
-        //}
 
         private async Task ConfigureDockerDaemonAsync(ISshClient sshClient)
         {
@@ -107,35 +85,9 @@ namespace Dogger.Domain.Services.Provisioning.States.InstallSoftwareOnInstance
 
             await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
+                SshResponseSensitivity.ContainsNoSensitiveData,
                 "sudo systemctl enable docker");
         }
-
-        //private async Task InstallKubernetesToolsAsync(ISshClient sshClient)
-        //{
-        //    this.description = "Installing Kubernetes";
-
-        //    await RunCommandsAsync(
-        //        sshClient,
-        //        SshRetryPolicy.AllowRetries,
-        //        new[]
-        //        {
-        //            "sudo apt-get update",
-        //            "sudo apt-get install -y apt-transport-https curl",
-        //            "sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -",
-        //            "sudo cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list\ndeb https://apt.kubernetes.io/ kubernetes-xenial main\nEOF",
-        //            "sudo apt-get update",
-        //            "sudo apt-get install -y kubelet kubeadm kubectl",
-        //            "sudo apt-mark hold kubelet kubeadm kubectl"
-        //        });
-        //}
-
-        ///// <summary>
-        ///// From: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#installing-kubeadm-on-your-hosts
-        ///// </summary>
-        //private async Task InitializeKubernetesControlPlaneNodeAsync(ISshClient sshClient)
-        //{
-        //    throw new NotImplementedException("Kubernetes control plane support has not been created yet.");
-        //}
 
         /// <summary>
         /// These sets of commands are taken from https://docs.docker.com/compose/install/
@@ -146,7 +98,6 @@ namespace Dogger.Domain.Services.Provisioning.States.InstallSoftwareOnInstance
 
             await RunCommandsAsync(
                 sshClient,
-                SshRetryPolicy.AllowRetries,
                 new[]
                 {
                     "sudo curl -L \"https://github.com/docker/compose/releases/download/1.25.3/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
@@ -164,7 +115,6 @@ namespace Dogger.Domain.Services.Provisioning.States.InstallSoftwareOnInstance
             //SET UP THE REPOSITORY
             await RunCommandsAsync(
                 sshClient,
-                SshRetryPolicy.AllowRetries,
                 new[]
                 {
                     "sudo apt-get update",
@@ -177,7 +127,6 @@ namespace Dogger.Domain.Services.Provisioning.States.InstallSoftwareOnInstance
             //INSTALL DOCKER ENGINE - COMMUNITY
             await RunCommandsAsync(
                 sshClient,
-                SshRetryPolicy.AllowRetries,
                 new[]
                 {
                     "sudo apt-get update",
@@ -187,13 +136,13 @@ namespace Dogger.Domain.Services.Provisioning.States.InstallSoftwareOnInstance
 
         private static async Task RunCommandsAsync(
             ISshClient sshClient,
-            SshRetryPolicy retryPolicy,
             string[] commands)
         {
             foreach (var command in commands)
             {
                 await sshClient.ExecuteCommandAsync(
-                    retryPolicy,
+                    SshRetryPolicy.AllowRetries,
+                    SshResponseSensitivity.ContainsNoSensitiveData,
                     command);
             }
         }

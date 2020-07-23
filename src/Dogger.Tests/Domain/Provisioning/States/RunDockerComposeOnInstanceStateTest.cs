@@ -94,6 +94,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
                 .Received()
                 .ExecuteCommandAsync(
                     Arg.Any<SshRetryPolicy>(),
+                    Arg.Any<SshResponseSensitivity>(),
                     Arg.Any<string>());
         }
 
@@ -127,6 +128,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
             fakeSshClient
                 .ExecuteCommandAsync(
                     SshRetryPolicy.ProhibitRetries,
+                    SshResponseSensitivity.ContainsNoSensitiveData,
                     Arg.Is<string>(arg => arg.Contains("docker-compose -f some-docker-compose-yml-path --compatibility up")),
                     Arg.Any<Dictionary<string, string>>())
                 .Throws(new SshCommandExecutionException("dummy", new SshCommandResult()
@@ -364,6 +366,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
                 .Received()
                 .ExecuteCommandAsync(
                     Arg.Any<SshRetryPolicy>(),
+                    Arg.Any<SshResponseSensitivity>(),
                     Arg.Is<string>(arg => arg.Contains("some-file-name")),
                     Arg.Any<Dictionary<string, string>>());
         }
@@ -430,6 +433,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
                 .Received()
                 .ExecuteCommandAsync(
                     Arg.Any<SshRetryPolicy>(),
+                    Arg.Any<SshResponseSensitivity>(),
                     Arg.Is<string>(arg =>
                         arg.Contains("@username") &&
                         arg.Contains("@password")),
@@ -491,6 +495,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
                 .DidNotReceive()
                 .ExecuteCommandAsync(
                     Arg.Any<SshRetryPolicy>(),
+                    Arg.Any<SshResponseSensitivity>(),
                     Arg.Is<string>(arg =>
                         arg.Contains("docker login")));
         }

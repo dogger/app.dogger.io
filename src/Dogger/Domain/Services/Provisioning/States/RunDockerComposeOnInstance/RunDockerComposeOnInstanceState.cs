@@ -78,6 +78,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
         {
             await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
+                SshResponseSensitivity.ContainsNoSensitiveData,
                 $"sudo rm ./{path} -rf");
         }
 
@@ -85,6 +86,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
         {
             await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
+                SshResponseSensitivity.ContainsNoSensitiveData,
                 $"mkdir -m 777 -p ./{path}");
 
             await SetUserPermissionsOnPathAsync(sshClient, path);
@@ -119,21 +121,25 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             {
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
+                    SshResponseSensitivity.ContainsNoSensitiveData,
                     $"cd dogger && @@environmentVariablesPrefix docker-compose {filesArgument} down --rmi all --volumes --remove-orphans",
                     GetEnvironmentVariablesCommandLinePrefixArguments());
 
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
+                    SshResponseSensitivity.ContainsNoSensitiveData,
                     $"cd dogger && @@environmentVariablesPrefix docker-compose {filesArgument} pull --include-deps",
                     GetEnvironmentVariablesCommandLinePrefixArguments());
 
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
+                    SshResponseSensitivity.ContainsNoSensitiveData,
                     $"cd dogger && @@environmentVariablesPrefix docker-compose {filesArgument} build --force-rm --parallel --no-cache {buildArgumentsArgument}",
                     GetEnvironmentVariablesCommandLinePrefixArguments());
 
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.ProhibitRetries,
+                    SshResponseSensitivity.ContainsNoSensitiveData,
                     $"cd dogger && @@environmentVariablesPrefix docker-compose {filesArgument} --compatibility up --detach --remove-orphans --always-recreate-deps --force-recreate --renew-anon-volumes",
                     GetEnvironmentVariablesCommandLinePrefixArguments());
             }
@@ -141,6 +147,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             {
                 var listFilesDump = await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
+                    SshResponseSensitivity.ContainsNoSensitiveData,
                     "cd dogger && ls -R");
 
                 await this.mediator.Send(new ServerDeploymentFailedEvent(
@@ -199,6 +206,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             {
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
+                    SshResponseSensitivity.MayContainSensitiveData,
                     "echo @password | docker login -u @username --password-stdin @registryHostName",
                     new Dictionary<string, string?>()
                     {
@@ -245,6 +253,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
             return await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
+                SshResponseSensitivity.MayContainSensitiveData,
                 $"cd dogger && @@environmentVariablesPrefix docker-compose {dockerComposeYmlFilePathArguments} config",
                 GetEnvironmentVariablesCommandLinePrefixArguments());
         }
@@ -302,6 +311,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
         {
             await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
+                SshResponseSensitivity.ContainsNoSensitiveData,
                 $"sudo chmod 777 ./{fileName}");
         }
     }

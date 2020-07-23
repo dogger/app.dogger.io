@@ -41,6 +41,7 @@ namespace Dogger.Infrastructure.Docker.Engine
 
             var response = await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
+                SshResponseSensitivity.MayContainSensitiveData,
                 $"docker logs --details --tail {tailArgument} @containerId",
                 new Dictionary<string, string?>()
                 {
@@ -78,6 +79,7 @@ namespace Dogger.Infrastructure.Docker.Engine
 
             var text = await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
+                SshResponseSensitivity.MayContainSensitiveData,
                 $@"sudo curl -s --unix-socket /var/run/docker.sock {additionalOptions} @url",
                 new Dictionary<string, string?>()
                 {

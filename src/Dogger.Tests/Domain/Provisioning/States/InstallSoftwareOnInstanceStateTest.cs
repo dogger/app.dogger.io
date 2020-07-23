@@ -70,6 +70,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
                 .Received()
                 .ExecuteCommandAsync(
                     Arg.Any<SshRetryPolicy>(),
+                    Arg.Any<SshResponseSensitivity>(),
                     Arg.Any<string>());
         }
 

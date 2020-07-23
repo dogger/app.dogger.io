@@ -6,4 +6,9 @@
         ProhibitRetries
     }
 
+    public enum SshResponseSensitivity
+    {
+        MayContainSensitiveData,
+        ContainsNoSensitiveData
+    }
 }

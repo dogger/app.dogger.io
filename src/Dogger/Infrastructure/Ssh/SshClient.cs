@@ -69,6 +69,7 @@ namespace Dogger.Infrastructure.Ssh
 
         public async Task<string> ExecuteCommandAsync(
             SshRetryPolicy retryPolicy,
+            SshResponseSensitivity dataSensitivity,
             string commandText,
             Dictionary<string, string?>? arguments = null)
         {
@@ -93,7 +94,7 @@ namespace Dogger.Infrastructure.Ssh
                 return result;
             });
 
-            if (arguments == null)
+            if (arguments == null && dataSensitivity == SshResponseSensitivity.ContainsNoSensitiveData)
             {
                 this.logger.Debug("Command {CommandText} executed with response {ResponseText}.", commandText, commandResult.Text);
             }

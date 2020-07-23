@@ -12,7 +12,8 @@ namespace Dogger.Infrastructure.Ssh
             byte[] contents);
 
         Task<string> ExecuteCommandAsync(
-            SshRetryPolicy retryPolicy, 
+            SshRetryPolicy retryPolicy,
+            SshResponseSensitivity dataSensitivity,
             string commandText,
             Dictionary<string, string?>? arguments = null);
     }

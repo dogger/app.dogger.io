@@ -77,6 +77,7 @@ namespace Dogger.Tests.Infrastructure.Ssh
             var exception = await Assert.ThrowsExceptionAsync<CommandSanitizationException>(async () => 
                 await client.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
+                    SshResponseSensitivity.ContainsNoSensitiveData,
                     "some-text",
                     new Dictionary<string, string>()
                     {
@@ -104,6 +105,7 @@ namespace Dogger.Tests.Infrastructure.Ssh
             //Act
             await client.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
+                SshResponseSensitivity.ContainsNoSensitiveData,
                 "some-text");
 
             //Assert
@@ -151,6 +153,7 @@ namespace Dogger.Tests.Infrastructure.Ssh
             //Act
             await client.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
+                SshResponseSensitivity.ContainsNoSensitiveData,
                 "some-text");
 
             //Assert
@@ -180,6 +183,7 @@ namespace Dogger.Tests.Infrastructure.Ssh
             //Act
             await client.ExecuteCommandAsync(
                 SshRetryPolicy.ProhibitRetries,
+                SshResponseSensitivity.ContainsNoSensitiveData,
                 "some-text");
 
             //Assert
@@ -213,6 +217,7 @@ namespace Dogger.Tests.Infrastructure.Ssh
             var exception = await Assert.ThrowsExceptionAsync<SshCommandExecutionException>(async () =>
                 await client.ExecuteCommandAsync(
                     SshRetryPolicy.ProhibitRetries,
+                    SshResponseSensitivity.ContainsNoSensitiveData,
                     "some-text"));
 
             //Assert
@@ -249,6 +254,7 @@ namespace Dogger.Tests.Infrastructure.Ssh
             var exception = await Assert.ThrowsExceptionAsync<SshCommandExecutionException>(async () =>
                 await client.ExecuteCommandAsync(
                     SshRetryPolicy.ProhibitRetries,
+                    SshResponseSensitivity.ContainsNoSensitiveData,
                     "some-text"));
 
             //Assert
@@ -283,6 +289,7 @@ namespace Dogger.Tests.Infrastructure.Ssh
             var exception = await Assert.ThrowsExceptionAsync<SshCommandExecutionException>(async () =>
                 await client.ExecuteCommandAsync(
                     SshRetryPolicy.ProhibitRetries,
+                    SshResponseSensitivity.ContainsNoSensitiveData,
                     "@alias",
                     new Dictionary<string, string>()
                     {
@@ -320,6 +327,7 @@ namespace Dogger.Tests.Infrastructure.Ssh
             //Act
             var result = await client.ExecuteCommandAsync(
                 SshRetryPolicy.ProhibitRetries,
+                SshResponseSensitivity.ContainsNoSensitiveData,
                 "@alias",
                 new Dictionary<string, string>()
                 {
