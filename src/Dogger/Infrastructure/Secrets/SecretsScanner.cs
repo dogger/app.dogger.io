@@ -1,0 +1,42 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Serilog;
+
+namespace Dogger.Infrastructure.Secrets
+{
+
+    public class SecretsScanner : ISecretsScanner
+    {
+        private readonly IConfiguration configuration;
+        private readonly ILogger logger;
+
+        public SecretsScanner(
+            IConfiguration configuration,
+            ILogger logger)
+        {
+            this.configuration = configuration;
+            this.logger = logger;
+        }
+
+        public void Scan(string? content)
+        {
+            if (content == null)
+                return;
+
+            logger.Verbose("Scanning for leaked secrets.");
+            foreach (var pair in this.configuration.AsEnumerable())
+            {
+                var secretName = pair.Key;
+                var secretValue = pair.Value;
+
+                logger.Verbose("Scanning for leaked secret {SecretName}.", secretName);
+
+                if (content.Contains(secretValue, StringComparison.InvariantCultureIgnoreCase))
+                    throw new InvalidOperationException($"Prevented a potential leak of secret {secretName}.");
+            }
+        }
+    }
+}

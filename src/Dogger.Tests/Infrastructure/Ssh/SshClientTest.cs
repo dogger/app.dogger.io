@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Dogger.Infrastructure.Secrets;
 using Dogger.Infrastructure.Ssh;
 using Dogger.Tests.TestHelpers;
 using Serilog;
@@ -23,7 +24,8 @@ namespace Dogger.Tests.Infrastructure.Ssh
 
             var client = new SshClient(
                 fakeClientDecorator,
-                fakeLogger);
+                fakeLogger,
+                Substitute.For<ISecretsScanner>());
 
             //Act
             await client.ConnectAsync();
@@ -44,7 +46,8 @@ namespace Dogger.Tests.Infrastructure.Ssh
 
             var client = new SshClient(
                 fakeClientDecorator,
-                fakeLogger);
+                fakeLogger,
+                Substitute.For<ISecretsScanner>());
 
             fakeClientDecorator
                 .ConnectAsync()
@@ -71,7 +74,8 @@ namespace Dogger.Tests.Infrastructure.Ssh
 
             var client = new SshClient(
                 fakeClientDecorator,
-                fakeLogger);
+                fakeLogger,
+                Substitute.For<ISecretsScanner>());
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<CommandSanitizationException>(async () => 
@@ -100,7 +104,8 @@ namespace Dogger.Tests.Infrastructure.Ssh
 
             var client = new SshClient(
                 fakeClientDecorator,
-                fakeLogger);
+                fakeLogger,
+                Substitute.For<ISecretsScanner>());
 
             //Act
             await client.ExecuteCommandAsync(
@@ -139,7 +144,8 @@ namespace Dogger.Tests.Infrastructure.Ssh
 
             var client = new SshClient(
                 fakeClientDecorator,
-                fakeLogger);
+                fakeLogger,
+                Substitute.For<ISecretsScanner>());
 
             fakeClientDecorator
                 .ExecuteCommandAsync("some-text")
@@ -165,6 +171,58 @@ namespace Dogger.Tests.Infrastructure.Ssh
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
+        public async Task ExecuteCommand_AllowRetriesAndFailedCommand_ScansSecretsTwice()
+        {
+            //Arrange
+            var fakeClientDecorator = Substitute.For<ISshClientDecorator>();
+            var fakeLogger = Substitute.For<ILogger>();
+            var fakeSecretsScanner = Substitute.For<ISecretsScanner>();
+
+            var client = new SshClient(
+                fakeClientDecorator,
+                fakeLogger,
+                fakeSecretsScanner);
+
+            fakeClientDecorator
+                .ExecuteCommandAsync("some-text")
+                .Returns(
+                    Task.FromResult(new SshCommandResult()
+                    {
+                        ExitCode = 1,
+                        Text = "error-text"
+                    }),
+                    Task.FromResult(new SshCommandResult()
+                    {
+                        Text = "success-text"
+                    }));
+
+            //Act
+            await client.ExecuteCommandAsync(
+                SshRetryPolicy.AllowRetries,
+                SshResponseSensitivity.ContainsNoSensitiveData,
+                "some-text");
+
+            //Assert
+            await fakeClientDecorator
+                .Received(2)
+                .ExecuteCommandAsync(
+                    Arg.Any<string>());
+
+            fakeSecretsScanner
+                .Received(1)
+                .Scan("some-text");
+
+            fakeSecretsScanner
+                .Received(1)
+                .Scan("error-text");
+
+            fakeSecretsScanner
+                .Received(1)
+                .Scan("success-text");
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
         public async Task ExecuteCommand_ProhibitRetriesAndSuccessfulCommand_ReturnsInstantly()
         {
             //Arrange
@@ -173,7 +231,8 @@ namespace Dogger.Tests.Infrastructure.Ssh
 
             var client = new SshClient(
                 fakeClientDecorator,
-                fakeLogger);
+                fakeLogger,
+                Substitute.For<ISecretsScanner>());
 
             fakeClientDecorator
                 .ExecuteCommandAsync("some-text")
@@ -203,7 +262,8 @@ namespace Dogger.Tests.Infrastructure.Ssh
 
             var client = new SshClient(
                 fakeClientDecorator,
-                fakeLogger);
+                fakeLogger,
+                Substitute.For<ISecretsScanner>());
 
             fakeClientDecorator
                 .ExecuteCommandAsync("some-text")
@@ -239,7 +299,8 @@ namespace Dogger.Tests.Infrastructure.Ssh
 
             var client = new SshClient(
                 fakeClientDecorator,
-                fakeLogger);
+                fakeLogger,
+                Substitute.For<ISecretsScanner>());
 
             fakeClientDecorator
                 .ExecuteCommandAsync("some-text")
@@ -274,7 +335,8 @@ namespace Dogger.Tests.Infrastructure.Ssh
 
             var client = new SshClient(
                 fakeClientDecorator,
-                fakeLogger);
+                fakeLogger,
+                Substitute.For<ISecretsScanner>());
 
             fakeClientDecorator
                 .ExecuteCommandAsync("'some-text'")
@@ -313,7 +375,8 @@ namespace Dogger.Tests.Infrastructure.Ssh
 
             var client = new SshClient(
                 fakeClientDecorator,
-                fakeLogger);
+                fakeLogger,
+                Substitute.For<ISecretsScanner>());
 
             fakeClientDecorator
                 .ExecuteCommandAsync("'some-text'")
@@ -348,7 +411,8 @@ namespace Dogger.Tests.Infrastructure.Ssh
 
             var client = new SshClient(
                 fakeClientDecorator,
-                fakeLogger);
+                fakeLogger,
+                Substitute.For<ISecretsScanner>());
 
             //Act
             client.Dispose();

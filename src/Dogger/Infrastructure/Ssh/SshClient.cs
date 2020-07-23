@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using Dogger.Infrastructure.Secrets;
 using Serilog;
 using Polly;
 using Renci.SshNet.Common;
@@ -12,13 +13,16 @@ namespace Dogger.Infrastructure.Ssh
     {
         private readonly ISshClientDecorator client;
         private readonly ILogger logger;
+        private readonly ISecretsScanner secretsScanner;
 
         public SshClient(
             ISshClientDecorator client,
-            ILogger logger)
+            ILogger logger,
+            ISecretsScanner secretsScanner)
         {
             this.client = client;
             this.logger = logger;
+            this.secretsScanner = secretsScanner;
         }
 
         public static string Sanitize(string? command)
@@ -73,6 +77,8 @@ namespace Dogger.Infrastructure.Ssh
             string commandText,
             Dictionary<string, string?>? arguments = null)
         {
+            this.secretsScanner.Scan(commandText);
+
             var policy = GetPollyPolicyFromSshRetryPolicy(retryPolicy);
             this.logger.Debug("Executing {CommandText}.", commandText);
 
@@ -80,6 +86,8 @@ namespace Dogger.Infrastructure.Ssh
             {
                 var result = await this.client.ExecuteCommandAsync(
                     GetSensitiveCommandText(commandText, arguments));
+                this.secretsScanner.Scan(result.Text);
+
                 if (result.ExitCode != 0)
                 {
                     var sshCommandExecutionException = new SshCommandExecutionException(

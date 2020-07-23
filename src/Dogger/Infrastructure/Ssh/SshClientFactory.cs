@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Dogger.Infrastructure.AspNet.Options;
+using Dogger.Infrastructure.Secrets;
 using Serilog;
 using Microsoft.Extensions.Options;
 using Polly;
@@ -16,13 +17,16 @@ namespace Dogger.Infrastructure.Ssh
     public class SshClientFactory : ISshClientFactory
     {
         private readonly ILogger logger;
+        private readonly ISecretsScanner secretsScanner;
         private readonly IOptionsMonitor<AwsOptions> awsOptionsMonitor;
 
         public SshClientFactory(
             ILogger logger,
+            ISecretsScanner secretsScanner,
             IOptionsMonitor<AwsOptions> awsOptionsMonitor)
         {
             this.logger = logger;
+            this.secretsScanner = secretsScanner;
             this.awsOptionsMonitor = awsOptionsMonitor;
         }
 
@@ -52,7 +56,8 @@ namespace Dogger.Infrastructure.Ssh
                 new SshClientDecorator(
                     new Renci.SshNet.SshClient(connectionInfo),
                     new Renci.SshNet.SftpClient(connectionInfo)),
-                this.logger);
+                this.logger,
+                secretsScanner);
 
             var policy = Policy
                 .Handle<Exception>(exception =>

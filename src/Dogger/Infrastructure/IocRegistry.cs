@@ -34,6 +34,7 @@ using Dogger.Infrastructure.GitHub;
 using Dogger.Infrastructure.IO;
 using Dogger.Infrastructure.Mediatr;
 using Dogger.Infrastructure.Mediatr.Database;
+using Dogger.Infrastructure.Secrets;
 using Dogger.Infrastructure.Ssh;
 using Dogger.Infrastructure.Time;
 using Flurl.Http.Configuration;
@@ -297,6 +298,7 @@ namespace Dogger.Infrastructure
         {
             services.AddSingleton<ISshClientFactory, SshClientFactory>();
             services.AddSingleton<IAesEncryptionHelper, AesEncryptionHelper>();
+            services.AddSingleton<ISecretsScanner, SecretsScanner>();
 
             services.AddSingleton<IFile, File>();
 
