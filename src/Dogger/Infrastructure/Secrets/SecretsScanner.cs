@@ -31,7 +31,7 @@ namespace Dogger.Infrastructure.Secrets
             {
                 var secretName = pair.Key;
                 var secretValue = pair.Value;
-                if (string.IsNullOrWhiteSpace(secretValue))
+                if (string.IsNullOrWhiteSpace(secretValue) || secretValue.Length < 10)
                     continue;
 
                 logger.Verbose("Scanning for leaked secret {SecretName}.", secretName);
