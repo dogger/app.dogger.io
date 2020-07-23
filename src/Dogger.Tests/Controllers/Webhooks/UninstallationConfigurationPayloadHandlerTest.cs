@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dogger.Controllers.Webhooks;
 using Dogger.Controllers.Webhooks.Handlers;
+using Dogger.Controllers.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;

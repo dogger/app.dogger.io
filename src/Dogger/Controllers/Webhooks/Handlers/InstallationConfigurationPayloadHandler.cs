@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Dogger.Controllers.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.AddPullDogToGitHubRepositories;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
 using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;

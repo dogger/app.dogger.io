@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Dogger.Controllers.Webhooks.Models;
 
 namespace Dogger.Controllers.Webhooks.Handlers
 {

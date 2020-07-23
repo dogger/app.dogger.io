@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Dogger.Controllers.Webhooks;
 using Dogger.Controllers.Webhooks.Handlers;
+using Dogger.Controllers.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
 using Dogger.Domain.Models;
 using Dogger.Tests.TestHelpers;

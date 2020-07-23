@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Controllers.Webhooks.Handlers;
+using Dogger.Controllers.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
 using Dogger.Domain.Helpers;
 using Dogger.Domain.Models;
@@ -26,6 +28,8 @@ namespace Dogger.Controllers.Webhooks
     [ApiController]
     public class WebhooksController : ControllerBase
     {
+        public const string WebhookSignatureVerificationKeyName = "IsWebhookSignatureVerified";
+
         private const string sha1Prefix = "sha1=";
 
         private readonly IMediator mediator;
@@ -58,13 +62,26 @@ namespace Dogger.Controllers.Webhooks
             WebhookPayload payload,
             CancellationToken cancellationToken)
         {
+            if (!Request.Headers.TryGetValue("X-GitHub-Delivery", out var correlationIdValues))
+                return BadRequest("No correlation ID was found.");
+
+            UpdateAspNetTraceIdentifierToMatchCorrelationId(correlationIdValues);
+
             if (!await IsGithubPushAllowedAsync())
                 return NotFound();
+
+            HttpContext.Items.Add(WebhookSignatureVerificationKeyName, true);
 
             return await this.dataContext.ExecuteInTransactionAsync(
                 async () => await HandlePayloadAsync(payload),
                 default,
                 cancellationToken);
+        }
+
+        private void UpdateAspNetTraceIdentifierToMatchCorrelationId(StringValues correlationIdValues)
+        {
+            var correlationId = correlationIdValues.Single();
+            this.HttpContext.TraceIdentifier = correlationId;
         }
 
         private async Task<IActionResult> HandlePayloadAsync(WebhookPayload payload)

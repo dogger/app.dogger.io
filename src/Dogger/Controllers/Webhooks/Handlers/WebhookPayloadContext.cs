@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Dogger.Controllers.Webhooks.Models;
 using Dogger.Domain.Models;
 
 namespace Dogger.Controllers.Webhooks.Handlers

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Dogger.Controllers.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using MediatR;

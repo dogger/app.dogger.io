@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using Dogger.Controllers.Webhooks;
 using Dogger.Infrastructure.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Primitives;
 
 namespace Dogger.Controllers.Errors
 {
@@ -46,9 +48,13 @@ namespace Dogger.Controllers.Errors
         {
             return
                 hostEnvironment.IsDevelopment() ||
-                HasScopeHandler.HasScope(
-                    User,
-                    Scopes.ReadErrors);
+                HasScopeHandler.HasScope(User, Scopes.ReadErrors) ||
+                IsSignatureVerifiedWebhookRequest();
+        }
+
+        private bool IsSignatureVerifiedWebhookRequest()
+        {
+            return (bool?)HttpContext.Items[WebhooksController.WebhookSignatureVerificationKeyName] == true;
         }
     }
 }

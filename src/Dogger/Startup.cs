@@ -190,6 +190,7 @@ namespace Dogger
                 webhookApp => webhookApp.Use(async (context, next) =>
                 {
                     context.Request.EnableBuffering();
+
                     await next();
                 }));
 

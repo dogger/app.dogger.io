@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Dogger.Controllers.Webhooks
+namespace Dogger.Controllers.Webhooks.Models
 {
     [ExcludeFromCodeCoverage]
     public class UserPayload
