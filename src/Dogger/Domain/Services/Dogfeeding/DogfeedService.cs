@@ -193,7 +193,7 @@ namespace Dogger.Domain.Services.Dogfeeding
             var stopwatch = this.time.StartStopwatch();
             do
             {
-                await this.time.WaitAsync(5000);
+                await this.time.WaitAsync(60000);
 
                 if (stopwatch.Elapsed.TotalMinutes > 30)
                 {
