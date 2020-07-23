@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Helpers;
+using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
 using Dogger.Domain.Services.PullDog;
+using Dogger.Infrastructure;
 using Dogger.Infrastructure.GitHub;
 using MediatR;
 
@@ -63,7 +66,7 @@ namespace Dogger.Domain.Commands.PullDog.UpsertPullRequestComment
                     x.User.Id == 64746321) :
                 null;
 
-            var requestContent = $"\\*Ruff\\* :dog: {request.Content}\n\n{GitHubCommentHelper.RenderSpoiler("What is this?", "<a href=\"https://dogger.io\" target=\"_blank\">Pull Dog</a> is a GitHub app that makes test environments for your pull requests using Docker, from a `docker-compose.yml` file you specify. It takes 19 seconds to set up (we counted!) and there's a free plan available.\n\nVisit <a href=\"https://dogger.io\" target=\"_blank\">our website</a> to learn more.")}{GitHubCommentHelper.RenderSpoiler("Commands", "- `@pull-dog up` to reprovision or provision the server.\n- `@pull-dog down` to delete the provisioned server.")}";
+            var requestContent = $"\\*Ruff\\* :dog: {request.Content}\n\n{RenderWhatIsThisSection()}{RenderCommandsSection()}{RenderDebugSection(configuration, request.PullRequest)}";
             if (existingBotComment == null)
             {
                 await client
@@ -86,6 +89,31 @@ namespace Dogger.Domain.Commands.PullDog.UpsertPullRequestComment
             }
 
             return Unit.Value;
+        }
+
+        private static string RenderDebugSection(
+            ConfigurationFile? configuration,
+            PullDogPullRequest pullRequest)
+        {
+            var configurationJson = JsonSerializer.Serialize(
+                configuration ?? new ConfigurationFile(), 
+                JsonFactory.GetOptions());
+
+            var configurationOverrideJson = JsonSerializer.Serialize(
+                pullRequest.ConfigurationOverride ?? new ConfigurationFileOverride(), 
+                JsonFactory.GetOptions());
+
+            return GitHubCommentHelper.RenderSpoiler("Troubleshooting", GitHubCommentHelper.RenderSpoiler("Configuration", $"**Initial**\n{GitHubCommentHelper.RenderCodeBlock("json", configurationJson)}\n\n**Lazy override**\n{GitHubCommentHelper.RenderCodeBlock("json", configurationOverrideJson)}"));
+        }
+
+        private static string RenderCommandsSection()
+        {
+            return GitHubCommentHelper.RenderSpoiler("Commands", "- `@pull-dog up` to reprovision or provision the server.\n- `@pull-dog down` to delete the provisioned server.");
+        }
+
+        private static string RenderWhatIsThisSection()
+        {
+            return GitHubCommentHelper.RenderSpoiler("What is this?", "<a href=\"https://dogger.io\" target=\"_blank\">Pull Dog</a> is a GitHub app that makes test environments for your pull requests using Docker, from a `docker-compose.yml` file you specify. It takes 19 seconds to set up (we counted!) and there's a free plan available.\n\nVisit <a href=\"https://dogger.io\" target=\"_blank\">our website</a> to learn more.");
         }
     }
 }

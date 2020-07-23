@@ -10,6 +10,11 @@ namespace Dogger.Domain.Helpers
             return $"<details>\n<summary><b>{title}</b></summary>\n\n{content}\n</details>";
         }
 
+        public static string RenderCodeBlock(string language, string content)
+        {
+            return $"```{language}\n{content}\n```";
+        }
+
         public static string RenderList(IEnumerable<string> filePathsInCodeElement)
         {
             return string.Join("\n", filePathsInCodeElement
