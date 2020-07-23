@@ -13,9 +13,6 @@ namespace Dogger.Domain.Models
         public Guid Id { get; set; }
 
         [NotLogged]
-        public byte[] EncryptedSshPrivateKey { get; set; }
-
-        [NotLogged]
         public List<Identity> Identities { get; set; }
 
         [NotLogged]
@@ -35,8 +32,6 @@ namespace Dogger.Domain.Models
             Identities = new List<Identity>();
             Clusters = new List<Cluster>();
             AmazonUsers = new List<AmazonUser>();
-
-            EncryptedSshPrivateKey = Array.Empty<byte>();
         }
     }
 

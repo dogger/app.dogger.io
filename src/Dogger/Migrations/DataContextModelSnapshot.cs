@@ -222,10 +222,6 @@ namespace Dogger.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte[]>("EncryptedSshPrivateKey")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<string>("StripeCustomerId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
