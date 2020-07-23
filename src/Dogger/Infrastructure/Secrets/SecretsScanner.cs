@@ -34,8 +34,6 @@ namespace Dogger.Infrastructure.Secrets
                 if (string.IsNullOrWhiteSpace(secretValue) || secretValue.Length < 10)
                     continue;
 
-                logger.Verbose("Scanning for leaked secret {SecretName}.", secretName);
-
                 if (content.Contains(secretValue, StringComparison.InvariantCultureIgnoreCase))
                     throw new InvalidOperationException($"Prevented a potential leak of secret {secretName}.");
             }
