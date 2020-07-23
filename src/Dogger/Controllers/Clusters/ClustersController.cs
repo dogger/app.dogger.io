@@ -119,7 +119,9 @@ namespace Dogger.Controllers.Clusters
                 });
             }
 
-            await this.mediator.Send(new DeleteInstanceByNameCommand(cluster.Instances.Single().Name));
+            await this.mediator.Send(new DeleteInstanceByNameCommand(
+                cluster.Instances.Single().Name,
+                InitiatorType.User));
 
             return Ok();
         }

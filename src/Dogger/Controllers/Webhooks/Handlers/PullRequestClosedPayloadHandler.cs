@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest;
 using MediatR;
 
@@ -28,7 +29,8 @@ namespace Dogger.Controllers.Webhooks.Handlers
             await mediator.Send(
                 new DeleteInstanceByPullRequestCommand(
                     context.Repository.Handle,
-                    context.PullRequest.Handle));
+                    context.PullRequest.Handle,
+                    InitiatorType.System));
         }
     }
 }

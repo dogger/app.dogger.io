@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
 using MediatR;
@@ -37,7 +38,8 @@ namespace Dogger.Controllers.Webhooks.Handlers
                 case "@pull-dog down":
                     await this.mediator.Send(new DeleteInstanceByPullRequestCommand(
                         context.Repository.Handle,
-                        context.PullRequest.Handle));
+                        context.PullRequest.Handle,
+                        InitiatorType.User));
                     break;
 
                 case "@pull-dog up":

@@ -22,10 +22,10 @@ namespace Dogger.Infrastructure.AspNet
         {
             var mediator = serviceProvider.GetRequiredService<IMediator>();
 
-            await CleanUpDemoClusterAsync(mediator, cancellationToken);
+            await CleanUpExpiredInstancesAsync(mediator, cancellationToken);
         }
 
-        private static async Task CleanUpDemoClusterAsync(
+        private static async Task CleanUpExpiredInstancesAsync(
             IMediator mediator, 
             CancellationToken cancellationToken)
         {
@@ -33,7 +33,9 @@ namespace Dogger.Infrastructure.AspNet
             foreach (var expiredInstance in expiredInstances)
             {
                 await mediator.Send(
-                    new DeleteInstanceByNameCommand(expiredInstance.Name),
+                    new DeleteInstanceByNameCommand(
+                        expiredInstance.Name,
+                        InitiatorType.System),
                     cancellationToken);
             }
         }

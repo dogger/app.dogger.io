@@ -32,7 +32,9 @@ namespace Dogger.Domain.Commands.PullDog.DeleteAllPullDogInstancesForUser
             foreach (var instance in instancesToDelete)
             {
                 await mediator.Send(
-                    new DeleteInstanceByNameCommand(instance.Name),
+                    new DeleteInstanceByNameCommand(
+                        instance.Name,
+                        request.InitiatedBy),
                     cancellationToken);
             }
 

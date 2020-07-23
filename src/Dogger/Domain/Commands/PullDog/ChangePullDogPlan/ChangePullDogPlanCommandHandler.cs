@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
 using Dogger.Domain.Commands.PullDog.DeleteAllPullDogInstancesForUser;
 using Dogger.Domain.Models;
@@ -64,7 +65,9 @@ namespace Dogger.Domain.Commands.PullDog.ChangePullDogPlan
                 cancellationToken);
 
             await this.mediator.Send(
-                new DeleteAllPullDogInstancesForUserCommand(request.UserId),
+                new DeleteAllPullDogInstancesForUserCommand(
+                    request.UserId,
+                    InitiatorType.User),
                 cancellationToken);
 
             return Unit.Value;

@@ -24,18 +24,28 @@ namespace Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest
 
         public async Task<Unit> Handle(DeleteInstanceByPullRequestCommand request, CancellationToken cancellationToken)
         {
-            var instance = await this.dataContext
-                .Instances
+            var pullRequest = await this.dataContext
+                .PullDogPullRequests
+                .Include(x => x.Instance)
                 .Where(x => 
-                    x.PullDogPullRequest!.PullDogRepository.Handle == request.RepositoryHandle &&
-                    x.PullDogPullRequest!.Handle == request.PullRequestHandle)
+                    x.PullDogRepository.Handle == request.RepositoryHandle &&
+                    x.Handle == request.PullRequestHandle)
                 .SingleOrDefaultAsync(cancellationToken);
-            if (instance == null)
+            if (pullRequest == null)
                 return Unit.Value;
 
-            await mediator.Send(
-                new DeleteInstanceByNameCommand(instance.Name),
-                cancellationToken);
+            var instance = pullRequest.Instance;
+            if (instance != null)
+            {
+                await mediator.Send(
+                    new DeleteInstanceByNameCommand(
+                        instance.Name,
+                        request.InitiatedBy),
+                    cancellationToken);
+            }
+
+            this.dataContext.PullDogPullRequests.Remove(pullRequest);
+            await this.dataContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
         }

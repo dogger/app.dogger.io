@@ -60,7 +60,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             //Act
             await environment.Mediator.Send(
-                new DeleteInstanceByNameCommand("some-name"),
+                new DeleteInstanceByNameCommand("some-name", InitiatorType.System),
                 default);
 
             //Assert
@@ -119,7 +119,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             //Act
             var exception = await Assert.ThrowsExceptionAsync<TestException>(async () =>
                 await environment.Mediator.Send(
-                    new DeleteInstanceByNameCommand("some-instance-name"),
+                    new DeleteInstanceByNameCommand("some-instance-name", InitiatorType.System),
                     default));
 
             //Assert
@@ -142,7 +142,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_DatabaseInstancesPresentWithPullRequests_InstanceIsRemovedFromClusterAndDatabase()
+        public async Task Handle_DatabaseInstancesPresentWithPullRequestsAndSystemInitiated_InstanceAndPullRequestIsRemovedFromClusterAndDatabase()
         {
             //Arrange
             var fakeAmazonLightsailClient = Substitute.For<IAmazonLightsail>();
@@ -255,7 +255,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             //Act
             await environment.Mediator.Send(
-                new DeleteInstanceByNameCommand("some-instance-name"),
+                new DeleteInstanceByNameCommand("some-instance-name", InitiatorType.System),
                 default);
 
             //Assert
@@ -272,6 +272,145 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
                 Assert.AreEqual(1, refreshedCluster.Instances.Count);
                 Assert.AreNotEqual("some-instance-name", refreshedCluster.Instances.Single().Name);
+
+                Assert.AreEqual(1, await dataContext.PullDogPullRequests.CountAsync());
+            });
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.IntegrationCategory)]
+        public async Task Handle_DatabaseInstancesPresentWithPullRequestsAndUserInitiated_InstanceIsRemovedFromClusterAndDatabase()
+        {
+            //Arrange
+            var fakeAmazonLightsailClient = Substitute.For<IAmazonLightsail>();
+            fakeAmazonLightsailClient
+                .DeleteInstanceAsync(
+                    Arg.Any<DeleteInstanceRequest>(),
+                    default)
+                .Returns(new DeleteInstanceResponse()
+                {
+                    Operations = new List<Operation>()
+                });
+
+            var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
+
+            var fakeGitHubClient = Substitute.For<IGitHubClient>();
+            fakeGitHubClient
+                .GitHubApps
+                .CreateInstallationToken(Arg.Any<long>())
+                .Returns(new AccessToken("dummy", DateTimeOffset.MaxValue));
+
+            var fakeGitHubClientFactory = Substitute.For<IGitHubClientFactory>();
+
+            var fakeGitHubInstallationClient = await fakeGitHubClientFactory.CreateInstallationClientAsync(1337);
+            fakeGitHubInstallationClient
+                .PullRequest
+                .Get(
+                    1338,
+                    1339)
+                .Returns(
+                    CreatePullRequestDto(
+                        CreateGitReferenceDto(
+                            CreateRepositoryDto(
+                                1338)),
+                        CreateGitReferenceDto(
+                            CreateRepositoryDto(
+                                1338))));
+
+            var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
+
+            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            {
+                IocConfiguration = services =>
+                {
+                    services.AddSingleton(fakeAmazonLightsailClient);
+                    services.AddSingleton(fakeLightsailOperationService);
+                    services.AddSingleton(fakeGitHubClient);
+                    services.AddSingleton(fakeGitHubClientFactory);
+                    services.AddSingleton(fakePullDogFileCollectorFactory);
+                }
+            });
+
+            var clusterId = Guid.NewGuid();
+            var cluster = new Cluster()
+            {
+                Id = clusterId,
+                Instances = new List<Instance>()
+                {
+                    new Instance()
+                    {
+                        Name = "not-matching",
+                        PlanId = "dummy",
+                        PullDogPullRequest = new PullDogPullRequest()
+                        {
+                            Handle = "dummy",
+                            PullDogRepository = new PullDogRepository()
+                            {
+                                Handle = "dummy",
+                                PullDogSettings = new PullDogSettings()
+                                {
+                                    PlanId = "dummy",
+                                    EncryptedApiKey = Array.Empty<byte>(),
+                                    User = new User()
+                                    {
+                                        StripeCustomerId = "dummy"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    new Instance()
+                    {
+                        Name = "some-instance-name",
+                        PlanId = "dummy",
+                        PullDogPullRequest = new PullDogPullRequest()
+                        {
+                            Handle = "1339",
+                            PullDogRepository = new PullDogRepository()
+                            {
+                                Handle = "1338",
+                                GitHubInstallationId = 1337,
+                                PullDogSettings = new PullDogSettings()
+                                {
+                                    PlanId = "dummy",
+                                    EncryptedApiKey = Array.Empty<byte>(),
+                                    User = new User()
+                                    {
+                                        StripeCustomerId = "dummy"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            await environment.WithFreshDataContext(async dataContext =>
+            {
+                await dataContext.Clusters.AddAsync(cluster);
+            });
+
+            //Act
+            await environment.Mediator.Send(
+                new DeleteInstanceByNameCommand("some-instance-name", InitiatorType.User),
+                default);
+
+            //Assert
+            await environment.WithFreshDataContext(async dataContext =>
+            {
+                var refreshedCluster = await dataContext
+                    .Clusters
+                    .Include(x => x.Instances)
+                    .FirstOrDefaultAsync(x => x.Id == clusterId);
+                var refreshedInstance = await dataContext.Instances.FirstOrDefaultAsync(x => x.Name == "some-instance-name");
+
+                Assert.IsNull(refreshedInstance);
+                Assert.IsNotNull(refreshedCluster);
+
+                Assert.AreEqual(1, refreshedCluster.Instances.Count);
+                Assert.AreNotEqual("some-instance-name", refreshedCluster.Instances.Single().Name);
+
+                Assert.AreEqual(2, await dataContext.PullDogPullRequests.CountAsync());
             });
         }
 
@@ -327,7 +466,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             //Act
             await environment.Mediator.Send(
-                new DeleteInstanceByNameCommand("some-instance-name"),
+                new DeleteInstanceByNameCommand("some-instance-name", InitiatorType.System),
                 default);
 
             //Assert
@@ -441,7 +580,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             //Act
             await environment.Mediator.Send(
-                new DeleteInstanceByNameCommand("some-instance-name"),
+                new DeleteInstanceByNameCommand("some-instance-name", InitiatorType.System),
                 default);
 
             //Assert
@@ -544,7 +683,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             //Act
             await environment.Mediator.Send(
-                new DeleteInstanceByNameCommand("some-instance-name"),
+                new DeleteInstanceByNameCommand("some-instance-name", InitiatorType.System),
                 default);
 
             //Assert
@@ -648,7 +787,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             //Act
             await environment.Mediator.Send(
-                new DeleteInstanceByNameCommand("some-instance-name"),
+                new DeleteInstanceByNameCommand("some-instance-name", InitiatorType.System),
                 default);
 
             //Assert
@@ -682,7 +821,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             //Act
             await environment.Mediator.Send(
-                new DeleteInstanceByNameCommand("some-name"),
+                new DeleteInstanceByNameCommand("some-name", InitiatorType.System),
                 default);
 
             //Assert

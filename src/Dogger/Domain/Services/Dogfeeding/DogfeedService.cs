@@ -175,7 +175,7 @@ namespace Dogger.Domain.Services.Dogfeeding
 
         private async Task DestroyInstanceByNameAsync(string name)
         {
-            await mediator.Send(new DeleteInstanceByNameCommand(name));
+            await mediator.Send(new DeleteInstanceByNameCommand(name, InitiatorType.System));
         }
 
         private async Task WaitForInstanceToBecomeHealthyAsync(

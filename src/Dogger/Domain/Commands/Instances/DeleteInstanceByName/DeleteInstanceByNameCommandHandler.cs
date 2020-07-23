@@ -54,7 +54,10 @@ namespace Dogger.Domain.Commands.Instances.DeleteInstanceByName
             {
                 var userId = instance.Cluster.UserId;
 
-                await RemoveInstanceFromDatabaseAsync(instance, cancellationToken);
+                await RemoveInstanceFromDatabaseAsync(
+                    request.InitiatedBy,
+                    instance, 
+                    cancellationToken);
 
                 if (userId != null)
                 {
@@ -77,13 +80,14 @@ namespace Dogger.Domain.Commands.Instances.DeleteInstanceByName
         }
 
         private async Task RemoveInstanceFromDatabaseAsync(
+            InitiatorType initiatorType,
             Instance instance, 
             CancellationToken cancellationToken)
         {
             var cluster = instance.Cluster;
             cluster.Instances.Remove(instance);
 
-            if (instance.PullDogPullRequest != null)
+            if (instance.PullDogPullRequest != null && initiatorType != InitiatorType.User)
                 this.dataContext.PullDogPullRequests.Remove(instance.PullDogPullRequest);
 
             if (cluster.Instances.Count == 0)

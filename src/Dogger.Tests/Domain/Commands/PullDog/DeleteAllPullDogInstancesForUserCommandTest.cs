@@ -48,7 +48,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             });
 
             //Act
-            await environment.Mediator.Send(new DeleteAllPullDogInstancesForUserCommand(user.Id));
+            await environment.Mediator.Send(new DeleteAllPullDogInstancesForUserCommand(
+                user.Id,
+                InitiatorType.System));
 
             //Assert
             await fakeMediator
@@ -110,7 +112,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             });
 
             //Act
-            await environment.Mediator.Send(new DeleteAllPullDogInstancesForUserCommand(matchedUser.Id));
+            await environment.Mediator.Send(new DeleteAllPullDogInstancesForUserCommand(
+                matchedUser.Id,
+                InitiatorType.System));
 
             //Assert
             await fakeMediator
@@ -165,7 +169,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             });
 
             //Act
-            await environment.Mediator.Send(new DeleteAllPullDogInstancesForUserCommand(user.Id));
+            await environment.Mediator.Send(new DeleteAllPullDogInstancesForUserCommand(
+                user.Id,
+                InitiatorType.System));
 
             //Assert
             await fakeMediator
