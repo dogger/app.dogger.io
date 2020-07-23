@@ -308,7 +308,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task Handle_PoolSizeExceeded_UpdatesPullRequestCommentWithMessageExplainingWhy()
+        public async Task Handle_PoolSizeExceededWithNoTestEnvironmentListUrl_UpdatesPullRequestCommentWithMessageExplainingWhy()
         {
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
@@ -360,7 +360,72 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             await fakeMediator
                 .Received(1)
-                .Send(Arg.Any<UpsertPullRequestCommentCommand>());
+                .Send(Arg.Is<UpsertPullRequestCommentCommand>(args =>
+                    args.Content.Contains("You can [upgrade your plan]")));
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public async Task Handle_PoolSizeExceededWithTestEnvironmentListUrl_UpdatesPullRequestCommentWithMessageExplainingWhy()
+        {
+            //Arrange
+            var fakeMediator = Substitute.For<IMediator>();
+            fakeMediator
+                .Send(Arg.Any<EnsurePullDogDatabaseInstanceCommand>())
+                .Throws(new PullDogPoolSizeExceededException(Array.Empty<PullRequestDetails>()));
+
+            fakeMediator
+                .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
+                .Returns(new PullDogPullRequest());
+
+            fakeMediator
+                .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
+                .Returns(new ConfigurationFile(new List<string>()));
+
+            var fakeProvisioningService = Substitute.For<IProvisioningService>();
+            var fakeSlackClient = Substitute.For<ISlackClient>();
+            var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
+            var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
+
+            var fakePullDogRepositoryClient = await fakePullDogRepositoryClientFactory.CreateAsync(Arg.Any<PullDogPullRequest>());
+            fakePullDogRepositoryClient
+                .GetTestEnvironmentListUrl(Arg.Any<ConfigurationFile>())
+                .Returns(new Uri("https://some-test-environment-list-url.example.com"));
+
+            var fakePullDogFileCollector = fakePullDogFileCollectorFactory.Create(fakePullDogRepositoryClient);
+            fakePullDogFileCollector
+                .GetRepositoryFilesFromConfiguration(Arg.Any<ConfigurationFile>())
+                .Returns(Array.Empty<RepositoryFile>());
+
+            var handler = new ProvisionPullDogEnvironmentCommandHandler(
+                fakeMediator,
+                fakeProvisioningService,
+                fakeSlackClient,
+                fakePullDogFileCollectorFactory,
+                fakePullDogRepositoryClientFactory);
+
+            //Act
+            await handler.Handle(
+                new ProvisionPullDogEnvironmentCommand(
+                    "some-pull-request-handle",
+                    new PullDogRepository()
+                    {
+                        GitHubInstallationId = 1337,
+                        PullDogSettings = new PullDogSettings()
+                    }),
+                default);
+
+            //Assert
+            await fakeProvisioningService
+                .DidNotReceive()
+                .ScheduleJobAsync(
+                    Arg.Any<AggregateProvisioningStateFlow>());
+
+            await fakeMediator
+                .Received(1)
+                .Send(Arg.Is<UpsertPullRequestCommentCommand>(args =>
+                    args.Content.Contains("You can [upgrade your plan]") &&
+                    args.Content.Contains("https://some-test-environment-list-url.example.com")));
         }
 
         [TestMethod]
