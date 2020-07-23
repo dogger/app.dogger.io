@@ -9,7 +9,6 @@ using YamlDotNet.Serialization;
 
 namespace Dogger.Infrastructure.Docker.Yml
 {
-
     public class DockerComposeParser : IDockerComposeParser
     {
         private readonly JsonDocument? dockerComposeModel;
@@ -31,6 +30,10 @@ namespace Dogger.Infrastructure.Docker.Yml
 
                 var json = serializer.Serialize(yamlObject);
                 this.dockerComposeModel = JsonDocument.Parse(json);
+            }
+            catch (SemanticErrorException ex)
+            {
+                throw new DockerComposeSyntaxErrorException(ex);
             }
             catch (SyntaxErrorException ex)
             {

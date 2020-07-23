@@ -162,12 +162,12 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
                         $"I tried to provision a test environment for your pull request, but there aren't enough free-plan servers available :tired_face:\n\nWe'll keep trying every time you open a new pull request in the future, but if you want to make sure to always have a test environment available, you need to [upgrade your plan](https://dogger.io/dashboard/pull-dog) to a paid plan.\n\nThe latest pull request that is currently using a demo server is: {ex.LatestOffendingPullRequest.PullRequestCommentReference}"),
                     cancellationToken);
             }
-            catch (DockerComposeSyntaxErrorException)
+            catch (DockerComposeSyntaxErrorException ex)
             {
                 await this.mediator.Send(
                     new UpsertPullRequestCommentCommand(
                         pullRequest,
-                        $"Your Docker Compose YML file was not valid. Try running `docker-compose up` on it yourself locally, to find any potential issues."),
+                        $"Your Docker Compose YML file was not valid. Try running `docker-compose up` on it yourself locally, to find any potential issues.\n> {ex.Message}"),
                     cancellationToken);
             }
 

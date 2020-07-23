@@ -5,7 +5,11 @@ namespace Dogger.Infrastructure.Docker.Yml
 {
     public class DockerComposeSyntaxErrorException : Exception
     {
-        public DockerComposeSyntaxErrorException(SyntaxErrorException ex) : base("A Docker Compose YML syntax error was encountered.", ex)
+        public DockerComposeSyntaxErrorException(SemanticErrorException ex) : base("A Docker Compose YML semantic error was encountered: " + ex.Message, ex)
+        {
+        }
+
+        public DockerComposeSyntaxErrorException(SyntaxErrorException ex) : base("A Docker Compose YML syntax error was encountered: " + ex.Message, ex)
         {
         }
     }
