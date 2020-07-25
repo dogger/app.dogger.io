@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using Dogger.Infrastructure.Database;
 using Dogger.Infrastructure.Logging;
 using FluffySpoon.AspNet.NGrok;
+using Microsoft.AspNetCore.Http;
+using NSubstitute;
 using Serilog;
 
 namespace Dogger
@@ -105,6 +107,7 @@ namespace Dogger
         {
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton(configuration);
+            serviceCollection.AddSingleton(Substitute.For<IHttpContextAccessor>());
 
             IocRegistry.Register(
                 serviceCollection,
