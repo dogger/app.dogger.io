@@ -20,10 +20,14 @@ namespace Dogger.Controllers.Webhooks.Handlers
 
         public bool CanHandle(WebhookPayload payload)
         {
-            if (payload.PullRequest?.Draft == true)
+            var pullRequest = payload.PullRequest;
+            if (pullRequest == null)
                 return false;
 
-            if (payload.PullRequest?.State != "open")
+            if (pullRequest.Draft)
+                return false;
+
+            if (pullRequest.State != "open")
                 return false;
 
             return

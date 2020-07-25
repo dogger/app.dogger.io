@@ -116,6 +116,8 @@ namespace Dogger
                 options.KnownProxies.Clear();
             });
 
+            services.AddHttpContextAccessor();
+
             var mvcBuilder = services
                 .AddMvcCore()
                 .AddJsonOptions(x =>

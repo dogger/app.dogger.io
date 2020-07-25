@@ -66,7 +66,7 @@ namespace Dogger.Domain.Commands.PullDog.UpsertPullRequestComment
                     x.User.Id == 64746321) :
                 null;
 
-            var requestContent = $"\\*Ruff\\* :dog: {request.Content}\n\n{RenderWhatIsThisSection()}{RenderCommandsSection()}{RenderDebugSection(configuration, request.PullRequest)}";
+            var requestContent = $"\\*Ruff\\* :dog: {request.Content}\n\n{RenderWhatIsThisSection()}{RenderCommandsSection()}{RenderDebugSection(configuration, request)}";
             if (existingBotComment == null)
             {
                 await client
@@ -93,17 +93,17 @@ namespace Dogger.Domain.Commands.PullDog.UpsertPullRequestComment
 
         private static string RenderDebugSection(
             ConfigurationFile? configuration,
-            PullDogPullRequest pullRequest)
+            UpsertPullRequestCommentCommand request)
         {
             var configurationJson = JsonSerializer.Serialize(
                 configuration ?? new ConfigurationFile(), 
                 JsonFactory.GetOptions());
 
             var configurationOverrideJson = JsonSerializer.Serialize(
-                pullRequest.ConfigurationOverride ?? new ConfigurationFileOverride(), 
+                request.PullRequest.ConfigurationOverride ?? new ConfigurationFileOverride(), 
                 JsonFactory.GetOptions());
 
-            return GitHubCommentHelper.RenderSpoiler("Troubleshooting", $"Need help? Don't hesitate to <a href=\"https://github.com/dogger/app.dogger.io/issues/new\">file an issue</a> in our repository.{GitHubCommentHelper.RenderSpoiler("Configuration", $"**Initial**\n{GitHubCommentHelper.RenderCodeBlock("json", configurationJson)}\n\n**Lazy override**\n{GitHubCommentHelper.RenderCodeBlock("json", configurationOverrideJson)}")}");
+            return GitHubCommentHelper.RenderSpoiler("Troubleshooting", $"Need help? Don't hesitate to <a href=\"https://github.com/dogger/app.dogger.io/issues/new\">file an issue</a> in our repository.{GitHubCommentHelper.RenderSpoiler("Configuration", $"**Initial**\n{GitHubCommentHelper.RenderCodeBlock("json", configurationJson)}\n\n**Lazy override**\n{GitHubCommentHelper.RenderCodeBlock("json", configurationOverrideJson)}")}\n\n**Trace ID**\n{request.TraceId ?? "No trace ID"}");
         }
 
         private static string RenderCommandsSection()

@@ -34,6 +34,7 @@ using Dogger.Infrastructure.GitHub;
 using Dogger.Infrastructure.IO;
 using Dogger.Infrastructure.Mediatr;
 using Dogger.Infrastructure.Mediatr.Database;
+using Dogger.Infrastructure.Mediatr.Tracing;
 using Dogger.Infrastructure.Secrets;
 using Dogger.Infrastructure.Ssh;
 using Dogger.Infrastructure.Time;
@@ -322,6 +323,7 @@ namespace Dogger.Infrastructure
 
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(DatabaseTransactionBehavior<,>));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TracingBehavior<,>));
         }
 
         private static void ConfigureAutoMapper(IServiceCollection services)

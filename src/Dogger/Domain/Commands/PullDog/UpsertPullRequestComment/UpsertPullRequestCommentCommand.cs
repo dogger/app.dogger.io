@@ -1,9 +1,10 @@
 ﻿using Dogger.Domain.Models;
+using Dogger.Infrastructure.Mediatr.Tracing;
 using MediatR;
 
 namespace Dogger.Domain.Commands.PullDog.UpsertPullRequestComment
 {
-    public class UpsertPullRequestCommentCommand : IRequest
+    public class UpsertPullRequestCommentCommand : IRequest, ITraceableRequest
     {
         public PullDogPullRequest PullRequest { get; }
 
@@ -16,5 +17,7 @@ namespace Dogger.Domain.Commands.PullDog.UpsertPullRequestComment
             this.PullRequest = pullRequest;
             this.Content = content;
         }
+
+        public string? TraceId { get; set; }
     }
 }
