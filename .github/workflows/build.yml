@@ -89,6 +89,8 @@ jobs:
             -e DOGFEED_Aws__SecretAccessKey="${{ secrets.AWS_SECRET_ACCESS_KEY }}"\
             -e DOGFEED_Aws__AccessKeyId="${{ secrets.AWS_ACCESS_KEY_ID }}"\
             -e DOGFEED_Aws__LightsailPrivateKeyPem="${{ secrets.AWS_LIGHTSAIL_PRIVATE_KEY_PEM }}"\
+            -e DOGFEED_Stripe__PublishableKey="${{ secrets.STRIPE_PUBLISHABLE_KEY_LIVE }}"\
+            -e DOGFEED_Stripe__SecretKey="${{ secrets.STRIPE_SECRET_KEY_LIVE }}"\
             -e DOGFEED_Dogfeed__DockerHub__Username="ffMathy"\
             -e DOGFEED_Dogfeed__DockerHub__Password="${{ secrets.GITHUB_TOKEN }}"\
             -e DOGFEED_Dogfeed__DockerComposeYmlFilePaths__0="/src/docker-compose.deploy.yml"\
