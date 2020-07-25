@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
+using Serilog;
 using Serilog.Context;
 
 namespace Dogger.Controllers.Webhooks
@@ -33,6 +34,7 @@ namespace Dogger.Controllers.Webhooks
         private const string sha1Prefix = "sha1=";
 
         private readonly IMediator mediator;
+        private readonly ILogger logger;
         private readonly IEnumerable<IConfigurationPayloadHandler> configurationPayloadHandlers;
         private readonly IEnumerable<IWebhookPayloadHandler> genericPayloadHandlers;
 
@@ -43,12 +45,14 @@ namespace Dogger.Controllers.Webhooks
 
         public WebhooksController(
             IMediator mediator,
+            ILogger logger,
             IEnumerable<IConfigurationPayloadHandler> configurationPayloadHandlers,
             IEnumerable<IWebhookPayloadHandler> genericPayloadHandlers,
             IOptionsMonitor<GitHubOptions> gitHubOptionsMonitor,
             DataContext dataContext)
         {
             this.mediator = mediator;
+            this.logger = logger;
             this.configurationPayloadHandlers = configurationPayloadHandlers;
             this.genericPayloadHandlers = genericPayloadHandlers;
             this.gitHubOptionsMonitor = gitHubOptionsMonitor;
@@ -65,7 +69,10 @@ namespace Dogger.Controllers.Webhooks
             if (!Request.Headers.TryGetValue("X-GitHub-Delivery", out var correlationIdValues))
                 return BadRequest("No correlation ID was found.");
 
-            UpdateAspNetTraceIdentifierToMatchCorrelationId(correlationIdValues);
+            var correlationId = correlationIdValues.Single();
+            this.HttpContext.TraceIdentifier = correlationId;
+
+            this.logger.Debug("Received webhook with correlation ID {GitHubCorrelationId} and payload {@Payload}.", correlationId, payload);
 
             if (!await IsGithubPushAllowedAsync())
                 return NotFound();
@@ -76,12 +83,6 @@ namespace Dogger.Controllers.Webhooks
                 async () => await HandlePayloadAsync(payload),
                 default,
                 cancellationToken);
-        }
-
-        private void UpdateAspNetTraceIdentifierToMatchCorrelationId(StringValues correlationIdValues)
-        {
-            var correlationId = correlationIdValues.Single();
-            this.HttpContext.TraceIdentifier = correlationId;
         }
 
         private async Task<IActionResult> HandlePayloadAsync(WebhookPayload payload)

@@ -24,6 +24,7 @@ using Dogger.Infrastructure.AspNet.Health;
 using FluffySpoon.AspNet.NGrok;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Serilog;
 
 namespace Dogger
 {
@@ -170,6 +171,8 @@ namespace Dogger
         public static void Configure(
             IApplicationBuilder app)
         {
+            app.UseSerilogRequestLogging();
+
             app.UseForwardedHeaders();
 
             app.UseNGrokAutomaticUrlDetection();
