@@ -85,6 +85,7 @@ jobs:
           docker run\
             -v $(pwd):/src\
             -e DOGFEED=true\
+            -e DOGFEED_Sql__ConnectionString="Server=dogger-mssql.cilzcbhfqhkd.eu-west-1.rds.amazonaws.com,1433;Database=dogger;User Id=admin;Password=${{ secrets.SQL_PASSWORD }}"\
             -e DOGFEED_Aws__SecretAccessKey="${{ secrets.AWS_SECRET_ACCESS_KEY }}"\
             -e DOGFEED_Aws__AccessKeyId="${{ secrets.AWS_ACCESS_KEY_ID }}"\
             -e DOGFEED_Aws__LightsailPrivateKeyPem="${{ secrets.AWS_LIGHTSAIL_PRIVATE_KEY_PEM }}"\
