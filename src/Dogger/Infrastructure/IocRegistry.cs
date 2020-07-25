@@ -60,15 +60,15 @@ namespace Dogger.Infrastructure
             IServiceCollection services,
             IConfiguration configuration)
         {
+            ConfigureOptions(
+                services,
+                configuration);
+
             ConfigureDebugHelpers(
                 services, 
                 configuration);
 
             ConfigureInfrastructure(
-                services, 
-                configuration);
-
-            ConfigureOptions(
                 services, 
                 configuration);
 
@@ -134,8 +134,12 @@ namespace Dogger.Infrastructure
         {
             services.AddTransient<IGitHubClient>(p =>
             {
-                var privateKey = configuration["GitHub:PullDog:PrivateKey"]
-                    .Replace("\\n", "\n", StringComparison.InvariantCulture);
+                var pullDogOptions = GetPullDogOptions(configuration);
+
+                var privateKey = 
+                    pullDogOptions?.PrivateKey?.Replace("\\n", "\n", StringComparison.InvariantCulture) ??
+                    throw new InvalidOperationException("Could not find private key");
+
                 if (string.IsNullOrWhiteSpace(privateKey))
                 {
                     return new GitHubClient(new ProductHeaderValue("pull-dog"));
@@ -149,19 +153,33 @@ namespace Dogger.Infrastructure
             services.AddTransient<IPullDogFileCollectorFactory, PullDogFileCollectorFactory>();
         }
 
+        private static GitHubPullDogOptions GetPullDogOptions(IConfiguration configuration)
+        {
+            var options = GetRequiredOption<GitHubOptions>(configuration);
+            if (options.PullDog == null)
+            {
+                throw new InvalidOperationException("Could not find GitHub Pull Dog options.");
+            }
+
+            return options.PullDog;
+        }
+
         [ExcludeFromCodeCoverage]
         private static IGitHubClient ConstructGitHubClientWithPrivateKey(IConfiguration configuration, string privateKey)
         {
-            var privateKeySource = new StringPrivateKeySource(
-                privateKey);
+            var pullDogOptions = GetPullDogOptions(configuration);
+
+            var appIdentifier = 
+                pullDogOptions.AppIdentifier ??
+                throw new InvalidOperationException("Could not find app identifier.");
+
+            var privateKeySource = new StringPrivateKeySource(privateKey);
 
             var tokenFactory = new GitHubJwtFactory(
                 privateKeySource,
                 new GitHubJwtFactoryOptions()
                 {
-                    AppIntegrationId = int.Parse(
-                        configuration["GitHub:PullDog:AppIdentifier"],
-                        CultureInfo.InvariantCulture),
+                    AppIntegrationId = appIdentifier,
                     ExpirationSeconds = 60 * 5
                 });
 
@@ -178,7 +196,13 @@ namespace Dogger.Infrastructure
             IServiceCollection services, 
             IConfiguration configuration)
         {
-            services.AddSingleton<ISlackClient>(_ => new SlackClient(configuration["Slack:IncomingUrl"]));
+            var slackSettings = GetRequiredOption<SlackOptions>(configuration);
+
+            var incomingUrl = slackSettings?.IncomingUrl;
+            if (incomingUrl == null)
+                throw new InvalidOperationException("Could not find a Slack incoming webhook URL.");
+
+            services.AddSingleton<ISlackClient>(_ => new SlackClient(incomingUrl));
         }
 
         private static void ConfigureFlurl(IServiceCollection services)
@@ -198,17 +222,7 @@ namespace Dogger.Infrastructure
         {
             void Configure<TOptions>() where TOptions : class
             {
-                const string optionsSuffix = "Options";
-
-                var configurationKey = typeof(TOptions).Name;
-                if (configurationKey.EndsWith(optionsSuffix, StringComparison.InvariantCulture))
-                {
-                    configurationKey = configurationKey.Replace(
-                        optionsSuffix, 
-                        string.Empty, 
-                        StringComparison.InvariantCulture);
-                }
-
+                var configurationKey = GetConfigurationKeyFromOptions<TOptions>();
                 services.Configure<TOptions>(configuration.GetSection(configurationKey));
             }
 
@@ -222,6 +236,22 @@ namespace Dogger.Infrastructure
             Configure<StripeOptions>();
             Configure<EncryptionOptions>();
             Configure<Auth0Options>();
+        }
+
+        private static string GetConfigurationKeyFromOptions<TOptions>() where TOptions : class
+        {
+            const string optionsSuffix = "Options";
+
+            var configurationKey = typeof(TOptions).Name;
+            if (configurationKey.EndsWith(optionsSuffix, StringComparison.InvariantCulture))
+            {
+                configurationKey = configurationKey.Replace(
+                    optionsSuffix,
+                    string.Empty,
+                    StringComparison.InvariantCulture);
+            }
+
+            return configurationKey;
         }
 
         private static void ConfigureDebugHelpers(IServiceCollection services, IConfiguration configuration)
@@ -241,16 +271,32 @@ namespace Dogger.Infrastructure
             IServiceCollection services, 
             IConfiguration configuration)
         {
-            services.AddSingleton<IStripeClient>(p =>
-                new StripeClient(
-                    apiKey: configuration["Stripe:SecretKey"],
-                    clientId: configuration["Stripe:PublishableKey"]));
-
             services.AddSingleton<CustomerService>();
             services.AddSingleton<PaymentMethodService>();
             services.AddSingleton<SubscriptionService>();
             services.AddSingleton<CardService>();
             services.AddSingleton<WebhookEndpointService>();
+
+            var stripeConfiguration = GetRequiredOption<StripeOptions>(configuration);
+
+            var secretKey = stripeConfiguration?.SecretKey;
+            var publishableKey = stripeConfiguration?.PublishableKey;
+
+            if (secretKey == null || publishableKey == null)
+                throw new InvalidOperationException("No Stripe secret was found.");
+
+            services.AddSingleton<IStripeClient>(p =>
+                new StripeClient(
+                    apiKey: secretKey,
+                    clientId: publishableKey));
+        }
+
+        private static TOptions GetRequiredOption<TOptions>(IConfiguration configuration) where TOptions : class
+        {
+            var key = GetConfigurationKeyFromOptions<TOptions>();
+            return configuration
+                .GetSection(key)
+                .Get<TOptions>();
         }
 
         [ExcludeFromCodeCoverage]
@@ -258,11 +304,15 @@ namespace Dogger.Infrastructure
             IServiceCollection services,
             IConfiguration configuration)
         {
+            var sqlOptions = GetRequiredOption<SqlOptions>(configuration);
+
+            var connectionString = sqlOptions?.ConnectionString;
+            if (connectionString == null)
+                throw new InvalidOperationException("SQL connection string was not found.");
+
             services.AddDbContextPool<DataContext>(
                 optionsBuilder =>
                 {
-                    var connectionString = configuration["Sql:ConnectionString"];
-
                     var hasConnectionString = !string.IsNullOrEmpty(connectionString);
                     if (hasConnectionString)
                     {

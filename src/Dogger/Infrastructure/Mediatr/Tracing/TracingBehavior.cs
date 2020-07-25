@@ -21,7 +21,7 @@ namespace Dogger.Infrastructure.Mediatr.Tracing
         {
             if (request is ITraceableRequest traceableRequest && traceableRequest.TraceId == null)
             {
-                traceableRequest.TraceId = this.httpContextAccessor.HttpContext.TraceIdentifier;
+                traceableRequest.TraceId = this.httpContextAccessor.HttpContext?.TraceIdentifier;
             }
 
             return await next();
