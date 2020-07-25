@@ -57,7 +57,7 @@
     <PackageReference Include="nsubstitute" Version="4.2.2" />
     <PackageReference Include="Octokit" Version="0.48.0" />
     <PackageReference Include="Polly" Version="7.2.1" />
-    <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="serilog.sinks.elasticsearch" Version="8.2.0" />
     <PackageReference Include="Serilog.Sinks.Slack.Core" Version="0.1.5-beta" />
     <PackageReference Include="SerilogAnalyzer" Version="0.15.0" />
