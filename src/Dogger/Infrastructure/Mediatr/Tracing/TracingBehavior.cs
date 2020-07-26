@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog.Context;
 
 namespace Dogger.Infrastructure.Mediatr.Tracing
 {
@@ -22,6 +23,11 @@ namespace Dogger.Infrastructure.Mediatr.Tracing
             if (request is ITraceableRequest traceableRequest && traceableRequest.TraceId == null)
             {
                 traceableRequest.TraceId = this.httpContextAccessor.HttpContext?.TraceIdentifier;
+
+                using (LogContext.PushProperty("RequestTraceId", traceableRequest.TraceId))
+                {
+                    return await next();
+                }
             }
 
             return await next();
