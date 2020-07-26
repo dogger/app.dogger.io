@@ -8,10 +8,12 @@ using Dogger.Domain.Commands.PullDog.AddPullDogToGitHubRepositories;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
+using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using Serilog;
 
 namespace Dogger.Tests.Controllers.Webhooks
 {
@@ -25,7 +27,10 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            var handler = new InstallationConfigurationPayloadHandler(fakeMediator);
+            var handler = new InstallationConfigurationPayloadHandler(
+                fakeMediator,
+                Substitute.For<IGitHubClientFactory>(),
+                Substitute.For<ILogger>());
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -53,7 +58,10 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            var handler = new InstallationConfigurationPayloadHandler(fakeMediator);
+            var handler = new InstallationConfigurationPayloadHandler(
+                fakeMediator,
+                Substitute.For<IGitHubClientFactory>(),
+                Substitute.For<ILogger>());
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -81,7 +89,10 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            var handler = new InstallationConfigurationPayloadHandler(fakeMediator);
+            var handler = new InstallationConfigurationPayloadHandler(
+                fakeMediator,
+                Substitute.For<IGitHubClientFactory>(),
+                Substitute.For<ILogger>());
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -100,7 +111,10 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            var handler = new InstallationConfigurationPayloadHandler(fakeMediator);
+            var handler = new InstallationConfigurationPayloadHandler(
+                fakeMediator,
+                Substitute.For<IGitHubClientFactory>(),
+                Substitute.For<ILogger>());
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -124,7 +138,10 @@ namespace Dogger.Tests.Controllers.Webhooks
                 .Send(Arg.Is<GetPullDogSettingsByGitHubInstallationIdQuery>(args => args.InstallationId == 1338))
                 .Returns(settings);
 
-            var handler = new InstallationConfigurationPayloadHandler(fakeMediator);
+            var handler = new InstallationConfigurationPayloadHandler(
+                fakeMediator,
+                Substitute.For<IGitHubClientFactory>(),
+                Substitute.For<ILogger>());
 
             //Act
             await handler.HandleAsync(new WebhookPayload()
@@ -169,7 +186,10 @@ namespace Dogger.Tests.Controllers.Webhooks
                 .Send(Arg.Is<GetPullDogSettingsByGitHubInstallationIdQuery>(args => args.InstallationId == 1338))
                 .Returns(settings);
 
-            var handler = new InstallationConfigurationPayloadHandler(fakeMediator);
+            var handler = new InstallationConfigurationPayloadHandler(
+                fakeMediator,
+                Substitute.For<IGitHubClientFactory>(),
+                Substitute.For<ILogger>());
 
             //Act
             await handler.HandleAsync(new WebhookPayload()
@@ -215,7 +235,10 @@ namespace Dogger.Tests.Controllers.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            var handler = new InstallationConfigurationPayloadHandler(fakeMediator);
+            var handler = new InstallationConfigurationPayloadHandler(
+                fakeMediator,
+                Substitute.For<IGitHubClientFactory>(),
+                Substitute.For<ILogger>());
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
