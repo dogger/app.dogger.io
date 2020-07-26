@@ -171,8 +171,6 @@ namespace Dogger
         public static void Configure(
             IApplicationBuilder app)
         {
-            app.UseSerilogRequestLogging();
-
             app.UseForwardedHeaders();
 
             app.UseNGrokAutomaticUrlDetection();
