@@ -6,7 +6,8 @@ using MediatR;
 
 namespace Dogger.Controllers.Webhooks.Handlers
 {
-    public class PullRequestReadyPayloadHandler : IWebhookPayloadHandler
+    public class 
+        PullRequestReadyPayloadHandler : IWebhookPayloadHandler
     {
         private readonly IMediator mediator;
 

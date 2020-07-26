@@ -55,16 +55,6 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
                     repository,
                     request.PullRequestHandle),
                 cancellationToken);
-            if (request.ConfigurationOverride != null)
-            {
-                await this.mediator.Send(
-                    new OverrideConfigurationForPullRequestCommand(
-                        pullRequest.Id,
-                        request.ConfigurationOverride),
-                    cancellationToken);
-
-                pullRequest.ConfigurationOverride = request.ConfigurationOverride;
-            }
 
             var configuration = await this.mediator.Send(
                 new GetConfigurationForPullRequestQuery(pullRequest),

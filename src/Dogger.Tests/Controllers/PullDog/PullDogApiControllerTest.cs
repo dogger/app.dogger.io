@@ -1,20 +1,33 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Dogger.Controllers.PullDog.Api;
 using Dogger.Domain.Commands.PullDog.ChangePullDogPlan;
+using Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance;
+using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
+using Dogger.Domain.Commands.PullDog.OverrideConfigurationForPullRequest;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
 using Dogger.Domain.Models;
-using Dogger.Domain.Queries.PullDog.GetPullRequestHandleFromCommitReference;
+using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
+using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromCommitReference;
 using Dogger.Domain.Queries.PullDog.GetRepositoriesForUser;
 using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
+using Dogger.Domain.Services.Provisioning;
+using Dogger.Domain.Services.Provisioning.Flows;
+using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Encryption;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using Octokit;
+using Slack.Webhooks;
+using RepositoriesResponse = Dogger.Controllers.PullDog.Api.RepositoriesResponse;
+using User = Dogger.Domain.Models.User;
 
 namespace Dogger.Tests.Controllers.PullDog
 {
@@ -197,9 +210,9 @@ namespace Dogger.Tests.Controllers.PullDog
                 });
 
             fakeMediator
-                .Send(Arg.Is<GetPullRequestHandleFromCommitReferenceQuery>(args =>
+                .Send(Arg.Is<GetPullRequestDetailsFromCommitReferenceQuery>(args =>
                     args.CommitReference == "some-commit-reference"))
-                .Returns((string)null);
+                .Returns((PullRequest)null);
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -224,6 +237,98 @@ namespace Dogger.Tests.Controllers.PullDog
             //Assert
             Assert.IsNotNull(result);
         }
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public async Task Provision_ConfigurationOverridePresentInRequest_UpdatesPullRequestConfigurationOverride()
+        {
+            //Arrange
+            var fakePullDogPullRequest = new PullDogPullRequest();
+
+            var fakeMediator = Substitute.For<IMediator>();
+            fakeMediator
+                .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
+                    args.RepositoryHandle == "some-repository-handle"))
+                .Returns(new PullDogRepository()
+                {
+                    PullDogSettings = new PullDogSettings()
+                });
+
+            fakeMediator
+                .Send(Arg.Is<EnsurePullDogPullRequestCommand>(args =>
+                    args.PullRequestHandle == "1337"))
+                .Returns(fakePullDogPullRequest);
+
+            fakeMediator
+                .Send(Arg.Is<GetPullRequestDetailsFromCommitReferenceQuery>(args =>
+                    args.CommitReference == "some-commit-reference"))
+                .Returns(new PullRequest(
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    1337,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default));
+
+            var fakeMapper = Substitute.For<IMapper>();
+
+            var fakeAesEncryptionHelper = Substitute.For<IAesEncryptionHelper>();
+            fakeAesEncryptionHelper
+                .DecryptAsync(Arg.Any<byte[]>())
+                .Returns("dummy");
+
+            var controller = new PullDogApiController(
+                fakeMediator,
+                fakeMapper,
+                fakeAesEncryptionHelper);
+
+            //Act
+            var result = await controller.Provision(new ProvisionRequest()
+            {
+                RepositoryHandle = "some-repository-handle",
+                CommitReference = "some-commit-reference",
+                PullRequestHandle = "1337",
+                ApiKey = "dummy",
+                Configuration = new ConfigurationFileOverride()
+            }) as OkObjectResult;
+
+            //Assert
+            Assert.IsNotNull(result);
+
+            await fakeMediator
+                .Received(1)
+                .Send(Arg.Any<OverrideConfigurationForPullRequestCommand>());
+        }
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
@@ -240,9 +345,46 @@ namespace Dogger.Tests.Controllers.PullDog
                 });
 
             fakeMediator
-                .Send(Arg.Is<GetPullRequestHandleFromCommitReferenceQuery>(args =>
+                .Send(Arg.Is<GetPullRequestDetailsFromCommitReferenceQuery>(args =>
                     args.CommitReference == "some-commit-reference"))
-                .Returns("some-inferred-pull-request-handle");
+                .Returns(new PullRequest(
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    1337,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default,
+                    default));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -262,15 +404,15 @@ namespace Dogger.Tests.Controllers.PullDog
                 RepositoryHandle = "some-repository-handle",
                 CommitReference = "some-commit-reference",
                 ApiKey = "dummy"
-            }) as OkResult;
+            });
 
             //Assert
-            Assert.IsNotNull(result);
+            Assert.IsNotNull(result as OkObjectResult);
 
             await fakeMediator
                 .Received(1)
                 .Send(Arg.Is<ProvisionPullDogEnvironmentCommand>(args =>
-                    args.PullRequestHandle == "some-inferred-pull-request-handle"));
+                    args.PullRequestHandle == "1337"));
         }
 
         [TestMethod]

@@ -11,8 +11,6 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
         public string PullRequestHandle { get; }
         public PullDogRepository Repository { get; }
 
-        public ConfigurationFileOverride? ConfigurationOverride { get; set; }
-
         public ProvisionPullDogEnvironmentCommand(
             string pullRequestHandle,
             PullDogRepository repository)

@@ -1,10 +1,14 @@
-﻿using System.Linq;
+﻿using System;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Dogger.Domain.Commands.PullDog.ChangePullDogPlan;
+using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
+using Dogger.Domain.Commands.PullDog.OverrideConfigurationForPullRequest;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
-using Dogger.Domain.Queries.PullDog.GetPullRequestHandleFromCommitReference;
+using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromCommitReference;
 using Dogger.Domain.Queries.PullDog.GetRepositoriesForUser;
 using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
 using Dogger.Infrastructure.Encryption;
@@ -66,22 +70,35 @@ namespace Dogger.Controllers.PullDog.Api
             if (decryptedKey != request.ApiKey)
                 return Unauthorized("Bad API key.");
 
-            var pullRequestHandle = 
-                request.PullRequestHandle ?? 
-                await this.mediator.Send(new GetPullRequestHandleFromCommitReferenceQuery(
+            var gitHubPullRequest = await this.mediator.Send(
+                new GetPullRequestDetailsFromCommitReferenceQuery(
                     repository,
                     request.CommitReference!));
-            if (pullRequestHandle == null)
-                return NotFound("An open pull request could not be found for the given parameters.");
+            if (gitHubPullRequest == null)
+                return NotFound("Repository was found, but the pull request was not.");
 
-            await this.mediator.Send(new ProvisionPullDogEnvironmentCommand(
-                pullRequestHandle,
-                repository)
+            if (request.Configuration != null)
             {
-                ConfigurationOverride = request.Configuration
-            });
+                var pullDogPullRequest = await this.mediator.Send(
+                    new EnsurePullDogPullRequestCommand(
+                        repository,
+                        request.PullRequestHandle!));
 
-            return Ok();
+                await this.mediator.Send(
+                    new OverrideConfigurationForPullRequestCommand(
+                        pullDogPullRequest.Id,
+                        request.Configuration));
+            }
+
+            if (gitHubPullRequest.Draft)
+                return Ok("The pull request is a draft, so no environment will be provisioned.");
+
+            await this.mediator.Send(
+                new ProvisionPullDogEnvironmentCommand(
+                    gitHubPullRequest.Number.ToString(CultureInfo.InvariantCulture),
+                    repository));
+
+            return Ok("The environment is being provisioned.");
         }
 
         [HttpGet]

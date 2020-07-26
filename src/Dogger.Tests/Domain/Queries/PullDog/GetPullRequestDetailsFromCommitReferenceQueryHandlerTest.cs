@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
-using Dogger.Domain.Queries.PullDog.GetPullRequestHandleFromCommitReference;
+using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromCommitReference;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,7 +12,7 @@ using User = Octokit.User;
 namespace Dogger.Tests.Domain.Queries.PullDog
 {
     [TestClass]
-    public class GetPullRequestHandleFromCommitReferenceQueryHandlerTest
+    public class GetPullRequestDetailsFromCommitReferenceQueryHandlerTest
     {
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
@@ -21,13 +21,13 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             //Arrange
             var fakeGitHubClientFactory = Substitute.For<IGitHubClientFactory>();
 
-            var handler = new GetPullRequestHandleFromCommitReferenceQueryHandler(
+            var handler = new GetPullRequestDetailsFromCommitReferenceQueryHandler(
                 fakeGitHubClientFactory);
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await handler.Handle(
-                    new GetPullRequestHandleFromCommitReferenceQuery(
+                    new GetPullRequestDetailsFromCommitReferenceQuery(
                         new PullDogRepository()
                         {
                             PullDogSettings = new PullDogSettings()
@@ -132,7 +132,6 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                         default,
                         default,
                         default,
-                        1339,
                         default,
                         default,
                         default,
@@ -144,6 +143,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                         default,
                         default,
                         default,
+                        new PullRequest(1339), 
                         default,
                         default,
                         default,
@@ -154,12 +154,12 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                         default)
                 }));
 
-            var handler = new GetPullRequestHandleFromCommitReferenceQueryHandler(
+            var handler = new GetPullRequestDetailsFromCommitReferenceQueryHandler(
                 fakeGitHubClientFactory);
 
             //Act
-            var pullRequestHandle = await handler.Handle(
-                new GetPullRequestHandleFromCommitReferenceQuery(
+            var pullRequest = await handler.Handle(
+                new GetPullRequestDetailsFromCommitReferenceQuery(
                     new PullDogRepository()
                     {
                         Handle = "1338",
@@ -170,7 +170,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 default);
 
             //Assert
-            Assert.AreEqual("1339", pullRequestHandle);
+            Assert.AreEqual(1339, pullRequest.Number);
         }
     }
 }

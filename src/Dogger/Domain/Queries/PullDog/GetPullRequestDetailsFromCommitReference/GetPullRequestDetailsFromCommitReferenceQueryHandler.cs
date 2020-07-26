@@ -7,19 +7,19 @@ using Dogger.Infrastructure.GitHub;
 using MediatR;
 using Octokit;
 
-namespace Dogger.Domain.Queries.PullDog.GetPullRequestHandleFromCommitReference
+namespace Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromCommitReference
 {
-    public class GetPullRequestHandleFromCommitReferenceQueryHandler : IRequestHandler<GetPullRequestHandleFromCommitReferenceQuery, string?>
+    public class GetPullRequestDetailsFromCommitReferenceQueryHandler : IRequestHandler<GetPullRequestDetailsFromCommitReferenceQuery, PullRequest?>
     {
         private readonly IGitHubClientFactory gitHubClientFactory;
 
-        public GetPullRequestHandleFromCommitReferenceQueryHandler(
+        public GetPullRequestDetailsFromCommitReferenceQueryHandler(
             IGitHubClientFactory gitHubClientFactory)
         {
             this.gitHubClientFactory = gitHubClientFactory;
         }
 
-        public async Task<string?> Handle(GetPullRequestHandleFromCommitReferenceQuery request, CancellationToken cancellationToken)
+        public async Task<PullRequest?> Handle(GetPullRequestDetailsFromCommitReferenceQuery request, CancellationToken cancellationToken)
         {
             var pullDogRepository = request.Repository;
             var installationId = pullDogRepository.GitHubInstallationId;
@@ -33,8 +33,8 @@ namespace Dogger.Domain.Queries.PullDog.GetPullRequestHandleFromCommitReference
 
             var pullRequestsResponse = await client.Search.SearchIssues(
                 new SearchIssuesRequest($"{request.CommitReference} type:pr state:open repo:{repository.Owner.Login}/{repository.Name}"));
-            var pullRequest = pullRequestsResponse.Items.SingleOrDefault();
-            return pullRequest.Number.ToString(CultureInfo.InvariantCulture);
+            var issue = pullRequestsResponse.Items.SingleOrDefault();
+            return issue?.PullRequest;
         }
     }
 }

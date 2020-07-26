@@ -1,14 +1,15 @@
 ﻿using Dogger.Domain.Models;
 using MediatR;
+using Octokit;
 
-namespace Dogger.Domain.Queries.PullDog.GetPullRequestHandleFromCommitReference
+namespace Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromCommitReference
 {
-    public class GetPullRequestHandleFromCommitReferenceQuery : IRequest<string?>
+    public class GetPullRequestDetailsFromCommitReferenceQuery : IRequest<PullRequest?>
     {
         public PullDogRepository Repository { get; }
         public string CommitReference { get; }
 
-        public GetPullRequestHandleFromCommitReferenceQuery(
+        public GetPullRequestDetailsFromCommitReferenceQuery(
             PullDogRepository repository,
             string commitReference)
         {
