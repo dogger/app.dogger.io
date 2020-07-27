@@ -30,7 +30,7 @@
     <PackageReference Include="FluffySpoon.AspNet.NGrok" Version="1.75.0" />
     <PackageReference Include="Flurl.Http" Version="2.4.2" />
     <PackageReference Include="GitHubJwt" Version="0.0.4" />
-    <PackageReference Include="hangfire" Version="1.7.11" />
+    <PackageReference Include="hangfire" Version="1.7.12" />
     <PackageReference Include="Macross.Json.Extensions" Version="1.5.0" />
     <PackageReference Include="mediatr" Version="8.0.2" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
