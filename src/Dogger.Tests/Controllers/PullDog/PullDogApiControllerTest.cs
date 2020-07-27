@@ -19,6 +19,7 @@ using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Encryption;
+using Dogger.Infrastructure.GitHub.Octokit;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -261,44 +262,11 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetPullRequestDetailsFromCommitReferenceQuery>(args =>
                     args.CommitReference == "some-commit-reference"))
-                .Returns(new PullRequest(
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    1337,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default));
+                .Returns(new OctokitPullRequestBuilder()
+                    .WithNumber(1337)
+                    .WithState(ItemState.Open)
+                    .WithUser(new Octokit.User())
+                    .Build());
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -347,44 +315,11 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetPullRequestDetailsFromCommitReferenceQuery>(args =>
                     args.CommitReference == "some-commit-reference"))
-                .Returns(new PullRequest(
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    1337,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default,
-                    default));
+                .Returns(new OctokitPullRequestBuilder()
+                    .WithNumber(1337)
+                    .WithState(ItemState.Open)
+                    .WithUser(new Octokit.User())
+                    .Build());
 
             var fakeMapper = Substitute.For<IMapper>();
 

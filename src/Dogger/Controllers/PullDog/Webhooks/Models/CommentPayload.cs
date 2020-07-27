@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
-namespace Dogger.Controllers.Webhooks.Models
+namespace Dogger.Controllers.PullDog.Webhooks.Models
 {
     [ExcludeFromCodeCoverage]
     public class CommentPayload

@@ -1,4 +1,4 @@
-﻿namespace Dogger.Controllers.Webhooks.Models
+﻿namespace Dogger.Controllers.PullDog.Webhooks.Models
 {
     public class InstallationPayload
     {

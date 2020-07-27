@@ -2,18 +2,23 @@
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using MediatR;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest
 {
     public class EnsurePullDogPullRequestCommandHandler : IRequestHandler<EnsurePullDogPullRequestCommand, PullDogPullRequest>
     {
         private readonly DataContext dataContext;
+        private readonly ILogger logger;
 
         public EnsurePullDogPullRequestCommandHandler(
-            DataContext dataContext)
+            DataContext dataContext,
+            ILogger logger)
         {
             this.dataContext = dataContext;
+            this.logger = logger;
         }
 
         public async Task<PullDogPullRequest> Handle(EnsurePullDogPullRequestCommand request, CancellationToken cancellationToken)
@@ -38,6 +43,11 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest
             catch (DbUpdateException ex) when (ex.IsUniqueConstraintViolation())
             {
                 return await GetExistingPullRequestAsync(request, cancellationToken);
+            }
+            catch (DbUpdateException ex) when(ex.InnerException is SqlException sqlException)
+            {
+                this.logger.Warning(ex, "An unknown SQL related error occured with number {SqlErrorNumber}.", sqlException.Number);
+                throw;
             }
         }
 

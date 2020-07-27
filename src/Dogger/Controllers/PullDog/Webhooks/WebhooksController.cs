@@ -8,8 +8,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Dogger.Controllers.Webhooks.Handlers;
-using Dogger.Controllers.Webhooks.Models;
+using Dogger.Controllers.PullDog.Webhooks.Handlers;
+using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
 using Dogger.Domain.Helpers;
 using Dogger.Domain.Models;
@@ -23,7 +23,7 @@ using Microsoft.Extensions.Primitives;
 using Serilog;
 using Serilog.Context;
 
-namespace Dogger.Controllers.Webhooks
+namespace Dogger.Controllers.PullDog.Webhooks
 {
     [Route("api/webhooks")]
     [ApiController]
@@ -66,7 +66,7 @@ namespace Dogger.Controllers.Webhooks
             WebhookPayload payload,
             CancellationToken cancellationToken)
         {
-            if (!Request.Headers.TryGetValue("X-GitHub-Delivery", out var correlationIdValues))
+            if (!this.Request.Headers.TryGetValue("X-GitHub-Delivery", out var correlationIdValues))
                 return BadRequest("No correlation ID was found.");
 
             var correlationId = correlationIdValues.Single();
@@ -77,7 +77,7 @@ namespace Dogger.Controllers.Webhooks
             if (!await IsGithubPushAllowedAsync())
                 return NotFound();
 
-            HttpContext.Items.Add(WebhookSignatureVerificationKeyName, true);
+            this.HttpContext.Items.Add(WebhookSignatureVerificationKeyName, true);
 
             return await this.dataContext.ExecuteInTransactionAsync(
                 async () => await HandlePayloadAsync(payload),
@@ -87,7 +87,7 @@ namespace Dogger.Controllers.Webhooks
 
         private async Task<IActionResult> HandlePayloadAsync(WebhookPayload payload)
         {
-            var @event = Request.Headers["X-GitHub-Event"].ToString();
+            var @event = this.Request.Headers["X-GitHub-Event"].ToString();
             if (@event == null)
                 throw new InvalidOperationException("Event is not set.");
 
@@ -188,11 +188,11 @@ namespace Dogger.Controllers.Webhooks
         [SuppressMessage("Security", "CA5350:Do Not Use Weak Cryptographic Algorithms", Justification = "GitHub uses SHA1.")]
         private async Task<bool> IsGithubPushAllowedAsync()
         {
-            Request.Headers.TryGetValue(
+            this.Request.Headers.TryGetValue(
                 "X-Hub-Signature",
                 out StringValues signatureWithPrefix);
 
-            using var reader = new StreamReader(Request.Body);
+            using var reader = new StreamReader(this.Request.Body);
             reader.BaseStream.Seek(0, SeekOrigin.Begin);
 
             var payload = await reader.ReadToEndAsync();

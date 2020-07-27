@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Dogger.Controllers.Webhooks.Models;
+using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.AddPullDogToGitHubRepositories;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
 using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
@@ -10,7 +10,7 @@ using Dogger.Infrastructure.GitHub;
 using MediatR;
 using Serilog;
 
-namespace Dogger.Controllers.Webhooks.Handlers
+namespace Dogger.Controllers.PullDog.Webhooks.Handlers
 {
     public class InstallationConfigurationPayloadHandler : IConfigurationPayloadHandler
     {
@@ -44,7 +44,7 @@ namespace Dogger.Controllers.Webhooks.Handlers
                     payload.Installation.Id));
             if (settings == null)
             {
-                var client = await gitHubClientFactory.CreateInstallationClientAsync(payload.Installation.Id);
+                var client = await this.gitHubClientFactory.CreateInstallationClientAsync(payload.Installation.Id);
                 var currentUser = await client.User.Current();
                 this.logger.Error("An error occured with user {@User}.", currentUser);
 

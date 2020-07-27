@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Dogger.Controllers.Webhooks.Models;
+using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest;
 using MediatR;
 
-namespace Dogger.Controllers.Webhooks.Handlers
+namespace Dogger.Controllers.PullDog.Webhooks.Handlers
 {
     public class PullRequestClosedPayloadHandler : IWebhookPayloadHandler
     {
@@ -27,7 +27,7 @@ namespace Dogger.Controllers.Webhooks.Handlers
 
         public async Task HandleAsync(WebhookPayloadContext context)
         {
-            await mediator.Send(
+            await this.mediator.Send(
                 new DeleteInstanceByPullRequestCommand(
                     context.Repository.Handle,
                     context.PullRequest.Handle,

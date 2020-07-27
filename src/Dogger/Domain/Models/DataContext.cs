@@ -28,7 +28,7 @@ namespace Dogger.Domain.Models
             return await strategy.ExecuteAsync(async () =>
             {
                 await using var transaction = await this.Database.BeginTransactionAsync(
-                    isolationLevel ?? IsolationLevel.RepeatableRead,
+                    isolationLevel ?? IsolationLevel.ReadUncommitted,
                     cancellationToken);
 
                 try

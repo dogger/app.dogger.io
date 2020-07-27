@@ -31,10 +31,8 @@ namespace Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest
                     x.PullDogRepository.Handle == request.RepositoryHandle &&
                     x.Handle == request.PullRequestHandle)
                 .SingleOrDefaultAsync(cancellationToken);
-            if (pullRequest == null)
-                return Unit.Value;
 
-            var instance = pullRequest.Instance;
+            var instance = pullRequest?.Instance;
             if (instance != null)
             {
                 await mediator.Send(
@@ -43,9 +41,6 @@ namespace Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest
                         request.InitiatedBy),
                     cancellationToken);
             }
-
-            this.dataContext.PullDogPullRequests.Remove(pullRequest);
-            await this.dataContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
         }

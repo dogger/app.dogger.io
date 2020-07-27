@@ -90,8 +90,12 @@ namespace Dogger.Controllers.PullDog.Api
                         request.Configuration));
             }
 
-            if (gitHubPullRequest.Draft)
-                return Ok("The pull request is a draft, so no environment will be provisioned.");
+            var isReady = PullRequestReadinessHelper.IsReady(
+                gitHubPullRequest.Draft,
+                gitHubPullRequest.State.ToString(),
+                gitHubPullRequest.User.Type?.ToString());
+            if (!isReady)
+                return NoContent();
 
             await this.mediator.Send(
                 new ProvisionPullDogEnvironmentCommand(

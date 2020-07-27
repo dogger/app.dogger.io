@@ -6,17 +6,21 @@ using System.Threading.Tasks;
 using Dogger.Infrastructure.GitHub;
 using MediatR;
 using Octokit;
+using Serilog;
 
 namespace Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromCommitReference
 {
     public class GetPullRequestDetailsFromCommitReferenceQueryHandler : IRequestHandler<GetPullRequestDetailsFromCommitReferenceQuery, PullRequest?>
     {
         private readonly IGitHubClientFactory gitHubClientFactory;
+        private readonly ILogger logger;
 
         public GetPullRequestDetailsFromCommitReferenceQueryHandler(
-            IGitHubClientFactory gitHubClientFactory)
+            IGitHubClientFactory gitHubClientFactory,
+            ILogger logger)
         {
             this.gitHubClientFactory = gitHubClientFactory;
+            this.logger = logger;
         }
 
         public async Task<PullRequest?> Handle(GetPullRequestDetailsFromCommitReferenceQuery request, CancellationToken cancellationToken)
@@ -31,8 +35,10 @@ namespace Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromCommitReference
             var repositoryId = long.Parse(pullDogRepository.Handle, CultureInfo.InvariantCulture);
             var repository = await client.Repository.Get(repositoryId);
 
-            var pullRequestsResponse = await client.Search.SearchIssues(
-                new SearchIssuesRequest($"{request.CommitReference} type:pr state:open repo:{repository.Owner.Login}/{repository.Name}"));
+            var term = $"{request.CommitReference} type:pr state:open repo:{repository.Owner.Login}/{repository.Name}";
+            this.logger.Debug("Using search term {SearchTerm}.", term);
+
+            var pullRequestsResponse = await client.Search.SearchIssues(new SearchIssuesRequest(term));
             var issue = pullRequestsResponse.Items.SingleOrDefault();
             return issue?.PullRequest;
         }

@@ -7,6 +7,7 @@ using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Octokit;
+using Serilog;
 using User = Octokit.User;
 
 namespace Dogger.Tests.Domain.Queries.PullDog
@@ -22,7 +23,8 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             var fakeGitHubClientFactory = Substitute.For<IGitHubClientFactory>();
 
             var handler = new GetPullRequestDetailsFromCommitReferenceQueryHandler(
-                fakeGitHubClientFactory);
+                fakeGitHubClientFactory,
+                Substitute.For<ILogger>());
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
@@ -155,7 +157,8 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 }));
 
             var handler = new GetPullRequestDetailsFromCommitReferenceQueryHandler(
-                fakeGitHubClientFactory);
+                fakeGitHubClientFactory,
+                Substitute.For<ILogger>());
 
             //Act
             var pullRequest = await handler.Handle(

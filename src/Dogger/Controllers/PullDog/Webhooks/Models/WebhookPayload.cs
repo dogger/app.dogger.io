@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 #pragma warning disable 8618
 
-namespace Dogger.Controllers.Webhooks.Models
+namespace Dogger.Controllers.PullDog.Webhooks.Models
 {
     [ExcludeFromCodeCoverage]
     public class WebhookPayload

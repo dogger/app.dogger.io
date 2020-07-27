@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Dogger.Controllers.Webhooks;
-using Dogger.Controllers.Webhooks.Handlers;
-using Dogger.Controllers.Webhooks.Models;
+using Dogger.Controllers.PullDog.Webhooks.Handlers;
+using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.AddPullDogToGitHubRepositories;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
 using Dogger.Domain.Models;
@@ -15,7 +14,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Serilog;
 
-namespace Dogger.Tests.Controllers.Webhooks
+namespace Dogger.Tests.Controllers.PullDog.Webhooks
 {
     [TestClass]
     public class InstallationConfigurationPayloadHandlerTest

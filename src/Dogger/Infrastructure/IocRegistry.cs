@@ -9,7 +9,7 @@ using Amazon.Extensions.NETCore.Setup;
 using Amazon.IdentityManagement;
 using Amazon.Lightsail;
 using Amazon.Runtime;
-using Dogger.Controllers.Webhooks.Handlers;
+using Dogger.Controllers.PullDog.Webhooks.Handlers;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.Amazon.Identity;
 using Dogger.Domain.Services.Amazon.Lightsail;

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Dogger.Controllers.Webhooks.Models
+namespace Dogger.Controllers.PullDog.Webhooks.Models
 {
     [ExcludeFromCodeCoverage]
     public class CommitPayload

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dogger.Controllers.Webhooks.Models;
+using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
 using MediatR;
 using Microsoft.Extensions.Hosting;
 
-namespace Dogger.Controllers.Webhooks.Handlers
+namespace Dogger.Controllers.PullDog.Webhooks.Handlers
 {
     public class BotCommandPayloadHandler : IWebhookPayloadHandler
     {

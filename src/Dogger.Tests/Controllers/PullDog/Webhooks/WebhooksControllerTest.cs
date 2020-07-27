@@ -5,9 +5,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Dogger.Controllers.Webhooks;
-using Dogger.Controllers.Webhooks.Handlers;
-using Dogger.Controllers.Webhooks.Models;
+using Dogger.Controllers.PullDog.Webhooks;
+using Dogger.Controllers.PullDog.Webhooks.Handlers;
+using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
@@ -23,7 +23,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 
-namespace Dogger.Tests.Controllers.Webhooks
+namespace Dogger.Tests.Controllers.PullDog.Webhooks
 {
     [TestClass]
     public class WebhooksControllerTest

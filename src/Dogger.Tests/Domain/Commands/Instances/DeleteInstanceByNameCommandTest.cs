@@ -9,6 +9,7 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Services.Amazon.Lightsail;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.GitHub;
+using Dogger.Infrastructure.GitHub.Octokit;
 using Dogger.Tests.TestHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -171,14 +172,16 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .Get(
                     1338,
                     1339)
-                .Returns(
-                    CreatePullRequestDto(
+                .Returns(new OctokitPullRequestBuilder()
+                    .WithHead(
                         CreateGitReferenceDto(
                             CreateRepositoryDto(
-                                1338)),
+                                1338)))
+                    .WithBase(
                         CreateGitReferenceDto(
                             CreateRepositoryDto(
-                                1338))));
+                                1338)))
+                    .Build());
 
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
 
@@ -308,14 +311,16 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .Get(
                     1338,
                     1339)
-                .Returns(
-                    CreatePullRequestDto(
+                .Returns(new OctokitPullRequestBuilder()
+                    .WithHead(
                         CreateGitReferenceDto(
                             CreateRepositoryDto(
-                                1338)),
+                                1338)))
+                    .WithBase(
                         CreateGitReferenceDto(
                             CreateRepositoryDto(
-                                1338))));
+                                1338)))
+                    .Build());
 
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
 
@@ -887,48 +892,6 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 default,
                 default,
                 repository);
-        }
-
-        private static PullRequest CreatePullRequestDto(GitReference @base, GitReference head)
-        {
-            return new PullRequest(
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                head,
-                @base,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default);
         }
     }
 }

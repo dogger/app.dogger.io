@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Dogger.Controllers.Webhooks.Models;
+using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Models;
 
-namespace Dogger.Controllers.Webhooks.Handlers
+namespace Dogger.Controllers.PullDog.Webhooks.Handlers
 {
     [ExcludeFromCodeCoverage]
     public class WebhookPayloadContext

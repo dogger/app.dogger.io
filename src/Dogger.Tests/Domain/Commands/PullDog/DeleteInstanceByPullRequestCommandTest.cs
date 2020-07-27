@@ -46,7 +46,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_PullRequestWithInstancePresent_DeletesInstanceByNameAndPullRequest()
+        public async Task Handle_PullRequestWithInstancePresent_DeletesInstanceByName()
         {
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
@@ -102,68 +102,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     Arg.Is<DeleteInstanceByNameCommand>(args => 
                         args.Name == "some-instance-name"), 
                     default);
-
-            await environment.WithFreshDataContext(async dataContext =>
-            {
-                Assert.AreEqual(0, await dataContext.PullDogPullRequests.CountAsync());
-            });
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_PullRequestWithoutInstancePresent_DeletesPullRequest()
-        {
-            //Arrange
-            var fakeMediator = Substitute.For<IMediator>();
-
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
-            {
-                IocConfiguration = services => services.AddSingleton(fakeMediator)
-            });
-
-            await environment.WithFreshDataContext(async dataContext =>
-            {
-                await dataContext.PullDogPullRequests.AddAsync(new PullDogPullRequest()
-                {
-                    Handle = "some-pull-request-handle",
-                    PullDogRepository = new PullDogRepository()
-                    {
-                        Handle = "some-repository-handle",
-                        PullDogSettings = new PullDogSettings()
-                        {
-                            PlanId = "dummy",
-                            User = new User()
-                            {
-                                StripeCustomerId = "dummy"
-                            },
-                            EncryptedApiKey = Array.Empty<byte>()
-                        }
-                    }
-                });
-            });
-
-            await environment.WithFreshDataContext(async dataContext =>
-            {
-                Assert.AreEqual(1, await dataContext.PullDogPullRequests.CountAsync());
-            });
-
-            //Act
-            await environment.Mediator.Send(new DeleteInstanceByPullRequestCommand(
-                "some-repository-handle",
-                "some-pull-request-handle",
-                InitiatorType.System));
-
-            //Assert
-            await fakeMediator
-                .DidNotReceive()
-                .Send(
-                    Arg.Any<DeleteInstanceByNameCommand>(),
-                    default);
-
-            await environment.WithFreshDataContext(async dataContext =>
-            {
-                Assert.AreEqual(0, await dataContext.PullDogPullRequests.CountAsync());
-            });
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using Dogger.Controllers.Webhooks;
+using Dogger.Controllers.PullDog.Webhooks;
 using Dogger.Infrastructure.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;

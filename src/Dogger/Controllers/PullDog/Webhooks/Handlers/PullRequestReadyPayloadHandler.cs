@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Dogger.Controllers.Webhooks.Models;
+using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using MediatR;
 
-namespace Dogger.Controllers.Webhooks.Handlers
+namespace Dogger.Controllers.PullDog.Webhooks.Handlers
 {
     public class 
         PullRequestReadyPayloadHandler : IWebhookPayloadHandler
@@ -25,10 +25,11 @@ namespace Dogger.Controllers.Webhooks.Handlers
             if (pullRequest == null)
                 return false;
 
-            if (pullRequest.Draft)
-                return false;
-
-            if (pullRequest.State != "open")
+            var isPullRequestReady = PullRequestReadinessHelper.IsReady(
+                pullRequest.Draft,
+                pullRequest.State,
+                pullRequest.User?.Type);
+            if (!isPullRequestReady)
                 return false;
 
             return
@@ -40,14 +41,6 @@ namespace Dogger.Controllers.Webhooks.Handlers
 
         public async Task HandleAsync(WebhookPayloadContext context)
         {
-            if (context.Payload.PullRequest?.User?.Type == "Bot")
-            {
-                await this.mediator.Send(new UpsertPullRequestCommentCommand(
-                    context.PullRequest,
-                    "I won't create a test environment for this pull request, since it was created by another bot. You can still use commands to provision an environment."));
-                return;
-            }
-
             await this.mediator.Send(new ProvisionPullDogEnvironmentCommand(
                 context.PullRequest.Handle,
                 context.Repository));

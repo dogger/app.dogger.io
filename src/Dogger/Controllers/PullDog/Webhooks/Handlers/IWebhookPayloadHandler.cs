@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Dogger.Controllers.Webhooks.Models;
+using Dogger.Controllers.PullDog.Webhooks.Models;
 
-namespace Dogger.Controllers.Webhooks.Handlers
+namespace Dogger.Controllers.PullDog.Webhooks.Handlers
 {
     public interface IWebhookPayloadHandler
     {
