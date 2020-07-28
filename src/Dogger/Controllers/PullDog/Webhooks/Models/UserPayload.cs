@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Octokit;
 
 namespace Dogger.Controllers.PullDog.Webhooks.Models
 {

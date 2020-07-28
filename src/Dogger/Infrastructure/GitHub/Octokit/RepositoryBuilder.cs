@@ -6,50 +6,40 @@ using Octokit;
 
 namespace Dogger.Infrastructure.GitHub.Octokit
 {
-    public class OctokitPullRequestBuilder
+    public class RepositoryBuilder
     {
-        private int number;
-
-        private ItemState state;
-
-        private GitReference? head;
-        private GitReference? @base;
-
         private User? user;
+        private string? name;
+        private long id;
+        private string? fullName;
 
-        public OctokitPullRequestBuilder WithNumber(int number)
-        {
-            this.number = number;
-            return this;
-        }
-
-        public OctokitPullRequestBuilder WithState(ItemState state)
-        {
-            this.state = state;
-            return this;
-        }
-
-        public OctokitPullRequestBuilder WithUser(User user)
+        public RepositoryBuilder WithUser(User user)
         {
             this.user = user;
             return this;
         }
 
-        public OctokitPullRequestBuilder WithHead(GitReference head)
+        public RepositoryBuilder WithId(long id)
         {
-            this.head = head;
+            this.id = id;
             return this;
         }
 
-        public OctokitPullRequestBuilder WithBase(GitReference @base)
+        public RepositoryBuilder WithName(string name)
         {
-            this.@base = @base;
+            this.name = name;
             return this;
         }
 
-        public PullRequest Build()
+        public RepositoryBuilder WithFullName(string fullName)
         {
-            return new PullRequest(
+            this.fullName = fullName;
+            return this;
+        }
+
+        public Repository Build()
+        {
+            return new Repository(
                 default,
                 default,
                 default,
@@ -57,18 +47,21 @@ namespace Dogger.Infrastructure.GitHub.Octokit
                 default,
                 default,
                 default,
+                id,
                 default,
-                number,
-                state,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                head,
-                @base,
                 user,
+                name,
+                fullName,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
+                default,
                 default,
                 default,
                 default,

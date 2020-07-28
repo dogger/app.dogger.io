@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Infrastructure.GitHub;
@@ -9,7 +8,7 @@ using Octokit;
 
 namespace Dogger.Domain.Queries.PullDog.GetPullRequestDetailsByHandle
 {
-    class GetPullRequestDetailsByHandleQueryHandler : IRequestHandler<GetPullRequestDetailsByHandleQuery, PullRequest?>
+    public class GetPullRequestDetailsByHandleQueryHandler : IRequestHandler<GetPullRequestDetailsByHandleQuery, PullRequest?>
     {
         private readonly IGitHubClientFactory gitHubClientFactory;
 

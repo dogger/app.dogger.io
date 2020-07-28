@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -14,7 +13,6 @@ using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromBranchReference;
 using Dogger.Domain.Queries.PullDog.GetRepositoriesForUser;
 using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
 using Dogger.Infrastructure.Encryption;
-using Flurl.Util;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

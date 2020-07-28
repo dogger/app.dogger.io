@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
-using Octokit;
 
 namespace Dogger.Controllers.PullDog.Webhooks.Models
 {

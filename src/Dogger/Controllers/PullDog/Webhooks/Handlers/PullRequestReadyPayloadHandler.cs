@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
-using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using MediatR;
 
 namespace Dogger.Controllers.PullDog.Webhooks.Handlers

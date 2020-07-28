@@ -6,6 +6,7 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.GitHub;
+using Dogger.Infrastructure.GitHub.Octokit;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -395,82 +396,17 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
         private static Octokit.User CreateUserDto(int id)
         {
-            return new Octokit.User(
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                id,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default);
+            return new UserBuilder()
+                .WithId(id)
+                .Build();
         }
 
         private static Repository CreateRepositoryDto(
             long id)
         {
-            return new Repository(
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                id,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default);
+            return new RepositoryBuilder()
+                .WithId(id)
+                .Build();
         }
 
         private static GitReference CreateGitReferenceDto(
@@ -488,44 +424,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
         private static PullRequest CreatePullRequestDto(GitReference @base)
         {
-            return new PullRequest(
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                @base,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default);
+            return new PullRequestBuilder()
+                .WithBase(@base)
+                .Build();
         }
     }
 }

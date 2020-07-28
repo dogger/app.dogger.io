@@ -6,19 +6,19 @@ using Octokit;
 
 namespace Dogger.Infrastructure.GitHub.Octokit
 {
-    public class OctokitUserBuilder
+    public class IssueBuilder
     {
-        private string? login;
+        private PullRequest? pullRequest;
 
-        public OctokitUserBuilder WithLogin(string login)
+        public IssueBuilder WithPullRequest(PullRequest pullRequest)
         {
-            this.login = login;
+            this.pullRequest = pullRequest;
             return this;
         }
 
-        public User Build()
+        public Issue Build()
         {
-            return new User(
+            return new Issue(
                 default,
                 default,
                 default,
@@ -34,12 +34,7 @@ namespace Dogger.Infrastructure.GitHub.Octokit
                 default,
                 default,
                 default,
-                default,
-                login,
-                default,
-                default,
-                default,
-                default,
+                pullRequest,
                 default,
                 default,
                 default,

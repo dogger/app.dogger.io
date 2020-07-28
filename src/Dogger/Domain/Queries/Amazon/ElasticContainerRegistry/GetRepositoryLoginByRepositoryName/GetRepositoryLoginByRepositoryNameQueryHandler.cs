@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amazon.ECR;
 using Amazon.ECR.Model;
-using Amazon.Lightsail.Model;
 using Dogger.Domain.Services.Amazon.Identity;
 using MediatR;
 using Polly;

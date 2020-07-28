@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
-using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromBranchReference;
+using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsByHandle;
 using Dogger.Infrastructure.GitHub;
-using Dogger.Infrastructure.GitHub.Octokit;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Octokit;
-using Serilog;
-using User = Octokit.User;
 
 namespace Dogger.Tests.Domain.Queries.PullDog
 {
     [TestClass]
-    public class GetPullRequestDetailsFromBranchReferenceQueryHandlerTest
+    public class GetPullRequestDetailsByHandleQueryHandlerTest
     {
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
@@ -23,19 +20,17 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             //Arrange
             var fakeGitHubClientFactory = Substitute.For<IGitHubClientFactory>();
 
-            var handler = new GetPullRequestDetailsFromBranchReferenceQueryHandler(
-                fakeGitHubClientFactory,
-                Substitute.For<ILogger>());
+            var handler = new GetPullRequestDetailsByHandleQueryHandler(fakeGitHubClientFactory);
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await handler.Handle(
-                    new GetPullRequestDetailsFromBranchReferenceQuery(
+                    new GetPullRequestDetailsByHandleQuery(
                         new PullDogRepository()
                         {
                             PullDogSettings = new PullDogSettings()
                         }, 
-                        "dummy"),
+                        "dummy"), 
                     default));
 
             //Assert
@@ -51,40 +46,22 @@ namespace Dogger.Tests.Domain.Queries.PullDog
 
             var fakeGitHubClient = await fakeGitHubClientFactory.CreateInstallationClientAsync(1337);
             fakeGitHubClient
-                .Repository
-                .Get(1338)
-                .Returns(new RepositoryBuilder()
-                    .WithUser(new UserBuilder()
-                        .WithLogin("some-login")
-                        .Build())
-                    .WithName("some-repository-name")
-                    .Build());
+                .PullRequest
+                .Get(1338, 1339)
+                .Returns(new PullRequest(1339));
 
-            fakeGitHubClient
-                .Search
-                .SearchIssues(Arg.Is<SearchIssuesRequest>(args =>
-                    args.Term == "head:some-branch-reference type:pr state:open repo:some-login/some-repository-name"))
-                .Returns(new SearchIssuesResult(1, false, new[]
-                {
-                    new IssueBuilder()
-                        .WithPullRequest(new PullRequest(1339))
-                        .Build()
-                }));
-
-            var handler = new GetPullRequestDetailsFromBranchReferenceQueryHandler(
-                fakeGitHubClientFactory,
-                Substitute.For<ILogger>());
+            var handler = new GetPullRequestDetailsByHandleQueryHandler(fakeGitHubClientFactory);
 
             //Act
             var pullRequest = await handler.Handle(
-                new GetPullRequestDetailsFromBranchReferenceQuery(
+                new GetPullRequestDetailsByHandleQuery(
                     new PullDogRepository()
                     {
                         Handle = "1338",
                         GitHubInstallationId = 1337,
                         PullDogSettings = new PullDogSettings()
                     },
-                    "some-branch-reference"),
+                    "1339"), 
                 default);
 
             //Assert

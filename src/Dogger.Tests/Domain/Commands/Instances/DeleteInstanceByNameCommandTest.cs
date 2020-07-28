@@ -172,7 +172,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .Get(
                     1338,
                     1339)
-                .Returns(new OctokitPullRequestBuilder()
+                .Returns(new PullRequestBuilder()
                     .WithHead(
                         CreateGitReferenceDto(
                             CreateRepositoryDto(
@@ -311,7 +311,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .Get(
                     1338,
                     1339)
-                .Returns(new OctokitPullRequestBuilder()
+                .Returns(new PullRequestBuilder()
                     .WithHead(
                         CreateGitReferenceDto(
                             CreateRepositoryDto(
@@ -838,47 +838,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
         private static Repository CreateRepositoryDto(
             long id)
         {
-            return new Repository(
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                id,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default,
-                default);
+            return new RepositoryBuilder()
+                .WithId(id)
+                .Build();
         }
 
         private static GitReference CreateGitReferenceDto(

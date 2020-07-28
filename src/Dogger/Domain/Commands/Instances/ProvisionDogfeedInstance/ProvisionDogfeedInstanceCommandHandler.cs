@@ -15,7 +15,6 @@ using Dogger.Infrastructure.AspNet.Options.Dogfeed;
 using Dogger.Infrastructure.IO;
 using MediatR;
 using Microsoft.Extensions.Configuration;
-using Serilog;
 using Microsoft.Extensions.Options;
 using Instance = Dogger.Domain.Models.Instance;
 

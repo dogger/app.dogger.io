@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Dogger.Controllers.PullDog.Api;
 using Dogger.Domain.Commands.PullDog.ChangePullDogPlan;
-using Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
 using Dogger.Domain.Commands.PullDog.OverrideConfigurationForPullRequest;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
 using Dogger.Domain.Models;
-using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
 using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsByHandle;
 using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromBranchReference;
 using Dogger.Domain.Queries.PullDog.GetRepositoriesForUser;
 using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
-using Dogger.Domain.Services.Provisioning;
-using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Encryption;
 using Dogger.Infrastructure.GitHub.Octokit;
@@ -27,7 +21,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Octokit;
-using Slack.Webhooks;
 using RepositoriesResponse = Dogger.Controllers.PullDog.Api.RepositoriesResponse;
 using User = Dogger.Domain.Models.User;
 
@@ -307,7 +300,7 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetPullRequestDetailsFromBranchReferenceQuery>(args =>
                     args.BranchReference == "some-branch-reference"))
-                .Returns(new OctokitPullRequestBuilder()
+                .Returns(new PullRequestBuilder()
                     .WithNumber(1337)
                     .WithState(ItemState.Open)
                     .WithUser(new Octokit.User())
@@ -359,7 +352,7 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetPullRequestDetailsFromBranchReferenceQuery>(args =>
                     args.BranchReference == "some-branch-reference"))
-                .Returns(new OctokitPullRequestBuilder()
+                .Returns(new PullRequestBuilder()
                     .WithNumber(1337)
                     .WithState(ItemState.Open)
                     .WithUser(new Octokit.User())
@@ -411,7 +404,7 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetPullRequestDetailsByHandleQuery>(args =>
                     args.Handle == "some-pull-request-handle"))
-                .Returns(new OctokitPullRequestBuilder()
+                .Returns(new PullRequestBuilder()
                     .WithNumber(1337)
                     .WithState(ItemState.Open)
                     .WithUser(new Octokit.User())

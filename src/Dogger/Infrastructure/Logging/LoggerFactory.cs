@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using Destructurama;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using Serilog.Configuration;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.Elasticsearch;

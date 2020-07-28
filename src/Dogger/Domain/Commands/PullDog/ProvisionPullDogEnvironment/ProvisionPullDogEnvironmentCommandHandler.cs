@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
-using Dogger.Domain.Commands.PullDog.OverrideConfigurationForPullRequest;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Helpers;
 using Dogger.Domain.Models;

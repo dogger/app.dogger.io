@@ -7,7 +7,6 @@ using Amazon.IdentityManagement.Model;
 using Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonGroupWithName;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Amazon.Identity.GetAmazonUserByName;
-using Dogger.Domain.Services.Amazon.Identity;
 using Dogger.Infrastructure.Amazon;
 using Dogger.Infrastructure.Encryption;
 using MediatR;

@@ -8,7 +8,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Octokit;
-using User = Octokit.User;
 
 namespace Dogger.Tests.Domain.Services.PullDog
 {
@@ -31,49 +30,12 @@ namespace Dogger.Tests.Domain.Services.PullDog
                     "some-reference",
                     default,
                     default,
-                    new Repository(
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        new OctokitUserBuilder()
+                    new RepositoryBuilder()
+                        .WithUser(new UserBuilder()
                             .WithLogin("some-user-name")
-                            .Build(), 
-                        default,
-                        "some-repository-name",
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default)));
+                            .Build())
+                        .WithFullName("some-repository-name")
+                        .Build()));
 
             //Act
             var details = client.GetPullRequestDetails(new PullDogPullRequest()
@@ -112,49 +74,12 @@ namespace Dogger.Tests.Domain.Services.PullDog
                     "some-reference",
                     default,
                     default,
-                    new Repository(
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        new OctokitUserBuilder()
+                    new RepositoryBuilder()
+                        .WithUser(new UserBuilder()
                             .WithLogin("some-user-name")
-                            .Build(), 
-                        "some-repository-name",
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default)));
+                            .Build())
+                        .WithName("some-repository-name")
+                        .Build()));
 
             //Act
             var contents = await client.GetFilesForPathAsync("some-path");
@@ -220,49 +145,12 @@ namespace Dogger.Tests.Domain.Services.PullDog
                     "some-reference",
                     default,
                     default,
-                    new Repository(
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        new OctokitUserBuilder()
+                    new RepositoryBuilder()
+                        .WithUser(new UserBuilder()
                             .WithLogin("some-user-name")
-                            .Build(),
-                        "some-repository-name",
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default,
-                        default)));
+                            .Build())
+                        .WithName("some-repository-name")
+                        .Build()));
 
             //Act
             var contents = await client.GetFilesForPathAsync("some-path");

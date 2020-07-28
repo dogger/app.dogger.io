@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Dogger.Infrastructure.Secrets;
 using Dogger.Tests.TestHelpers;
 using Microsoft.Extensions.Configuration;

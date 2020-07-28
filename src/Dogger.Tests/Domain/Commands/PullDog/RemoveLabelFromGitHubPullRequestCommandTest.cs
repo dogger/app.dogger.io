@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Dogger.Domain.Commands.PullDog.AddLabelToGitHubPullRequest;
 using Dogger.Domain.Commands.PullDog.RemoveLabelFromGitHubPullRequest;
-using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Models;
-using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
-using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.TestHelpers;
-using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using Octokit;
 
 namespace Dogger.Tests.Domain.Commands.PullDog
 {
