@@ -2,24 +2,33 @@
 using System.Threading.Tasks;
 using Dogger.Domain.Services.PullDog;
 using MediatR;
+using Serilog;
 
 namespace Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest
 {
     public class GetConfigurationForPullRequestQueryHandler : IRequestHandler<GetConfigurationForPullRequestQuery, ConfigurationFile>
     {
         private readonly IPullDogFileCollectorFactory pullDogFileCollectorFactory;
+        private readonly ILogger logger;
 
         public GetConfigurationForPullRequestQueryHandler(
-            IPullDogFileCollectorFactory pullDogFileCollectorFactory)
+            IPullDogFileCollectorFactory pullDogFileCollectorFactory,
+            ILogger logger)
         {
             this.pullDogFileCollectorFactory = pullDogFileCollectorFactory;
+            this.logger = logger;
         }
 
         public async Task<ConfigurationFile> Handle(GetConfigurationForPullRequestQuery request, CancellationToken cancellationToken)
         {
             var client = await this.pullDogFileCollectorFactory.CreateAsync(request.PullRequest);
 
-            var configuration = await client.GetConfigurationFileAsync() ?? new ConfigurationFile();
+            var configuration = await client.GetConfigurationFileAsync();
+            if (configuration == null)
+            {
+                configuration = new ConfigurationFile();
+                logger.Information("No configuration file was found, a default will be used.");
+            }
 
             var configurationOverride = request.PullRequest.ConfigurationOverride;
             if (configurationOverride == null)

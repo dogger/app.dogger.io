@@ -8,6 +8,7 @@ using Dogger.Domain.Services.PullDog;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using Serilog;
 
 namespace Dogger.Tests.Domain.Services.PullDog
 {
@@ -22,7 +23,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
 
             var handler = new GetConfigurationForPullRequestQueryHandler(
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                Substitute.For<ILogger>());
 
             //Act
             var configuration = await handler.Handle(
@@ -55,7 +57,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 .Returns(fakeConfiguration);
 
             var handler = new GetConfigurationForPullRequestQueryHandler(
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                Substitute.For<ILogger>());
 
             //Act
             var configuration = await handler.Handle(
@@ -99,7 +102,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 .Returns(fakeConfiguration);
 
             var handler = new GetConfigurationForPullRequestQueryHandler(
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                Substitute.For<ILogger>());
 
             //Act
             var configuration = await handler.Handle(
@@ -139,7 +143,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 .Returns(fakeConfiguration);
 
             var handler = new GetConfigurationForPullRequestQueryHandler(
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                Substitute.For<ILogger>());
 
             //Act
             var configuration = await handler.Handle(
@@ -177,7 +182,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 .Returns(fakeConfiguration);
 
             var handler = new GetConfigurationForPullRequestQueryHandler(
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                Substitute.For<ILogger>());
 
             //Act
             var configuration = await handler.Handle(
@@ -215,7 +221,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 .Returns(fakeConfiguration);
 
             var handler = new GetConfigurationForPullRequestQueryHandler(
-                fakePullDogFileCollectorFactory);
+                fakePullDogFileCollectorFactory,
+                Substitute.For<ILogger>());
 
             //Act
             var configuration = await handler.Handle(

@@ -98,11 +98,7 @@ namespace Dogger.Domain.Commands.PullDog.UpsertPullRequestComment
                 configuration ?? new ConfigurationFile(), 
                 JsonFactory.GetOptions());
 
-            var configurationOverrideJson = JsonSerializer.Serialize(
-                request.PullRequest.ConfigurationOverride ?? new ConfigurationFileOverride(), 
-                JsonFactory.GetOptions());
-
-            return GitHubCommentHelper.RenderSpoiler("Troubleshooting", $"Need help? Don't hesitate to <a href=\"https://github.com/dogger/app.dogger.io/issues/new\">file an issue</a> in our repository.{GitHubCommentHelper.RenderSpoiler("Configuration", $"**Initial**\n{GitHubCommentHelper.RenderCodeBlock("json", configurationJson)}\n\n**Lazy override**\n{GitHubCommentHelper.RenderCodeBlock("json", configurationOverrideJson)}")}\n\n**Trace ID**\n{request.TraceId ?? "No trace ID"}");
+            return GitHubCommentHelper.RenderSpoiler("Troubleshooting", $"Need help? Don't hesitate to <a href=\"https://github.com/dogger/app.dogger.io/issues/new\">file an issue</a> in our repository.{GitHubCommentHelper.RenderSpoiler("Configuration", $"**Initial**\n{GitHubCommentHelper.RenderCodeBlock("json", configurationJson)}\n\n**Trace ID**\n{request.TraceId ?? "No trace ID"}")}");
         }
 
         private static string RenderCommandsSection()

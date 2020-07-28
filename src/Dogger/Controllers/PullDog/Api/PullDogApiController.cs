@@ -76,13 +76,6 @@ namespace Dogger.Controllers.PullDog.Api
             if (pullRequestDetails == null)
                 return NotFound("Repository was found, but pull request was not.");
 
-            var isReady = PullRequestReadinessHelper.IsReady(
-                pullRequestDetails.Draft,
-                pullRequestDetails.State.ToString(),
-                pullRequestDetails.User.Type?.ToString());
-            if (!isReady)
-                return NoContent();
-
             var pullRequestHandle = pullRequestDetails.Number.ToString(CultureInfo.InvariantCulture);
 
             if (request.Configuration != null)
@@ -97,6 +90,13 @@ namespace Dogger.Controllers.PullDog.Api
                         pullDogPullRequest.Id,
                         request.Configuration));
             }
+
+            var isReady = PullRequestReadinessHelper.IsReady(
+                pullRequestDetails.Draft,
+                pullRequestDetails.State.ToString(),
+                pullRequestDetails.User.Type?.ToString());
+            if (!isReady)
+                return NoContent();
 
             await this.mediator.Send(
                 new ProvisionPullDogEnvironmentCommand(
