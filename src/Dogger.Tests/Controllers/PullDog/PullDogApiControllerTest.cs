@@ -12,7 +12,8 @@ using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
-using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromCommitReference;
+using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsByHandle;
+using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromBranchReference;
 using Dogger.Domain.Queries.PullDog.GetRepositoriesForUser;
 using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
 using Dogger.Domain.Services.Provisioning;
@@ -111,7 +112,7 @@ namespace Dogger.Tests.Controllers.PullDog
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task Provision_PullRequestHandleAndCommitReferenceMissing_ReturnsBadRequest()
+        public async Task Provision_PullRequestHandleAndBranchReferenceMissing_ReturnsBadRequest()
         {
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
@@ -127,7 +128,7 @@ namespace Dogger.Tests.Controllers.PullDog
             var result = await controller.Provision(new ProvisionRequest()
             {
                 PullRequestHandle = null,
-                CommitReference = null
+                BranchReference = null
             }) as BadRequestObjectResult;
 
             //Assert
@@ -198,7 +199,7 @@ namespace Dogger.Tests.Controllers.PullDog
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task Provision_OnlyCommitReferenceSpecifiedAndPullRequestNotInferred_ReturnsNotFound()
+        public async Task Provision_OnlyPullRequestHandleSpecifiedAndPullRequestNotFound_ReturnsNotFound()
         {
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
@@ -211,8 +212,8 @@ namespace Dogger.Tests.Controllers.PullDog
                 });
 
             fakeMediator
-                .Send(Arg.Is<GetPullRequestDetailsFromCommitReferenceQuery>(args =>
-                    args.CommitReference == "some-commit-reference"))
+                .Send(Arg.Is<GetPullRequestDetailsByHandleQuery>(args =>
+                    args.Handle == "some-pull-request-handle"))
                 .Returns((PullRequest)null);
 
             var fakeMapper = Substitute.For<IMapper>();
@@ -231,13 +232,57 @@ namespace Dogger.Tests.Controllers.PullDog
             var result = await controller.Provision(new ProvisionRequest()
             {
                 RepositoryHandle = "some-repository-handle",
-                CommitReference = "some-commit-reference",
+                PullRequestHandle = "some-pull-request-handle",
                 ApiKey = "dummy"
             }) as NotFoundObjectResult;
 
             //Assert
             Assert.IsNotNull(result);
         }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public async Task Provision_OnlyBranchReferenceSpecifiedAndPullRequestNotInferred_ReturnsNotFound()
+        {
+            //Arrange
+            var fakeMediator = Substitute.For<IMediator>();
+            fakeMediator
+                .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
+                    args.RepositoryHandle == "some-repository-handle"))
+                .Returns(new PullDogRepository()
+                {
+                    PullDogSettings = new PullDogSettings()
+                });
+
+            fakeMediator
+                .Send(Arg.Is<GetPullRequestDetailsFromBranchReferenceQuery>(args =>
+                    args.BranchReference == "some-branch-reference"))
+                .Returns((PullRequest)null);
+
+            var fakeMapper = Substitute.For<IMapper>();
+
+            var fakeAesEncryptionHelper = Substitute.For<IAesEncryptionHelper>();
+            fakeAesEncryptionHelper
+                .DecryptAsync(Arg.Any<byte[]>())
+                .Returns("dummy");
+
+            var controller = new PullDogApiController(
+                fakeMediator,
+                fakeMapper,
+                fakeAesEncryptionHelper);
+
+            //Act
+            var result = await controller.Provision(new ProvisionRequest()
+            {
+                RepositoryHandle = "some-repository-handle",
+                BranchReference = "some-branch-reference",
+                ApiKey = "dummy"
+            }) as NotFoundObjectResult;
+
+            //Assert
+            Assert.IsNotNull(result);
+        }
+
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
         public async Task Provision_ConfigurationOverridePresentInRequest_UpdatesPullRequestConfigurationOverride()
@@ -260,8 +305,8 @@ namespace Dogger.Tests.Controllers.PullDog
                 .Returns(fakePullDogPullRequest);
 
             fakeMediator
-                .Send(Arg.Is<GetPullRequestDetailsFromCommitReferenceQuery>(args =>
-                    args.CommitReference == "some-commit-reference"))
+                .Send(Arg.Is<GetPullRequestDetailsFromBranchReferenceQuery>(args =>
+                    args.BranchReference == "some-branch-reference"))
                 .Returns(new OctokitPullRequestBuilder()
                     .WithNumber(1337)
                     .WithState(ItemState.Open)
@@ -284,8 +329,7 @@ namespace Dogger.Tests.Controllers.PullDog
             var result = await controller.Provision(new ProvisionRequest()
             {
                 RepositoryHandle = "some-repository-handle",
-                CommitReference = "some-commit-reference",
-                PullRequestHandle = "1337",
+                BranchReference = "some-branch-reference",
                 ApiKey = "dummy",
                 Configuration = new ConfigurationFileOverride()
             }) as OkObjectResult;
@@ -300,7 +344,7 @@ namespace Dogger.Tests.Controllers.PullDog
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task Provision_PullRequestInferredFromCommitReference_ProvisionsPullDogEnvironment()
+        public async Task Provision_PullRequestInferredFromBranchReference_ProvisionsPullDogEnvironment()
         {
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
@@ -313,8 +357,8 @@ namespace Dogger.Tests.Controllers.PullDog
                 });
 
             fakeMediator
-                .Send(Arg.Is<GetPullRequestDetailsFromCommitReferenceQuery>(args =>
-                    args.CommitReference == "some-commit-reference"))
+                .Send(Arg.Is<GetPullRequestDetailsFromBranchReferenceQuery>(args =>
+                    args.BranchReference == "some-branch-reference"))
                 .Returns(new OctokitPullRequestBuilder()
                     .WithNumber(1337)
                     .WithState(ItemState.Open)
@@ -337,7 +381,59 @@ namespace Dogger.Tests.Controllers.PullDog
             var result = await controller.Provision(new ProvisionRequest()
             {
                 RepositoryHandle = "some-repository-handle",
-                CommitReference = "some-commit-reference",
+                BranchReference = "some-branch-reference",
+                ApiKey = "dummy"
+            });
+
+            //Assert
+            Assert.IsNotNull(result as OkObjectResult);
+
+            await fakeMediator
+                .Received(1)
+                .Send(Arg.Is<ProvisionPullDogEnvironmentCommand>(args =>
+                    args.PullRequestHandle == "1337"));
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public async Task Provision_PullRequestInferredFromPullRequestHandle_ProvisionsPullDogEnvironment()
+        {
+            //Arrange
+            var fakeMediator = Substitute.For<IMediator>();
+            fakeMediator
+                .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
+                    args.RepositoryHandle == "some-repository-handle"))
+                .Returns(new PullDogRepository()
+                {
+                    PullDogSettings = new PullDogSettings()
+                });
+
+            fakeMediator
+                .Send(Arg.Is<GetPullRequestDetailsByHandleQuery>(args =>
+                    args.Handle == "some-pull-request-handle"))
+                .Returns(new OctokitPullRequestBuilder()
+                    .WithNumber(1337)
+                    .WithState(ItemState.Open)
+                    .WithUser(new Octokit.User())
+                    .Build());
+
+            var fakeMapper = Substitute.For<IMapper>();
+
+            var fakeAesEncryptionHelper = Substitute.For<IAesEncryptionHelper>();
+            fakeAesEncryptionHelper
+                .DecryptAsync(Arg.Any<byte[]>())
+                .Returns("dummy");
+
+            var controller = new PullDogApiController(
+                fakeMediator,
+                fakeMapper,
+                fakeAesEncryptionHelper);
+
+            //Act
+            var result = await controller.Provision(new ProvisionRequest()
+            {
+                RepositoryHandle = "some-repository-handle",
+                PullRequestHandle = "some-pull-request-handle",
                 ApiKey = "dummy"
             });
 

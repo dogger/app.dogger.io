@@ -8,14 +8,14 @@ using MediatR;
 using Octokit;
 using Serilog;
 
-namespace Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromCommitReference
+namespace Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromBranchReference
 {
-    public class GetPullRequestDetailsFromCommitReferenceQueryHandler : IRequestHandler<GetPullRequestDetailsFromCommitReferenceQuery, PullRequest?>
+    public class GetPullRequestDetailsFromBranchReferenceQueryHandler : IRequestHandler<GetPullRequestDetailsFromBranchReferenceQuery, PullRequest?>
     {
         private readonly IGitHubClientFactory gitHubClientFactory;
         private readonly ILogger logger;
 
-        public GetPullRequestDetailsFromCommitReferenceQueryHandler(
+        public GetPullRequestDetailsFromBranchReferenceQueryHandler(
             IGitHubClientFactory gitHubClientFactory,
             ILogger logger)
         {
@@ -23,8 +23,11 @@ namespace Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromCommitReference
             this.logger = logger;
         }
 
-        public async Task<PullRequest?> Handle(GetPullRequestDetailsFromCommitReferenceQuery request, CancellationToken cancellationToken)
+        public async Task<PullRequest?> Handle(GetPullRequestDetailsFromBranchReferenceQuery request, CancellationToken cancellationToken)
         {
+            if (string.IsNullOrWhiteSpace(request.BranchReference))
+                throw new InvalidOperationException("The branch reference was not specified.");
+
             var pullDogRepository = request.Repository;
             var installationId = pullDogRepository.GitHubInstallationId;
             if (installationId == null)
@@ -35,7 +38,7 @@ namespace Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromCommitReference
             var repositoryId = long.Parse(pullDogRepository.Handle, CultureInfo.InvariantCulture);
             var repository = await client.Repository.Get(repositoryId);
 
-            var term = $"{request.CommitReference} type:pr state:open repo:{repository.Owner.Login}/{repository.Name}";
+            var term = $"head:{request.BranchReference} type:pr state:open repo:{repository.Owner.Login}/{repository.Name}";
             this.logger.Debug("Using search term {SearchTerm}.", term);
 
             var pullRequestsResponse = await client.Search.SearchIssues(new SearchIssuesRequest(term));

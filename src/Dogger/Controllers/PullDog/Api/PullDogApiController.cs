@@ -8,14 +8,18 @@ using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
 using Dogger.Domain.Commands.PullDog.OverrideConfigurationForPullRequest;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
-using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromCommitReference;
+using Dogger.Domain.Models;
+using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsByHandle;
+using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromBranchReference;
 using Dogger.Domain.Queries.PullDog.GetRepositoriesForUser;
 using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
 using Dogger.Infrastructure.Encryption;
+using Flurl.Util;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Octokit;
 
 namespace Dogger.Controllers.PullDog.Api
 {
@@ -58,7 +62,7 @@ namespace Dogger.Controllers.PullDog.Api
         [Route("provision")]
         public async Task<IActionResult> Provision(ProvisionRequest request)
         {
-            if (request.PullRequestHandle == null && request.CommitReference == null)
+            if (request.PullRequestHandle == null && request.BranchReference == null)
                 return BadRequest("Either a pull request handle or a branch reference must be specified.");
 
             var repository = await this.mediator.Send(new GetRepositoryByHandleQuery(request.RepositoryHandle));
@@ -70,19 +74,25 @@ namespace Dogger.Controllers.PullDog.Api
             if (decryptedKey != request.ApiKey)
                 return Unauthorized("Bad API key.");
 
-            var gitHubPullRequest = await this.mediator.Send(
-                new GetPullRequestDetailsFromCommitReferenceQuery(
-                    repository,
-                    request.CommitReference!));
-            if (gitHubPullRequest == null)
-                return NotFound("Repository was found, but the pull request was not.");
+            var pullRequestDetails = await GetPullRequestDetailsFromRequestAsync(request, repository);
+            if (pullRequestDetails == null)
+                return NotFound("Repository was found, but pull request was not.");
+
+            var isReady = PullRequestReadinessHelper.IsReady(
+                pullRequestDetails.Draft,
+                pullRequestDetails.State.ToString(),
+                pullRequestDetails.User.Type?.ToString());
+            if (!isReady)
+                return NoContent();
+
+            var pullRequestHandle = pullRequestDetails.Number.ToString(CultureInfo.InvariantCulture);
 
             if (request.Configuration != null)
             {
                 var pullDogPullRequest = await this.mediator.Send(
                     new EnsurePullDogPullRequestCommand(
                         repository,
-                        request.PullRequestHandle!));
+                        pullRequestHandle));
 
                 await this.mediator.Send(
                     new OverrideConfigurationForPullRequestCommand(
@@ -90,19 +100,33 @@ namespace Dogger.Controllers.PullDog.Api
                         request.Configuration));
             }
 
-            var isReady = PullRequestReadinessHelper.IsReady(
-                gitHubPullRequest.Draft,
-                gitHubPullRequest.State.ToString(),
-                gitHubPullRequest.User.Type?.ToString());
-            if (!isReady)
-                return NoContent();
-
             await this.mediator.Send(
                 new ProvisionPullDogEnvironmentCommand(
-                    gitHubPullRequest.Number.ToString(CultureInfo.InvariantCulture),
+                    pullRequestHandle,
                     repository));
 
             return Ok("The environment is being provisioned.");
+        }
+
+        private async Task<PullRequest?> GetPullRequestDetailsFromRequestAsync(ProvisionRequest request, PullDogRepository repository)
+        {
+            PullRequest? pullRequestDetails = null;
+            if (request.PullRequestHandle != null)
+            {
+                pullRequestDetails = await this.mediator.Send(
+                    new GetPullRequestDetailsByHandleQuery(
+                        repository,
+                        request.PullRequestHandle));
+            }
+            else if (request.BranchReference != null)
+            {
+                pullRequestDetails = await this.mediator.Send(
+                    new GetPullRequestDetailsFromBranchReferenceQuery(
+                        repository,
+                        request.BranchReference));
+            }
+
+            return pullRequestDetails;
         }
 
         [HttpGet]

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
-using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromCommitReference;
+using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromBranchReference;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,7 +13,7 @@ using User = Octokit.User;
 namespace Dogger.Tests.Domain.Queries.PullDog
 {
     [TestClass]
-    public class GetPullRequestDetailsFromCommitReferenceQueryHandlerTest
+    public class GetPullRequestDetailsFromBranchReferenceQueryHandlerTest
     {
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
@@ -22,14 +22,14 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             //Arrange
             var fakeGitHubClientFactory = Substitute.For<IGitHubClientFactory>();
 
-            var handler = new GetPullRequestDetailsFromCommitReferenceQueryHandler(
+            var handler = new GetPullRequestDetailsFromBranchReferenceQueryHandler(
                 fakeGitHubClientFactory,
                 Substitute.For<ILogger>());
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await handler.Handle(
-                    new GetPullRequestDetailsFromCommitReferenceQuery(
+                    new GetPullRequestDetailsFromBranchReferenceQuery(
                         new PullDogRepository()
                         {
                             PullDogSettings = new PullDogSettings()
@@ -126,7 +126,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             fakeGitHubClient
                 .Search
                 .SearchIssues(Arg.Is<SearchIssuesRequest>(args =>
-                    args.Term == "some-commit-reference type:pr state:open repo:some-login/some-repository-name"))
+                    args.Term == "head:some-branch-reference type:pr state:open repo:some-login/some-repository-name"))
                 .Returns(new SearchIssuesResult(1, false, new[]
                 {
                     new Issue(
@@ -156,20 +156,20 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                         default)
                 }));
 
-            var handler = new GetPullRequestDetailsFromCommitReferenceQueryHandler(
+            var handler = new GetPullRequestDetailsFromBranchReferenceQueryHandler(
                 fakeGitHubClientFactory,
                 Substitute.For<ILogger>());
 
             //Act
             var pullRequest = await handler.Handle(
-                new GetPullRequestDetailsFromCommitReferenceQuery(
+                new GetPullRequestDetailsFromBranchReferenceQuery(
                     new PullDogRepository()
                     {
                         Handle = "1338",
                         GitHubInstallationId = 1337,
                         PullDogSettings = new PullDogSettings()
                     },
-                    "some-commit-reference"),
+                    "some-branch-reference"),
                 default);
 
             //Assert

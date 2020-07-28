@@ -11,7 +11,7 @@ namespace Dogger.Controllers.PullDog.Api
         public string RepositoryHandle { get; set; }
 
         public string? PullRequestHandle { get; set; }
-        public string? CommitReference { get; set; }
+        public string? BranchReference { get; set; }
 
         public string ApiKey { get; set; }
 
