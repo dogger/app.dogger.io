@@ -74,7 +74,7 @@ namespace Dogger.Controllers.PullDog.Api
                 new GetPullRequestDetailsFromCommitReferenceQuery(
                     repository,
                     request.CommitReference!));
-            if (gitHubPullRequest == null)
+            if (githubPullRequest?.Number == null)
                 return NotFound("Repository was found, but the pull request was not.");
 
             if (request.Configuration != null)
