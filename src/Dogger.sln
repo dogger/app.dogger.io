@@ -10,10 +10,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F9DD83BF-30AA-44B6-A3BA-42671AB0B603}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		docker-compose.deploy.yml = docker-compose.deploy.yml
-		docker-compose.local.yml = docker-compose.local.yml
-		docker-compose.pull-dog.yml = docker-compose.pull-dog.yml
+		docker-compose.app-dogger-io.yml = docker-compose.app-dogger-io.yml
+		docker-compose.sql-server.yml = docker-compose.sql-server.yml
 		docker-compose.test.yml = docker-compose.test.yml
+		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{60474487-E341-4B26-9D02-0FA470436C15}"
@@ -35,10 +35,6 @@ Global
 		{D86B96E9-456B-49A7-99FE-C3ACE44A1207}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D86B96E9-456B-49A7-99FE-C3ACE44A1207}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D86B96E9-456B-49A7-99FE-C3ACE44A1207}.Release|Any CPU.Build.0 = Release|Any CPU
-		{82076099-7369-4126-9A5B-1C247A314B99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{82076099-7369-4126-9A5B-1C247A314B99}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{82076099-7369-4126-9A5B-1C247A314B99}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{82076099-7369-4126-9A5B-1C247A314B99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

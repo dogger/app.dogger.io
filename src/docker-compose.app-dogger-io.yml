@@ -2,13 +2,6 @@ version: '3.4'
 
 services:
   dogger:
-    image: docker.pkg.github.com/dogger/app.dogger.io/dogger:latest
-    restart: always
-    env_file:
-     - ./env/dogger.env
-    ports:
-     - "80:80"
-     - "443:443"
     depends_on:
      - "elasticsearch"
 

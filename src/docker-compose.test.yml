@@ -9,14 +9,10 @@ services:
     volumes:
       - "./TestResults:/src/Dogger.Tests/TestResults"
     environment:
-    - SQL_CONNECTION_STRING="Server=mssql-test-container,1433;Database=master;User Id=SA;Password=hNxX9Qz2"
+    - SQL_CONNECTION_STRING="Server=${SQL_HOST:-mssql,1433};Database=${SQL_DATABASE:-master};User Id=${SQL_USERNAME:-SA};Password=${SQL_PASSWORD:-hNxX9Qz2}"
     - DOTNET_RUNNING_IN_TEST=true
 
-  mssql-test-container:
-    image: mcr.microsoft.com/mssql/server:2019-latest
+  mssql:
     tmpfs: /var/lib/mssql:rw,exec,suid,dev
-    environment:
-    - ACCEPT_EULA=Y
-    - SA_PASSWORD=hNxX9Qz2
     logging:
       driver: none
