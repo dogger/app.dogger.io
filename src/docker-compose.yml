@@ -14,4 +14,5 @@ services:
     - Aws__SecretAccessKey=${AWS_SECRET_ACCESS_KEY}
     - Aws__LightsailPrivateKeyPem=${AWS_LIGHTSAIL_PRIVATE_KEY_PEM:-}
     - Slack__IncomingUrl=${SLACK_INCOMING_WEBHOOK_URL:-}
+    - Encryption__Pepper=${ENCRYPTION_PEPPER:-e32ae512-deb8-44b8-82d1-8f3af58fec28}
     - Sql__ConnectionString="Server=${SQL_HOST:-mssql,1433};Database=${SQL_DATABASE:-master};User Id=${SQL_USERNAME:-SA};Password=${SQL_PASSWORD:-hNxX9Qz2}"
