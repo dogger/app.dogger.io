@@ -9,7 +9,6 @@ using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Amazon.Lightsail.AssignStaticIpToInstance;
 using Dogger.Domain.Commands.Amazon.Lightsail.AttachInstancesToLoadBalancer;
-using Dogger.Domain.Commands.Cloudflare.WipeCloudflareCache;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetAllInstances;
@@ -106,18 +105,11 @@ namespace Dogger.Domain.Services.Dogfeeding
                     await DestroyInstanceByNameAsync(newInstance.Name);
                     throw;
                 }
-
-                await WipeCloudflareCacheAsync();
             }
             finally
             {
                 await CleanUpAsync();
             }
-        }
-
-        private async Task WipeCloudflareCacheAsync()
-        {
-            await this.mediator.Send(new WipeCloudflareCacheCommand());
         }
 
         private async Task AssignStaticIpAddressToNewInstanceAsync(Instance newInstance)

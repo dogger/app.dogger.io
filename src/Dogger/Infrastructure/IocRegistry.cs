@@ -228,7 +228,6 @@ namespace Dogger.Infrastructure
             services.AddOptions();
 
             Configure<AwsOptions>();
-            Configure<CloudflareOptions>();
             Configure<GitHubOptions>();
             Configure<DogfeedOptions>();
             Configure<SqlOptions>();
