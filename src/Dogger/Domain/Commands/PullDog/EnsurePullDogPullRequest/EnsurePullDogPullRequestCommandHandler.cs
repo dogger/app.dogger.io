@@ -44,11 +44,6 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest
             {
                 return await GetExistingPullRequestAsync(request, cancellationToken);
             }
-            catch (DbUpdateException ex) when(ex.InnerException is SqlException sqlException)
-            {
-                this.logger.Warning(ex, "An unknown SQL related error occured with number {SqlErrorNumber}.", sqlException.Number);
-                throw;
-            }
         }
 
         private async Task<PullDogPullRequest> GetExistingPullRequestAsync(EnsurePullDogPullRequestCommand request, CancellationToken cancellationToken)

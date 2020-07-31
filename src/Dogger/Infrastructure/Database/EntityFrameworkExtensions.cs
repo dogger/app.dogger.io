@@ -9,7 +9,7 @@ namespace Microsoft.EntityFrameworkCore
         {
             return
                 exception.InnerException is SqlException sqlException &&
-                sqlException.Number == 2627;
+                (sqlException.Number == 2627 || sqlException.Number == 2601);
         }
     }
 }
