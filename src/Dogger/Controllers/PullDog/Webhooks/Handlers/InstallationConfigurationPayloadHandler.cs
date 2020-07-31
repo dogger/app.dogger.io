@@ -44,6 +44,8 @@ namespace Dogger.Controllers.PullDog.Webhooks.Handlers
                     payload.Installation.Id));
             if (settings == null)
             {
+                this.logger.Error("No settings error occured - will log more details.");
+
                 var client = await this.gitHubClientFactory.CreateInstallationClientAsync(payload.Installation.Id);
                 var currentUser = await client.User.Current();
                 this.logger.Error("An error occured with user {@User}.", currentUser);
