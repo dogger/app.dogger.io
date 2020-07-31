@@ -8,8 +8,16 @@ services:
   elasticsearch:
     image: xtermi2/elasticsearch-searchguard:7.6.1
     container_name: elasticsearch
-    env_file:
-     - ./env/elasticsearch.env
+    environment:
+    - node.name=elasticsearch
+    - discovery.type=single-node
+    - ES_JAVA_OPTS=-Xms256m -Xmx256m
+    - ROOT_CA=root-ca.pem
+    - ADMIN_PEM=admin.pem
+    - ADMIN_KEY=admin.key
+    - ADMIN_KEY_PASS=${ELASTICSEARCH_ADMIN_KEY_PASSWORD}
+    - ELASTIC_PWD=elastic
+    - KIBANA_PWD={ELASTICSEARCH_INSTANCE_PASSWORD}
     ulimits:
       memlock:
         soft: -1
@@ -27,8 +35,11 @@ services:
   kibana:
     image: xtermi2/kibana-searchguard:7.6.1
     container_name: kibana
-    env_file:
-     - ./env/kibana.env
+    environment:
+    - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+    - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
+    - ELASTICSEARCH_USERNAME=kibana
+    - ELASTICSEARCH_PASSWORD={ELASTICSEARCH_INSTANCE_PASSWORD}
     ports:
       - "5601:5601"
     restart: always
