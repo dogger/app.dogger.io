@@ -50,7 +50,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
         public async Task<IProvisioningJob> Handle(ProvisionDogfeedInstanceCommand request, CancellationToken cancellationToken)
         {
             var dogfeedOptions = this.dogfeedOptionsMonitor.CurrentValue;
-            if (dogfeedOptions.DockerComposeYmlFilePaths == null)
+            if (dogfeedOptions.Files == null)
                 throw new InvalidOperationException("Could not find Docker Compose YML contents.");
 
             var dockerHubOptions = dogfeedOptions.DockerHub;
@@ -85,7 +85,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
                         instance),
                     new DeployToClusterStateFlow(
                         request.InstanceName,
-                        SanitizeDockerComposeYmlFilePaths(dogfeedOptions.DockerComposeYmlFilePaths))
+                        SanitizeDockerComposeYmlFilePaths(dogfeedOptions.Files))
                     {
                         Files = dockerFiles,
                         Authentication = new[] {
@@ -126,7 +126,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
             if (elasticsearchOptions == null)
                 throw new InvalidOperationException("Could not find Elasticsearch options.");
 
-            if (options.DockerComposeYmlFilePaths == null)
+            if (options.Files == null)
                 throw new InvalidOperationException("Could not find Docker Compose YML contents.");
 
             var instanceEnvironmentVariableFile = GetInstanceEnvironmentVariableFile(configuration);
@@ -188,7 +188,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
                     SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.ConfigurationYmlContents))
             };
 
-            foreach (var ymlFilePath in options.DockerComposeYmlFilePaths)
+            foreach (var ymlFilePath in options.Files)
             {
                 files.Add(new InstanceDockerFile(
                     SanitizeDockerComposeYmlFilePath(ymlFilePath),

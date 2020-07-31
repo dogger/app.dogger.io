@@ -62,7 +62,12 @@ namespace Dogger.Domain.Services.Dogfeeding
 
             const string whitespacePattern = "\\s";
             while (Regex.IsMatch(resourceName, whitespacePattern))
-                resourceName = Regex.Replace(resourceName, whitespacePattern, string.Empty);
+            {
+                resourceName = Regex.Replace(
+                    resourceName, 
+                    whitespacePattern, 
+                    string.Empty);
+            }
 
             return resourceName
                 .Trim()
