@@ -10,6 +10,8 @@ using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Queries.Users.GetUserById;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +29,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_PullDogNotInstalled_ThrowsException()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var user = new User()
             {
@@ -61,8 +63,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     args.DoggerPlanId == "some-plan-id"))
                 .Returns((PullDogPlan)null);
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
@@ -112,8 +114,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     1337,
                     1337));
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
@@ -163,8 +165,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     1337,
                     1338));
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
@@ -221,8 +223,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     new Bundle(), 
                     Array.Empty<PullDogPlan>()));
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
@@ -277,8 +279,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     1337,
                     1338));
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
@@ -330,8 +332,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Send(Arg.Any<UpdateUserSubscriptionCommand>())
                 .Throws(new TestException());
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
@@ -392,8 +394,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Send(Arg.Any<DeleteAllPullDogInstancesForUserCommand>())
                 .Throws(new TestException());
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
@@ -452,8 +454,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     1337,
                     1337));
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });

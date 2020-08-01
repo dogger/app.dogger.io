@@ -4,6 +4,7 @@ using Dogger.Domain.Commands.Payment.SetActivePaymentMethodForUser;
 using Dogger.Domain.Commands.Users.CreateUserForIdentity;
 using Dogger.Domain.Models;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Stripe;
@@ -18,7 +19,7 @@ namespace Dogger.Tests.Domain.Commands.Payment
         public async Task Handle_UserWithNoStripeCustomerId_ExceptionThrown()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<NoStripeCustomerIdException>(async () => 
@@ -36,7 +37,7 @@ namespace Dogger.Tests.Domain.Commands.Payment
         public async Task Handle_ExistingPaymentMethodsPresent_OldPaymentMethodsRemoved()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var user = await environment.Mediator.Send(
                 new CreateUserForIdentityCommand(
@@ -80,7 +81,7 @@ namespace Dogger.Tests.Domain.Commands.Payment
         public async Task Handle_ExistingPaymentMethodsPresent_DefaultPaymentMethodChangedToAddedMethod()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var user = await environment.Mediator.Send(
                 new CreateUserForIdentityCommand(
@@ -118,7 +119,7 @@ namespace Dogger.Tests.Domain.Commands.Payment
         public async Task Handle_NoPaymentMethodsPresent_DefaultPaymentMethodChangedToAddedMethod()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var user = await environment.Mediator.Send(
                 new CreateUserForIdentityCommand(

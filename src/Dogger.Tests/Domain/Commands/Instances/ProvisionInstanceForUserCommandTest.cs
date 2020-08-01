@@ -13,6 +13,8 @@ using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Infrastructure.Ssh;
 using Dogger.Infrastructure.Time;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,7 +34,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
         public async Task Handle_ProperArgumentsGiven_UnprovisionedInstanceIsAddedToDatabase()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -90,8 +92,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .UtcNow
                 .Returns(lastDayOfLastMonth);
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {
@@ -154,8 +156,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
         public async Task Handle_ProperArgumentsGiven_FullServerProvisioningFlowIsRunAndProperInstanceIsCreated()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = FakeOutMinimalLightsailFeaturesForFullProvisioning
                 });
@@ -218,7 +220,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .ScheduleJobAsync(Arg.Any<IProvisioningStateFlow>())
                 .Throws(new TestException());
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {

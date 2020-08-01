@@ -4,6 +4,8 @@ using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Commands.PullDog.DeleteAllPullDogInstancesForUser;
 using Dogger.Domain.Models;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -21,8 +23,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
@@ -65,8 +67,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
@@ -129,8 +131,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });

@@ -6,6 +6,8 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Queries.Instances.GetProvisionedClustersWithInstancesForUser;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -21,7 +23,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
         public async Task Handle_NoInstancesPresent_NoLightsailInstancesReturned()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             //Act
             var instances = await environment.Mediator.Send(
@@ -59,7 +61,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
                     Name = "some-instance-2"
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -148,7 +150,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
                     Name = "some-instance-2"
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -246,7 +248,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
                     Name = "some-instance-2"
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {

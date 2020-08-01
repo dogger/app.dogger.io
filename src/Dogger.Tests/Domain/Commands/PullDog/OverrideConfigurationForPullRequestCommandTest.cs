@@ -5,6 +5,7 @@ using Dogger.Domain.Commands.PullDog.OverrideConfigurationForPullRequest;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -18,7 +19,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_PullRequestGiven_ConfigurationOverrideUpdatedOnPullRequest()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var pullRequest = new PullDogPullRequest()
             {

@@ -2,6 +2,7 @@
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Instances.GetInstanceByName;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Dogger.Tests.Domain.Queries.Instances
@@ -14,7 +15,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
         public async Task Handle_NoInstancesPresent_NullIsReturned()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             //Act
             var result = await environment.Mediator.Send(new GetInstanceByNameQuery("some-instance-name"));
@@ -28,7 +29,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
         public async Task Handle_MultipleInstancesPresent_MatchingInstanceIsReturned()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             await environment.WithFreshDataContext(async dataContext =>
             {

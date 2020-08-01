@@ -7,6 +7,8 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,7 +30,7 @@ namespace Dogger.Tests.Domain.Events
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
                 .Returns(new ConfigurationFile());
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(fakeMediator)
             });
@@ -94,7 +96,7 @@ namespace Dogger.Tests.Domain.Events
                     Label = "some-label"
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(fakeMediator)
             });

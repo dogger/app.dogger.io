@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Clusters.GetClusterById;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Dogger.Tests.Domain.Queries.Clusters
@@ -16,7 +17,7 @@ namespace Dogger.Tests.Domain.Queries.Clusters
         public async Task Handle_MultipleClusters_ReturnsCorrectCluster()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var guid1 = Guid.NewGuid();
             var guid2 = Guid.NewGuid();

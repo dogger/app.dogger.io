@@ -11,6 +11,8 @@ using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Infrastructure.GitHub.Octokit;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -50,7 +52,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -84,7 +86,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -185,7 +187,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -324,7 +326,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -436,7 +438,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -510,7 +512,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -613,7 +615,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -716,7 +718,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -815,7 +817,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {

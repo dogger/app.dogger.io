@@ -6,6 +6,8 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetRepositoriesForUser;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -22,7 +24,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
         public async Task Handle_NoPullDogSettingsFoundOnUser_ThrowsException()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var userId = Guid.NewGuid();
             await environment.WithFreshDataContext(async dataContext =>
@@ -47,7 +49,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
         public async Task Handle_SettingsContainNoRepositories_ThrowsException()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var userId = Guid.NewGuid();
             await environment.WithFreshDataContext(async dataContext =>
@@ -75,7 +77,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
         public async Task Handle_SettingsContainNoInstallationIdOnAnyRepositories_ThrowsException()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var userId = Guid.NewGuid();
             await environment.WithFreshDataContext(async dataContext =>
@@ -125,7 +127,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                         new Repository(2)
                     }));
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(fakeGitHubClientFactory)
             });
@@ -192,7 +194,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                         new Repository(3)
                     }));
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(fakeGitHubClientFactory)
             });

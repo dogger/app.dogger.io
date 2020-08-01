@@ -21,7 +21,7 @@ using Stripe;
 namespace Dogger.Infrastructure.AspNet
 {
     [ExcludeFromCodeCoverage]
-    public class DockerDebugEnvironmentService : IHostedService
+    public class DockerDependencyService : IHostedService
     {
         private readonly IServiceProvider serviceProvider;
 
@@ -34,7 +34,7 @@ namespace Dogger.Infrastructure.AspNet
 
         private DockerClient? docker;
 
-        public DockerDebugEnvironmentService(
+        public DockerDependencyService(
             IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
@@ -379,7 +379,7 @@ namespace Dogger.Infrastructure.AspNet
             IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddHostedService<DockerDebugEnvironmentService>();
+            services.AddHostedService<DockerDependencyService>();
 
             configuration["Sql:ConnectionString"] = GetSqlConnectionStringForDatabase("dogger");
         }

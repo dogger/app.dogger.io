@@ -9,6 +9,8 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -27,7 +29,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             //Arrange
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -75,7 +77,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             //Arrange
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -123,7 +125,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             //Arrange
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -176,7 +178,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .GetCompletedJob()
                 .Returns(fakeCompletedJob);
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -229,7 +231,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -260,7 +262,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -291,7 +293,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {

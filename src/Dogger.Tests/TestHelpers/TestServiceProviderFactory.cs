@@ -51,7 +51,6 @@ namespace Dogger.Tests.TestHelpers
             ConfigureFakeDelay(services);
 
             IocRegistry.ConfigureMediatr(services,
-                typeof(Startup).Assembly,
                 typeof(TestServiceProviderFactory).Assembly);
 
             services.AddScoped<Mediator>();

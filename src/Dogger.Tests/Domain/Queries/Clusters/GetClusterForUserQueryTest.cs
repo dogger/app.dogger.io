@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Clusters.GetClusterForUser;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Dogger.Tests.Domain.Queries.Clusters
@@ -15,7 +16,7 @@ namespace Dogger.Tests.Domain.Queries.Clusters
         public async Task Handle_NoClusterIdGivenAndSingleClusterOnUser_ClusterReturned()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var fakeUserId = Guid.NewGuid();
 
@@ -43,7 +44,7 @@ namespace Dogger.Tests.Domain.Queries.Clusters
         public async Task Handle_ClusterIdGivenAndOneMatchingClusterOnUser_ClusterReturned()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var fakeUserId = Guid.NewGuid();
             var fakeClusterId = Guid.NewGuid();
@@ -83,7 +84,7 @@ namespace Dogger.Tests.Domain.Queries.Clusters
         public async Task Handle_NoClusterIdGivenAndMultipleClustersOnUser_QueryTooBroadExceptionThrown()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var fakeUserId = Guid.NewGuid();
 

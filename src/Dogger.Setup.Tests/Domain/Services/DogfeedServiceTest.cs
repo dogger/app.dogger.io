@@ -15,6 +15,8 @@ using Dogger.Infrastructure.Time;
 using Dogger.Setup.Domain.Services;
 using Dogger.Setup.Infrastructure;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -64,7 +66,7 @@ namespace Dogger.Setup.Tests.Domain.Services
                         }
                     });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -131,7 +133,7 @@ namespace Dogger.Setup.Tests.Domain.Services
                         }
                     });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -202,7 +204,7 @@ namespace Dogger.Setup.Tests.Domain.Services
                         }
                     });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -253,7 +255,7 @@ namespace Dogger.Setup.Tests.Domain.Services
                 .Send(Arg.Any<AttachInstancesToLoadBalancerCommand>())
                 .Throws(new TestException());
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -313,7 +315,7 @@ namespace Dogger.Setup.Tests.Domain.Services
                 .StartStopwatch()
                 .Returns(fakeStopwatchWithHighElapsedTime);
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -392,7 +394,7 @@ namespace Dogger.Setup.Tests.Domain.Services
                         }
                     });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -454,7 +456,7 @@ namespace Dogger.Setup.Tests.Domain.Services
                         }
                     });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {

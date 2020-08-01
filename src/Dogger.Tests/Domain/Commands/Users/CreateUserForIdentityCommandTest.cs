@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Dogger.Domain.Commands.Users.CreateUserForIdentity;
 using Dogger.Domain.Models;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,7 +28,7 @@ namespace Dogger.Tests.Domain.Commands.Users
             var fakeIdentityName = Guid.NewGuid().ToString();
             var fakeIdentity = TestClaimsPrincipalFactory.CreateWithIdentityName(fakeIdentityName);
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(provider =>
                 {
@@ -56,7 +58,7 @@ namespace Dogger.Tests.Domain.Commands.Users
         public async Task Handle_EmptyIdentityNameGiven_ExceptionIsThrown()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<IdentityNameNotProvidedException>(
@@ -71,7 +73,7 @@ namespace Dogger.Tests.Domain.Commands.Users
         public async Task Handle_DevelopmentEnvironmentAndNoExistingStripeCustomer_NewStripeCustomerCreatedWithFakeEmail()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
             var customerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
 
             var fakeIdentityName = Guid.NewGuid().ToString();
@@ -93,7 +95,7 @@ namespace Dogger.Tests.Domain.Commands.Users
         public async Task Handle_ProductionEnvironmentAndExistingStripeCustomer_NewStripeCustomerCreated()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 EnvironmentName = Environments.Production
             });
@@ -124,7 +126,7 @@ namespace Dogger.Tests.Domain.Commands.Users
         public async Task Handle_IdentityNameGiven_NewUserIsAddedToDatabase()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var fakeIdentityName = Guid.NewGuid().ToString();
             var fakeIdentity = TestClaimsPrincipalFactory.CreateWithIdentityName(fakeIdentityName);
@@ -141,7 +143,7 @@ namespace Dogger.Tests.Domain.Commands.Users
             Assert.AreEqual(fakeIdentityName, createdUser.Identities.Single().Name);
         }
 
-        private static async Task<User> GetUserByIdentityNameAsync(IntegrationTestEnvironment environment, string fakeIdentityName)
+        private static async Task<User> GetUserByIdentityNameAsync(DoggerIntegrationTestEnvironment environment, string fakeIdentityName)
         {
             return await environment.WithFreshDataContext(async dataContext =>
             {
@@ -158,7 +160,7 @@ namespace Dogger.Tests.Domain.Commands.Users
         /// Creates a user (which in turn creates a Stripe customer), and then deletes the user from the database again, leading to the Stripe customer being orphaned.
         /// </summary>
         private static async Task<Customer> CreateOrphanedStripeCustomerAsync(
-            IntegrationTestEnvironment environment,
+            DoggerIntegrationTestEnvironment environment,
             ClaimsPrincipal fakeIdentity)
         {
             var existingUser = await environment.Mediator.Send(new CreateUserForIdentityCommand(fakeIdentity));

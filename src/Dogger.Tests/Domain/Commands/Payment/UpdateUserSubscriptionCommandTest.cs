@@ -7,6 +7,8 @@ using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Queries.Plans.GetSupportedPullDogPlans;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,8 +54,8 @@ namespace Dogger.Tests.Domain.Commands.Payment
                     }
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
                 });
@@ -139,8 +141,8 @@ namespace Dogger.Tests.Domain.Commands.Payment
                     }
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
                 });
@@ -252,8 +254,8 @@ namespace Dogger.Tests.Domain.Commands.Payment
                     }
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {
@@ -358,8 +360,8 @@ namespace Dogger.Tests.Domain.Commands.Payment
                     }
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {
@@ -443,8 +445,8 @@ namespace Dogger.Tests.Domain.Commands.Payment
                     }
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {
@@ -524,8 +526,8 @@ namespace Dogger.Tests.Domain.Commands.Payment
                     }
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
                 });
@@ -647,8 +649,8 @@ namespace Dogger.Tests.Domain.Commands.Payment
                     }
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {
@@ -710,8 +712,8 @@ namespace Dogger.Tests.Domain.Commands.Payment
                     }
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
                 });
@@ -779,8 +781,8 @@ namespace Dogger.Tests.Domain.Commands.Payment
                     }
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
                 });

@@ -13,6 +13,8 @@ using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,7 +48,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .GetAll()
                 .Returns(Array.Empty<EmailAddress>());
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(fakeGitHubClientFactory)
             });
@@ -69,7 +71,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             var fakeGitHubClientFactory = Substitute.For<IGitHubClientFactory>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -177,7 +179,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             var fakeGitHubClientFactory = Substitute.For<IGitHubClientFactory>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -268,7 +270,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             var fakeGitHubClientFactory = Substitute.For<IGitHubClientFactory>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -363,7 +365,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             var fakeGitHubClientFactory = Substitute.For<IGitHubClientFactory>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {

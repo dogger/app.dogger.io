@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Services.Provisioning.States;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 
 namespace Dogger.Tests.Domain.Provisioning.States
 {
@@ -24,7 +25,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
                     .GetInterfaces()
                     .Contains(typeof(IProvisioningState)));
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var stateFactory = new ProvisioningStateFactory(environment.ServiceProvider);
 

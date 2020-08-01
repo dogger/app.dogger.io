@@ -6,6 +6,8 @@ using Dogger.Domain.Commands.Instances.RegisterInstanceAsProvisioned;
 using Dogger.Domain.Commands.Instances.SetInstanceExpiry;
 using Dogger.Domain.Models;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -23,7 +25,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
         public async Task Handle_InstanceNotFound_ThrowsException()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
@@ -40,7 +42,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
         public async Task Handle_InstanceFound_ExpiryTimeSetInDatabase()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -82,8 +84,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     default)
                 .Returns((Subscription)null);
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {
@@ -132,8 +134,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     LatestInvoice = new Invoice()
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {
@@ -213,8 +215,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     LatestInvoice = new Invoice()
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {
@@ -276,8 +278,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     default)
                 .Throws(new TestException());
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {
@@ -348,8 +350,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     }
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {

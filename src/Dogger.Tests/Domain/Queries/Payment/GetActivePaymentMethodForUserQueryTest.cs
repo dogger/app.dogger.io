@@ -5,6 +5,7 @@ using Dogger.Domain.Commands.Users.CreateUserForIdentity;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Payment;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Stripe;
@@ -19,7 +20,7 @@ namespace Dogger.Tests.Domain.Queries.Payment
         public async Task Handle_StripeCustomerIdNotFoundOnUser_ReturnsNull()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             //Act
             var result = await environment.Mediator.Send(
@@ -38,7 +39,7 @@ namespace Dogger.Tests.Domain.Queries.Payment
         public async Task Handle_NoPaymentMethodPresentOnStripeCustomer_NullReturned()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var createdUser = await environment.Mediator.Send(
                 new CreateUserForIdentityCommand(
@@ -58,7 +59,7 @@ namespace Dogger.Tests.Domain.Queries.Payment
         public async Task Handle_SinglePaymentMethodPresentOnStripeCustomer_SinglePaymentMethodReturned()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var createdUser = await environment.Mediator.Send(
                 new CreateUserForIdentityCommand(

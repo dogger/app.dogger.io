@@ -257,7 +257,7 @@ namespace Dogger.Infrastructure
             if (!shouldConfigure)
                 return;
 
-            DockerDebugEnvironmentService.InjectInto(
+            DockerDependencyService.InjectInto(
                 services,
                 configuration);
         }

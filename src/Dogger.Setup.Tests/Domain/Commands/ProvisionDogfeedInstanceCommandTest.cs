@@ -10,6 +10,8 @@ using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Infrastructure.IO;
 using Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +35,7 @@ namespace Dogger.Setup.Tests.Domain.Commands
 
             var fakeFile = Substitute.For<IFile>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -68,7 +70,7 @@ namespace Dogger.Setup.Tests.Domain.Commands
 
             var fakeFile = Substitute.For<IFile>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -113,7 +115,7 @@ namespace Dogger.Setup.Tests.Domain.Commands
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -153,7 +155,7 @@ namespace Dogger.Setup.Tests.Domain.Commands
 
             var fakeFile = Substitute.For<IFile>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {

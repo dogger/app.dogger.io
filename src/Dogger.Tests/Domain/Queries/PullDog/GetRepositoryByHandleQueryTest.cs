@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -16,7 +17,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
         public async Task Handle_NoRepositoryForHandleFound_ReturnsNull()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -35,7 +36,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
         public async Task Handle_RepositoryForHandleFound_ReturnsRepository()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var pullDogRepository = new PullDogRepository()
             {
