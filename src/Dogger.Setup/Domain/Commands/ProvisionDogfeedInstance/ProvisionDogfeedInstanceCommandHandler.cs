@@ -11,14 +11,14 @@ using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Arguments;
 using Dogger.Domain.Services.Provisioning.Flows;
-using Dogger.Infrastructure.AspNet.Options.Dogfeed;
 using Dogger.Infrastructure.IO;
+using Dogger.Setup.Infrastructure;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Instance = Dogger.Domain.Models.Instance;
 
-namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
+namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
 {
     public class ProvisionDogfeedInstanceCommandHandler : IRequestHandler<ProvisionDogfeedInstanceCommand, IProvisioningJob>
     {
@@ -60,7 +60,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
             if (dockerHubOptions.Password == null)
                 throw new InvalidOperationException("Could not find Docker Hub password.");
 
-            var cluster = await mediator.Send(new EnsureClusterWithIdCommand(DataContext.DoggerClusterId), cancellationToken);
+            var cluster = await this.mediator.Send(new EnsureClusterWithIdCommand(DataContext.DoggerClusterId), cancellationToken);
 
             var firstCapablePlan = await GetDogfeedingPlanAsync();
             var instance = new Instance()
@@ -109,7 +109,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
 
         private async Task<Plan> GetDogfeedingPlanAsync()
         {
-            var allPlans = await mediator.Send(new GetSupportedPlansQuery());
+            var allPlans = await this.mediator.Send(new GetSupportedPlansQuery());
 
             var firstCapablePlan = allPlans
                 .OrderBy(x => x.PriceInHundreds)
@@ -129,7 +129,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
             if (options.Files == null)
                 throw new InvalidOperationException("Could not find Docker Compose YML contents.");
 
-            var instanceEnvironmentVariableFile = GetInstanceEnvironmentVariableFile(configuration);
+            var instanceEnvironmentVariableFile = GetInstanceEnvironmentVariableFile(this.configuration);
 
             var elasticsearchInstancePassword =
                 elasticsearchOptions.InstancePassword ??
@@ -192,7 +192,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
             {
                 files.Add(new InstanceDockerFile(
                     SanitizeDockerComposeYmlFilePath(ymlFilePath),
-                    await file.ReadAllBytesAsync(ymlFilePath)));
+                    await this.file.ReadAllBytesAsync(ymlFilePath)));
             }
 
             return files.ToArray();

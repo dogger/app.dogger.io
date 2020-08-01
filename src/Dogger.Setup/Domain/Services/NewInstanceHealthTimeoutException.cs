@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Dogger.Domain.Services.Dogfeeding
+namespace Dogger.Setup.Domain.Services
 {
     public class NewInstanceHealthTimeoutException : Exception
     {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using Dogger.Domain.Services.Dogfeeding;
 using Dogger.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

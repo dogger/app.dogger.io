@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Dogger.Infrastructure.AspNet.Options;
 
-namespace Dogger.Infrastructure.AspNet.Options.Dogfeed
+namespace Dogger.Setup.Infrastructure
 {
     [ExcludeFromCodeCoverage]
     public class DogfeedOptions

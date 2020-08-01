@@ -15,7 +15,6 @@ using Dogger.Domain.Queries.Clusters.GetConnectionDetails;
 using Dogger.Domain.Queries.Instances.GetContainerLogs;
 using Dogger.Domain.Queries.Instances.GetInstanceByName;
 using Dogger.Domain.Queries.Instances.GetProvisionedClustersWithInstancesForUser;
-using Dogger.Domain.Services.Dogfeeding;
 using Dogger.Domain.Services.Provisioning.Arguments;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

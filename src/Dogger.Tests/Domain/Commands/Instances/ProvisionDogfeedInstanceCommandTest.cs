@@ -4,7 +4,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
-using Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;

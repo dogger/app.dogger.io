@@ -10,7 +10,6 @@ using Dogger.Domain.Queries.Amazon.Lightsail.GetAllInstances;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLoadBalancerByName;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
-using Dogger.Domain.Services.Dogfeeding;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Infrastructure;
 using Dogger.Infrastructure.Time;

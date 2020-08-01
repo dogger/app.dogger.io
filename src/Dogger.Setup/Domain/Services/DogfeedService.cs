@@ -10,7 +10,6 @@ using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Amazon.Lightsail.AssignStaticIpToInstance;
 using Dogger.Domain.Commands.Amazon.Lightsail.AttachInstancesToLoadBalancer;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
-using Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetAllInstances;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLoadBalancerByName;
@@ -22,7 +21,7 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using Instance = Amazon.Lightsail.Model.Instance;
 
-namespace Dogger.Domain.Services.Dogfeeding
+namespace Dogger.Setup.Domain.Services
 {
     public class DogfeedService : IDogfeedService
     {
@@ -79,7 +78,7 @@ namespace Dogger.Domain.Services.Dogfeeding
 
         public async Task DogfeedAsync()
         {
-            logger.Information("Provisioning has started.");
+            this.logger.Information("Provisioning has started.");
 
             await CleanUpAsync();
 
@@ -143,7 +142,7 @@ namespace Dogger.Domain.Services.Dogfeeding
         /// </summary>
         private async Task DestroyDetachedInstancesAsync(LoadBalancer loadBalancer)
         {
-            var allInstances = await mediator.Send(new GetAllInstancesQuery());
+            var allInstances = await this.mediator.Send(new GetAllInstancesQuery());
             var detachedInstanceNames = allInstances
                 .Where(x => x.Name.StartsWith(prefix, StringComparison.InvariantCulture))
                 .Where(instance => loadBalancer
@@ -153,7 +152,7 @@ namespace Dogger.Domain.Services.Dogfeeding
 
             foreach (var detachedInstanceName in detachedInstanceNames)
             {
-                logger.Warning("Deleting detached instance {InstanceName}.", detachedInstanceName);
+                this.logger.Warning("Deleting detached instance {InstanceName}.", detachedInstanceName);
                 await DestroyInstanceByNameAsync(detachedInstanceName);
             }
         }
@@ -162,7 +161,7 @@ namespace Dogger.Domain.Services.Dogfeeding
             Instance instance,
             LoadBalancer loadBalancer)
         {
-            await mediator.Send(new AttachInstancesToLoadBalancerCommand(
+            await this.mediator.Send(new AttachInstancesToLoadBalancerCommand(
                 loadBalancer.Name,
                 new[]
                 {
@@ -172,7 +171,7 @@ namespace Dogger.Domain.Services.Dogfeeding
 
         private async Task DestroyInstanceByNameAsync(string name)
         {
-            await mediator.Send(new DeleteInstanceByNameCommand(name, InitiatorType.System));
+            await this.mediator.Send(new DeleteInstanceByNameCommand(name, InitiatorType.System));
         }
 
         private async Task WaitForInstanceToBecomeHealthyAsync(
@@ -198,7 +197,7 @@ namespace Dogger.Domain.Services.Dogfeeding
                         $"The newly deployed instance {newInstance.Name} was not healthy after 5 minutes.");
                 }
 
-                loadBalancer = await mediator.Send(new GetLoadBalancerByNameQuery(loadBalancer.Name)) ??
+                loadBalancer = await this.mediator.Send(new GetLoadBalancerByNameQuery(loadBalancer.Name)) ??
                     throw new InvalidOperationException("Could not refresh load balancer status.");
             } while (IsUnhealthy());
         }
@@ -214,7 +213,7 @@ namespace Dogger.Domain.Services.Dogfeeding
 
             foreach (var oldInstanceName in oldInstanceNames)
             {
-                logger.Warning("Deleting old instance {InstanceName}.", oldInstanceName);
+                this.logger.Warning("Deleting old instance {InstanceName}.", oldInstanceName);
                 await DestroyInstanceByNameAsync(oldInstanceName);
             }
         }
@@ -232,7 +231,7 @@ namespace Dogger.Domain.Services.Dogfeeding
 
             foreach (var redundantInstanceName in redundantInstanceNames)
             {
-                logger.Warning("Deleting redundant instance {InstanceName}.", redundantInstanceName);
+                this.logger.Warning("Deleting redundant instance {InstanceName}.", redundantInstanceName);
                 await DestroyInstanceByNameAsync(redundantInstanceName);
             }
         }
@@ -242,7 +241,7 @@ namespace Dogger.Domain.Services.Dogfeeding
             var newInstanceName = $"{instanceName}-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
 
             await this.mediator.Send(new ProvisionDogfeedInstanceCommand(newInstanceName));
-            await provisioningService.ProcessPendingJobsAsync();
+            await this.provisioningService.ProcessPendingJobsAsync();
 
             return await this.mediator.Send(new GetLightsailInstanceByNameQuery(newInstanceName)) ??
                 throw new InvalidOperationException("Could not fetch newly created instance.");

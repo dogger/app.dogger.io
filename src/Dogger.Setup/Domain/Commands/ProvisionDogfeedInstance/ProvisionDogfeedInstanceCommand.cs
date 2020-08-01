@@ -3,7 +3,7 @@ using Dogger.Domain.Services.Provisioning;
 using Dogger.Infrastructure.Mediatr.Database;
 using MediatR;
 
-namespace Dogger.Domain.Commands.Instances.ProvisionDogfeedInstance
+namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
 {
     public class ProvisionDogfeedInstanceCommand : IRequest<IProvisioningJob>, IDatabaseTransactionRequest
     {

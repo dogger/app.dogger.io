@@ -12,7 +12,6 @@ using Dogger.Controllers.PullDog.Webhooks.Handlers;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.Amazon.Identity;
 using Dogger.Domain.Services.Amazon.Lightsail;
-using Dogger.Domain.Services.Dogfeeding;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.States.CompleteInstanceSetup;
 using Dogger.Domain.Services.Provisioning.States.CreateLightsailInstance;
@@ -22,7 +21,6 @@ using Dogger.Domain.Services.PullDog;
 using Dogger.Domain.Services.PullDog.GitHub;
 using Dogger.Infrastructure.AspNet;
 using Dogger.Infrastructure.AspNet.Options;
-using Dogger.Infrastructure.AspNet.Options.Dogfeed;
 using Dogger.Infrastructure.AspNet.Options.GitHub;
 using Dogger.Infrastructure.Auth.Auth0;
 using Dogger.Infrastructure.Database;
@@ -229,7 +227,6 @@ namespace Dogger.Infrastructure
 
             Configure<AwsOptions>();
             Configure<GitHubOptions>();
-            Configure<DogfeedOptions>();
             Configure<SqlOptions>();
             Configure<StripeOptions>();
             Configure<EncryptionOptions>();
@@ -335,12 +332,6 @@ namespace Dogger.Infrastructure
         private static void ConfigureDocker(IServiceCollection services)
         {
             services.AddTransient<IDockerEngineClientFactory, DockerEngineClientFactory>();
-        }
-
-        public static void ConfigureDogfeeding(
-            IServiceCollection services)
-        {
-            services.AddTransient<IDogfeedService, DogfeedService>();
         }
 
         private static void ConfigureInfrastructure(IServiceCollection services, IConfiguration configuration)

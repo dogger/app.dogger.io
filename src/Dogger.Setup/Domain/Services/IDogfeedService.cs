@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Dogger.Domain.Services.Dogfeeding
+namespace Dogger.Setup.Domain.Services
 {
     public interface IDogfeedService
     {
