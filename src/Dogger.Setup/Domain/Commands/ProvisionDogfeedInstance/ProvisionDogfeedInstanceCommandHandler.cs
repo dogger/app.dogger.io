@@ -16,6 +16,7 @@ using Dogger.Setup.Infrastructure;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using File = System.IO.File;
 using Instance = Dogger.Domain.Models.Instance;
 
 namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
@@ -117,121 +118,21 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
             return firstCapablePlan;
         }
 
-        /// <summary>
-        /// Makes the job create a file on the disk called environment-variables.env, which is then referenced by docker-compose.deploy.yml.
-        /// </summary>
-        private async Task<InstanceDockerFile[]> GetDockerFilesAsync(DogfeedOptions options)
+        private static async Task<InstanceDockerFile[]> GetDockerFilesAsync(DogfeedOptions options)
         {
-            var elasticsearchOptions = options.Elasticsearch;
-            if (elasticsearchOptions == null)
-                throw new InvalidOperationException("Could not find Elasticsearch options.");
-
             if (options.Files == null)
                 throw new InvalidOperationException("Could not find Docker Compose YML contents.");
 
-            var instanceEnvironmentVariableFile = GetInstanceEnvironmentVariableFile(this.configuration);
-
-            var elasticsearchInstancePassword =
-                elasticsearchOptions.InstancePassword ??
-                throw new InvalidOperationException("No Elasticsearch instance password was specified.");
-
-            var files = new List<InstanceDockerFile>()
-            {
-                instanceEnvironmentVariableFile,
-                new InstanceDockerFile(
-                    "env/elasticsearch.env",
-                    FormatEnvironmentVariableFileContentsFromValues(new Dictionary<string, string>()
-                    {
-                        { "node.name", "elasticsearch" },
-                        { "discovery.type", "single-node" },
-                        { "ES_JAVA_OPTS", "-Xms256m -Xmx256m" },
-                        { "ROOT_CA", "root-ca.pem" },
-                        { "ADMIN_PEM", "admin.pem" },
-                        { "ADMIN_KEY", "admin.key" },
-                        {
-                            "ADMIN_KEY_PASS",
-                            elasticsearchOptions.AdminKeyPassword ??
-                                throw new InvalidOperationException("No admin key password was specified.")
-                        },
-                        { "ELASTIC_PWD", "elastic" },
-                        { "KIBANA_PWD", elasticsearchInstancePassword }
-                    })),
-                new InstanceDockerFile(
-                    "env/kibana.env",
-                    FormatEnvironmentVariableFileContentsFromValues(new Dictionary<string, string>()
-                    {
-                        { "ELASTICSEARCH_HOSTS", "https://elasticsearch:9200" },
-                        { "ELASTICSEARCH_SSL_VERIFICATIONMODE", "none" },
-                        { "ELASTICSEARCH_USERNAME", "kibana" },
-                        { "ELASTICSEARCH_PASSWORD", elasticsearchInstancePassword }
-                    })),
-                new InstanceDockerFile(
-                    "certs/admin.key",
-                    SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.AdminKeyContents)),
-                new InstanceDockerFile(
-                    "certs/admin.pem",
-                    SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.AdminPemContents)),
-                new InstanceDockerFile(
-                    "certs/node.key",
-                    SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.NodeKeyContents)),
-                new InstanceDockerFile(
-                    "certs/node.pem",
-                    SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.NodePemContents)),
-                new InstanceDockerFile(
-                    "certs/root-ca.key",
-                    SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.RootCaKeyContents)),
-                new InstanceDockerFile(
-                    "certs/root-ca.pem",
-                    SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.RootCaPemContents)),
-                new InstanceDockerFile(
-                    "config/elasticsearch.yml",
-                    SanitizeFileContentsFromConfigurationAsBytes(elasticsearchOptions.ConfigurationYmlContents))
-            };
-
-            foreach (var ymlFilePath in options.Files)
-            {
-                files.Add(new InstanceDockerFile(
-                    SanitizeDockerComposeYmlFilePath(ymlFilePath),
-                    await this.file.ReadAllBytesAsync(ymlFilePath)));
-            }
-
-            return files.ToArray();
+            return await Task.WhenAll(options
+                .Files
+                .Select(async path => new InstanceDockerFile(
+                    path,
+                    await File.ReadAllBytesAsync(path))));
         }
 
         private static string SanitizeDockerComposeYmlFilePath(string ymlFilePath)
         {
             return Path.GetFileName(ymlFilePath);
-        }
-
-        private static InstanceDockerFile GetInstanceEnvironmentVariableFile(IConfiguration configuration)
-        {
-            const string instanceEnvironmentVariableKeyPrefix = "INSTANCE_";
-
-            var configurationAsKeyValuePairs = configuration
-                .AsEnumerable()
-                .ToArray();
-
-            var configurationToTransferToInstance = configurationAsKeyValuePairs
-                .Where(x => x.Key.StartsWith(
-                    instanceEnvironmentVariableKeyPrefix,
-                    StringComparison.InvariantCulture))
-                .ToDictionary(
-                    x => x.Key.Substring(
-                        instanceEnvironmentVariableKeyPrefix.Length),
-                    x => x.Value);
-
-            var instanceEnvironmentVariableFile = new InstanceDockerFile(
-                "env/dogger.env",
-                FormatEnvironmentVariableFileContentsFromValues(configurationToTransferToInstance));
-            return instanceEnvironmentVariableFile;
-        }
-
-        private static byte[] FormatEnvironmentVariableFileContentsFromValues(Dictionary<string, string> values)
-        {
-            return Encoding.UTF8.GetBytes(
-                string.Join('\n', values
-                    .Select(keyPair =>
-                        keyPair.Key + "=" + keyPair.Value)));
         }
 
         private static string SanitizeFileContentsFromConfigurationAsString(string? contents)

@@ -59,10 +59,6 @@ namespace Dogger
         private static IConfigurationRoot BuildConfiguration(string[] args)
         {
             var configurationBuilder = new ConfigurationBuilder();
-
-            if(DogfeedService.IsInDogfeedMode)
-                DogfeedService.MoveDogfeedPrefixedEnvironmentVariableIntoConfiguration(configurationBuilder);
-
             configurationBuilder.AddJsonFile("appsettings.json");
             configurationBuilder.AddEnvironmentVariables();
             configurationBuilder.AddCommandLine(args);

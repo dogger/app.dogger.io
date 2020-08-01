@@ -11,8 +11,8 @@ using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLoadBalancerByName;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Services.Provisioning;
-using Dogger.Infrastructure;
 using Dogger.Infrastructure.Time;
+using Dogger.Setup.Domain.Services;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -22,7 +22,7 @@ using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Instance = Amazon.Lightsail.Model.Instance;
 
-namespace Dogger.Tests.Domain.Services
+namespace Dogger.Setup.Tests.Domain
 {
     [TestClass]
     public class DogfeedServiceTest

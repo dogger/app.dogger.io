@@ -36,9 +36,6 @@ namespace Dogger.Setup.Domain.Services
         private readonly ILogger logger;
         private readonly ITime time;
 
-        public static bool IsInDogfeedMode =>
-            Environment.GetEnvironmentVariable("DOGFEED") == "true";
-
         public DogfeedService(
             IProvisioningService provisioningService,
             IMediator mediator,
