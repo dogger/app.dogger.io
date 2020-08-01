@@ -4,6 +4,7 @@ using System.Text;
 using Dogger.Setup.Domain.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using DoggerIocRegistry = Dogger.Infrastructure.IocRegistry;
 
 namespace Dogger.Setup.Infrastructure
 {
@@ -13,6 +14,10 @@ namespace Dogger.Setup.Infrastructure
             IServiceCollection services,
             IConfiguration configuration)
         {
+            DoggerIocRegistry.Register(
+                services, 
+                configuration);
+
             ConfigureOptions(
                 services,
                 configuration);

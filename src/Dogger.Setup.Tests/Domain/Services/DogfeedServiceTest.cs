@@ -13,6 +13,7 @@ using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Infrastructure.Time;
 using Dogger.Setup.Domain.Services;
+using Dogger.Setup.Infrastructure;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -22,80 +23,11 @@ using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Instance = Amazon.Lightsail.Model.Instance;
 
-namespace Dogger.Setup.Tests.Domain
+namespace Dogger.Setup.Tests.Domain.Services
 {
     [TestClass]
     public class DogfeedServiceTest
     {
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
-        public async Task IsProtectedResourceName_ProtectedNameWithLeadingWhitespace_ReturnsTrue()
-        {
-            //Arrange
-            var name = " main-";
-
-            //Act
-            var result = DogfeedService.IsProtectedResourceName(name);
-
-            //Assert
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
-        public async Task IsProtectedResourceName_ProtectedNameWithWhitespaceInside_ReturnsTrue()
-        {
-            //Arrange
-            var name = "mai n-lol";
-
-            //Act
-            var result = DogfeedService.IsProtectedResourceName(name);
-
-            //Assert
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
-        public async Task IsProtectedResourceName_ProtectedNameWithTrailingWhitespace_ReturnsTrue()
-        {
-            //Arrange
-            var name = "main- ";
-
-            //Act
-            var result = DogfeedService.IsProtectedResourceName(name);
-
-            //Assert
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
-        public async Task IsProtectedResourceName_ProtectedNameGiven_ReturnsTrue()
-        {
-            //Arrange
-            var name = "main-lol";
-
-            //Act
-            var result = DogfeedService.IsProtectedResourceName(name);
-
-            //Assert
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
-        public async Task IsProtectedResourceName_JustProtectedNamePrefixGiven_ReturnsTrue()
-        {
-            //Arrange
-            var name = "main-";
-
-            //Act
-            var result = DogfeedService.IsProtectedResourceName(name);
-
-            //Assert
-            Assert.IsTrue(result);
-        }
 
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
@@ -136,7 +68,6 @@ namespace Dogger.Setup.Tests.Domain
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -203,7 +134,6 @@ namespace Dogger.Setup.Tests.Domain
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -274,7 +204,6 @@ namespace Dogger.Setup.Tests.Domain
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -325,7 +254,6 @@ namespace Dogger.Setup.Tests.Domain
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -385,7 +313,6 @@ namespace Dogger.Setup.Tests.Domain
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -464,7 +391,6 @@ namespace Dogger.Setup.Tests.Domain
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -526,7 +452,6 @@ namespace Dogger.Setup.Tests.Domain
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);

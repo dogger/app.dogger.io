@@ -16,6 +16,7 @@ using Dogger.Domain.Queries.Amazon.Lightsail.GetLoadBalancerByName;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Infrastructure;
 using Dogger.Infrastructure.Time;
+using Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -25,11 +26,9 @@ namespace Dogger.Setup.Domain.Services
 {
     public class DogfeedService : IDogfeedService
     {
-        private const string prefix = "main-";
-
-        private const string instanceName = prefix + "instance";
-        private const string loadBalancerName = prefix + "load-balancer";
-        private const string ipName = prefix + "ip";
+        private const string instanceName = ProvisioningService.ProtectedResourcePrefix + "instance";
+        private const string loadBalancerName = ProvisioningService.ProtectedResourcePrefix + "load-balancer";
+        private const string ipName = ProvisioningService.ProtectedResourcePrefix + "ip";
 
         private readonly IProvisioningService provisioningService;
         private readonly IMediator mediator;
@@ -46,31 +45,6 @@ namespace Dogger.Setup.Domain.Services
             this.mediator = mediator;
             this.logger = logger;
             this.time = time;
-        }
-
-        public static bool IsProtectedResourceName(string? resourceName)
-        {
-            if (resourceName == null)
-                return false;
-
-            if (Debugger.IsAttached && !EnvironmentHelper.IsRunningInTest)
-                return false;
-
-            const string whitespacePattern = "\\s";
-            while (Regex.IsMatch(resourceName, whitespacePattern))
-            {
-                resourceName = Regex.Replace(
-                    resourceName, 
-                    whitespacePattern, 
-                    string.Empty);
-            }
-
-            return resourceName
-                .Trim()
-                .StartsWith(
-                    prefix,
-                    ignoreCase: true,
-                    CultureInfo.InvariantCulture);
         }
 
         public async Task DogfeedAsync()
@@ -141,7 +115,7 @@ namespace Dogger.Setup.Domain.Services
         {
             var allInstances = await this.mediator.Send(new GetAllInstancesQuery());
             var detachedInstanceNames = allInstances
-                .Where(x => x.Name.StartsWith(prefix, StringComparison.InvariantCulture))
+                .Where(x => x.Name.StartsWith(ProvisioningService.ProtectedResourcePrefix, StringComparison.InvariantCulture))
                 .Where(instance => loadBalancer
                     .InstanceHealthSummary
                     .All(x => x.InstanceName != instance.Name))

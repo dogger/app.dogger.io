@@ -8,6 +8,7 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Infrastructure.IO;
+using Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance;
 using Dogger.Tests.TestHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 
-namespace Dogger.Tests.Domain.Commands.Instances
+namespace Dogger.Setup.Tests.Domain.Commands
 {
     [TestClass]
     public class ProvisionDogfeedInstanceCommandTest

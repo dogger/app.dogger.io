@@ -19,15 +19,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Dogger.Tests.TestHelpers
 {
-    class EnvironmentSetupOptions
-    {
-        public string EnvironmentName { get; set; }
-        public Action<IServiceCollection> IocConfiguration { get; set; }
-        public bool SkipWebServer { get; set; }
-    }
 
     [ExcludeFromCodeCoverage]
-    class IntegrationTestEnvironment : IAsyncDisposable
+    public class IntegrationTestEnvironment : IAsyncDisposable
     {
         private readonly IHost host;
         private readonly IServiceScope serviceScope;

@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Domain.Services.Provisioning.States;
+using Dogger.Infrastructure;
 using Dogger.Infrastructure.Time;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -15,6 +19,7 @@ namespace Dogger.Domain.Services.Provisioning
     public class ProvisioningService : IProvisioningService
     {
         public const string CompletedJobId = "J_SUCCEEDED";
+        public const string ProtectedResourcePrefix = "main-";
 
         private readonly ITime time;
         private readonly IServiceProvider serviceProvider;
@@ -35,6 +40,31 @@ namespace Dogger.Domain.Services.Provisioning
 
             this.jobQueue = new Queue<ProvisioningJob>();
             this.jobsByIds = new ConcurrentDictionary<string, ProvisioningJob>();
+        }
+
+        public static bool IsProtectedResourceName(string? resourceName)
+        {
+            if (resourceName == null)
+                return false;
+
+            if (Debugger.IsAttached && !EnvironmentHelper.IsRunningInTest)
+                return false;
+
+            const string whitespacePattern = "\\s";
+            while (Regex.IsMatch(resourceName, whitespacePattern))
+            {
+                resourceName = Regex.Replace(
+                    resourceName,
+                    whitespacePattern,
+                    string.Empty);
+            }
+
+            return resourceName
+                .Trim()
+                .StartsWith(
+                    ProtectedResourcePrefix,
+                    ignoreCase: true,
+                    CultureInfo.InvariantCulture);
         }
 
         public Task<IProvisioningJob?> GetJobByIdAsync(string jobId)

@@ -20,57 +20,29 @@ namespace Dogger
     public static class Program
     {
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "This is the main method.")]
-        public static async Task<int> Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
-            var configuration = BuildConfiguration(args);
+            var configuration = ConfigurationFactory.BuildConfiguration(args);
+            Log.Logger = LoggerFactory.BuildWebApplicationLogger(configuration);
 
-            if (DogfeedService.IsInDogfeedMode)
+            try
             {
-                Log.Logger = LoggerFactory.BuildDogfeedLogger();
+                var host = CreateDoggerHostBuilder(configuration, args).Build();
+                await DatabaseMigrator.MigrateDatabaseForHostAsync(host);
 
-                await DogfeedAsync(configuration);
+                await host.RunAsync();
+
                 return 0;
             }
-            else
+            catch (Exception ex) when(!Debugger.IsAttached)
             {
-                Log.Logger = LoggerFactory.BuildWebApplicationLogger(configuration);
-
-                try
-                {
-                    var host = CreateDoggerHostBuilder(configuration, args).Build();
-                    await DatabaseMigrator.MigrateDatabaseForHostAsync(host);
-
-                    await host.RunAsync();
-
-                    return 0;
-                }
-                catch (Exception ex) when(!Debugger.IsAttached)
-                {
-                    Log.Fatal(ex, "Host terminated unexpectedly");
-                    return 1;
-                }
-                finally
-                {
-                    Log.CloseAndFlush();
-                }
+                Log.Fatal(ex, "Host terminated unexpectedly");
+                return 1;
             }
-        }
-
-        private static IConfigurationRoot BuildConfiguration(string[] args)
-        {
-            var configurationBuilder = new ConfigurationBuilder();
-            configurationBuilder.AddJsonFile("appsettings.json");
-            configurationBuilder.AddEnvironmentVariables();
-            configurationBuilder.AddCommandLine(args);
-
-            if (Debugger.IsAttached)
+            finally
             {
-                configurationBuilder.AddJsonFile("appsettings.Development.json");
-                configurationBuilder.AddUserSecrets("be404feb-b81c-425a-b355-029dbd854c3d");
+                Log.CloseAndFlush();
             }
-
-            var configuration = configurationBuilder.Build();
-            return configuration;
         }
 
         public static IHostBuilder CreateDoggerHostBuilder(IConfiguration? configuration, string[] args) =>
@@ -97,28 +69,5 @@ namespace Dogger
         /// Used by Entity Framework when running console commands for migrations etc. It must have this signature.
         /// </summary>
         private static IHostBuilder CreateHostBuilder(string[] args) => CreateDoggerHostBuilder(null, args);
-
-        private static async Task DogfeedAsync(IConfiguration configuration)
-        {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton(configuration);
-            serviceCollection.AddSingleton(Substitute.For<IHttpContextAccessor>());
-
-            IocRegistry.Register(
-                serviceCollection,
-                configuration);
-
-            IocRegistry.ConfigureDogfeeding(
-                serviceCollection);
-
-            await using var serviceProvider = serviceCollection.BuildServiceProvider();
-
-            using var scope = serviceProvider.CreateScope();
-            var dogfeedService = scope
-                .ServiceProvider
-                .GetRequiredService<IDogfeedService>();
-
-            await dogfeedService.DogfeedAsync();
-        }
     }
 }
