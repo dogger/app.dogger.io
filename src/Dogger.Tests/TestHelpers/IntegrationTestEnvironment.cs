@@ -19,7 +19,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Dogger.Tests.TestHelpers
 {
-
     [ExcludeFromCodeCoverage]
     public class IntegrationTestEnvironment : IAsyncDisposable
     {
