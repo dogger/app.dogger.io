@@ -68,7 +68,7 @@ namespace Dogger.Setup.Tests.Domain.Services
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.Register(services, Substitute.For<IConfiguration>());
+                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -135,7 +135,7 @@ namespace Dogger.Setup.Tests.Domain.Services
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.Register(services, Substitute.For<IConfiguration>());
+                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -206,7 +206,7 @@ namespace Dogger.Setup.Tests.Domain.Services
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.Register(services, Substitute.For<IConfiguration>());
+                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -257,7 +257,7 @@ namespace Dogger.Setup.Tests.Domain.Services
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.Register(services, Substitute.For<IConfiguration>());
+                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -317,7 +317,7 @@ namespace Dogger.Setup.Tests.Domain.Services
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.Register(services, Substitute.For<IConfiguration>());
+                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -396,7 +396,7 @@ namespace Dogger.Setup.Tests.Domain.Services
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.Register(services, Substitute.For<IConfiguration>());
+                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -458,7 +458,7 @@ namespace Dogger.Setup.Tests.Domain.Services
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.Register(services, Substitute.For<IConfiguration>());
+                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);

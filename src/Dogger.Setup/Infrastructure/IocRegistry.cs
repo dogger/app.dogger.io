@@ -32,7 +32,7 @@ namespace Dogger.Setup.Infrastructure
             services.Configure<DogfeedOptions>(configuration);
         }
 
-        private static void ConfigureDogfeeding(
+        public static void ConfigureDogfeeding(
             IServiceCollection services)
         {
             services.AddTransient<IDogfeedService, DogfeedService>();
