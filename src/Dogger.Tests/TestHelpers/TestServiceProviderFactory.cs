@@ -15,7 +15,7 @@ using NSubstitute;
 
 namespace Dogger.Tests.TestHelpers
 {
-    class TestServiceProviderFactory
+    public class TestServiceProviderFactory
     {
         public static IServiceProvider CreateUsingStartup(Action<IServiceCollection> configure = null)
         {

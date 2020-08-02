@@ -21,7 +21,7 @@ using Stripe;
 namespace Dogger.Infrastructure.AspNet
 {
     [ExcludeFromCodeCoverage]
-    public class DockerDependencyService : IHostedService
+    public class DockerDependencyService : IHostedService, IDockerDependencyService
     {
         private readonly IServiceProvider serviceProvider;
 
@@ -60,9 +60,10 @@ namespace Dogger.Infrastructure.AspNet
             dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
             customerService = scope.ServiceProvider.GetRequiredService<CustomerService>();
             webhookEndpointService = scope.ServiceProvider.GetRequiredService<WebhookEndpointService>();
-            ngrokHostedService = scope.ServiceProvider.GetRequiredService<INGrokHostedService>();
+            ngrokHostedService = scope.ServiceProvider.GetService<INGrokHostedService>();
 
-            ngrokHostedService.Ready += SetupStripeWebhooksAsync;
+            if(this.ngrokHostedService != null)
+                ngrokHostedService.Ready += SetupStripeWebhooksAsync;
 
             await InitializeDockerAsync();
             await WaitForHealthyDockerDependenciesAsync();
@@ -379,7 +380,10 @@ namespace Dogger.Infrastructure.AspNet
             IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddHostedService<DockerDependencyService>();
+            services.AddSingleton<DockerDependencyService>();
+            services.AddSingleton<IDockerDependencyService>(p => p.GetRequiredService<DockerDependencyService>());
+
+            services.AddHostedService(p => p.GetRequiredService<DockerDependencyService>());
 
             configuration["Sql:ConnectionString"] = GetSqlConnectionStringForDatabase("dogger");
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Dogger.Setup.Domain.Services;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using DoggerIocRegistry = Dogger.Infrastructure.IocRegistry;
@@ -17,6 +18,8 @@ namespace Dogger.Setup.Infrastructure
             DoggerIocRegistry.Register(
                 services, 
                 configuration);
+
+            services.AddMediatR(typeof(IocRegistry).Assembly);
 
             ConfigureOptions(
                 services,

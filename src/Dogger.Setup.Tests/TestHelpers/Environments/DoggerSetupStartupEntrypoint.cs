@@ -24,6 +24,8 @@ namespace Dogger.Setup.Tests.TestHelpers.Environments
 
             var serviceCollection = new ServiceCollection();
             IocRegistry.Register(serviceCollection, configuration);
+            DockerDependencyService.InjectInto(serviceCollection, configuration);
+            TestServiceProviderFactory.ConfigureServicesForTesting(serviceCollection);
 
             options.IocConfiguration?.Invoke(serviceCollection);
 
