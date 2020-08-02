@@ -6,8 +6,10 @@ using Dogger.Infrastructure.AspNet;
 using Dogger.Setup.Infrastructure;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 
 namespace Dogger.Setup.Tests.TestHelpers.Environments
 {
@@ -23,6 +25,8 @@ namespace Dogger.Setup.Tests.TestHelpers.Environments
             var configuration = configurationBuilder.Build();
 
             var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton(Substitute.For<IHttpContextAccessor>());
+
             IocRegistry.Register(serviceCollection, configuration);
             DockerDependencyService.InjectInto(serviceCollection, configuration);
             TestServiceProviderFactory.ConfigureServicesForTesting(serviceCollection);
