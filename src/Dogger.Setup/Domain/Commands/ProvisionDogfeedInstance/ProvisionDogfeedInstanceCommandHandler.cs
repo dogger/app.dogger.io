@@ -52,7 +52,7 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
         {
             var dogfeedOptions = this.dogfeedOptionsMonitor.CurrentValue;
             if (dogfeedOptions.Files == null)
-                throw new InvalidOperationException("Could not find Docker Compose YML contents.");
+                throw new InvalidOperationException("Could not find files to deploy.");
 
             var dockerHubOptions = dogfeedOptions.DockerHub;
             if (dockerHubOptions?.Username == null)

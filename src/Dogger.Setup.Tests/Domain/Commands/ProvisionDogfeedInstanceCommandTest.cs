@@ -96,56 +96,6 @@ namespace Dogger.Setup.Tests.Domain.Commands
 
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_InstancePrefixedEnvironmentVariable_MovesEnvironmentVariableIntoNewInstanceEnvironmentVariableFiles()
-        {
-            //Arrange
-            var fakeConfigurationSection = Substitute.For<IConfigurationSection>();
-
-            var fakeConfiguration = Substitute.For<IConfiguration>();
-            fakeConfiguration
-                .GetChildren()
-                .Returns(new[]
-                {
-                    fakeConfigurationSection
-                });
-
-            var fakeFile = Substitute.For<IFile>();
-
-            var fakeAmazonLightsail = Substitute.For<IAmazonLightsail>();
-            FakeOutBundleFetching(fakeAmazonLightsail);
-
-            var fakeProvisioningService = Substitute.For<IProvisioningService>();
-
-            await using var environment = await DoggerSetupIntegrationTestEnvironment.CreateAsync(new DoggerSetupEnvironmentSetupOptions()
-            {
-                IocConfiguration = services =>
-                {
-                    services.AddSingleton(fakeFile);
-                    services.AddSingleton(fakeProvisioningService);
-                    services.AddSingleton(fakeAmazonLightsail);
-                }
-            });
-
-            var configuration = environment.Configuration;
-            configuration["INSTANCE_FOO"] = "some-value";
-
-            //Act
-            await environment.Mediator.Send(
-                new ProvisionDogfeedInstanceCommand(
-                    "some-instance-name"));
-
-            //Assert
-            await fakeProvisioningService
-                .Received(1)
-                .ScheduleJobAsync(Arg.Is<AggregateProvisioningStateFlow>(arg => ((DeployToClusterStateFlow)arg.Flows[1])
-                    .Files
-                    .Any(x =>
-                        x.Path == "env/dogger.env" &&
-                        Encoding.UTF8.GetString(x.Contents) == "FOO=some-value")));
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_ProperArgumentsGiven_DoggerInstanceIsCreatedInDatabase()
         {
             //Arrange
