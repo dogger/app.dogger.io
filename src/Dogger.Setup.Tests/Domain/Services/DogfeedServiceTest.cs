@@ -14,6 +14,7 @@ using Dogger.Domain.Services.Provisioning;
 using Dogger.Infrastructure.Time;
 using Dogger.Setup.Domain.Services;
 using Dogger.Setup.Infrastructure;
+using Dogger.Setup.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
@@ -66,11 +67,10 @@ namespace Dogger.Setup.Tests.Domain.Services
                         }
                     });
 
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
+            await using var environment = await DoggerSetupIntegrationTestEnvironment.CreateAsync(new DoggerSetupEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -133,11 +133,10 @@ namespace Dogger.Setup.Tests.Domain.Services
                         }
                     });
 
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
+            await using var environment = await DoggerSetupIntegrationTestEnvironment.CreateAsync(new DoggerSetupEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -204,11 +203,10 @@ namespace Dogger.Setup.Tests.Domain.Services
                         }
                     });
 
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
+            await using var environment = await DoggerSetupIntegrationTestEnvironment.CreateAsync(new DoggerSetupEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -255,11 +253,10 @@ namespace Dogger.Setup.Tests.Domain.Services
                 .Send(Arg.Any<AttachInstancesToLoadBalancerCommand>())
                 .Throws(new TestException());
 
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
+            await using var environment = await DoggerSetupIntegrationTestEnvironment.CreateAsync(new DoggerSetupEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -315,11 +312,10 @@ namespace Dogger.Setup.Tests.Domain.Services
                 .StartStopwatch()
                 .Returns(fakeStopwatchWithHighElapsedTime);
 
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
+            await using var environment = await DoggerSetupIntegrationTestEnvironment.CreateAsync(new DoggerSetupEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -394,11 +390,10 @@ namespace Dogger.Setup.Tests.Domain.Services
                         }
                     });
 
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
+            await using var environment = await DoggerSetupIntegrationTestEnvironment.CreateAsync(new DoggerSetupEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);
@@ -456,11 +451,10 @@ namespace Dogger.Setup.Tests.Domain.Services
                         }
                     });
 
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
+            await using var environment = await DoggerSetupIntegrationTestEnvironment.CreateAsync(new DoggerSetupEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
-                    IocRegistry.ConfigureDogfeeding(services);
                     FakeOutMinimalServices(services);
 
                     services.AddSingleton(fakeMediator);

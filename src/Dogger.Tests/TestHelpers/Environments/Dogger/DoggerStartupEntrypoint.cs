@@ -13,7 +13,7 @@ using Microsoft.Extensions.Hosting;
 namespace Dogger.Tests.TestHelpers.Environments.Dogger
 {
 
-    public class DoggerStartupEntrypoint : IIntegrationTestEntrypoint
+    class DoggerStartupEntrypoint : IIntegrationTestEntrypoint
     {
         private readonly IHost host;
 
@@ -29,7 +29,7 @@ namespace Dogger.Tests.TestHelpers.Environments.Dogger
             this.cancellationTokenSource = new CancellationTokenSource();
 
             this.host = Host.CreateDefaultBuilder()
-                .ConfigureAppConfiguration(ConfigureConfigurationBuilder)
+                .ConfigureAppConfiguration(TestConfigurationFactory.ConfigureConfigurationBuilder)
                 .UseEnvironment(options.EnvironmentName ?? Microsoft.Extensions.Hosting.Environments.Development)
                 .ConfigureWebHostDefaults(webBuilder => webBuilder
                     .UseStartup<Startup>()
@@ -98,21 +98,6 @@ namespace Dogger.Tests.TestHelpers.Environments.Dogger
 
             if (!isAvailable)
                 throw new InvalidOperationException("The web server didn't start within enough time.");
-        }
-
-        private static void ConfigureConfigurationBuilder(IConfigurationBuilder builder)
-        {
-            foreach (var source in builder.Sources.ToArray())
-            {
-                if (source is ChainedConfigurationSource)
-                    continue;
-
-                builder.Sources.Remove(source);
-            }
-
-            builder
-                .AddJsonFile("appsettings.json", false)
-                .AddJsonFile($"appsettings.{Microsoft.Extensions.Hosting.Environments.Development}.json", false);
         }
 
         public async ValueTask DisposeAsync()

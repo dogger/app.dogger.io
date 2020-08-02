@@ -27,7 +27,7 @@ namespace Dogger.Tests.TestHelpers
                 .Build();
 
             var environment = Substitute.For<IHostEnvironment>();
-            environment.EnvironmentName.Returns(Environments.Development);
+            environment.EnvironmentName.Returns("Development");
             services.AddSingleton(environment);
 
             var startup = new Startup(

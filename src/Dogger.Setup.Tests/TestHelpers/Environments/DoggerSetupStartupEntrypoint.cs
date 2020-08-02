@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Dogger.Infrastructure.AspNet;
+using Dogger.Setup.Infrastructure;
+using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Dogger.Setup.Tests.TestHelpers.Environments
@@ -12,9 +15,18 @@ namespace Dogger.Setup.Tests.TestHelpers.Environments
     {
         private DockerDependencyService dockerDependencyService;
 
-        public DoggerSetupStartupEntrypoint()
+        public DoggerSetupStartupEntrypoint(DoggerSetupEnvironmentSetupOptions options)
         {
+            var configurationBuilder = new ConfigurationBuilder();
+            TestConfigurationFactory.ConfigureConfigurationBuilder(configurationBuilder);
+
+            var configuration = configurationBuilder.Build();
+
             var serviceCollection = new ServiceCollection();
+            IocRegistry.Register(serviceCollection, configuration);
+
+            options.IocConfiguration?.Invoke(serviceCollection);
+
             RootProvider = serviceCollection.BuildServiceProvider();
             ScopeProvider = RootProvider.CreateScope().ServiceProvider;
         }

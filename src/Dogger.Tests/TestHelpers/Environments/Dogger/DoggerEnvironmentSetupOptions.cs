@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Dogger.Tests.TestHelpers.Environments.Dogger
 {
-    public class DoggerEnvironmentSetupOptions
+    class DoggerEnvironmentSetupOptions
     {
         public string EnvironmentName { get; set; }
         public Action<IServiceCollection> IocConfiguration { get; set; }
