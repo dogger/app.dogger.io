@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPullDogPlans;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Time;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -17,19 +18,19 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
     public class UpdateUserSubscriptionCommandHandler : IRequestHandler<UpdateUserSubscriptionCommand>
     {
         private readonly DataContext dataContext;
-        private readonly SubscriptionService subscriptionService;
+        private readonly SubscriptionService? subscriptionService;
 
         private readonly ITimeProvider timeProvider;
         private readonly IMediator mediator;
 
         public UpdateUserSubscriptionCommandHandler(
             DataContext dataContext,
-            SubscriptionService subscriptionService,
+            IOptionalService<SubscriptionService> subscriptionService,
             ITimeProvider timeProvider,
             IMediator mediator)
         {
             this.dataContext = dataContext;
-            this.subscriptionService = subscriptionService;
+            this.subscriptionService = subscriptionService.Value;
             this.timeProvider = timeProvider;
             this.mediator = mediator;
         }
@@ -38,6 +39,9 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
             UpdateUserSubscriptionCommand request, 
             CancellationToken cancellationToken)
         {
+            if (this.subscriptionService == null)
+                return Unit.Value;
+
             var user = await this.dataContext
                 .Users
                 .Include(x => x.PullDogSettings)
@@ -133,6 +137,9 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
 
         private async Task<SubscriptionItem[]> GetExistingSubscriptionItemsAsync(User user)
         {
+            if (this.subscriptionService == null)
+                throw new InvalidOperationException("Stripe subscription service was not configured.");
+
             if (user.StripeSubscriptionId == null)
                 return Array.Empty<SubscriptionItem>();
 
@@ -155,6 +162,9 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
 
             var createdSubscription = await policy.ExecuteAsync(async () =>
             {
+                if (this.subscriptionService == null)
+                    throw new InvalidOperationException("Stripe subscription service was not configured.");
+
                 Subscription subscription;
                 if (user.StripeSubscriptionId == null)
                 {

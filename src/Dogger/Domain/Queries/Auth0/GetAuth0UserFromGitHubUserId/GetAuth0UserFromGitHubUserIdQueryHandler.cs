@@ -5,22 +5,26 @@ using System.Threading.Tasks;
 using Auth0.ManagementApi.Models;
 using Auth0.ManagementApi.Paging;
 using Dogger.Infrastructure.Auth.Auth0;
+using Dogger.Infrastructure.Ioc;
 using MediatR;
 
 namespace Dogger.Domain.Queries.Auth0.GetAuth0UserFromGitHubUserId
 {
     public class GetAuth0UserFromGitHubUserIdQueryHandler : IRequestHandler<GetAuth0UserFromGitHubUserIdQuery, User?>
     {
-        private readonly IManagementApiClientFactory managementApiClientFactory;
+        private readonly IManagementApiClientFactory? managementApiClientFactory;
 
         public GetAuth0UserFromGitHubUserIdQueryHandler(
-            IManagementApiClientFactory managementApiClientFactory)
+            IOptionalService<IManagementApiClientFactory> managementApiClientFactory)
         {
-            this.managementApiClientFactory = managementApiClientFactory;
+            this.managementApiClientFactory = managementApiClientFactory.Value;
         }
 
         public async Task<User?> Handle(GetAuth0UserFromGitHubUserIdQuery request, CancellationToken cancellationToken)
         {
+            if (this.managementApiClientFactory == null)
+                return null;
+
             if(request.GitHubUserId == default)
                 throw new InvalidOperationException("No GitHub ID is given.");
 

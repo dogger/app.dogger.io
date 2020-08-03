@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Docker.DotNet;
 using Docker.DotNet.Models;
 using Dogger.Domain.Models;
+using Dogger.Infrastructure.Ioc;
 using FluffySpoon.AspNet.NGrok;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -58,8 +59,8 @@ namespace Dogger.Infrastructure.AspNet
             using var scope = this.serviceProvider.CreateScope();
 
             dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
-            customerService = scope.ServiceProvider.GetRequiredService<CustomerService>();
-            webhookEndpointService = scope.ServiceProvider.GetRequiredService<WebhookEndpointService>();
+            customerService = scope.ServiceProvider.GetRequiredService<IOptionalService<CustomerService>>().Value;
+            webhookEndpointService = scope.ServiceProvider.GetRequiredService<IOptionalService<WebhookEndpointService>>().Value;
             ngrokHostedService = scope.ServiceProvider.GetService<INGrokHostedService>();
 
             if(this.ngrokHostedService != null)

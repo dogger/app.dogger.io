@@ -10,6 +10,7 @@ using Dogger.Domain.Services.Amazon.Lightsail;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Infrastructure.GitHub.Octokit;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
@@ -533,7 +534,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 Customer = customer.Id
             });
 
-            var stripeSubscriptionService = environment.ServiceProvider.GetRequiredService<SubscriptionService>();
+            var stripeSubscriptionService = environment.ServiceProvider.GetRequiredService<IOptionalService<SubscriptionService>>().Value;
             var subscription = await stripeSubscriptionService.CreateAsync(new SubscriptionCreateOptions()
             {
                 Customer = customer.Id,

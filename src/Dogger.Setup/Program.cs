@@ -45,9 +45,10 @@ namespace Dogger.Setup
             serviceCollection.AddSingleton(configuration);
             serviceCollection.AddSingleton(Substitute.For<IHttpContextAccessor>());
 
-            IocRegistry.Register(
+            var registry = new IocRegistry(
                 serviceCollection,
                 configuration);
+            registry.Register();
 
             await using var serviceProvider = serviceCollection.BuildServiceProvider();
 

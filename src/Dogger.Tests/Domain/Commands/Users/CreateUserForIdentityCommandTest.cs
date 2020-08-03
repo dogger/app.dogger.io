@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Users.CreateUserForIdentity;
 using Dogger.Domain.Models;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
@@ -33,7 +34,7 @@ namespace Dogger.Tests.Domain.Commands.Users
                 IocConfiguration = services => services.AddSingleton(provider =>
                 {
                     var partiallyFakeCustomerService = Substitute.ForPartsOf<CustomerService>(
-                        provider.GetRequiredService<IStripeClient>());
+                        provider.GetRequiredService<IOptionalService<IStripeClient>>().Value);
                     partiallyFakeCustomerService
                         .CreateAsync(Arg.Any<CustomerCreateOptions>())
                         .Throws(new TestException());

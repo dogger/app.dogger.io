@@ -51,7 +51,7 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
 
             await this.slackClient.PostAsync(new SlackMessage()
             {
-                Text = $"Pull Dog was installed by a user.",
+                Text = "Pull Dog was installed by a user.",
                 Attachments = new List<SlackAttachment>()
                 {
                     new SlackAttachment()
@@ -128,7 +128,10 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
             return Unit.Value;
         }
 
-        private async Task<User> EnsureAuth0UserForGitHubUserAsync(int userId, EmailAddress[] userEmails, CancellationToken cancellationToken)
+        private async Task<User> EnsureAuth0UserForGitHubUserAsync(
+            int userId, 
+            IEnumerable<EmailAddress> userEmails, 
+            CancellationToken cancellationToken)
         {
             var emailStrings = userEmails
                 .Select(x => x.Email)
@@ -136,7 +139,8 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
             return
                 await this.mediator.Send(new GetAuth0UserFromGitHubUserIdQuery(userId), cancellationToken) ??
                 await this.mediator.Send(new GetAuth0UserFromEmailsQuery(emailStrings), cancellationToken) ??
-                await this.mediator.Send(new CreateAuth0UserCommand(emailStrings), cancellationToken);
+                await this.mediator.Send(new CreateAuth0UserCommand(emailStrings), cancellationToken) ??
+                throw new InvalidOperationException("No user could be created.");
         }
     }
 }

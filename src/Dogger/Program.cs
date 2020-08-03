@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Dogger.Infrastructure.Database;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Logging;
 using FluffySpoon.AspNet.NGrok;
 using Microsoft.AspNetCore.Http;
@@ -62,7 +63,10 @@ namespace Dogger
                 })
                 .ConfigureServices((context, services) =>
                 {
-                    IocRegistry.RegisterDelayedHostedServices(services);
+                    var registry = new IocRegistry(
+                        services,
+                        context.Configuration);
+                    registry.RegisterDelayedHostedServices();
                 });
 
         /// <summary>

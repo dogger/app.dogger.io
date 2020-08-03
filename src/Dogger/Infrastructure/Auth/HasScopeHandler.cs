@@ -22,7 +22,7 @@ namespace Dogger.Infrastructure.Auth
                .Claims
                .Any(c => 
                     c.Type == type && 
-                    c.Issuer == Constants.Domain &&
+                    c.Issuer == AuthConstants.Auth0Domain &&
                     c.Value?.Split(' ').Contains(scope) == true);
         }
 

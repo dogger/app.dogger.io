@@ -5,40 +5,41 @@ using Dogger.Setup.Domain.Services;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using DoggerIocRegistry = Dogger.Infrastructure.IocRegistry;
+using DoggerIocRegistry = Dogger.Infrastructure.Ioc.IocRegistry;
 
 namespace Dogger.Setup.Infrastructure
 {
-    public static class IocRegistry
+    public class IocRegistry : DoggerIocRegistry
     {
-        public static void Register(
+        public IocRegistry(
             IServiceCollection services,
-            IConfiguration configuration)
+            IConfiguration configuration) : base(services, configuration)
         {
-            DoggerIocRegistry.Register(
-                services, 
-                configuration);
-
-            services.AddMediatR(typeof(IocRegistry).Assembly);
-
-            ConfigureOptions(
-                services,
-                configuration);
-
-            ConfigureDogfeeding(services);
+            
         }
 
-        private static void ConfigureOptions(
-            IServiceCollection services,
-            IConfiguration configuration)
+        public override void Register()
         {
-            services.Configure<DogfeedOptions>(configuration);
+            base.Register();
+
+            ConfigureMediatr();
+            ConfigureOptions();
+            ConfigureDogfeeding();
         }
 
-        private static void ConfigureDogfeeding(
-            IServiceCollection services)
+        private void ConfigureMediatr()
         {
-            services.AddTransient<IDogfeedService, DogfeedService>();
+            this.Services.AddMediatR(typeof(IocRegistry).Assembly);
+        }
+
+        private void ConfigureOptions()
+        {
+            Services.Configure<DogfeedOptions>(Configuration);
+        }
+
+        private void ConfigureDogfeeding()
+        {
+            Services.AddTransient<IDogfeedService, DogfeedService>();
         }
     }
 }

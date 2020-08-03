@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dogger.Infrastructure.Ioc;
 using MediatR;
 using Stripe;
 
@@ -8,16 +9,19 @@ namespace Dogger.Domain.Queries.Payment
 {
     public class GetActivePaymentMethodForUserQueryHandler : IRequestHandler<GetActivePaymentMethodForUserQuery, PaymentMethod?>
     {
-        private readonly PaymentMethodService stripePaymentMethodService;
+        private readonly PaymentMethodService? stripePaymentMethodService;
 
         public GetActivePaymentMethodForUserQueryHandler(
-            PaymentMethodService stripePaymentMethodService)
+            IOptionalService<PaymentMethodService> stripePaymentMethodService)
         {
-            this.stripePaymentMethodService = stripePaymentMethodService;
+            this.stripePaymentMethodService = stripePaymentMethodService.Value;
         }
 
         public async Task<PaymentMethod?> Handle(GetActivePaymentMethodForUserQuery request, CancellationToken cancellationToken)
         {
+            if (this.stripePaymentMethodService == null)
+                return null;
+
             if(request.User.StripeCustomerId == null)
                 return null;
 

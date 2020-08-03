@@ -21,9 +21,11 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Dogger.Infrastructure.AspNet.Health;
+using Dogger.Infrastructure.Ioc;
 using FluffySpoon.AspNet.NGrok;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Octokit;
 
 namespace Dogger
 {
@@ -52,9 +54,10 @@ namespace Dogger
 
         public void ConfigureServices(IServiceCollection services)
         {
-            IocRegistry.Register(
+            var registry = new IocRegistry(
                 services,
                 Configuration);
+            registry.Register();
 
             ConfigureNGrok(services);
             ConfigureAspNetCore(services);
@@ -75,21 +78,35 @@ namespace Dogger
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                .AddJwtBearer(options =>
+                .AddJwtBearer("Auth0", options =>
                 {
-                    options.Authority = Constants.Domain;
-                    options.Audience = Constants.Audience;
+                    options.Authority = AuthConstants.Auth0Domain;
+                    options.Audience = AuthConstants.Audience;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         NameClaimType = ClaimTypes.NameIdentifier
                     };
 
                     options.RequireHttpsMetadata = !Environment.IsDevelopment();
+                })
+                .AddJwtBearer("OnPremises", options =>
+                {
+                    options.Authority = "https://dogger.io/on-prem";
+                    options.Audience = AuthConstants.Audience;
+                    options.TokenValidationParameters = new TokenValidationParameters();
+                    options.RequireHttpsMetadata = false;
+                })
+                .AddJwtBearer("Licensing", options =>
+                {
+                    options.Authority = "https://dogger.io/licensing";
+                    options.Audience = AuthConstants.Audience;
+                    options.TokenValidationParameters = new TokenValidationParameters();
+                    options.RequireHttpsMetadata = false;
                 });
 
             services.AddAuthorization(options =>
             {
-                void AddPolicy(string permissionName)
+                void AddScopePolicy(string permissionName)
                 {
                     options.AddPolicy(
                         permissionName,
@@ -98,7 +115,27 @@ namespace Dogger
                                 permissionName)));
                 }
 
-                AddPolicy(Scopes.ReadErrors);
+                static AuthorizationPolicy BuildSchemePolicy(string scheme)
+                {
+                    return new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .AddAuthenticationSchemes(scheme)
+                        .Build();
+                }
+
+                void AddSchemePolicy(string scheme)
+                {
+                    options.AddPolicy(
+                        scheme, 
+                        BuildSchemePolicy(scheme));
+                }
+
+                options.DefaultPolicy = BuildSchemePolicy("Auth0");
+
+                AddSchemePolicy("OnPremises");
+                AddSchemePolicy("Licensing");
+
+                AddScopePolicy(Scopes.ReadErrors);
             });
 
             services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
