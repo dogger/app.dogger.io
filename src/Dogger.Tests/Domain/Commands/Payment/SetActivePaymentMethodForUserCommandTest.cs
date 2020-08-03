@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Commands.Payment.SetActivePaymentMethodForUser;
 using Dogger.Domain.Commands.Users.CreateUserForIdentity;
 using Dogger.Domain.Models;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.Extensions.DependencyInjection;
@@ -108,7 +109,8 @@ namespace Dogger.Tests.Domain.Commands.Payment
             //Assert
             var stripeCustomer = await environment
                 .ServiceProvider
-                .GetRequiredService<CustomerService>()
+                .GetRequiredService<IOptionalService<CustomerService>>()
+                .Value
                 .GetAsync(user.StripeCustomerId);
 
             Assert.AreEqual(stripeCustomer.InvoiceSettings.DefaultPaymentMethodId, newPaymentMethod.Id);
@@ -140,7 +142,8 @@ namespace Dogger.Tests.Domain.Commands.Payment
             //Assert
             var stripeCustomer = await environment
                 .ServiceProvider
-                .GetRequiredService<CustomerService>()
+                .GetRequiredService<IOptionalService<CustomerService>>()
+                .Value
                 .GetAsync(user.StripeCustomerId);
 
             Assert.AreEqual(stripeCustomer.InvoiceSettings.DefaultPaymentMethodId, newPaymentMethod.Id);

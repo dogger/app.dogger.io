@@ -522,8 +522,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 }
             });
 
-            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
-            var customer = await stripeCustomerService.CreateAsync(new CustomerCreateOptions()
+            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<IOptionalService<CustomerService>>();
+            var customer = await stripeCustomerService.Value.CreateAsync(new CustomerCreateOptions()
             {
                 Email = "dummy@example.com"
             });
@@ -625,8 +625,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 }
             });
 
-            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
-            var customer = await stripeCustomerService.CreateAsync(new CustomerCreateOptions()
+            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<IOptionalService<CustomerService>>();
+            var customer = await stripeCustomerService.Value.CreateAsync(new CustomerCreateOptions()
             {
                 Email = "dummy@example.com"
             });
@@ -728,8 +728,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 }
             });
 
-            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
-            var customer = await stripeCustomerService.CreateAsync(new CustomerCreateOptions()
+            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<IOptionalService<CustomerService>>();
+            var customer = await stripeCustomerService.Value.CreateAsync(new CustomerCreateOptions()
             {
                 Email = "dummy@example.com"
             });

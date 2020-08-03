@@ -148,7 +148,7 @@ namespace Dogger.Infrastructure.Ioc
 
         private GitHubPullDogOptions GetPullDogOptions()
         {
-            var options = GetRequiredOption<GitHubOptions>();
+            var options = this.Configuration.GetSection<GitHubOptions>();
             if (options.PullDog == null)
             {
                 throw new InvalidOperationException("Could not find GitHub Pull Dog options.");
@@ -187,7 +187,7 @@ namespace Dogger.Infrastructure.Ioc
 
         private void ConfigureSlack()
         {
-            var slackSettings = GetRequiredOption<SlackOptions>();
+            var slackSettings = this.Configuration.GetSection<SlackOptions>();
             var incomingUrl = slackSettings?.IncomingUrl;
 
             this.Services.AddOptionalSingleton<ISlackClient>(
@@ -210,7 +210,7 @@ namespace Dogger.Infrastructure.Ioc
         {
             void Configure<TOptions>() where TOptions : class
             {
-                var configurationKey = GetConfigurationKeyFromOptions<TOptions>();
+                var configurationKey = Configuration.GetSectionNameFor<TOptions>();
                 this.Services.Configure<TOptions>(this.Configuration.GetSection(configurationKey));
             }
 
@@ -222,22 +222,6 @@ namespace Dogger.Infrastructure.Ioc
             Configure<StripeOptions>();
             Configure<EncryptionOptions>();
             Configure<Auth0Options>();
-        }
-
-        private static string GetConfigurationKeyFromOptions<TOptions>() where TOptions : class
-        {
-            const string optionsSuffix = "Options";
-
-            var configurationKey = typeof(TOptions).Name;
-            if (configurationKey.EndsWith(optionsSuffix, StringComparison.InvariantCulture))
-            {
-                configurationKey = configurationKey.Replace(
-                    optionsSuffix,
-                    string.Empty,
-                    StringComparison.InvariantCulture);
-            }
-
-            return configurationKey;
         }
 
         private void ConfigureDebugHelpers()
@@ -257,7 +241,7 @@ namespace Dogger.Infrastructure.Ioc
         {
             var isStripeConfigured = this.OnPremisesManifest.HasStripe;
 
-            var stripeConfiguration = GetRequiredOption<StripeOptions>();
+            var stripeConfiguration = this.Configuration.GetSection<StripeOptions>();
 
             var secretKey = stripeConfiguration?.SecretKey;
             var publishableKey = stripeConfiguration?.PublishableKey;
@@ -274,18 +258,10 @@ namespace Dogger.Infrastructure.Ioc
                 () => isStripeConfigured);
         }
 
-        private TOptions GetRequiredOption<TOptions>() where TOptions : class
-        {
-            var key = GetConfigurationKeyFromOptions<TOptions>();
-            return this.Configuration
-                .GetSection(key)
-                .Get<TOptions>();
-        }
-
         [ExcludeFromCodeCoverage]
         private void ConfigureEntityFramework()
         {
-            var sqlOptions = GetRequiredOption<SqlOptions>();
+            var sqlOptions = this.Configuration.GetSection<SqlOptions>();
 
             var connectionString = sqlOptions?.ConnectionString;
             if (connectionString == null)
@@ -358,11 +334,13 @@ namespace Dogger.Infrastructure.Ioc
         {
             BasicAWSCredentials CreateAwsCredentials()
             {
-                var accessKey = this.Configuration["Aws:AccessKeyId"];
+                var options = this.Configuration.GetSection<AwsOptions>();
+
+                var accessKey = options.AccessKeyId;
                 if (accessKey == null)
                     throw new InvalidOperationException("The AWS access key ID could not be found.");
 
-                var secretKey = this.Configuration["Aws:SecretAccessKey"];
+                var secretKey = options.SecretAccessKey;
                 if (secretKey == null)
                     throw new InvalidOperationException("The AWS secret access key could not be found.");
 

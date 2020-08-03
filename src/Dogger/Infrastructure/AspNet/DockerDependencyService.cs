@@ -100,7 +100,7 @@ namespace Dogger.Infrastructure.AspNet
         private async void SetupStripeWebhooksAsync(IEnumerable<FluffySpoon.AspNet.NGrok.NGrokModels.Tunnel> tunnels)
         {
             if (this.webhookEndpointService == null)
-                throw new InvalidOperationException("Stripe webhook service has not been initialized.");
+                return;
 
             if (this.ngrokHostedService == null)
                 throw new InvalidOperationException("NGrok service has not been initialized yet.");
