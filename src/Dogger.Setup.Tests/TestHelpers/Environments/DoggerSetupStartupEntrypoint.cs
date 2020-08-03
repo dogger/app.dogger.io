@@ -20,16 +20,25 @@ namespace Dogger.Setup.Tests.TestHelpers.Environments
         public DoggerSetupStartupEntrypoint(DoggerSetupEnvironmentSetupOptions options)
         {
             var configurationBuilder = new ConfigurationBuilder();
-            TestConfigurationFactory.ConfigureConfigurationBuilder(configurationBuilder);
+            TestConfigurationFactory.ConfigureBuilder(configurationBuilder);
 
             var configuration = configurationBuilder.Build();
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton(Substitute.For<IHttpContextAccessor>());
 
-            IocRegistry.Register(serviceCollection, configuration);
-            DockerDependencyService.InjectInto(serviceCollection, configuration);
-            TestServiceProviderFactory.ConfigureServicesForTesting(serviceCollection);
+            var registry = new IocRegistry(
+                serviceCollection, 
+                configuration);
+            registry.Register();
+
+            DockerDependencyService.InjectInto(
+                serviceCollection, 
+                configuration);
+
+            TestServiceProviderFactory.ConfigureServicesForTesting(
+                serviceCollection,
+                configuration);
 
             options.IocConfiguration?.Invoke(serviceCollection);
 

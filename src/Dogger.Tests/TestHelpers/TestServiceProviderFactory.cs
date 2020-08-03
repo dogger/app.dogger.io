@@ -36,7 +36,9 @@ namespace Dogger.Tests.TestHelpers
                 environment);
             startup.ConfigureServices(services);
 
-            ConfigureServicesForTesting(services);
+            ConfigureServicesForTesting(
+                services, 
+                configuration);
 
             configure?.Invoke(services);
 
@@ -44,15 +46,18 @@ namespace Dogger.Tests.TestHelpers
         }
 
         public static void ConfigureServicesForTesting(
-            IServiceCollection services)
+            IServiceCollection services,
+            IConfiguration configuration)
         {
             RemoveTimedHostedServices(services);
             ConfigureAmazonLightsailDefaultFakes(services);
             ConfigureAmazonIdentityDefaultFakes(services);
             ConfigureFakeDelay(services);
 
-            IocRegistry.ConfigureMediatr(services,
-                typeof(TestServiceProviderFactory).Assembly);
+            var registry = new IocRegistry(
+                services,
+                configuration);
+            registry.ConfigureMediatr(typeof(TestServiceProviderFactory).Assembly);
 
             services.AddScoped<Mediator>();
         }

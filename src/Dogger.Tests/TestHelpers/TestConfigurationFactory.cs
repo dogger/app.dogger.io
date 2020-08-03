@@ -8,7 +8,7 @@ namespace Dogger.Tests.TestHelpers
 {
     public static class TestConfigurationFactory
     {
-        public static void ConfigureConfigurationBuilder(IConfigurationBuilder builder)
+        public static IConfigurationBuilder ConfigureBuilder(IConfigurationBuilder builder)
         {
             foreach (var source in builder.Sources.ToArray())
             {
@@ -21,6 +21,8 @@ namespace Dogger.Tests.TestHelpers
             builder
                 .AddJsonFile("appsettings.json", false)
                 .AddJsonFile($"appsettings.{Microsoft.Extensions.Hosting.Environments.Development}.json", false);
+
+            return builder;
         }
     }
 }

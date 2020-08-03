@@ -29,7 +29,7 @@ namespace Dogger.Tests.TestHelpers.Environments.Dogger
             this.cancellationTokenSource = new CancellationTokenSource();
 
             this.host = Host.CreateDefaultBuilder()
-                .ConfigureAppConfiguration(TestConfigurationFactory.ConfigureConfigurationBuilder)
+                .ConfigureAppConfiguration(builder => TestConfigurationFactory.ConfigureBuilder(builder))
                 .UseEnvironment(options.EnvironmentName ?? Microsoft.Extensions.Hosting.Environments.Development)
                 .ConfigureWebHostDefaults(webBuilder => webBuilder
                     .UseStartup<Startup>()
@@ -43,7 +43,11 @@ namespace Dogger.Tests.TestHelpers.Environments.Dogger
                     }))
                 .ConfigureServices(services =>
                 {
-                    TestServiceProviderFactory.ConfigureServicesForTesting(services);
+                    TestServiceProviderFactory.ConfigureServicesForTesting(
+                        services, 
+                        TestConfigurationFactory
+                            .ConfigureBuilder(new ConfigurationBuilder())
+                            .Build());
                     options.IocConfiguration?.Invoke(services);
                 })
                 .Build();
