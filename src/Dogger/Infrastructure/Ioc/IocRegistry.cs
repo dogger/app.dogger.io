@@ -53,10 +53,10 @@ namespace Dogger.Infrastructure.Ioc
 {
     public class IocRegistry
     {
-        protected readonly IServiceCollection Services;
-        protected readonly IConfiguration Configuration;
+        protected IServiceCollection Services { get; }
+        protected IConfiguration Configuration { get; }
 
-        protected readonly OnPremisesManifest OnPremisesManifest;
+        protected OnPremisesManifest OnPremisesManifest { get; }
 
         public IocRegistry(
             IServiceCollection services,
@@ -188,12 +188,11 @@ namespace Dogger.Infrastructure.Ioc
         private void ConfigureSlack()
         {
             var slackSettings = GetRequiredOption<SlackOptions>();
-
             var incomingUrl = slackSettings?.IncomingUrl;
-            if (incomingUrl == null)
-                throw new InvalidOperationException("Could not find a Slack incoming webhook URL.");
 
-            this.Services.AddSingleton<ISlackClient>(_ => new SlackClient(incomingUrl));
+            this.Services.AddOptionalSingleton<ISlackClient>(
+                _ => new SlackClient(incomingUrl),
+                incomingUrl != null);
         }
 
         private void ConfigureFlurl()

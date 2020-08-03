@@ -6,6 +6,7 @@ using Dogger.Domain.Commands.Clusters.EnsureClusterForUser;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
+using Dogger.Infrastructure.Ioc;
 using MediatR;
 using Slack.Webhooks;
 
@@ -14,19 +15,19 @@ namespace Dogger.Domain.Commands.Instances.ProvisionInstanceForUser
     public class ProvisionInstanceForUserCommandHandler : IRequestHandler<ProvisionInstanceForUserCommand, IProvisioningJob>
     {
         private readonly IProvisioningService provisioningService;
-        private readonly ISlackClient slackClient;
+        private readonly ISlackClient? slackClient;
         private readonly IMediator mediator;
 
         private readonly DataContext dataContext;
 
         public ProvisionInstanceForUserCommandHandler(
             IProvisioningService provisioningService,
-            ISlackClient slackClient,
+            IOptionalService<ISlackClient> slackClient,
             IMediator mediator,
             DataContext dataContext)
         {
             this.provisioningService = provisioningService;
-            this.slackClient = slackClient;
+            this.slackClient = slackClient.Value;
             this.mediator = mediator;
             this.dataContext = dataContext;
         }
@@ -35,31 +36,34 @@ namespace Dogger.Domain.Commands.Instances.ProvisionInstanceForUser
             ProvisionInstanceForUserCommand request, 
             CancellationToken cancellationToken)
         {
-            await this.slackClient.PostAsync(new SlackMessage()
+            if (this.slackClient != null)
             {
-                Text = "A paid instance is being provisioned.",
-                Attachments = new List<SlackAttachment>()
+                await this.slackClient.PostAsync(new SlackMessage()
                 {
-                    new SlackAttachment()
+                    Text = "A paid instance is being provisioned.",
+                    Attachments = new List<SlackAttachment>()
                     {
-                        Fields = new List<SlackField>()
+                        new SlackAttachment()
                         {
-                            new SlackField()
+                            Fields = new List<SlackField>()
                             {
-                                Title = "User ID",
-                                Value = request.User.Id.ToString(),
-                                Short = true
-                            },
-                            new SlackField()
-                            {
-                                Title = "Plan",
-                                Value = request.Plan.Id,
-                                Short = true
+                                new SlackField()
+                                {
+                                    Title = "User ID",
+                                    Value = request.User.Id.ToString(),
+                                    Short = true
+                                },
+                                new SlackField()
+                                {
+                                    Title = "Plan",
+                                    Value = request.Plan.Id,
+                                    Short = true
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
 
             var cluster = await mediator.Send(new EnsureClusterForUserCommand(request.User.Id), cancellationToken);
 

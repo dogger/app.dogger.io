@@ -8,6 +8,7 @@ using Dogger.Domain.Queries.Clusters.GetClusterById;
 using Dogger.Domain.Queries.Clusters.GetClusterForUser;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -40,7 +41,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
-            var fakeSlackClient = Substitute.For<ISlackClient>();
+            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
 
             var handler = new DeployToClusterCommandHandler(
                 fakeProvisioningService,
@@ -81,7 +82,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                     }
                 });
 
-            var fakeSlackClient = Substitute.For<ISlackClient>();
+            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -121,7 +122,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                     }
                 });
 
-            var fakeSlackClient = Substitute.For<ISlackClient>();
+            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -162,7 +163,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                     }
                 });
 
-            var fakeSlackClient = Substitute.For<ISlackClient>();
+            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -193,7 +194,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 .Send(Arg.Any<EnsureClusterWithIdCommand>())
                 .Returns((Cluster)null);
 
-            var fakeSlackClient = Substitute.For<ISlackClient>();
+            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -236,7 +237,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                     }
                 });
 
-            var fakeSlackClient = Substitute.For<ISlackClient>();
+            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -268,7 +269,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 .Send(Arg.Any<GetClusterForUserQuery>())
                 .Returns((Cluster)null);
 
-            var fakeSlackClient = Substitute.For<ISlackClient>();
+            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 

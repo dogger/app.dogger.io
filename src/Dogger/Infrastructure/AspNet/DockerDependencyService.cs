@@ -130,7 +130,7 @@ namespace Dogger.Infrastructure.AspNet
         private async Task CleanupStripeWebhooksAsync()
         {
             if (this.webhookEndpointService == null)
-                throw new InvalidOperationException("Stripe webhook service has not been initialized.");
+                return;
 
             var existingEndpoints = await this.webhookEndpointService.ListAsync();
             foreach (var endpoint in existingEndpoints.Data)
@@ -149,7 +149,7 @@ namespace Dogger.Infrastructure.AspNet
         private async Task CleanupStripeCustomersAsync()
         {
             if (this.customerService == null)
-                throw new InvalidOperationException("Could not prepare database - Stripe customer service was not initialized.");
+                return;
 
             if (!ShouldDeleteExistingData())
                 return;

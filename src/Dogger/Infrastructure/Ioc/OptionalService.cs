@@ -16,8 +16,6 @@ namespace Dogger.Infrastructure.Ioc
 
         public bool IsConfigured => this.value != null;
 
-        public T Value => 
-            value ?? 
-            throw new InvalidOperationException($"Service of type {typeof(T).FullName} configured. Make sure all configuration parameters are present in the on-prem version of Dogger.");
+        public T? Value => value;
     }
 }
