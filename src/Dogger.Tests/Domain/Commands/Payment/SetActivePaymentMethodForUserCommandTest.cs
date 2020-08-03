@@ -46,15 +46,15 @@ namespace Dogger.Tests.Domain.Commands.Payment
 
             var paymentMethodService = environment
                 .ServiceProvider
-                .GetRequiredService<PaymentMethodService>();
+                .GetRequiredService<IOptionalService<PaymentMethodService>>();
 
-            var existingPaymentMethod = await CreatePaymentMethodAsync(paymentMethodService);
-            await paymentMethodService.AttachAsync(existingPaymentMethod.Id, new PaymentMethodAttachOptions()
+            var existingPaymentMethod = await CreatePaymentMethodAsync(paymentMethodService.Value);
+            await paymentMethodService.Value.AttachAsync(existingPaymentMethod.Id, new PaymentMethodAttachOptions()
             {
                 Customer = user.StripeCustomerId
             });
 
-            var newPaymentMethod = await CreatePaymentMethodAsync(paymentMethodService);
+            var newPaymentMethod = await CreatePaymentMethodAsync(paymentMethodService.Value);
 
             //Act
             await environment.Mediator.Send(
@@ -64,12 +64,12 @@ namespace Dogger.Tests.Domain.Commands.Payment
 
             //Assert
             var refreshedExistingPaymentMethod = await GetPaymentMethodForCustomerAsync(
-                paymentMethodService, 
+                paymentMethodService.Value, 
                 user.StripeCustomerId,
                 existingPaymentMethod.Id);
 
             var refreshedNewPaymentMethod = await GetPaymentMethodForCustomerAsync(
-                paymentMethodService,
+                paymentMethodService.Value,
                 user.StripeCustomerId,
                 newPaymentMethod.Id);
 
@@ -90,15 +90,15 @@ namespace Dogger.Tests.Domain.Commands.Payment
 
             var paymentMethodService = environment
                 .ServiceProvider
-                .GetRequiredService<PaymentMethodService>();
+                .GetRequiredService<IOptionalService<PaymentMethodService>>();
 
-            var existingPaymentMethod = await CreatePaymentMethodAsync(paymentMethodService);
-            await paymentMethodService.AttachAsync(existingPaymentMethod.Id, new PaymentMethodAttachOptions()
+            var existingPaymentMethod = await CreatePaymentMethodAsync(paymentMethodService.Value);
+            await paymentMethodService.Value.AttachAsync(existingPaymentMethod.Id, new PaymentMethodAttachOptions()
             {
                 Customer = user.StripeCustomerId
             });
 
-            var newPaymentMethod = await CreatePaymentMethodAsync(paymentMethodService);
+            var newPaymentMethod = await CreatePaymentMethodAsync(paymentMethodService.Value);
 
             //Act
             await environment.Mediator.Send(
@@ -129,9 +129,9 @@ namespace Dogger.Tests.Domain.Commands.Payment
 
             var paymentMethodService = environment
                 .ServiceProvider
-                .GetRequiredService<PaymentMethodService>();
+                .GetRequiredService<IOptionalService<PaymentMethodService>>();
 
-            var newPaymentMethod = await CreatePaymentMethodAsync(paymentMethodService);
+            var newPaymentMethod = await CreatePaymentMethodAsync(paymentMethodService.Value);
 
             //Act
             await environment.Mediator.Send(

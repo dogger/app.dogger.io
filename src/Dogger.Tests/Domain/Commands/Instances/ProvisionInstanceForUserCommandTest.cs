@@ -10,6 +10,7 @@ using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Services.Amazon.Lightsail;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Ssh;
 using Dogger.Infrastructure.Time;
 using Dogger.Tests.TestHelpers;
@@ -109,13 +110,13 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var paymentMethodService = environment
                 .ServiceProvider
-                .GetRequiredService<PaymentMethodService>();
+                .GetRequiredService<IOptionalService<PaymentMethodService>>();
 
             var user = await environment.Mediator.Send(
                 new CreateUserForIdentityCommand(
                     TestClaimsPrincipalFactory.CreateWithIdentityName("some-identity-name")));
 
-            var paymentMethod = await CreatePaymentMethodAsync(paymentMethodService);
+            var paymentMethod = await CreatePaymentMethodAsync(paymentMethodService.Value);
             await environment.Mediator.Send(
                 new SetActivePaymentMethodForUserCommand(
                     user,
@@ -168,13 +169,13 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var paymentMethodService = environment
                 .ServiceProvider
-                .GetRequiredService<PaymentMethodService>();
+                .GetRequiredService<IOptionalService<PaymentMethodService>>();
 
             var user = await environment.Mediator.Send(
                 new CreateUserForIdentityCommand(
                     TestClaimsPrincipalFactory.CreateWithIdentityName("some-identity-name")));
 
-            var paymentMethod = await CreatePaymentMethodAsync(paymentMethodService);
+            var paymentMethod = await CreatePaymentMethodAsync(paymentMethodService.Value);
             await environment.Mediator.Send(
                 new SetActivePaymentMethodForUserCommand(
                     user,

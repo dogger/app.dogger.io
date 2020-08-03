@@ -528,8 +528,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 Email = "dummy@example.com"
             });
 
-            var stripePaymentMethodService = environment.ServiceProvider.GetRequiredService<PaymentMethodService>();
-            var paymentMethod = await stripePaymentMethodService.AttachAsync("pm_card_visa", new PaymentMethodAttachOptions()
+            var stripePaymentMethodService = environment.ServiceProvider.GetRequiredService<IOptionalService<PaymentMethodService>>();
+            var paymentMethod = await stripePaymentMethodService.Value.AttachAsync("pm_card_visa", new PaymentMethodAttachOptions()
             {
                 Customer = customer.Id
             });
@@ -631,8 +631,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 Email = "dummy@example.com"
             });
 
-            var stripePaymentMethodService = environment.ServiceProvider.GetRequiredService<PaymentMethodService>();
-            var paymentMethod = await stripePaymentMethodService.AttachAsync("pm_card_visa", new PaymentMethodAttachOptions()
+            var stripePaymentMethodService = environment.ServiceProvider.GetRequiredService<IOptionalService<PaymentMethodService>>();
+            var paymentMethod = await stripePaymentMethodService.Value.AttachAsync("pm_card_visa", new PaymentMethodAttachOptions()
             {
                 Customer = customer.Id
             });
@@ -734,8 +734,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 Email = "dummy@example.com"
             });
 
-            var stripePaymentMethodService = environment.ServiceProvider.GetRequiredService<PaymentMethodService>();
-            var paymentMethod = await stripePaymentMethodService.AttachAsync("pm_card_visa", new PaymentMethodAttachOptions()
+            var stripePaymentMethodService = environment.ServiceProvider.GetRequiredService<IOptionalService<PaymentMethodService>>();
+            var paymentMethod = await stripePaymentMethodService.Value.AttachAsync("pm_card_visa", new PaymentMethodAttachOptions()
             {
                 Customer = customer.Id
             });

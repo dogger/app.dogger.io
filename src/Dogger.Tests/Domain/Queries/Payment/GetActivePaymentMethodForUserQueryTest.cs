@@ -4,6 +4,7 @@ using Dogger.Domain.Commands.Payment.SetActivePaymentMethodForUser;
 using Dogger.Domain.Commands.Users.CreateUserForIdentity;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Payment;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.Extensions.DependencyInjection;
@@ -67,7 +68,8 @@ namespace Dogger.Tests.Domain.Queries.Payment
 
             var createdPaymentMethod = await environment
                 .ServiceProvider
-                .GetRequiredService<PaymentMethodService>()
+                .GetRequiredService<IOptionalService<PaymentMethodService>>()
+                .Value
                 .CreateAsync(new PaymentMethodCreateOptions()
                 {
                     Card = new PaymentMethodCardCreateOptions()
