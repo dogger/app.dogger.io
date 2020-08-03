@@ -5,6 +5,7 @@ using Auth0.ManagementApi.Models;
 using Auth0.ManagementApi.Paging;
 using Dogger.Domain.Queries.Auth0.GetAuth0UserFromGitHubUserId;
 using Dogger.Infrastructure.Auth.Auth0;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -19,7 +20,7 @@ namespace Dogger.Tests.Domain.Queries.Auth0
         public async Task Handle_GitHubUserIdNotGiven_ThrowsException()
         {
             //Arrange
-            var fakeManagementApiClientFactory = Substitute.For<IManagementApiClientFactory>();
+            var fakeManagementApiClientFactory = Substitute.For<IOptionalService<IManagementApiClientFactory>>();
 
             var handler = new GetAuth0UserFromGitHubUserIdQueryHandler(fakeManagementApiClientFactory);
 
@@ -38,9 +39,9 @@ namespace Dogger.Tests.Domain.Queries.Auth0
         public async Task Handle_ExistingGitHubUserIdGiven_UserReturned()
         {
             //Arrange
-            var fakeManagementApiClientFactory = Substitute.For<IManagementApiClientFactory>();
+            var fakeManagementApiClientFactory = Substitute.For<IOptionalService<IManagementApiClientFactory>>();
 
-            var fakeManagementApiClient = await fakeManagementApiClientFactory.CreateAsync();
+            var fakeManagementApiClient = await fakeManagementApiClientFactory.Value.CreateAsync();
             fakeManagementApiClient
                 .GetAllUsersAsync(
                     Arg.Is<GetUsersRequest>(args =>
@@ -67,7 +68,7 @@ namespace Dogger.Tests.Domain.Queries.Auth0
         public async Task Handle_NonExistingGitHubUserIdGiven_NullReturned()
         {
             //Arrange
-            var fakeManagementApiClientFactory = Substitute.For<IManagementApiClientFactory>();
+            var fakeManagementApiClientFactory = Substitute.For<IOptionalService<IManagementApiClientFactory>>();
 
             var handler = new GetAuth0UserFromGitHubUserIdQueryHandler(fakeManagementApiClientFactory);
 

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Auth0.ManagementApi.Models;
 using Dogger.Domain.Queries.Auth0.GetAuth0UserFromEmails;
 using Dogger.Infrastructure.Auth.Auth0;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -18,7 +19,7 @@ namespace Dogger.Tests.Domain.Queries.Auth0
         public async Task Handle_NoEmailsProvided_ThrowsException()
         {
             //Arrange
-            var fakeManagementApiClientFactory = Substitute.For<IManagementApiClientFactory>();
+            var fakeManagementApiClientFactory = Substitute.For<IOptionalService<IManagementApiClientFactory>>();
 
             var handler = new GetAuth0UserFromEmailsQueryHandler(fakeManagementApiClientFactory);
 
@@ -37,9 +38,9 @@ namespace Dogger.Tests.Domain.Queries.Auth0
         public async Task Handle_SeveralEmailsGivenWithOneMatch_MatchingUserReturned()
         {
             //Arrange
-            var fakeManagementApiClientFactory = Substitute.For<IManagementApiClientFactory>();
+            var fakeManagementApiClientFactory = Substitute.For<IOptionalService<IManagementApiClientFactory>>();
 
-            var fakeManagementApiClient = await fakeManagementApiClientFactory.CreateAsync();
+            var fakeManagementApiClient = await fakeManagementApiClientFactory.Value.CreateAsync();
             fakeManagementApiClient
                 .GetUsersByEmailAsync("matching@example.com")
                 .Returns(new List<User>()
@@ -72,7 +73,7 @@ namespace Dogger.Tests.Domain.Queries.Auth0
         public async Task Handle_SeveralEmailsGivenWithNoMatch_ReturnsNull()
         {
             //Arrange
-            var fakeManagementApiClientFactory = Substitute.For<IManagementApiClientFactory>();
+            var fakeManagementApiClientFactory = Substitute.For<IOptionalService<IManagementApiClientFactory>>();
 
             var handler = new GetAuth0UserFromEmailsQueryHandler(fakeManagementApiClientFactory);
 
@@ -94,9 +95,9 @@ namespace Dogger.Tests.Domain.Queries.Auth0
         public async Task Handle_ValidConditions_DisposesClient()
         {
             //Arrange
-            var fakeManagementApiClientFactory = Substitute.For<IManagementApiClientFactory>();
+            var fakeManagementApiClientFactory = Substitute.For<IOptionalService<IManagementApiClientFactory>>();
 
-            var fakeManagementApiClient = await fakeManagementApiClientFactory.CreateAsync();
+            var fakeManagementApiClient = await fakeManagementApiClientFactory.Value.CreateAsync();
 
             var handler = new GetAuth0UserFromEmailsQueryHandler(fakeManagementApiClientFactory);
 

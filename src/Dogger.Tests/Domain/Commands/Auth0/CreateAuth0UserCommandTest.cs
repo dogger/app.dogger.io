@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Auth0.ManagementApi.Models;
 using Dogger.Domain.Commands.Auth0.CreateAuth0User;
 using Dogger.Infrastructure.Auth.Auth0;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -19,7 +20,7 @@ namespace Dogger.Tests.Domain.Commands.Auth0
         public async Task Handle_NoEmailsGiven_ThrowsException()
         {
             //Arrange
-            var fakeManagementApiClientFactory = Substitute.For<IManagementApiClientFactory>();
+            var fakeManagementApiClientFactory = Substitute.For<IOptionalService<IManagementApiClientFactory>>();
             var fakeMediator = Substitute.For<IMediator>();
 
             var handler = new CreateAuth0UserCommandHandler(
@@ -39,9 +40,9 @@ namespace Dogger.Tests.Domain.Commands.Auth0
         public async Task Handle_ThreeEmailsGiven_CreatesThreeUsersLinkedIntoOne()
         {
             //Arrange
-            var fakeManagementApiClientFactory = Substitute.For<IManagementApiClientFactory>();
+            var fakeManagementApiClientFactory = Substitute.For<IOptionalService<IManagementApiClientFactory>>();
 
-            var fakeManagementApiClient = await fakeManagementApiClientFactory.CreateAsync();
+            var fakeManagementApiClient = await fakeManagementApiClientFactory.Value.CreateAsync();
 
             var firstCreatedUser = new User()
             {
@@ -106,9 +107,9 @@ namespace Dogger.Tests.Domain.Commands.Auth0
         public async Task Handle_ThreeEmailsGivenAndOneCreationFails_DeletesAdditionalCreatedUser()
         {
             //Arrange
-            var fakeManagementApiClientFactory = Substitute.For<IManagementApiClientFactory>();
+            var fakeManagementApiClientFactory = Substitute.For<IOptionalService<IManagementApiClientFactory>>();
 
-            var fakeManagementApiClient = await fakeManagementApiClientFactory.CreateAsync();
+            var fakeManagementApiClient = await fakeManagementApiClientFactory.Value.CreateAsync();
 
             var firstCreatedUser = new User()
             {
