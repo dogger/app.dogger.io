@@ -24,7 +24,7 @@
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.101" />
     <PackageReference Include="AWSSDK.IdentityManagement" Version="3.3.106.22" />
     <PackageReference Include="AWSSDK.Lightsail" Version="3.3.105.21" />
-    <PackageReference Include="awssdk.securitytoken" Version="3.3.105.31" />
+    <PackageReference Include="awssdk.securitytoken" Version="3.3.105.37" />
     <PackageReference Include="Destructurama.Attributed" Version="2.0.0" />
     <PackageReference Include="docker.dotnet" Version="3.125.2" />
     <PackageReference Include="FluffySpoon.AspNet.NGrok" Version="1.75.0" />
