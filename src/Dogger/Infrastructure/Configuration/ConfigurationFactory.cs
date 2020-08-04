@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 
-namespace Dogger.Infrastructure
+namespace Dogger.Infrastructure.Configuration
 {
     public static class ConfigurationFactory
     {

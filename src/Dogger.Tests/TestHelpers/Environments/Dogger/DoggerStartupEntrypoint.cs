@@ -63,7 +63,7 @@ namespace Dogger.Tests.TestHelpers.Environments.Dogger
             Console.WriteLine("Initializing integration test environment.");
 
             var hostStartTask = this.host.StartAsync(this.cancellationTokenSource.Token);
-            await WaitForUrlToBeAvailable("http://localhost:14568/health");
+            await WaitForUrlToBeAvailable(hostStartTask, "http://localhost:14568/health");
 
             var ngrokService = this.RootProvider.GetService<INGrokHostedService>();
             if (ngrokService != null)
@@ -78,7 +78,7 @@ namespace Dogger.Tests.TestHelpers.Environments.Dogger
             Console.WriteLine("Tunnels {0} are now open.", tunnels.Select(x => x.PublicUrl));
         }
 
-        private static async Task WaitForUrlToBeAvailable(string url)
+        private static async Task WaitForUrlToBeAvailable(Task hostStartTask, string url)
         {
             using var client = new HttpClient();
 
@@ -87,6 +87,9 @@ namespace Dogger.Tests.TestHelpers.Environments.Dogger
             while (!isAvailable && stopwatch.Elapsed < TimeSpan.FromSeconds(60))
             {
                 isAvailable = true;
+
+                if (hostStartTask.IsFaulted)
+                    throw hostStartTask.Exception;
 
                 try
                 {

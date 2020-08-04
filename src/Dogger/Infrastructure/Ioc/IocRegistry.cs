@@ -24,6 +24,7 @@ using Dogger.Infrastructure.AspNet;
 using Dogger.Infrastructure.AspNet.Options;
 using Dogger.Infrastructure.AspNet.Options.GitHub;
 using Dogger.Infrastructure.Auth.Auth0;
+using Dogger.Infrastructure.Configuration;
 using Dogger.Infrastructure.Database;
 using Dogger.Infrastructure.Docker.Engine;
 using Dogger.Infrastructure.Docker.Yml;
@@ -191,7 +192,7 @@ namespace Dogger.Infrastructure.Ioc
             var slackSettings = this.Configuration.GetSection<SlackOptions>();
             var incomingUrl = slackSettings?.IncomingUrl;
 
-            this.Services.AddOptionalSingleton<ISlackClient>(
+            this.Services.AddOptionalSingleton<ISlackClient, SlackClient>(
                 _ => new SlackClient(incomingUrl),
                 incomingUrl != null);
         }
@@ -252,7 +253,7 @@ namespace Dogger.Infrastructure.Ioc
             this.Services.AddOptionalSingleton<SubscriptionService>(isStripeConfigured);
             this.Services.AddOptionalSingleton<WebhookEndpointService>(isStripeConfigured);
 
-            this.Services.AddOptionalSingleton<IStripeClient>(
+            this.Services.AddOptionalSingleton<IStripeClient, StripeClient>(
                 _ => new StripeClient(
                     apiKey: secretKey,
                     clientId: publishableKey),

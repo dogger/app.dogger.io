@@ -1,4 +1,4 @@
-﻿namespace Dogger.Infrastructure
+﻿namespace Dogger.Infrastructure.Configuration
 {
     public interface IOnPremisesManifest
     {

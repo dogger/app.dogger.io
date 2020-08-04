@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Dogger.Infrastructure.Configuration;
 using Dogger.Infrastructure.Database;
 using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Logging;
