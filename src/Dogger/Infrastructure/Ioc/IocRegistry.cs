@@ -8,6 +8,7 @@ using Amazon.Extensions.NETCore.Setup;
 using Amazon.IdentityManagement;
 using Amazon.Lightsail;
 using Amazon.Runtime;
+using AutoMapper;
 using Dogger.Controllers.PullDog.Webhooks.Handlers;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.Amazon.Identity;
@@ -327,7 +328,7 @@ namespace Dogger.Infrastructure.Ioc
 
         private void ConfigureAutoMapper()
         {
-            this.Services.AddSingleton(_ => AutoMapperFactory.CreateValidMapper());
+            this.Services.AddAutoMapper(typeof(IocRegistry).Assembly);
         }
 
         private void ConfigureAws()

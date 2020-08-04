@@ -19,6 +19,7 @@
     <PackageReference Include="Auth0.AuthenticationApi" Version="7.0.9" />
     <PackageReference Include="Auth0.ManagementApi" Version="7.0.9" />
     <PackageReference Include="automapper" Version="10.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="AWSSDK.Core" Version="3.3.107.32" />
     <PackageReference Include="AWSSDK.ECR" Version="3.3.107.2" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.101" />
