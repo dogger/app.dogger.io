@@ -16,8 +16,8 @@ namespace Dogger.Infrastructure.Configuration
             {
                 var options = Get<StripeOptions>();
                 return
-                    !string.IsNullOrWhiteSpace(options.SecretKey) &&
-                    !string.IsNullOrWhiteSpace(options.PublishableKey);
+                    !string.IsNullOrWhiteSpace(options?.SecretKey) &&
+                    !string.IsNullOrWhiteSpace(options?.PublishableKey);
             }
         }
 
