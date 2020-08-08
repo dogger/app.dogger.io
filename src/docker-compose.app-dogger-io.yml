@@ -8,6 +8,8 @@ services:
   elasticsearch:
     image: xtermi2/elasticsearch-searchguard:7.6.1
     container_name: elasticsearch
+    networks:
+    - network
     environment:
     - node.name=elasticsearch
     - discovery.type=single-node
@@ -35,6 +37,8 @@ services:
   kibana:
     image: xtermi2/kibana-searchguard:7.6.1
     container_name: kibana
+    networks:
+    - network
     environment:
     - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
     - ELASTICSEARCH_SSL_VERIFICATIONMODE=none

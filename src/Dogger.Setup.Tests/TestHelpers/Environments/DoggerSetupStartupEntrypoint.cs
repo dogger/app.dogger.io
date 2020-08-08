@@ -32,10 +32,6 @@ namespace Dogger.Setup.Tests.TestHelpers.Environments
                 configuration);
             registry.Register();
 
-            DockerDependencyService.InjectInto(
-                serviceCollection, 
-                configuration);
-
             TestServiceProviderFactory.ConfigureServicesForTesting(
                 serviceCollection,
                 configuration);

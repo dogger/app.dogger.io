@@ -19,6 +19,9 @@ namespace Dogger.Domain.Models
         public List<Cluster> Clusters { get; set; }
 
         [NotLogged]
+        public List<License> Licenses { get; set; }
+
+        [NotLogged]
         public List<AmazonUser> AmazonUsers { get; set; }
 
         [NotLogged]
@@ -31,6 +34,7 @@ namespace Dogger.Domain.Models
         {
             Identities = new List<Identity>();
             Clusters = new List<Cluster>();
+            Licenses = new List<License>();
             AmazonUsers = new List<AmazonUser>();
         }
     }

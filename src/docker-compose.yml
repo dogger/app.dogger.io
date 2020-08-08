@@ -4,11 +4,11 @@ services:
   dogger:
     image: docker.pkg.github.com/dogger/app.dogger.io/dogger:latest
     restart: always
-    env_file:
-     - ./env/dogger.env
+    networks:
+    - network
     ports:
-     - "80:80"
-     - "443:443"
+    - "80:80"
+    - "443:443"
     environment:
     - Aws__AccessKeyId=${AWS_ACCESS_KEY_ID}
     - Aws__SecretAccessKey=${AWS_SECRET_ACCESS_KEY}
@@ -19,3 +19,6 @@ services:
     - Stripe__SecretKey=${STRIPE_SECRET_EKY:-}
     - Stripe__PublishableKey=${STRIPE_SECRET_EKY:-}
     - ASPNETCORE_ENVIRONMENT=Production
+
+networks:
+  network:

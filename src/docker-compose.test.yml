@@ -3,6 +3,8 @@ version: '3.4'
 services:
   dogger-tests:
     image: ${DOCKER_REGISTRY-}dogger-tests
+    networks:
+    - network
     build:
       context: .
       dockerfile: Dogger.Tests/Dockerfile
@@ -14,6 +16,8 @@ services:
 
   dogger-setup-tests:
     image: ${DOCKER_REGISTRY-}dogger-setup-tests
+    networks:
+    - network
     build:
       context: .
       dockerfile: Dogger.Setup.Tests/Dockerfile
@@ -27,3 +31,6 @@ services:
     tmpfs: /var/lib/mssql:rw,exec,suid,dev
     logging:
       driver: none
+
+networks:
+  network:

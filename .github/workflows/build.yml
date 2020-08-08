@@ -30,12 +30,13 @@ jobs:
         working-directory: ./src
         run: |
           docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml build
+          SQL_HOST=mssql-test-container && docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml config
 
           docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml down
-          docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml up --exit-code-from=dogger-tests --scale dogger-setup-tests=0
+          SQL_HOST=mssql-test-container && docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from=dogger-tests --scale dogger-setup-tests=0 --scale dogger=0
           
           docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml down
-          docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml up --exit-code-from=dogger-setup-tests --scale dogger-tests=0
+          SQL_HOST=mssql-test-container && docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from=dogger-setup-tests --scale dogger-tests=0 --scale dogger=0
 
       - name: Code coverage reporting for Dogger
         uses: codecov/codecov-action@v1
@@ -52,7 +53,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && contains(github.ref, 'master')
-
+,
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2

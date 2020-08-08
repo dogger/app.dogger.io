@@ -386,7 +386,10 @@ namespace Dogger.Infrastructure.AspNet
 
             services.AddHostedService(p => p.GetRequiredService<DockerDependencyService>());
 
-            configuration["Sql:ConnectionString"] = GetSqlConnectionStringForDatabase("dogger");
+            var sqlConnectionStringForDatabase = GetSqlConnectionStringForDatabase("dogger");
+            configuration["Sql:ConnectionString"] = sqlConnectionStringForDatabase;
+
+            Console.WriteLine("Will use SQL connection string: " + sqlConnectionStringForDatabase);
         }
     }
 }
