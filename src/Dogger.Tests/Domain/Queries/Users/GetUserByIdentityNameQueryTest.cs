@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Commands.Users.CreateUserForIdentity;
 using Dogger.Domain.Queries.Users.GetUserByIdentityName;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Dogger.Tests.Domain.Queries.Users
@@ -15,7 +16,7 @@ namespace Dogger.Tests.Domain.Queries.Users
         public async Task Handle_IdentityNameNull_ExceptionIsThrown()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
             
             //Act
             var exception = await Assert.ThrowsExceptionAsync<IdentityNameNotProvidedException>(async () => 
@@ -32,7 +33,7 @@ namespace Dogger.Tests.Domain.Queries.Users
         public async Task Handle_MultipleUsersExist_MatchingUserIsReturned()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var existingUserIdentityName = "identity-name";
 

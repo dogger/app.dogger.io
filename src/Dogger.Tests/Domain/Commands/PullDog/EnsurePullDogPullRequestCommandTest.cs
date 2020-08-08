@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
 using Dogger.Domain.Models;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -16,7 +17,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_ExistingPullRequestFound_ReturnsExistingPullRequest()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var pullDogRepository = new PullDogRepository()
             {
@@ -59,7 +60,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_NoExistingPullRequestFound_ReturnsNewPullRequest()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var pullDogRepository = new PullDogRepository()
             {

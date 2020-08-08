@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Commands.Users.CreateUserForIdentity;
 using Dogger.Domain.Queries.Users.GetUserById;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Dogger.Tests.Domain.Queries.Users
@@ -15,7 +16,7 @@ namespace Dogger.Tests.Domain.Queries.Users
         public async Task Handle_UserNotFound_ReturnsNull()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             //Act
             var returnedUser = await environment.Mediator.Send(
@@ -30,7 +31,7 @@ namespace Dogger.Tests.Domain.Queries.Users
         public async Task Handle_UserFound_ReturnsUser()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var existingUser = await environment.Mediator.Send(
                 new CreateUserForIdentityCommand(

@@ -10,9 +10,12 @@ using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Services.Amazon.Lightsail;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Ssh;
 using Dogger.Infrastructure.Time;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,7 +35,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
         public async Task Handle_ProperArgumentsGiven_UnprovisionedInstanceIsAddedToDatabase()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -90,8 +93,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .UtcNow
                 .Returns(lastDayOfLastMonth);
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {
@@ -107,13 +110,13 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var paymentMethodService = environment
                 .ServiceProvider
-                .GetRequiredService<PaymentMethodService>();
+                .GetRequiredService<IOptionalService<PaymentMethodService>>();
 
             var user = await environment.Mediator.Send(
                 new CreateUserForIdentityCommand(
                     TestClaimsPrincipalFactory.CreateWithIdentityName("some-identity-name")));
 
-            var paymentMethod = await CreatePaymentMethodAsync(paymentMethodService);
+            var paymentMethod = await CreatePaymentMethodAsync(paymentMethodService.Value);
             await environment.Mediator.Send(
                 new SetActivePaymentMethodForUserCommand(
                     user,
@@ -154,8 +157,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
         public async Task Handle_ProperArgumentsGiven_FullServerProvisioningFlowIsRunAndProperInstanceIsCreated()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(
-                new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
+                new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = FakeOutMinimalLightsailFeaturesForFullProvisioning
                 });
@@ -166,13 +169,13 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var paymentMethodService = environment
                 .ServiceProvider
-                .GetRequiredService<PaymentMethodService>();
+                .GetRequiredService<IOptionalService<PaymentMethodService>>();
 
             var user = await environment.Mediator.Send(
                 new CreateUserForIdentityCommand(
                     TestClaimsPrincipalFactory.CreateWithIdentityName("some-identity-name")));
 
-            var paymentMethod = await CreatePaymentMethodAsync(paymentMethodService);
+            var paymentMethod = await CreatePaymentMethodAsync(paymentMethodService.Value);
             await environment.Mediator.Send(
                 new SetActivePaymentMethodForUserCommand(
                     user,
@@ -218,7 +221,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .ScheduleJobAsync(Arg.Any<IProvisioningStateFlow>())
                 .Throws(new TestException());
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {

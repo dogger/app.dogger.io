@@ -13,6 +13,7 @@ using Dogger.Domain.Queries.Auth0.GetAuth0UserFromGitHubUserId;
 using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Infrastructure.Encryption;
 using Dogger.Infrastructure.GitHub;
+using Dogger.Infrastructure.Ioc;
 using MediatR;
 using Octokit;
 using Slack.Webhooks;
@@ -24,7 +25,7 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
     {
         private readonly IGitHubClientFactory gitHubClientFactory;
         private readonly IMediator mediator;
-        private readonly ISlackClient slackClient;
+        private readonly ISlackClient? slackClient;
         private readonly IAesEncryptionHelper aesEncryptionHelper;
 
         private readonly DataContext dataContext;
@@ -32,13 +33,13 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
         public InstallPullDogFromGitHubCommandHandler(
             IGitHubClientFactory gitHubClientFactory,
             IMediator mediator,
-            ISlackClient slackClient,
+            IOptionalService<ISlackClient> slackClient,
             IAesEncryptionHelper aesEncryptionHelper,
             DataContext dataContext)
         {
             this.gitHubClientFactory = gitHubClientFactory;
             this.mediator = mediator;
-            this.slackClient = slackClient;
+            this.slackClient = slackClient.Value;
             this.aesEncryptionHelper = aesEncryptionHelper;
             this.dataContext = dataContext;
         }
@@ -49,31 +50,34 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
             var currentUser = await client.User.Current();
             var emails = await client.User.Email.GetAll();
 
-            await this.slackClient.PostAsync(new SlackMessage()
+            if (this.slackClient != null)
             {
-                Text = $"Pull Dog was installed by a user.",
-                Attachments = new List<SlackAttachment>()
+                await this.slackClient.PostAsync(new SlackMessage()
                 {
-                    new SlackAttachment()
+                    Text = "Pull Dog was installed by a user.",
+                    Attachments = new List<SlackAttachment>()
                     {
-                        Fields = new List<SlackField>()
+                        new SlackAttachment()
                         {
-                            new SlackField()
+                            Fields = new List<SlackField>()
                             {
-                                Title = "GitHub user login",
-                                Value = currentUser.Login,
-                                Short = true
-                            },
-                            new SlackField()
-                            {
-                                Title = "GitHub user ID",
-                                Value = currentUser.Id.ToString(CultureInfo.InvariantCulture),
-                                Short = true
+                                new SlackField()
+                                {
+                                    Title = "GitHub user login",
+                                    Value = currentUser.Login,
+                                    Short = true
+                                },
+                                new SlackField()
+                                {
+                                    Title = "GitHub user ID",
+                                    Value = currentUser.Id.ToString(CultureInfo.InvariantCulture),
+                                    Short = true
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
 
             var validatedEmails = emails
                 .Where(x => x.Verified)
@@ -128,7 +132,10 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
             return Unit.Value;
         }
 
-        private async Task<User> EnsureAuth0UserForGitHubUserAsync(int userId, EmailAddress[] userEmails, CancellationToken cancellationToken)
+        private async Task<User> EnsureAuth0UserForGitHubUserAsync(
+            int userId, 
+            IEnumerable<EmailAddress> userEmails, 
+            CancellationToken cancellationToken)
         {
             var emailStrings = userEmails
                 .Select(x => x.Email)
@@ -136,7 +143,8 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
             return
                 await this.mediator.Send(new GetAuth0UserFromGitHubUserIdQuery(userId), cancellationToken) ??
                 await this.mediator.Send(new GetAuth0UserFromEmailsQuery(emailStrings), cancellationToken) ??
-                await this.mediator.Send(new CreateAuth0UserCommand(emailStrings), cancellationToken);
+                await this.mediator.Send(new CreateAuth0UserCommand(emailStrings), cancellationToken) ??
+                throw new InvalidOperationException("No user could be created.");
         }
     }
 }

@@ -15,7 +15,7 @@ using Dogger.Domain.Queries.Clusters.GetConnectionDetails;
 using Dogger.Domain.Queries.Instances.GetContainerLogs;
 using Dogger.Domain.Queries.Instances.GetInstanceByName;
 using Dogger.Domain.Queries.Instances.GetProvisionedClustersWithInstancesForUser;
-using Dogger.Domain.Services.Dogfeeding;
+using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Arguments;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -211,7 +211,7 @@ namespace Dogger.Controllers.Clusters
         [ProducesResponseType(typeof(ConnectionDetailsResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> ConnectionDetails(string clusterId)
         {
-            if(DogfeedService.IsProtectedResourceName(clusterId))
+            if(ProvisioningService.IsProtectedResourceName(clusterId))
                 return Unauthorized("Can't get connection details for reserved instances.");
 
             var connectionDetails = await this.mediator.Send(new GetConnectionDetailsQuery(clusterId));
@@ -238,7 +238,7 @@ namespace Dogger.Controllers.Clusters
         [ProducesResponseType(typeof(LogsResponse[]), StatusCodes.Status200OK)]
         public async Task<IActionResult> Logs(string clusterId)
         {
-            if(DogfeedService.IsProtectedResourceName(clusterId))
+            if(ProvisioningService.IsProtectedResourceName(clusterId))
                 return Unauthorized("Can't get logs for reserved instances.");
 
             var instance = await this.mediator.Send(new GetInstanceByNameQuery(clusterId));

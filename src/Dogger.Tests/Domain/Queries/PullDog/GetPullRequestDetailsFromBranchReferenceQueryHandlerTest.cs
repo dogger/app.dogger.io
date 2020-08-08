@@ -9,7 +9,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Octokit;
 using Serilog;
-using User = Octokit.User;
 
 namespace Dogger.Tests.Domain.Queries.PullDog
 {

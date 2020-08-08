@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Infrastructure;
+using Dogger.Infrastructure.Ioc;
 using MediatR;
 using Stripe;
 
@@ -14,14 +15,14 @@ namespace Dogger.Domain.Commands.Users.CreateUserForIdentity
     public class CreateUserForIdentityCommandHandler : IRequestHandler<CreateUserForIdentityCommand, User>
     {
         private readonly DataContext dataContext;
-        private readonly CustomerService stripeCustomerService;
+        private readonly CustomerService? stripeCustomerService;
 
         public CreateUserForIdentityCommandHandler(
             DataContext dataContext,
-            CustomerService stripeCustomerService)
+            IOptionalService<CustomerService> stripeCustomerService)
         {
             this.dataContext = dataContext;
-            this.stripeCustomerService = stripeCustomerService;
+            this.stripeCustomerService = stripeCustomerService.Value;
         }
 
         public async Task<User> Handle(CreateUserForIdentityCommand request, CancellationToken cancellationToken)
@@ -40,6 +41,9 @@ namespace Dogger.Domain.Commands.Users.CreateUserForIdentity
 
         private async Task AssignStripeCustomerToUserAsync(User user, CreateUserForIdentityCommand request)
         {
+            if (this.stripeCustomerService == null)
+                return;
+
             try
             {
                 var existingCustomer = await GetExistingStripeCustomerAsync(request);
@@ -63,6 +67,9 @@ namespace Dogger.Domain.Commands.Users.CreateUserForIdentity
             if (EnvironmentHelper.IsRunningInTest || Debugger.IsAttached)
                 return null;
 
+            if (this.stripeCustomerService == null)
+                return null;
+
             var existingCustomersResponse = await this.stripeCustomerService.ListAsync(new CustomerListOptions()
             {
                 Email = request.Email
@@ -73,6 +80,9 @@ namespace Dogger.Domain.Commands.Users.CreateUserForIdentity
 
         private async Task CreateNewStripeCustomerForUserAsync(User user, CreateUserForIdentityCommand request)
         {
+            if (this.stripeCustomerService == null)
+                return;
+
             var customer = await this.stripeCustomerService.CreateAsync(new CustomerCreateOptions()
             {
                 Email = request.Email,

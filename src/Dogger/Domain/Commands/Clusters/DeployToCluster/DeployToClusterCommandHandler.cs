@@ -9,6 +9,7 @@ using Dogger.Domain.Queries.Clusters.GetClusterForUser;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Arguments;
 using Dogger.Domain.Services.Provisioning.Flows;
+using Dogger.Infrastructure.Ioc;
 using MediatR;
 using Slack.Webhooks;
 
@@ -18,16 +19,16 @@ namespace Dogger.Domain.Commands.Clusters.DeployToCluster
     {
         private readonly IProvisioningService provisioningService;
         private readonly IMediator mediator;
-        private readonly ISlackClient slackClient;
+        private readonly ISlackClient? slackClient;
 
         public DeployToClusterCommandHandler(
             IProvisioningService provisioningService,
             IMediator mediator,
-            ISlackClient slackClient)
+            IOptionalService<ISlackClient> slackClient)
         {
             this.provisioningService = provisioningService;
             this.mediator = mediator;
-            this.slackClient = slackClient;
+            this.slackClient = slackClient.Value;
         }
 
         public async Task<IProvisioningJob> Handle(DeployToClusterCommand request, CancellationToken cancellationToken)
@@ -40,7 +41,7 @@ namespace Dogger.Domain.Commands.Clusters.DeployToCluster
                     new GetClusterByIdQuery(request.ClusterId.Value),
                     cancellationToken);
 
-                if (request.ClusterId == DataContext.DemoClusterId)
+                if (request.ClusterId == DataContext.DemoClusterId && this.slackClient != null)
                 {
                     await this.slackClient.PostAsync(new SlackMessage()
                     {

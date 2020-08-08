@@ -5,6 +5,8 @@ using Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Models;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +25,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(fakeMediator)
             });
@@ -51,7 +53,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(fakeMediator)
             });

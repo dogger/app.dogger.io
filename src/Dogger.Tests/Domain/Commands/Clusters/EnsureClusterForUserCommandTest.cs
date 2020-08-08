@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Commands.Clusters.EnsureClusterForUser;
 using Dogger.Domain.Models;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Dogger.Tests.Domain.Commands.Clusters
@@ -16,7 +17,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
         public async Task Handle_MultipleClustersOnUserWithDifferentNames_ReturnsMatchingClusterByName()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var matchingClusterId = Guid.NewGuid();
             var user = new User()
@@ -62,7 +63,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
         public async Task Handle_NoClustersOnUserByName_CreatesClusterByName()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var user = new User()
             {

@@ -7,7 +7,6 @@ using Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Helpers;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest;
 using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
 using Dogger.Domain.Services.Provisioning;
@@ -15,6 +14,7 @@ using Dogger.Domain.Services.Provisioning.Arguments;
 using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Docker.Yml;
+using Dogger.Infrastructure.Ioc;
 using MediatR;
 using Slack.Webhooks;
 
@@ -24,20 +24,20 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
     {
         private readonly IMediator mediator;
         private readonly IProvisioningService provisioningService;
-        private readonly ISlackClient slackClient;
+        private readonly ISlackClient? slackClient;
         private readonly IPullDogFileCollectorFactory pullDogFileCollectorFactory;
         private readonly IPullDogRepositoryClientFactory pullDogRepositoryClientFactory;
 
         public ProvisionPullDogEnvironmentCommandHandler(
             IMediator mediator,
             IProvisioningService provisioningService,
-            ISlackClient slackClient,
+            IOptionalService<ISlackClient> slackClient,
             IPullDogFileCollectorFactory pullDogFileCollectorFactory,
             IPullDogRepositoryClientFactory pullDogRepositoryClientFactory)
         {
             this.mediator = mediator;
             this.provisioningService = provisioningService;
-            this.slackClient = slackClient;
+            this.slackClient = slackClient.Value;
             this.pullDogFileCollectorFactory = pullDogFileCollectorFactory;
             this.pullDogRepositoryClientFactory = pullDogRepositoryClientFactory;
         }
@@ -92,7 +92,7 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
 
             try
             {
-                await ReportProvisioningToSlackAsync(request, settings);
+                await ReportProvisioningToSlackAsync(request);
 
                 var instance = await this.mediator.Send(
                     new EnsurePullDogDatabaseInstanceCommand(
@@ -163,8 +163,11 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
             return Unit.Value;
         }
 
-        private async Task ReportProvisioningToSlackAsync(ProvisionPullDogEnvironmentCommand request, PullDogSettings settings)
+        private async Task ReportProvisioningToSlackAsync(ProvisionPullDogEnvironmentCommand request)
         {
+            if (this.slackClient == null)
+                return;
+
             await this.slackClient.PostAsync(
                 new SlackMessage()
                 {

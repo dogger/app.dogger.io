@@ -20,6 +20,76 @@ namespace Dogger.Tests.Domain.Provisioning
     {
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
+        public async Task IsProtectedResourceName_ProtectedNameWithLeadingWhitespace_ReturnsTrue()
+        {
+            //Arrange
+            var name = " main-";
+
+            //Act
+            var result = ProvisioningService.IsProtectedResourceName(name);
+
+            //Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public async Task IsProtectedResourceName_ProtectedNameWithWhitespaceInside_ReturnsTrue()
+        {
+            //Arrange
+            var name = "mai n-lol";
+
+            //Act
+            var result = ProvisioningService.IsProtectedResourceName(name);
+
+            //Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public async Task IsProtectedResourceName_ProtectedNameWithTrailingWhitespace_ReturnsTrue()
+        {
+            //Arrange
+            var name = "main- ";
+
+            //Act
+            var result = ProvisioningService.IsProtectedResourceName(name);
+
+            //Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public async Task IsProtectedResourceName_ProtectedNameGiven_ReturnsTrue()
+        {
+            //Arrange
+            var name = "main-lol";
+
+            //Act
+            var result = ProvisioningService.IsProtectedResourceName(name);
+
+            //Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public async Task IsProtectedResourceName_JustProtectedNamePrefixGiven_ReturnsTrue()
+        {
+            //Arrange
+            var name = "main-";
+
+            //Act
+            var result = ProvisioningService.IsProtectedResourceName(name);
+
+            //Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
         public async Task GetCompletedJob_Always_ReturnsCompletedJob()
         {
             //Arrange

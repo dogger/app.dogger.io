@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Dogger.Infrastructure.Ioc;
 using MediatR;
 using Stripe;
 
@@ -9,31 +10,34 @@ namespace Dogger.Domain.Commands.Payment.SetActivePaymentMethodForUser
 
     public class SetActivePaymentMethodForUserCommandHandler : IRequestHandler<SetActivePaymentMethodForUserCommand>
     {
-        private readonly PaymentMethodService stripePaymentMethodService;
-        private readonly CustomerService customerService;
+        private readonly PaymentMethodService? paymentMethodService;
+        private readonly CustomerService? customerService;
 
         [DebuggerStepThrough]
         public SetActivePaymentMethodForUserCommandHandler(
-            PaymentMethodService stripePaymentMethodService,
-            CustomerService customerService)
+            IOptionalService<PaymentMethodService> stripePaymentMethodService,
+            IOptionalService<CustomerService> customerService)
         {
-            this.stripePaymentMethodService = stripePaymentMethodService;
-            this.customerService = customerService;
+            this.paymentMethodService = stripePaymentMethodService.Value;
+            this.customerService = customerService.Value;
         }
 
         public async Task<Unit> Handle(SetActivePaymentMethodForUserCommand request, CancellationToken cancellationToken)
         {
+            if (this.customerService == null || this.paymentMethodService == null)
+                return Unit.Value;
+
             var user = request.User;
             if (user.StripeCustomerId == null)
                 throw new NoStripeCustomerIdException();
 
-            var existingPaymentMethods = await this.stripePaymentMethodService.ListAsync(new PaymentMethodListOptions()
+            var existingPaymentMethods = await this.paymentMethodService.ListAsync(new PaymentMethodListOptions()
             {
                 Customer = user.StripeCustomerId,
                 Type = "card"
             }, cancellationToken: cancellationToken);
 
-            await this.stripePaymentMethodService.AttachAsync(
+            await this.paymentMethodService.AttachAsync(
                 request.PaymentMethodId,
                 new PaymentMethodAttachOptions()
                 {
@@ -50,7 +54,7 @@ namespace Dogger.Domain.Commands.Payment.SetActivePaymentMethodForUser
 
             foreach(var oldPaymentMethod in existingPaymentMethods)
             {
-                await this.stripePaymentMethodService.DetachAsync(
+                await this.paymentMethodService.DetachAsync(
                     oldPaymentMethod.Id,
                     cancellationToken: cancellationToken);
             }

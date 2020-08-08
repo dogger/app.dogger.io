@@ -5,6 +5,7 @@ using Amazon.Lightsail;
 using Dogger.Domain.Services.Amazon.Lightsail;
 using Dogger.Infrastructure;
 using Dogger.Infrastructure.AspNet;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Time;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +16,7 @@ using NSubstitute;
 
 namespace Dogger.Tests.TestHelpers
 {
-    class TestServiceProviderFactory
+    public class TestServiceProviderFactory
     {
         public static IServiceProvider CreateUsingStartup(Action<IServiceCollection> configure = null)
         {
@@ -27,7 +28,7 @@ namespace Dogger.Tests.TestHelpers
                 .Build();
 
             var environment = Substitute.For<IHostEnvironment>();
-            environment.EnvironmentName.Returns(Environments.Development);
+            environment.EnvironmentName.Returns("Development");
             services.AddSingleton(environment);
 
             var startup = new Startup(
@@ -35,7 +36,9 @@ namespace Dogger.Tests.TestHelpers
                 environment);
             startup.ConfigureServices(services);
 
-            ConfigureServicesForTesting(services);
+            ConfigureServicesForTesting(
+                services, 
+                configuration);
 
             configure?.Invoke(services);
 
@@ -43,16 +46,18 @@ namespace Dogger.Tests.TestHelpers
         }
 
         public static void ConfigureServicesForTesting(
-            IServiceCollection services)
+            IServiceCollection services,
+            IConfiguration configuration)
         {
             RemoveTimedHostedServices(services);
             ConfigureAmazonLightsailDefaultFakes(services);
             ConfigureAmazonIdentityDefaultFakes(services);
             ConfigureFakeDelay(services);
 
-            IocRegistry.ConfigureMediatr(services,
-                typeof(Startup).Assembly,
-                typeof(TestServiceProviderFactory).Assembly);
+            var registry = new IocRegistry(
+                services,
+                configuration);
+            registry.ConfigureMediatr(typeof(TestServiceProviderFactory).Assembly);
 
             services.AddScoped<Mediator>();
         }

@@ -10,7 +10,10 @@ using Dogger.Domain.Services.Amazon.Lightsail;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Infrastructure.GitHub.Octokit;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -50,7 +53,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -84,7 +87,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -185,7 +188,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -324,7 +327,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -436,7 +439,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -510,7 +513,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -519,19 +522,19 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 }
             });
 
-            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
-            var customer = await stripeCustomerService.CreateAsync(new CustomerCreateOptions()
+            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<IOptionalService<CustomerService>>();
+            var customer = await stripeCustomerService.Value.CreateAsync(new CustomerCreateOptions()
             {
                 Email = "dummy@example.com"
             });
 
-            var stripePaymentMethodService = environment.ServiceProvider.GetRequiredService<PaymentMethodService>();
-            var paymentMethod = await stripePaymentMethodService.AttachAsync("pm_card_visa", new PaymentMethodAttachOptions()
+            var stripePaymentMethodService = environment.ServiceProvider.GetRequiredService<IOptionalService<PaymentMethodService>>();
+            var paymentMethod = await stripePaymentMethodService.Value.AttachAsync("pm_card_visa", new PaymentMethodAttachOptions()
             {
                 Customer = customer.Id
             });
 
-            var stripeSubscriptionService = environment.ServiceProvider.GetRequiredService<SubscriptionService>();
+            var stripeSubscriptionService = environment.ServiceProvider.GetRequiredService<IOptionalService<SubscriptionService>>().Value;
             var subscription = await stripeSubscriptionService.CreateAsync(new SubscriptionCreateOptions()
             {
                 Customer = customer.Id,
@@ -613,7 +616,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -622,14 +625,14 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 }
             });
 
-            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
-            var customer = await stripeCustomerService.CreateAsync(new CustomerCreateOptions()
+            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<IOptionalService<CustomerService>>();
+            var customer = await stripeCustomerService.Value.CreateAsync(new CustomerCreateOptions()
             {
                 Email = "dummy@example.com"
             });
 
-            var stripePaymentMethodService = environment.ServiceProvider.GetRequiredService<PaymentMethodService>();
-            var paymentMethod = await stripePaymentMethodService.AttachAsync("pm_card_visa", new PaymentMethodAttachOptions()
+            var stripePaymentMethodService = environment.ServiceProvider.GetRequiredService<IOptionalService<PaymentMethodService>>();
+            var paymentMethod = await stripePaymentMethodService.Value.AttachAsync("pm_card_visa", new PaymentMethodAttachOptions()
             {
                 Customer = customer.Id
             });
@@ -716,7 +719,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -725,14 +728,14 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 }
             });
 
-            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
-            var customer = await stripeCustomerService.CreateAsync(new CustomerCreateOptions()
+            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<IOptionalService<CustomerService>>();
+            var customer = await stripeCustomerService.Value.CreateAsync(new CustomerCreateOptions()
             {
                 Email = "dummy@example.com"
             });
 
-            var stripePaymentMethodService = environment.ServiceProvider.GetRequiredService<PaymentMethodService>();
-            var paymentMethod = await stripePaymentMethodService.AttachAsync("pm_card_visa", new PaymentMethodAttachOptions()
+            var stripePaymentMethodService = environment.ServiceProvider.GetRequiredService<IOptionalService<PaymentMethodService>>();
+            var paymentMethod = await stripePaymentMethodService.Value.AttachAsync("pm_card_visa", new PaymentMethodAttachOptions()
             {
                 Customer = customer.Id
             });
@@ -815,7 +818,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             var fakeLightsailOperationService = Substitute.For<ILightsailOperationService>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {

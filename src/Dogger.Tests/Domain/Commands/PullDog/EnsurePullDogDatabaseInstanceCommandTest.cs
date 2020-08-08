@@ -6,6 +6,8 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +24,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_ExistingClusterInstanceFoundAndPaidUser_ReusesExistingInstanceAndUpdatesExpiry()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var user = new User()
             {
@@ -91,7 +93,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_ExistingClusterInstanceFoundAndDemoUserWithNoExpiry_ReducesExpiryToAnHour()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var pullDogPullRequest = new PullDogPullRequest()
             {
@@ -155,7 +157,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_ExistingClusterInstanceFoundAndDemoUserWithMoreThanOneHourExpiry_ReducesExpiryToAnHour()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var pullDogPullRequest = new PullDogPullRequest()
             {
@@ -247,7 +249,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     args.PullRequest == pullDogPullRequest))
                 .Returns(new Cluster());
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(fakeMediator)
             });
@@ -310,7 +312,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     User = user
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(fakeMediator)
             });

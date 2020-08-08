@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 
 namespace Dogger.Tests
 {
@@ -13,7 +14,7 @@ namespace Dogger.Tests
         public async Task HealthCheck_HealthEndpoint_ReturnsOk()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             //Act
             using var httpClient = new HttpClient();

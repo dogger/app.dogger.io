@@ -15,7 +15,7 @@ namespace Dogger.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.5")
+                .HasAnnotation("ProductVersion", "3.1.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -128,6 +128,26 @@ namespace Dogger.Migrations
                         .IsUnique();
 
                     b.ToTable("Instances");
+                });
+
+            modelBuilder.Entity("Dogger.Domain.Models.License", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("EncryptedToken")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("License");
                 });
 
             modelBuilder.Entity("Dogger.Domain.Models.PullDogPullRequest", b =>
@@ -262,6 +282,15 @@ namespace Dogger.Migrations
                     b.HasOne("Dogger.Domain.Models.Cluster", "Cluster")
                         .WithMany("Instances")
                         .HasForeignKey("ClusterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Dogger.Domain.Models.License", b =>
+                {
+                    b.HasOne("Dogger.Domain.Models.User", "User")
+                        .WithMany("Licenses")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

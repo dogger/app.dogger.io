@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
 using Dogger.Domain.Models;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -18,7 +19,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_PullDogRepositoryWithPullRequestPresentInDatabase_DeletesBothRepositoryAndPullRequests()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -68,7 +69,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_MatchingAndUnmatchingRepositoriesPresent_DeletesMatchingRepository()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             await environment.WithFreshDataContext(async dataContext =>
             {

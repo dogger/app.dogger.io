@@ -8,6 +8,7 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Mediatr.Database;
 using MediatR;
 using Slack.Webhooks;
@@ -18,43 +19,46 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDemoInstance
     {
         private readonly IProvisioningService provisioningService;
         private readonly IMediator mediator;
-        private readonly ISlackClient slackClient;
+        private readonly ISlackClient? slackClient;
 
         private readonly DataContext dataContext;
 
         public ProvisionDemoInstanceCommandHandler(
             IProvisioningService provisioningService,
             IMediator mediator,
-            ISlackClient slackClient,
+            IOptionalService<ISlackClient> slackClient,
             DataContext dataContext)
         {
             this.provisioningService = provisioningService;
             this.mediator = mediator;
-            this.slackClient = slackClient;
+            this.slackClient = slackClient.Value;
             this.dataContext = dataContext;
         }
 
         public async Task<IProvisioningJob> Handle(ProvisionDemoInstanceCommand request, CancellationToken cancellationToken)
         {
-            await this.slackClient.PostAsync(new SlackMessage()
+            if (this.slackClient != null)
             {
-                Text = "A demo instance is being provisioned.",
-                Attachments = new List<SlackAttachment>()
+                await this.slackClient.PostAsync(new SlackMessage()
                 {
-                    new SlackAttachment()
+                    Text = "A demo instance is being provisioned.",
+                    Attachments = new List<SlackAttachment>()
                     {
-                        Fields = new List<SlackField>()
+                        new SlackAttachment()
                         {
-                            new SlackField()
+                            Fields = new List<SlackField>()
                             {
-                                Title = "User ID",
-                                Value = request.AuthenticatedUserId?.ToString() ?? string.Empty,
-                                Short = true
+                                new SlackField()
+                                {
+                                    Title = "User ID",
+                                    Value = request.AuthenticatedUserId?.ToString() ?? string.Empty,
+                                    Short = true
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
 
             var cluster = await mediator.Send(new EnsureClusterWithIdCommand(DataContext.DemoClusterId), cancellationToken);
             if (cluster.Instances.Count > 0)

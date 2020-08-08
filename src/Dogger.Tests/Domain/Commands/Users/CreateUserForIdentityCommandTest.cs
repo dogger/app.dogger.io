@@ -4,7 +4,10 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Users.CreateUserForIdentity;
 using Dogger.Domain.Models;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,12 +29,12 @@ namespace Dogger.Tests.Domain.Commands.Users
             var fakeIdentityName = Guid.NewGuid().ToString();
             var fakeIdentity = TestClaimsPrincipalFactory.CreateWithIdentityName(fakeIdentityName);
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(provider =>
                 {
                     var partiallyFakeCustomerService = Substitute.ForPartsOf<CustomerService>(
-                        provider.GetRequiredService<IStripeClient>());
+                        provider.GetRequiredService<IOptionalService<IStripeClient>>().Value);
                     partiallyFakeCustomerService
                         .CreateAsync(Arg.Any<CustomerCreateOptions>())
                         .Throws(new TestException());
@@ -56,7 +59,7 @@ namespace Dogger.Tests.Domain.Commands.Users
         public async Task Handle_EmptyIdentityNameGiven_ExceptionIsThrown()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<IdentityNameNotProvidedException>(
@@ -71,8 +74,8 @@ namespace Dogger.Tests.Domain.Commands.Users
         public async Task Handle_DevelopmentEnvironmentAndNoExistingStripeCustomer_NewStripeCustomerCreatedWithFakeEmail()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
-            var customerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
+            var customerService = environment.ServiceProvider.GetRequiredService<IOptionalService<CustomerService>>();
 
             var fakeIdentityName = Guid.NewGuid().ToString();
             var fakeIdentity = TestClaimsPrincipalFactory.CreateWithIdentityName(fakeIdentityName);
@@ -81,7 +84,7 @@ namespace Dogger.Tests.Domain.Commands.Users
             var createdUser = await environment.Mediator.Send(new CreateUserForIdentityCommand(fakeIdentity));
 
             //Assert
-            var createdStripeCustomer = await customerService.GetAsync(createdUser.StripeCustomerId);
+            var createdStripeCustomer = await customerService.Value.GetAsync(createdUser.StripeCustomerId);
 
             Assert.IsNotNull(createdStripeCustomer);
             Assert.AreEqual(fakeIdentityName + "@example.com", createdStripeCustomer.Email);
@@ -93,18 +96,18 @@ namespace Dogger.Tests.Domain.Commands.Users
         public async Task Handle_ProductionEnvironmentAndExistingStripeCustomer_NewStripeCustomerCreated()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 EnvironmentName = Environments.Production
             });
-            var customerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
+            var customerService = environment.ServiceProvider.GetRequiredService<IOptionalService<CustomerService>>();
 
             var fakeIdentityName = Guid.NewGuid().ToString();
             var fakeIdentity = TestClaimsPrincipalFactory.CreateWithIdentityName(fakeIdentityName);
 
             //Act
             var createdUser = await environment.Mediator.Send(new CreateUserForIdentityCommand(fakeIdentity));
-            var createdStripeCustomer = await customerService.GetAsync(createdUser.StripeCustomerId);
+            var createdStripeCustomer = await customerService.Value.GetAsync(createdUser.StripeCustomerId);
 
             //Assert
             try
@@ -115,7 +118,7 @@ namespace Dogger.Tests.Domain.Commands.Users
             }
             finally
             {
-                await customerService.DeleteAsync(createdStripeCustomer.Id);
+                await customerService.Value.DeleteAsync(createdStripeCustomer.Id);
             }
         }
 
@@ -124,7 +127,7 @@ namespace Dogger.Tests.Domain.Commands.Users
         public async Task Handle_IdentityNameGiven_NewUserIsAddedToDatabase()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var fakeIdentityName = Guid.NewGuid().ToString();
             var fakeIdentity = TestClaimsPrincipalFactory.CreateWithIdentityName(fakeIdentityName);
@@ -141,7 +144,7 @@ namespace Dogger.Tests.Domain.Commands.Users
             Assert.AreEqual(fakeIdentityName, createdUser.Identities.Single().Name);
         }
 
-        private static async Task<User> GetUserByIdentityNameAsync(IntegrationTestEnvironment environment, string fakeIdentityName)
+        private static async Task<User> GetUserByIdentityNameAsync(DoggerIntegrationTestEnvironment environment, string fakeIdentityName)
         {
             return await environment.WithFreshDataContext(async dataContext =>
             {
@@ -152,27 +155,6 @@ namespace Dogger.Tests.Domain.Commands.Users
                         .Identities
                         .Any(i => i.Name == fakeIdentityName));
             });
-        }
-
-        /// <summary>
-        /// Creates a user (which in turn creates a Stripe customer), and then deletes the user from the database again, leading to the Stripe customer being orphaned.
-        /// </summary>
-        private static async Task<Customer> CreateOrphanedStripeCustomerAsync(
-            IntegrationTestEnvironment environment,
-            ClaimsPrincipal fakeIdentity)
-        {
-            var existingUser = await environment.Mediator.Send(new CreateUserForIdentityCommand(fakeIdentity));
-
-            await environment.WithFreshDataContext(async dataContext =>
-            {
-                var userToRemove = await dataContext.Users.SingleAsync(x => x.Id == existingUser.Id);
-                dataContext.Users.Remove(userToRemove);
-            });
-
-            return await environment
-                .ServiceProvider
-                .GetRequiredService<CustomerService>()
-                .GetAsync(existingUser.StripeCustomerId);
         }
     }
 }

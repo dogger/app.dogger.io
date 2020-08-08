@@ -39,7 +39,7 @@ namespace Dogger.Infrastructure.Auth.Auth0
                 .ReceiveJson();
             var accessToken = (string)response.access_token;
 
-            var domainUrl = new Uri(Constants.Domain);
+            var domainUrl = new Uri(AuthConstants.Auth0Domain);
             return new ManagementApiClientProxy(
                 new ManagementApiClient(
                     accessToken, 

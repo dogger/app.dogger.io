@@ -3,6 +3,8 @@ using System.Net.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -17,7 +19,7 @@ namespace Dogger.Tests
         public async Task ThrowError_AnonymousUserAndProductionEnvironment_ReturnsNoErrorDetails()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 EnvironmentName = Environments.Production
             });
@@ -41,7 +43,7 @@ namespace Dogger.Tests
         public async Task ThrowError_AnonymousUserAndDevelopmentEnvironment_ReturnsNoErrorDetails()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 EnvironmentName = Environments.Development
             });

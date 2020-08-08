@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Amazon.Identity.GetAmazonUserByName;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Dogger.Tests.Domain.Queries.Amazon.Identity
@@ -15,7 +16,7 @@ namespace Dogger.Tests.Domain.Queries.Amazon.Identity
         public async Task Handle_UserNotFound_ReturnsNull()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             //Act
             var user = await environment.Mediator.Send(new GetAmazonUserByNameQuery("some-name"));
@@ -29,7 +30,7 @@ namespace Dogger.Tests.Domain.Queries.Amazon.Identity
         public async Task Handle_SeveralUsers_ReturnsFoundUser()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             await environment.WithFreshDataContext(async dataContext =>
             {

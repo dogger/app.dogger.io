@@ -7,6 +7,8 @@ using Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonUserWithName;
 using Dogger.Domain.Models;
 using Dogger.Infrastructure.Encryption;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +26,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
         public async Task Handle_ExistingUserFoundInDatabase_ReturnsUser()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var userId = Guid.NewGuid();
 
@@ -60,7 +62,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                     AccessKey = new AccessKey()
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(fakeAmazonIdentityManagementService)
             });
@@ -91,7 +93,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                     AccessKey = new AccessKey()
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(fakeAmazonIdentityManagementService)
             });
@@ -119,7 +121,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                     AccessKey = new AccessKey()
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(fakeAmazonIdentityManagementService)
             });
@@ -151,7 +153,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                     }
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(fakeAmazonIdentityManagementService)
             });
@@ -196,7 +198,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                     AccessKey = new AccessKey()
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -240,7 +242,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                 .CreateUserAsync(Arg.Any<CreateUserRequest>())
                 .Throws(new TestException());
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(fakeAmazonIdentityManagementService)
             });
@@ -269,7 +271,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                 .CreateAccessKeyAsync(Arg.Any<CreateAccessKeyRequest>())
                 .Throws(new TestException());
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services => services.AddSingleton(fakeAmazonIdentityManagementService)
             });
@@ -304,7 +306,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                     AccessKey = new AccessKey()
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -355,7 +357,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                     AccessKey = new AccessKey()
                 });
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {

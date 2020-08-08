@@ -13,6 +13,8 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
 using Dogger.Infrastructure.AspNet.Options.GitHub;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Environments;
+using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -76,7 +78,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             fakeHandler3.CanHandle(context.Payload).Returns(true);
             fakeHandler4.CanHandle(context.Payload).Returns(false);
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -137,7 +139,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             var fakeHandler = Substitute.For<IWebhookPayloadHandler>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -206,7 +208,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                 .CanHandle(Arg.Any<WebhookPayload>())
                 .Returns(true);
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -278,7 +280,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             var fakeWebhookPayloadHandler = Substitute.For<IWebhookPayloadHandler>();
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -346,7 +348,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                 .CanHandle(Arg.Any<WebhookPayload>())
                 .Returns(true);
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -419,7 +421,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                 .CanHandle(Arg.Any<WebhookPayload>())
                 .Returns(true);
 
-            await using var environment = await IntegrationTestEnvironment.CreateAsync(new EnvironmentSetupOptions()
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
@@ -453,7 +455,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
         public async Task PullDogWebhook_AuthenticPayload_ReturnsNoContent()
         {
             //Arrange
-            await using var environment = await IntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
             environment.Configuration["GitHub:PullDog:WebhookSecret"] = "some-webhook-secret";
 
             using var httpClient = new HttpClient();

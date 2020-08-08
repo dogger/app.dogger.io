@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Dogger.Tests.TestHelpers
 {
     [ExcludeFromCodeCoverage]
-    class TestException : Exception
+    public class TestException : Exception
     {
         public TestException()
         {
