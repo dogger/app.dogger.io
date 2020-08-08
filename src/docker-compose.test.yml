@@ -9,7 +9,7 @@ services:
       context: .
       dockerfile: Dogger.Tests/Dockerfile
     volumes:
-      - "./TestResults/Dogger:/src/Dogger.Tests/TestResults"
+      - "./TestResults/Dogger:/src/Dogger.Tests/TestResults/Dogger"
     environment:
     - DOTNET_RUNNING_IN_TEST=true
 
@@ -21,7 +21,7 @@ services:
       context: .
       dockerfile: Dogger.Setup.Tests/Dockerfile
     volumes:
-      - "./TestResults/Dogger.Setup:/src/Dogger.Setup.Tests/TestResults"
+      - "./TestResults/Dogger.Setup:/src/Dogger.Setup.Tests/TestResults/Dogger.Setup"
     environment:
     - DOTNET_RUNNING_IN_TEST=true
 
