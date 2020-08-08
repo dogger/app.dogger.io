@@ -25,7 +25,6 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
     {
         private readonly IProvisioningService provisioningService;
         private readonly IMediator mediator;
-        private readonly IConfiguration configuration;
         private readonly IFile file;
 
         private readonly IOptionsMonitor<DogfeedOptions> dogfeedOptionsMonitor;
@@ -44,15 +43,14 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
             this.mediator = mediator;
             this.file = file;
             this.dataContext = dataContext;
-            this.configuration = configuration;
             this.dogfeedOptionsMonitor = dogfeedOptionsMonitor;
         }
 
         public async Task<IProvisioningJob> Handle(ProvisionDogfeedInstanceCommand request, CancellationToken cancellationToken)
         {
             var dogfeedOptions = this.dogfeedOptionsMonitor.CurrentValue;
-            if (dogfeedOptions.Files == null)
-                throw new InvalidOperationException("Could not find files to deploy.");
+            if (dogfeedOptions.DockerComposeYmlFilePaths == null || dogfeedOptions.DockerComposeYmlFilePaths.Length == 0)
+                throw new InvalidOperationException("Could not find Docker Compose YML files to deploy.");
 
             var dockerHubOptions = dogfeedOptions.DockerHub;
             if (dockerHubOptions?.Username == null)
@@ -86,7 +84,7 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
                         instance),
                     new DeployToClusterStateFlow(
                         request.InstanceName,
-                        SanitizeDockerComposeYmlFilePaths(dogfeedOptions.Files))
+                        SanitizeDockerComposeYmlFilePaths(dogfeedOptions.DockerComposeYmlFilePaths))
                     {
                         Files = dockerFiles,
                         Authentication = new[] {
@@ -118,38 +116,26 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
             return firstCapablePlan;
         }
 
-        private static async Task<InstanceDockerFile[]> GetDockerFilesAsync(DogfeedOptions options)
+        private async Task<InstanceDockerFile[]?> GetDockerFilesAsync(DogfeedOptions options)
         {
-            if (options.Files == null)
-                throw new InvalidOperationException("Could not find Docker Compose YML contents.");
+            if (options.DockerComposeYmlFilePaths == null)
+                throw new InvalidOperationException("Docker Compose YML file paths were not specified.");
 
-            return await Task.WhenAll(options
-                .Files
+            var filePaths = new List<string>();
+            filePaths.AddRange(options.DockerComposeYmlFilePaths);
+
+            if(options.AdditionalFilePaths != null)
+                filePaths.AddRange(options.AdditionalFilePaths);
+
+            return await Task.WhenAll(filePaths
                 .Select(async path => new InstanceDockerFile(
                     path,
-                    await File.ReadAllBytesAsync(path))));
+                    await file.ReadAllBytesAsync(path))));
         }
 
         private static string SanitizeDockerComposeYmlFilePath(string ymlFilePath)
         {
             return Path.GetFileName(ymlFilePath);
-        }
-
-        private static string SanitizeFileContentsFromConfigurationAsString(string? contents)
-        {
-            if (contents == null)
-                throw new ArgumentNullException(nameof(contents));
-
-            return contents.Replace("\\n", "\n", StringComparison.InvariantCulture);
-        }
-
-        private static byte[] SanitizeFileContentsFromConfigurationAsBytes(string? contents)
-        {
-            var text = SanitizeFileContentsFromConfigurationAsString(contents);
-            if (text == null)
-                return Array.Empty<byte>();
-
-            return Encoding.UTF8.GetBytes(text);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Destructurama.Attributed;
 using Dogger.Infrastructure.AspNet.Options;
 
 namespace Dogger.Setup.Infrastructure
@@ -6,7 +7,10 @@ namespace Dogger.Setup.Infrastructure
     [ExcludeFromCodeCoverage]
     public class DogfeedOptions
     {
-        public string[]? Files { get; set; }
+        [NotLogged]
+        public string[]? AdditionalFilePaths { get; set; }
+
+        public string[]? DockerComposeYmlFilePaths { get; set; }
 
         public DockerHubOptions? DockerHub { get; set; }
     }

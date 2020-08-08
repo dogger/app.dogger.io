@@ -15,6 +15,7 @@ using IocRegistry = Dogger.Setup.Infrastructure.IocRegistry;
 
 namespace Dogger.Setup
 {
+    [ExcludeFromCodeCoverage]
     class Program
     {
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "This is the main method.")]

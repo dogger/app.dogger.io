@@ -20,39 +20,6 @@ namespace Dogger.Tests.Infrastructure.Mediatr
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
-        public async Task Handle_TwoDifferentEnvironments_CantAccessUncommittedRows()
-        {
-            //Arrange
-            var options = new DoggerEnvironmentSetupOptions()
-            {
-                IncludeWebServer = true
-            };
-
-            await using var environment1 = await DoggerIntegrationTestEnvironment.CreateAsync(options);
-            await environment1.DataContext.Database.MigrateAsync();
-
-            await using var environment2 = await DoggerIntegrationTestEnvironment.CreateAsync(options);
-
-            //Act & Assert
-            await environment1.Mediator.Send(new TestCommand(async () =>
-            {
-                await environment1.DataContext.Clusters.AddAsync(new Cluster()
-                {
-                    Name = "outer"
-                });
-                await environment1.DataContext.SaveChangesAsync();
-
-                var clusterCount1 = await environment1.DataContext.Clusters.CountAsync();
-                var clusterCount2 = await environment2.DataContext.Clusters.CountAsync();
-
-                Assert.AreEqual(1, clusterCount1);
-                Assert.AreEqual(0, clusterCount2);
-            }));
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.IntegrationCategory)]
-        [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
         public async Task Handle_NestedTransactionsOuterExceptionThrown_InnerAndOuterTransactionContentsReverted()
         {
             //Arrange
