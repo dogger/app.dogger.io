@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  dogger-setup:
+    build: 
+        context: .
+        dockerfile: ./Dogger.Setup/Dockerfile
+    image: docker.pkg.github.com/dogger/app.dogger.io/dogger-setup:latest
+    networks:
+    - network
+    environment:
+    - Aws__AccessKeyId=${AWS_ACCESS_KEY_ID}
+    - Aws__SecretAccessKey=${AWS_SECRET_ACCESS_KEY}
+    - Aws__LightsailPrivateKeyPem=${AWS_LIGHTSAIL_PRIVATE_KEY_PEM:-}
+    - ASPNETCORE_ENVIRONMENT=Production
+
+networks:
+  network:

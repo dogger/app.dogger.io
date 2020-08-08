@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		docker-compose.app-dogger-io.yml = docker-compose.app-dogger-io.yml
+		docker-compose.setup.yml = docker-compose.setup.yml
 		docker-compose.sql-server.yml = docker-compose.sql-server.yml
 		docker-compose.test.yml = docker-compose.test.yml
 		docker-compose.yml = docker-compose.yml
@@ -21,9 +22,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{60474487
 		..\.github\workflows\build.yml = ..\.github\workflows\build.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dogger.Setup", "Dogger.Setup\Dogger.Setup.csproj", "{593773CC-EDEF-4198-B7CF-19549E94EA37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dogger.Setup", "Dogger.Setup\Dogger.Setup.csproj", "{593773CC-EDEF-4198-B7CF-19549E94EA37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dogger.Setup.Tests", "Dogger.Setup.Tests\Dogger.Setup.Tests.csproj", "{653399BD-B129-4FCC-B5FB-568B3F72648D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dogger.Setup.Tests", "Dogger.Setup.Tests\Dogger.Setup.Tests.csproj", "{653399BD-B129-4FCC-B5FB-568B3F72648D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

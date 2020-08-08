@@ -263,15 +263,12 @@ namespace Dogger.Infrastructure.Ioc
         [ExcludeFromCodeCoverage]
         private void ConfigureEntityFramework()
         {
-            var sqlOptions = this.Configuration.GetSection<SqlOptions>();
-
-            var connectionString = sqlOptions?.ConnectionString;
-            if (connectionString == null)
-                throw new InvalidOperationException("SQL connection string was not found.");
-
             this.Services.AddDbContextPool<DataContext>(
                 optionsBuilder =>
                 {
+                    var sqlOptions = this.Configuration.GetSection<SqlOptions>();
+                    var connectionString = sqlOptions?.ConnectionString;
+
                     var hasConnectionString = !string.IsNullOrEmpty(connectionString);
                     if (hasConnectionString)
                     {
