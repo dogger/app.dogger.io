@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Destructurama;
+using Dogger.Infrastructure.AspNet.Options;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Debugging;
@@ -49,11 +50,9 @@ namespace Dogger.Infrastructure.Logging
 
             SelfLog.Enable(Console.Error);
 
-            var slackWebhookUrl = configuration["Slack:IncomingUrl"];
-            return CreateBaseLoggingConfiguration()
+            var loggerConfiguration =  CreateBaseLoggingConfiguration()
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
-                .WriteTo.Slack(slackWebhookUrl, restrictedToMinimumLevel: LogEventLevel.Error)
                 .WriteTo.Sink(
                     new NonDisposableSinkProxy(
                         new ElasticsearchSink(
@@ -76,6 +75,14 @@ namespace Dogger.Infrastructure.Logging
                                     .BasicAuthentication("elastic", "elastic")
                                     .ServerCertificateValidationCallback((a, b, c, d) => true)
                             })));
+
+            var slackWebhookUrl = configuration.GetSection<SlackOptions>()?.IncomingUrl;
+            if (slackWebhookUrl != null)
+            {
+                loggerConfiguration = loggerConfiguration.WriteTo.Slack(slackWebhookUrl, restrictedToMinimumLevel: LogEventLevel.Error);
+            }
+
+            return loggerConfiguration;
         }
     }
 }
