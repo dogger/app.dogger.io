@@ -35,7 +35,7 @@ namespace Dogger.Infrastructure.Ssh
 
             return new SshCommandResult()
             {
-                Text = string.IsNullOrWhiteSpace(command.Error) ? 
+                Text = command.ExitStatus == 0 || string.IsNullOrWhiteSpace(command.Error) ? 
                     command.Result :
                     command.Error,
                 ExitCode = command.ExitStatus

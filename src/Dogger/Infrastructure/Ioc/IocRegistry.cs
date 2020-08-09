@@ -50,6 +50,7 @@ using Serilog;
 using Slack.Webhooks;
 using Stripe;
 using File = Dogger.Infrastructure.IO.File;
+using LoggingOptions = Dogger.Infrastructure.AspNet.Options.LoggingOptions;
 
 namespace Dogger.Infrastructure.Ioc
 {
@@ -221,6 +222,7 @@ namespace Dogger.Infrastructure.Ioc
             Configure<AwsOptions>();
             Configure<GitHubOptions>();
             Configure<SqlOptions>();
+            Configure<LoggingOptions>();
             Configure<StripeOptions>();
             Configure<EncryptionOptions>();
             Configure<Auth0Options>();

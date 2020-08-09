@@ -14,5 +14,8 @@ namespace Dogger.Infrastructure.AspNet.Options
 
         [NotLogged]
         public string? LightsailPrivateKeyPem { get; set; }
+
+        [NotLogged]
+        public string? KeyPairName { get; set; }
     }
 }

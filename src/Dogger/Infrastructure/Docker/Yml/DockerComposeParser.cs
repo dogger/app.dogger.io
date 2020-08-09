@@ -161,7 +161,13 @@ namespace Dogger.Infrastructure.Docker.Yml
 
         private JsonElement? GetRootProperty(string name)
         {
-            if (dockerComposeModel == null || !dockerComposeModel.RootElement.TryGetProperty(name, out var result))
+            if (this.dockerComposeModel == null)
+                return null;
+
+            if (this.dockerComposeModel.RootElement.ValueKind != JsonValueKind.Object)
+                return null;
+
+            if (!this.dockerComposeModel.RootElement.TryGetProperty(name, out var result))
                 return null;
 
             return result;

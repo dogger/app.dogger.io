@@ -26,6 +26,7 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
         private readonly IProvisioningService provisioningService;
         private readonly IMediator mediator;
         private readonly IFile file;
+        private readonly IConfiguration configuration;
 
         private readonly IOptionsMonitor<DogfeedOptions> dogfeedOptionsMonitor;
 
@@ -34,25 +35,26 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
         public ProvisionDogfeedInstanceCommandHandler(
             IProvisioningService provisioningService,
             IMediator mediator,
-            IConfiguration configuration,
             IOptionsMonitor<DogfeedOptions> dogfeedOptionsMonitor,
             IFile file,
+            IConfiguration configuration,
             DataContext dataContext)
         {
             this.provisioningService = provisioningService;
             this.mediator = mediator;
             this.file = file;
+            this.configuration = configuration;
             this.dataContext = dataContext;
             this.dogfeedOptionsMonitor = dogfeedOptionsMonitor;
         }
 
         public async Task<IProvisioningJob> Handle(ProvisionDogfeedInstanceCommand request, CancellationToken cancellationToken)
         {
-            var dogfeedOptions = this.dogfeedOptionsMonitor.CurrentValue;
+            var dogfeedOptions = GetSanitizedDogfeedOptions();
             if (dogfeedOptions.DockerComposeYmlFilePaths == null || dogfeedOptions.DockerComposeYmlFilePaths.Length == 0)
-                throw new InvalidOperationException("Could not find Docker Compose YML files to deploy.");
+                throw new InvalidOperationException("Could not find Docker Compose YML file paths to deploy.");
 
-            var dockerHubOptions = dogfeedOptions.DockerHub;
+            var dockerHubOptions = dogfeedOptions.DockerRegistry;
             if (dockerHubOptions?.Username == null)
                 throw new InvalidOperationException("Could not find Docker Hub username.");
 
@@ -84,26 +86,35 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
                         instance),
                     new DeployToClusterStateFlow(
                         request.InstanceName,
-                        SanitizeDockerComposeYmlFilePaths(dogfeedOptions.DockerComposeYmlFilePaths))
+                        dogfeedOptions.DockerComposeYmlFilePaths)
                     {
                         Files = dockerFiles,
+                        BuildArguments = new Dictionary<string, string>()
+                        {
+                            { "DOGGER_TAG", this.configuration["DOGGER_TAG"] }
+                        },
                         Authentication = new[] {
                             new DockerAuthenticationArguments(
                                 username: dockerHubOptions.Username,
                                 password: dockerHubOptions.Password)
                             {
-                                RegistryHostName = "docker.pkg.github.com"
+                                RegistryHostName = dockerHubOptions.HostName
                             }
                         }
                     }));
         }
 
-        private static string[] SanitizeDockerComposeYmlFilePaths(
-            string[] dogfeedOptionsDockerComposeYmlFilePaths)
+        private DogfeedOptions GetSanitizedDogfeedOptions()
         {
-            return dogfeedOptionsDockerComposeYmlFilePaths
-                .Select(SanitizeDockerComposeYmlFilePath)
-                .ToArray();
+            var dogfeedOptions = this.dogfeedOptionsMonitor.CurrentValue;
+            if (dogfeedOptions.DockerComposeYmlFilePaths == null || dogfeedOptions.DockerComposeYmlFilePaths.Length == 0)
+            {
+                dogfeedOptions.DockerComposeYmlFilePaths = this
+                    .configuration["DOCKER_COMPOSE_YML_FILE_PATHS"]?
+                    .Split(";", StringSplitOptions.RemoveEmptyEntries);
+            }
+
+            return dogfeedOptions;
         }
 
         private async Task<Plan> GetDogfeedingPlanAsync()
@@ -131,11 +142,6 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
                 .Select(async path => new InstanceDockerFile(
                     path,
                     await file.ReadAllBytesAsync(path))));
-        }
-
-        private static string SanitizeDockerComposeYmlFilePath(string ymlFilePath)
-        {
-            return Path.GetFileName(ymlFilePath);
         }
     }
 }

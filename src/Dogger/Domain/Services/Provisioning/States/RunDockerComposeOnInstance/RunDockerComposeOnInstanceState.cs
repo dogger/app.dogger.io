@@ -250,12 +250,14 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
         private async Task<string> GetMergedDockerComposeYmlFileContentsAsync(ISshClient sshClient)
         {
             var dockerComposeYmlFilePathArguments = GetDockerComposeFilesCommandLineArgumentString();
+            var commandText = $"cd dogger && @@environmentVariablesPrefix docker-compose {dockerComposeYmlFilePathArguments} config";
+            var environmentVariablesCommandLinePrefixArguments = GetEnvironmentVariablesCommandLinePrefixArguments();
 
             return await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
                 SshResponseSensitivity.MayContainSensitiveData,
-                $"cd dogger && @@environmentVariablesPrefix docker-compose {dockerComposeYmlFilePathArguments} config",
-                GetEnvironmentVariablesCommandLinePrefixArguments());
+                commandText,
+                environmentVariablesCommandLinePrefixArguments);
         }
 
         private static string PrependArgumentNameToStrings(string argumentName, IEnumerable<string> arguments)

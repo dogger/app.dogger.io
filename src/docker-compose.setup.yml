@@ -5,13 +5,29 @@ services:
     build: 
         context: .
         dockerfile: ./Dogger.Setup/Dockerfile
-    image: docker.pkg.github.com/dogger/app.dogger.io/dogger-setup:latest
+    image: docker.pkg.github.com/dogger/app.dogger.io/dogger-setup:${DOGGER_TAG:-latest}
     networks:
     - network
+    volumes:
+    - "./:/pwd/"
     environment:
     - Aws__AccessKeyId=${AWS_ACCESS_KEY_ID}
     - Aws__SecretAccessKey=${AWS_SECRET_ACCESS_KEY}
     - Aws__LightsailPrivateKeyPem=${AWS_LIGHTSAIL_PRIVATE_KEY_PEM:-}
+    - Dogfeed__DockerRegistry__HostName=${DOCKER_REGISTRY_URL:-docker.pkg.github.com}
+    - Dogfeed__DockerRegistry__Username=${DOCKER_REGISTRY_USERNAME:-}
+    - Dogfeed__DockerRegistry__Password=${DOCKER_REGISTRY_PASSWORD:-}
+    - Stripe__SecretKey=${STRIPE_SECRET_KEY:-}
+    - Stripe__PublishableKey=${STRIPE_PUBLISHABLE_KEY:-}
+    - GitHub__PullDog__PrivateKey=${PULL_DOG_PRIVATE_KEY:-}
+    - GitHub__PullDog__AppIdentifier=${PULL_DOG_APP_IDENTIFIER:-}
+    - GitHub__PullDog__WebhookSecret=${PULL_DOG_WEBHOOK_SECRET:-}
+    - GitHub__PullDog__ClientId=${PULL_DOG_CLIENT_ID:-}
+    - GitHub__PullDog__ClientSecret=${PULL_DOG_CLIENT_SECRET:-}
+    - Auth0__ClientId=${AUTHZERO_CLIENT_ID:-}
+    - Auth0__ClientSecret=${AUTHZERO_CLIENT_SECRET:-}
+    - DOCKER_COMPOSE_YML_FILE_PATHS=${DOCKER_COMPOSE_YML_FILE_PATHS:-/pwd/docker-compose.yml;/pwd/docker-compose.sql-server.yml}
+    - DOGGER_TAG=${DOGGER_TAG:-latest}
     - ASPNETCORE_ENVIRONMENT=Production
 
 networks:

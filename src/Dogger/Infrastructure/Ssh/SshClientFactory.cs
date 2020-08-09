@@ -3,6 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Amazon.Lightsail;
+using Amazon.Lightsail.Model;
 using Dogger.Infrastructure.AspNet.Options;
 using Dogger.Infrastructure.Secrets;
 using Serilog;
@@ -19,15 +21,18 @@ namespace Dogger.Infrastructure.Ssh
         private readonly ILogger logger;
         private readonly ISecretsScanner secretsScanner;
         private readonly IOptionsMonitor<AwsOptions> awsOptionsMonitor;
+        private readonly IAmazonLightsail amazonLightsail;
 
         public SshClientFactory(
             ILogger logger,
             ISecretsScanner secretsScanner,
-            IOptionsMonitor<AwsOptions> awsOptionsMonitor)
+            IOptionsMonitor<AwsOptions> awsOptionsMonitor,
+            IAmazonLightsail amazonLightsail)
         {
             this.logger = logger;
             this.secretsScanner = secretsScanner;
             this.awsOptionsMonitor = awsOptionsMonitor;
+            this.amazonLightsail = amazonLightsail;
         }
 
         public async Task<ISshClient> CreateForLightsailInstanceAsync(string ipAddress)
@@ -36,10 +41,9 @@ namespace Dogger.Infrastructure.Ssh
                 .CurrentValue
                 .LightsailPrivateKeyPem;
             if (string.IsNullOrWhiteSpace(privateKey))
-                throw new InvalidOperationException("Could not find the Lightsail private key PEM.");
+                privateKey = await GetDefaultPrivateKeyAsync();
 
-            var privateKeyPemBytes = Encoding.UTF8.GetBytes(
-                privateKey.Replace("\\n", "\n", StringComparison.InvariantCulture));
+            var privateKeyPemBytes = Encoding.UTF8.GetBytes(privateKey);
 
             await using var stream = new MemoryStream(privateKeyPemBytes);
             var connectionInfo = new ConnectionInfo(
@@ -63,10 +67,12 @@ namespace Dogger.Infrastructure.Ssh
                 .Handle<Exception>(exception =>
                     exception is SshOperationTimeoutException)
                 .WaitAndRetryAsync(
-                    3,
+                    5,
                     retryAttempt =>
                     {
-                        logger.Warning("Could not connect to SSH in attempt {RetryAttempt}.", retryAttempt);
+                        if(retryAttempt > 3)
+                            logger.Warning("Could not connect to SSH in attempt {RetryAttempt}.", retryAttempt);
+
                         return TimeSpan.FromSeconds(retryAttempt);
                     });
 
@@ -74,6 +80,12 @@ namespace Dogger.Infrastructure.Ssh
                 await client.ConnectAsync());
 
             return client;
+        }
+
+        private async Task<string> GetDefaultPrivateKeyAsync()
+        {
+            var response = await amazonLightsail.DownloadDefaultKeyPairAsync(new DownloadDefaultKeyPairRequest());
+            return response.PrivateKeyBase64;
         }
     }
 }

@@ -1,0 +1,6 @@
+version: '3.4'
+
+services:
+    mssql:
+        ports:
+            - "1436:1433"

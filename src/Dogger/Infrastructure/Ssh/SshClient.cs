@@ -48,7 +48,9 @@ namespace Dogger.Infrastructure.Ssh
                     totalWaitTimeInSeconds / retryIntervalInSeconds,
                     retryAttempt =>
                     {
-                        logger.Warning("Could not connect to SSH in attempt {RetryAttempt}.", retryAttempt);
+                        if(retryAttempt > 3)
+                            logger.Warning("Could not connect to SSH in attempt {RetryAttempt}.", retryAttempt);
+
                         return TimeSpan.FromSeconds(retryIntervalInSeconds);
                     });
 

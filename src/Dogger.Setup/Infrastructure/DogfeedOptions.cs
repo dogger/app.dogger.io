@@ -12,7 +12,7 @@ namespace Dogger.Setup.Infrastructure
 
         public string[]? DockerComposeYmlFilePaths { get; set; }
 
-        public DockerHubOptions? DockerHub { get; set; }
+        public DockerRegistryOptions? DockerRegistry { get; set; }
     }
 
 }
