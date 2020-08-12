@@ -78,7 +78,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
         {
             await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
-                SshResponseSensitivity.ContainsNoSensitiveData,
+                SshResponseSensitivity.MayContainSensitiveData,
                 $"sudo rm ./{path} -rf");
         }
 
@@ -86,7 +86,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
         {
             await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
-                SshResponseSensitivity.ContainsNoSensitiveData,
+                SshResponseSensitivity.MayContainSensitiveData,
                 $"mkdir -m 777 -p ./{path}");
 
             await SetUserPermissionsOnPathAsync(sshClient, path);
@@ -122,26 +122,26 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
                     SshResponseSensitivity.ContainsNoSensitiveData,
-                    $"cd dogger && @@environmentVariablesPrefix docker-compose {filesArgument} down --rmi all --volumes --remove-orphans",
-                    GetEnvironmentVariablesCommandLinePrefixArguments());
+                    $"cd dogger && @@environmentVariablesPrefix docker-compose @@dockerComposeYmlFilePathArguments down --rmi all --volumes --remove-orphans",
+                    GetDockerComposeArguments());
 
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
                     SshResponseSensitivity.ContainsNoSensitiveData,
-                    $"cd dogger && @@environmentVariablesPrefix docker-compose {filesArgument} pull --include-deps",
-                    GetEnvironmentVariablesCommandLinePrefixArguments());
+                    $"cd dogger && @@environmentVariablesPrefix docker-compose @@dockerComposeYmlFilePathArguments pull --include-deps",
+                    GetDockerComposeArguments());
 
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
-                    SshResponseSensitivity.ContainsNoSensitiveData,
-                    $"cd dogger && @@environmentVariablesPrefix docker-compose {filesArgument} build --force-rm --parallel --no-cache {buildArgumentsArgument}",
-                    GetEnvironmentVariablesCommandLinePrefixArguments());
+                    SshResponseSensitivity.MayContainSensitiveData,
+                    $"cd dogger && @@environmentVariablesPrefix docker-compose @@dockerComposeYmlFilePathArguments build --force-rm --parallel --no-cache @@buildArguments",
+                    GetDockerComposeBuildArguments(buildArgumentsArgument));
 
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.ProhibitRetries,
-                    SshResponseSensitivity.ContainsNoSensitiveData,
-                    $"cd dogger && @@environmentVariablesPrefix docker-compose {filesArgument} --compatibility up --detach --remove-orphans --always-recreate-deps --force-recreate --renew-anon-volumes",
-                    GetEnvironmentVariablesCommandLinePrefixArguments());
+                    SshResponseSensitivity.MayContainSensitiveData,
+                    $"cd dogger && @@environmentVariablesPrefix docker-compose @@dockerComposeYmlFilePathArguments --compatibility up --detach --remove-orphans --always-recreate-deps --force-recreate --renew-anon-volumes",
+                    GetDockerComposeArguments());
             }
             catch (SshCommandExecutionException ex) when (ex.Result.ExitCode == 1)
             {
@@ -167,6 +167,14 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             }
         }
 
+        private Dictionary<string, string?> GetDockerComposeBuildArguments(string buildArgumentsArgument)
+        {
+            var dockerComposeBuildArguments = GetDockerComposeArguments();
+            dockerComposeBuildArguments.Add("buildArguments", buildArgumentsArgument);
+
+            return dockerComposeBuildArguments;
+        }
+
         private string GetDockerComposeFilesCommandLineArgumentString()
         {
             if (this.DockerComposeYmlFilePaths == null)
@@ -177,12 +185,15 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
                 .Select(SanitizeRelativePath));
         }
 
-        private Dictionary<string, string?> GetEnvironmentVariablesCommandLinePrefixArguments()
+        private Dictionary<string, string?> GetDockerComposeArguments()
         {
             return new Dictionary<string, string?>()
             {
                 {
                     "environmentVariablesPrefix", string.Join(' ', GetBuildArgumentAssignments())
+                },
+                {
+                    "dockerComposeYmlFilePathArguments", GetDockerComposeFilesCommandLineArgumentString()
                 }
             };
         }
@@ -249,15 +260,15 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
         private async Task<string> GetMergedDockerComposeYmlFileContentsAsync(ISshClient sshClient)
         {
-            var dockerComposeYmlFilePathArguments = GetDockerComposeFilesCommandLineArgumentString();
-            var commandText = $"cd dogger && @@environmentVariablesPrefix docker-compose {dockerComposeYmlFilePathArguments} config";
-            var environmentVariablesCommandLinePrefixArguments = GetEnvironmentVariablesCommandLinePrefixArguments();
+            var commandText = $"cd dogger && @@environmentVariablesPrefix docker-compose @@dockerComposeYmlFilePathArguments config";
+
+            var arguments = GetDockerComposeArguments();
 
             return await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
                 SshResponseSensitivity.MayContainSensitiveData,
                 commandText,
-                environmentVariablesCommandLinePrefixArguments);
+                arguments);
         }
 
         private static string PrependArgumentNameToStrings(string argumentName, IEnumerable<string> arguments)
@@ -313,8 +324,12 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
         {
             await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
-                SshResponseSensitivity.ContainsNoSensitiveData,
-                $"sudo chmod 777 ./{fileName}");
+                SshResponseSensitivity.MayContainSensitiveData,
+                $"sudo chmod 777 @fileName",
+                new Dictionary<string, string?>()
+                {
+                    {"fileName", $"./{fileName}"}
+                });
         }
     }
 }

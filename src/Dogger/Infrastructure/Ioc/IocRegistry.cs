@@ -237,8 +237,7 @@ namespace Dogger.Infrastructure.Ioc
                 return;
 
             DockerDependencyService.InjectInto(
-                this.Services,
-                this.Configuration);
+                this.Services);
         }
 
         private void ConfigureStripe()
@@ -271,7 +270,7 @@ namespace Dogger.Infrastructure.Ioc
                     var sqlOptions = this.Configuration.GetSection<SqlOptions>();
                     var connectionString = sqlOptions?.ConnectionString;
 
-                    var hasConnectionString = !string.IsNullOrEmpty(connectionString);
+                    var hasConnectionString = !string.IsNullOrWhiteSpace(connectionString);
                     if (hasConnectionString)
                     {
                         optionsBuilder.UseSqlServer(

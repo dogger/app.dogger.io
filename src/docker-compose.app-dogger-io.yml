@@ -4,6 +4,7 @@ services:
   dogger:
     depends_on:
      - "elasticsearch"
+     - "kibana"
 
   elasticsearch:
     image: xtermi2/elasticsearch-searchguard:7.6.1

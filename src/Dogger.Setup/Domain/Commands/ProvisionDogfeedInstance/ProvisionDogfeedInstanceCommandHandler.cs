@@ -50,7 +50,7 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
 
         public async Task<IProvisioningJob> Handle(ProvisionDogfeedInstanceCommand request, CancellationToken cancellationToken)
         {
-            var dogfeedOptions = GetSanitizedDogfeedOptions();
+            var dogfeedOptions = this.dogfeedOptionsMonitor.CurrentValue;
             if (dogfeedOptions.DockerComposeYmlFilePaths == null || dogfeedOptions.DockerComposeYmlFilePaths.Length == 0)
                 throw new InvalidOperationException("Could not find Docker Compose YML file paths to deploy.");
 
@@ -89,10 +89,9 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
                         dogfeedOptions.DockerComposeYmlFilePaths)
                     {
                         Files = dockerFiles,
-                        BuildArguments = new Dictionary<string, string>()
-                        {
-                            { "DOGGER_TAG", this.configuration["DOGGER_TAG"] }
-                        },
+                        BuildArguments = 
+                            dogfeedOptions.BuildArguments ?? 
+                            new Dictionary<string, string>(),
                         Authentication = new[] {
                             new DockerAuthenticationArguments(
                                 username: dockerHubOptions.Username,
@@ -102,19 +101,6 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
                             }
                         }
                     }));
-        }
-
-        private DogfeedOptions GetSanitizedDogfeedOptions()
-        {
-            var dogfeedOptions = this.dogfeedOptionsMonitor.CurrentValue;
-            if (dogfeedOptions.DockerComposeYmlFilePaths == null || dogfeedOptions.DockerComposeYmlFilePaths.Length == 0)
-            {
-                dogfeedOptions.DockerComposeYmlFilePaths = this
-                    .configuration["DOCKER_COMPOSE_YML_FILE_PATHS"]?
-                    .Split(";", StringSplitOptions.RemoveEmptyEntries);
-            }
-
-            return dogfeedOptions;
         }
 
         private async Task<Plan> GetDogfeedingPlanAsync()

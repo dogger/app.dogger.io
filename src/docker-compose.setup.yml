@@ -17,6 +17,19 @@ services:
     - Dogfeed__DockerRegistry__HostName=${DOCKER_REGISTRY_URL:-docker.pkg.github.com}
     - Dogfeed__DockerRegistry__Username=${DOCKER_REGISTRY_USERNAME:-}
     - Dogfeed__DockerRegistry__Password=${DOCKER_REGISTRY_PASSWORD:-}
+    - Dogfeed__DockerComposeYmlFilePaths__0=${DOCKER_COMPOSE_YML_FILE_PATHS_0:-}
+    - Dogfeed__DockerComposeYmlFilePaths__1=${DOCKER_COMPOSE_YML_FILE_PATHS_1:-}
+    - Dogfeed__DockerComposeYmlFilePaths__2=${DOCKER_COMPOSE_YML_FILE_PATHS_2:-}
+    - Dogfeed__DockerComposeYmlFilePaths__3=${DOCKER_COMPOSE_YML_FILE_PATHS_3:-}
+    - Dogfeed__DockerComposeYmlFilePaths__4=${DOCKER_COMPOSE_YML_FILE_PATHS_4:-}
+    - Dogfeed__DockerComposeYmlFilePaths__5=${DOCKER_COMPOSE_YML_FILE_PATHS_5:-}
+    - Dogfeed__AdditionalFilePaths__0=${DOCKER_COMPOSE_YML_FILE_PATHS_0:-}
+    - Dogfeed__AdditionalFilePaths__1=${DOCKER_COMPOSE_YML_FILE_PATHS_1:-}
+    - Dogfeed__AdditionalFilePaths__2=${DOCKER_COMPOSE_YML_FILE_PATHS_2:-}
+    - Dogfeed__AdditionalFilePaths__3=${DOCKER_COMPOSE_YML_FILE_PATHS_3:-}
+    - Dogfeed__AdditionalFilePaths__4=${DOCKER_COMPOSE_YML_FILE_PATHS_4:-}
+    - Dogfeed__AdditionalFilePaths__5=${DOCKER_COMPOSE_YML_FILE_PATHS_5:-}
+    - Dogfeed__Tag=${DOGGER_TAG:-latest}
     - Stripe__SecretKey=${STRIPE_SECRET_KEY:-}
     - Stripe__PublishableKey=${STRIPE_PUBLISHABLE_KEY:-}
     - GitHub__PullDog__PrivateKey=${PULL_DOG_PRIVATE_KEY:-}
@@ -26,7 +39,6 @@ services:
     - GitHub__PullDog__ClientSecret=${PULL_DOG_CLIENT_SECRET:-}
     - Auth0__ClientId=${AUTHZERO_CLIENT_ID:-}
     - Auth0__ClientSecret=${AUTHZERO_CLIENT_SECRET:-}
-    - DOCKER_COMPOSE_YML_FILE_PATHS=${DOCKER_COMPOSE_YML_FILE_PATHS:-/pwd/docker-compose.yml;/pwd/docker-compose.sql-server.yml}
     - DOGGER_TAG=${DOGGER_TAG:-latest}
     - ASPNETCORE_ENVIRONMENT=Production
 
