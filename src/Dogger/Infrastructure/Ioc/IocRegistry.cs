@@ -136,7 +136,7 @@ namespace Dogger.Infrastructure.Ioc
 
                 var privateKeyPath = 
                     pullDogOptions?.PrivateKeyPath ??
-                    throw new InvalidOperationException("Pull Dog private key path was not found.");
+                    throw new InvalidOperationException("No Pull Dog private key path was specified.");
 
                 var privateKey = file.ReadAllText(privateKeyPath);
                 return ConstructGitHubClientWithPrivateKey(privateKey);
