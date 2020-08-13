@@ -34,7 +34,7 @@ namespace Dogger.Setup.Infrastructure
 
         private void ConfigureOptions()
         {
-            Services.Configure<DogfeedOptions>(Configuration);
+            Services.Configure<DogfeedOptions>(Configuration.GetSection("Dogfeed"));
         }
 
         private void ConfigureDogfeeding()

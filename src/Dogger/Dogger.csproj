@@ -20,12 +20,12 @@
     <PackageReference Include="Auth0.ManagementApi" Version="7.0.9" />
     <PackageReference Include="automapper" Version="10.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
-    <PackageReference Include="AWSSDK.Core" Version="3.3.107.32" />
-    <PackageReference Include="AWSSDK.ECR" Version="3.3.107.2" />
+    <PackageReference Include="AWSSDK.Core" Version="3.3.107.37" />
+    <PackageReference Include="AWSSDK.ECR" Version="3.3.107.6" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.101" />
-    <PackageReference Include="AWSSDK.IdentityManagement" Version="3.3.106.27" />
-    <PackageReference Include="AWSSDK.Lightsail" Version="3.3.106.4" />
-    <PackageReference Include="awssdk.securitytoken" Version="3.3.105.36" />
+    <PackageReference Include="AWSSDK.IdentityManagement" Version="3.3.106.31" />
+    <PackageReference Include="AWSSDK.Lightsail" Version="3.3.106.8" />
+    <PackageReference Include="awssdk.securitytoken" Version="3.3.105.40" />
     <PackageReference Include="Destructurama.Attributed" Version="2.0.0" />
     <PackageReference Include="docker.dotnet" Version="3.125.2" />
     <PackageReference Include="FluffySpoon.AspNet.NGrok" Version="1.75.0" />
@@ -54,7 +54,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="nsubstitute" Version="4.2.2" />
     <PackageReference Include="Octokit" Version="0.48.0" />
     <PackageReference Include="Polly" Version="7.2.1" />
@@ -64,7 +64,7 @@
     <PackageReference Include="SerilogAnalyzer" Version="0.15.0" />
     <PackageReference Include="Slack.Webhooks" Version="1.1.4" />
     <PackageReference Include="SSH.NET" Version="2016.1.0" />
-    <PackageReference Include="Stripe.net" Version="37.27.0" />
+    <PackageReference Include="Stripe.net" Version="37.30.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
     <PackageReference Include="YamlDotNet" Version="8.1.2" />
   </ItemGroup>
@@ -72,12 +72,16 @@
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     <Content Remove="$(SpaRoot)**" />
+    <Content Remove="Infrastructure\AspNet\Options\Dogfeed\**" />
     <None Remove="$(SpaRoot)**" />
+    <None Remove="Infrastructure\AspNet\Options\Dogfeed\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\AspNet\Options\Dogfeed\" />
+    <Compile Remove="Infrastructure\AspNet\Options\Dogfeed\**" />
+    <EmbeddedResource Remove="Infrastructure\AspNet\Options\Dogfeed\**" />
+    <TypeScriptCompile Remove="Infrastructure\AspNet\Options\Dogfeed\**" />
   </ItemGroup>
 
 

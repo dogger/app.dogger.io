@@ -26,27 +26,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Run tests
-        working-directory: ./src
-        run: |
-          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml build
-          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml config
-
-          docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml down
-          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from=dogger-tests --scale dogger-setup-tests=0 --scale dogger=0
-          
-          docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml down
-          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from=dogger-setup-tests --scale dogger-tests=0 --scale dogger=0
-
-      - name: Code coverage reporting for Dogger
-        uses: codecov/codecov-action@v1
-        with:
-          file: ./src/TestResults/Dogger/coverage.opencover.xml
-
-      - name: Code coverage reporting for Dogger.Setup
-        uses: codecov/codecov-action@v1
-        with:
-          file: ./src/TestResults/Dogger.Setup/coverage.opencover.xml
+#      - name: Run tests
+#        working-directory: ./src
+#        run: |
+#          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml build
+#          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml config
+#
+#          docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml down
+#          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from=dogger-tests --scale dogger-setup-tests=0 --scale dogger=0
+#          
+#          docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml down
+#          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from=dogger-setup-tests --scale dogger-tests=0 --scale dogger=0
+#
+#      - name: Code coverage reporting for Dogger
+#        uses: codecov/codecov-action@v1
+#        with:
+#          file: ./src/TestResults/Dogger/coverage.opencover.xml
+#
+#      - name: Code coverage reporting for Dogger.Setup
+#        uses: codecov/codecov-action@v1
+#        with:
+#          file: ./src/TestResults/Dogger.Setup/coverage.opencover.xml
 
   publish-app-dogger-io:
     name: Publish app-dogger-io
@@ -62,6 +62,7 @@ jobs:
         working-directory: ./src
         run: |
           docker build . --file Dogger/Dockerfile --tag dogger-image
+          docker build . --file Dogger.Setup/Dockerfile --tag dogger-setup-image
 
       - name: Tag Docker image
         run: |
@@ -70,12 +71,16 @@ jobs:
           docker tag dogger-image docker.pkg.github.com/dogger/app.dogger.io/dogger:${{github.sha}}
           docker tag dogger-image docker.pkg.github.com/dogger/app.dogger.io/dogger:latest
 
+          docker tag dogger-setup-image docker.pkg.github.com/dogger/app.dogger.io/dogger-setup:${{github.sha}}
+          docker tag dogger-setup-image docker.pkg.github.com/dogger/app.dogger.io/dogger-setup:latest
+
       - name: Push Docker image to Docker Hub
         working-directory: ./src
         run: |
           echo "Pushing image to Docker Hub."
 
           docker push docker.pkg.github.com/dogger/app.dogger.io/dogger
+          docker push docker.pkg.github.com/dogger/app.dogger.io/dogger-setup
 
   deploy-app-dogger-io:
     name: Deploy app-dogger-io
@@ -85,6 +90,29 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+          
+      - name: Write secret files
+        working-directory: ./src
+        shell: bash
+        env:
+          ELK_CONFIGURATION_YML_CONTENTS: ${{secrets.ELK_CONFIGURATION_YML_CONTENTS}}
+          ELK_ADMIN_KEY_CONTENTS: ${{secrets.ELK_ADMIN_KEY_CONTENTS}}
+          ELK_ADMIN_PEM_CONTENTS: ${{secrets.ELK_ADMIN_PEM_CONTENTS}}
+          ELK_NODE_KEY_CONTENTS: ${{secrets.ELK_NODE_KEY_CONTENTS}}
+          ELK_NODE_PEM_CONTENTS: ${{secrets.ELK_NODE_PEM_CONTENTS}}
+          ELK_ROOT_CA_KEY_CONTENTS: ${{secrets.ELK_ROOT_CA_KEY_CONTENTS}}
+          ELK_ROOT_CA_PEM_CONTENTS: ${{secrets.ELK_ROOT_CA_PEM_CONTENTS}}
+        run: |
+            mkdir certs
+            mkdir config
+
+            echo "$ELK_CONFIGURATION_YML_CONTENTS" > ./config/elasticsearch.yml
+            echo "$ELK_ADMIN_KEY_CONTENTS" > ./certs/admin.key
+            echo "$ELK_ADMIN_PEM_CONTENTS" > ./certs/admin.pem
+            echo "$ELK_NODE_KEY_CONTENTS" > ./certs/node.key
+            echo "$ELK_NODE_PEM_CONTENTS" > ./certs/node.pem
+            echo "$ELK_ROOT_CA_KEY_CONTENTS" > ./certs/root-ca.key
+            echo "$ELK_ROOT_CA_PEM_CONTENTS" > ./certs/root-ca.pem
 
       - name: Deploy to app.dogger.io
         working-directory: ./src
@@ -93,47 +121,69 @@ jobs:
           
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ffMathy --password-stdin
           
-          docker run\
-            -v $(pwd):/src\
-            -e DOGFEED=true\
-            -e DOGFEED_Sql__ConnectionString="Server=dogger-mssql.cilzcbhfqhkd.eu-west-1.rds.amazonaws.com,1433;Database=dogger;User Id=admin;Password=${{ secrets.SQL_PASSWORD }}"\
-            -e DOGFEED_Aws__SecretAccessKey="${{ secrets.AWS_SECRET_ACCESS_KEY }}"\
-            -e DOGFEED_Aws__AccessKeyId="${{ secrets.AWS_ACCESS_KEY_ID }}"\
-            -e DOGFEED_Aws__LightsailPrivateKeyPem="${{ secrets.AWS_LIGHTSAIL_PRIVATE_KEY_PEM }}"\
-            -e DOGFEED_Stripe__PublishableKey="${{ secrets.STRIPE_PUBLISHABLE_KEY_LIVE }}"\
-            -e DOGFEED_Stripe__SecretKey="${{ secrets.STRIPE_SECRET_KEY_LIVE }}"\
-            -e DOGFEED_Dogfeed__DockerHub__Username="ffMathy"\
-            -e DOGFEED_Dogfeed__DockerHub__Password="${{ secrets.GITHUB_TOKEN }}"\
-            -e DOGFEED_Dogfeed__DockerComposeYmlFilePaths__0="/src/docker-compose.deploy.yml"\
-            -e DOGFEED_Dogfeed__Elasticsearch__InstancePassword="${{ secrets.ELK_PASSWORD }}"\
-            -e DOGFEED_Dogfeed__Elasticsearch__ConfigurationYmlContents="${{ secrets.ELK_CONFIGURATION_YML_CONTENTS }}"\
-            -e DOGFEED_Dogfeed__Elasticsearch__AdminKeyContents="${{ secrets.ELK_ADMIN_KEY_CONTENTS }}"\
-            -e DOGFEED_Dogfeed__Elasticsearch__AdminPemContents="${{ secrets.ELK_ADMIN_PEM_CONTENTS }}"\
-            -e DOGFEED_Dogfeed__Elasticsearch__AdminKeyPassword="${{ secrets.ELK_ADMIN_KEY_PASSWORD }}"\
-            -e DOGFEED_Dogfeed__Elasticsearch__NodeKeyContents="${{ secrets.ELK_NODE_KEY_CONTENTS }}"\
-            -e DOGFEED_Dogfeed__Elasticsearch__NodePemContents="${{ secrets.ELK_NODE_PEM_CONTENTS }}"\
-            -e DOGFEED_Dogfeed__Elasticsearch__RootCaKeyContents="${{ secrets.ELK_ROOT_CA_KEY_CONTENTS }}"\
-            -e DOGFEED_Dogfeed__Elasticsearch__RootCaPemContents="${{ secrets.ELK_ROOT_CA_PEM_CONTENTS }}"\
-            -e DOGFEED_Slack__IncomingUrl="${{ secrets.SLACK_INCOMING_URL }}"\
-            -e DOGFEED_Cloudflare__ApiKey="${{ secrets.CLOUDFLARE_KEY }}"\
-            -e DOGFEED_ASPNETCORE_ENVIRONMENT="Production"\
-            -e DOGFEED_LicenseKey="${{ secrets.GUMROAD_LICENSE_KEY }}"\
-            -e INSTANCE_Sql__ConnectionString="Server=dogger-mssql.cilzcbhfqhkd.eu-west-1.rds.amazonaws.com,1433;Database=dogger;User Id=admin;Password=${{ secrets.SQL_PASSWORD }}"\
-            -e INSTANCE_Aws__SecretAccessKey="${{ secrets.AWS_SECRET_ACCESS_KEY }}"\
-            -e INSTANCE_Aws__AccessKeyId="${{ secrets.AWS_ACCESS_KEY_ID }}"\
-            -e INSTANCE_Aws__LightsailPrivateKeyPem="${{ secrets.AWS_LIGHTSAIL_PRIVATE_KEY_PEM }}"\
-            -e INSTANCE_Stripe__PublishableKey="${{ secrets.STRIPE_PUBLISHABLE_KEY_LIVE }}"\
-            -e INSTANCE_Stripe__SecretKey="${{ secrets.STRIPE_SECRET_KEY_LIVE }}"\
-            -e INSTANCE_Slack__IncomingUrl="${{ secrets.SLACK_INCOMING_URL }}"\
-            -e INSTANCE_Encryption__Pepper="${{ secrets.ENCRYPTION_PEPPER }}"\
-            -e INSTANCE_GitHub__PullDog__PrivateKey="${{ secrets.PULL_DOG_PRIVATE_KEY }}"\
-            -e INSTANCE_GitHub__PullDog__AppIdentifier="${{ secrets.PULL_DOG_APP_IDENTIFIER }}"\
-            -e INSTANCE_GitHub__PullDog__WebhookSecret="${{ secrets.PULL_DOG_WEBHOOK_SECRET }}"\
-            -e INSTANCE_GitHub__PullDog__ClientId="${{ secrets.PULL_DOG_CLIENT_ID }}"\
-            -e INSTANCE_GitHub__PullDog__ClientSecret="${{ secrets.PULL_DOG_CLIENT_SECRET }}"\
-            -e INSTANCE_Auth0__ClientId="${{ secrets.AUTHZERO_CLIENT_ID }}"\
-            -e INSTANCE_Auth0__ClientSecret="${{ secrets.AUTHZERO_CLIENT_SECRET }}"\
-            -e INSTANCE_ASPNETCORE_ENVIRONMENT="Production"\
-            -e INSTANCE_LicenseKey="${{ secrets.GUMROAD_LICENSE_KEY }}"\
-            -e DOGFEED=true\
-            docker.pkg.github.com/dogger/app.dogger.io/dogger:${{github.sha}}
+          docker-compose up\
+            -f docker-compose.setup.yml\
+            -f docker-compose.setup.app-dogger-io.yml\
+            -v $(pwd):/pwd\
+            -e DOGGER_TAG=${{ github.sha }}\
+            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}\
+            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}\
+            -e AWS_LIGHTSAIL_PRIVATE_KEY_PEM="${{ secrets.AWS_LIGHTSAIL_PRIVATE_KEY_PEM }}"\
+            -e AWS_LIGHTSAIL_KEY_NAME=${{ secrets.AWS_LIGHTSAIL_KEY_NAME }}\
+            -e DOCKER_REGISTRY_USERNAME=ffmathy\
+            -e DOCKER_REGISTRY_PASSWORD=${{ secrets.GITHUB_TOKEN }}\
+            -e ENCRYPTION_PEPPER=${{ secrets.ENCRYPTION_PEPPER }}\
+            -e SQL_HOST={{ secrets.SQL_HOST }}\
+            -e SQL_DATABASE=dogger\
+            -e SQL_USERNAME=admin\
+            -e SQL_PASSWORD=${{ secrets.SQL_PASSWORD }}\
+            -e SLACK_INCOMING_WEBHOOK_URL=${{ secrets.SLACK_INCOMING_URL }}\
+            -e ELASTICSEARCH_ADMIN_KEY_PASSWORD="${{ secrets.ELK_ADMIN_KEY_PASSWORD }}"\
+            -e ELASTICSEARCH_INSTANCE_PASSWORD="${{ secrets.ELK_PASSWORD }}"\
+            -e STRIPE_PUBLISHABLE_KEY="${{ secrets.STRIPE_SECRET_KEY_LIVE }}"\
+            -e STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY_LIVE }}"\
+            -e ELASTICSEARCH_ADMIN_KEY_PASSWORD="${{ secrets.ELK_ADMIN_KEY_PASSWORD }}"\
+            -e ELASTICSEARCH_INSTANCE_PASSWORD="${{ secrets.ELK_PASSWORD }}"
+
+            #-e DOGFEED=true\
+            #-e DOGFEED_Sql__ConnectionString="Server=dogger-mssql.cilzcbhfqhkd.eu-west-1.rds.amazonaws.com,1433;Database=dogger;User #Id=admin;Password=${{ secrets.SQL_PASSWORD }}"\
+            #-e DOGFEED_Aws__SecretAccessKey="${{ secrets.AWS_SECRET_ACCESS_KEY }}"\
+            #-e DOGFEED_Aws__AccessKeyId="${{ secrets.AWS_ACCESS_KEY_ID }}"\
+            #-e DOGFEED_Aws__LightsailPrivateKeyPem="${{ secrets.AWS_LIGHTSAIL_PRIVATE_KEY_PEM }}"\
+            #-e DOGFEED_Stripe__PublishableKey="${{ secrets.STRIPE_PUBLISHABLE_KEY_LIVE }}"\
+            #-e DOGFEED_Stripe__SecretKey="${{ secrets.STRIPE_SECRET_KEY_LIVE }}"\
+            #-e DOGFEED_Dogfeed__DockerHub__Username="ffMathy"\
+            #-e DOGFEED_Dogfeed__DockerHub__Password="${{ secrets.GITHUB_TOKEN }}"\
+            #-e DOGFEED_Dogfeed__DockerComposeYmlFilePaths__0="/src/docker-compose.deploy.yml"\
+            #-e DOGFEED_Dogfeed__Elasticsearch__InstancePassword="${{ secrets.ELK_PASSWORD }}"\
+            #-e DOGFEED_Dogfeed__Elasticsearch__ConfigurationYmlContents="${{ secrets.ELK_CONFIGURATION_YML_CONTENTS }}"\
+            #-e DOGFEED_Dogfeed__Elasticsearch__AdminKeyContents="${{ secrets.ELK_ADMIN_KEY_CONTENTS }}"\
+            #-e DOGFEED_Dogfeed__Elasticsearch__AdminPemContents="${{ secrets.ELK_ADMIN_PEM_CONTENTS }}"\
+            #-e DOGFEED_Dogfeed__Elasticsearch__AdminKeyPassword="${{ secrets.ELK_ADMIN_KEY_PASSWORD }}"\
+            #-e DOGFEED_Dogfeed__Elasticsearch__NodeKeyContents="${{ secrets.ELK_NODE_KEY_CONTENTS }}"\
+            #-e DOGFEED_Dogfeed__Elasticsearch__NodePemContents="${{ secrets.ELK_NODE_PEM_CONTENTS }}"\
+            #-e DOGFEED_Dogfeed__Elasticsearch__RootCaKeyContents="${{ secrets.ELK_ROOT_CA_KEY_CONTENTS }}"\
+            #-e DOGFEED_Dogfeed__Elasticsearch__RootCaPemContents="${{ secrets.ELK_ROOT_CA_PEM_CONTENTS }}"\
+            #-e DOGFEED_Slack__IncomingUrl="${{ secrets.SLACK_INCOMING_URL }}"\
+            #-e DOGFEED_Cloudflare__ApiKey="${{ secrets.CLOUDFLARE_KEY }}"\
+            #-e DOGFEED_ASPNETCORE_ENVIRONMENT="Production"\
+            #-e DOGFEED_LicenseKey="${{ secrets.GUMROAD_LICENSE_KEY }}"\
+            #-e INSTANCE_Sql__ConnectionString="Server=dogger-mssql.cilzcbhfqhkd.eu-west-1.rds.amazonaws.com,1433;Database=dogger;User #Id=admin;Password=${{ secrets.SQL_PASSWORD }}"\
+            #-e INSTANCE_Aws__SecretAccessKey="${{ secrets.AWS_SECRET_ACCESS_KEY }}"\
+            #-e INSTANCE_Aws__AccessKeyId="${{ secrets.AWS_ACCESS_KEY_ID }}"\
+            #-e INSTANCE_Aws__LightsailPrivateKeyPem="${{ secrets.AWS_LIGHTSAIL_PRIVATE_KEY_PEM }}"\
+            #-e INSTANCE_Stripe__PublishableKey="${{ secrets.STRIPE_PUBLISHABLE_KEY_LIVE }}"\
+            #-e INSTANCE_Stripe__SecretKey="${{ secrets.STRIPE_SECRET_KEY_LIVE }}"\
+            #-e INSTANCE_Slack__IncomingUrl="${{ secrets.SLACK_INCOMING_URL }}"\
+            #-e INSTANCE_Encryption__Pepper="${{ secrets.ENCRYPTION_PEPPER }}"\
+            #-e INSTANCE_GitHub__PullDog__PrivateKey="${{ secrets.PULL_DOG_PRIVATE_KEY }}"\
+            #-e INSTANCE_GitHub__PullDog__AppIdentifier="${{ secrets.PULL_DOG_APP_IDENTIFIER }}"\
+            #-e INSTANCE_GitHub__PullDog__WebhookSecret="${{ secrets.PULL_DOG_WEBHOOK_SECRET }}"\
+            #-e INSTANCE_GitHub__PullDog__ClientId="${{ secrets.PULL_DOG_CLIENT_ID }}"\
+            #-e INSTANCE_GitHub__PullDog__ClientSecret="${{ secrets.PULL_DOG_CLIENT_SECRET }}"\
+            #-e INSTANCE_Auth0__ClientId="${{ secrets.AUTHZERO_CLIENT_ID }}"\
+            #-e INSTANCE_Auth0__ClientSecret="${{ secrets.AUTHZERO_CLIENT_SECRET }}"\
+            #-e INSTANCE_ASPNETCORE_ENVIRONMENT="Production"\
+            #-e INSTANCE_LicenseKey="${{ secrets.GUMROAD_LICENSE_KEY }}"\
+            #-e DOGFEED=true\
+            #docker.pkg.github.com/dogger/app.dogger.io/dogger-setup:${{github.sha}}

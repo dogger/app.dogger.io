@@ -21,7 +21,7 @@ namespace Dogger.Setup
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "This is the main method.")]
         static async Task<int> Main(string[] args)
         {
-            var configuration = ConfigurationFactory.BuildConfiguration(args);
+            var configuration = ConfigurationFactory.BuildConfiguration("be404feb-b81c-425a-b355-029dbd854c3e", args);
             Log.Logger = LoggerFactory.BuildDogfeedLogger();
 
             try

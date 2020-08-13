@@ -11,3 +11,6 @@ services:
     environment:
     - ACCEPT_EULA=Y
     - SA_PASSWORD=${SQL_PASSWORD:-hNxX9Qz2}
+
+networks:
+  network:

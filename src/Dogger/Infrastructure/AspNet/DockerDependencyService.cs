@@ -14,7 +14,6 @@ using Dogger.Infrastructure.Ioc;
 using FluffySpoon.AspNet.NGrok;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Stripe;
@@ -275,7 +274,7 @@ namespace Dogger.Infrastructure.AspNet
             var sqlServerPort = GetDockerSqlServerPort();
             var connectionString = $@"Server={server},{sqlServerPort};Database={database};User Id=SA;Password={sqlPassword}";
 
-            Console.WriteLine("Using connectiong string " + connectionString);
+            Console.WriteLine("Using connection string " + connectionString);
 
             return connectionString;
         }
@@ -378,18 +377,12 @@ namespace Dogger.Infrastructure.AspNet
         }
 
         public static void InjectInto(
-            IServiceCollection services,
-            IConfiguration configuration)
+            IServiceCollection services)
         {
             services.AddSingleton<DockerDependencyService>();
             services.AddSingleton<IDockerDependencyService>(p => p.GetRequiredService<DockerDependencyService>());
 
             services.AddHostedService(p => p.GetRequiredService<DockerDependencyService>());
-
-            var sqlConnectionStringForDatabase = GetSqlConnectionStringForDatabase("dogger");
-            configuration["Sql:ConnectionString"] = sqlConnectionStringForDatabase;
-
-            Console.WriteLine("Will use SQL connection string: " + sqlConnectionStringForDatabase);
         }
     }
 }

@@ -5,17 +5,17 @@ namespace Dogger.Infrastructure.Configuration
 {
     public static class ConfigurationFactory
     {
-        public static IConfigurationRoot BuildConfiguration(string[] args)
+        public static IConfigurationRoot BuildConfiguration(string secretId, string[] args)
         {
             var configurationBuilder = new ConfigurationBuilder();
             configurationBuilder.AddJsonFile("appsettings.json");
             configurationBuilder.AddEnvironmentVariables();
             configurationBuilder.AddCommandLine(args);
 
-            if (Debugger.IsAttached)
+            if (Debugger.IsAttached && !EnvironmentHelper.IsRunningInTest)
             {
                 configurationBuilder.AddJsonFile("appsettings.Development.json");
-                configurationBuilder.AddUserSecrets("be404feb-b81c-425a-b355-029dbd854c3d");
+                configurationBuilder.AddUserSecrets(secretId);
             }
 
             var configuration = configurationBuilder.Build();

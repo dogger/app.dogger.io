@@ -50,13 +50,19 @@ namespace Dogger.Infrastructure.Logging
 
             SelfLog.Enable(Console.Error);
 
-            var loggerConfiguration =  CreateBaseLoggingConfiguration()
+            var loggerConfiguration = CreateBaseLoggingConfiguration()
                 .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .WriteTo.Sink(
+                .WriteTo.Console();
+
+            var loggingOptions = configuration.GetSection<LoggingOptions>();
+
+            var elasticsearchLoggingUrl = loggingOptions?.ElasticsearchLoggingUrl;
+            if (!string.IsNullOrWhiteSpace(elasticsearchLoggingUrl))
+            {
+                loggerConfiguration = loggerConfiguration.WriteTo.Sink(
                     new NonDisposableSinkProxy(
                         new ElasticsearchSink(
-                            new ElasticsearchSinkOptions(new Uri("https://elasticsearch:9200"))
+                            new ElasticsearchSinkOptions(new Uri(elasticsearchLoggingUrl))
                             {
                                 FailureCallback = e => Console.WriteLine($"Unable to log message with template {e.MessageTemplate}"),
                                 EmitEventFailure =
@@ -75,9 +81,10 @@ namespace Dogger.Infrastructure.Logging
                                     .BasicAuthentication("elastic", "elastic")
                                     .ServerCertificateValidationCallback((a, b, c, d) => true)
                             })));
+            }
 
             var slackWebhookUrl = configuration.GetSection<SlackOptions>()?.IncomingUrl;
-            if (slackWebhookUrl != null)
+            if (!string.IsNullOrWhiteSpace(slackWebhookUrl))
             {
                 loggerConfiguration = loggerConfiguration.WriteTo.Slack(slackWebhookUrl, restrictedToMinimumLevel: LogEventLevel.Error);
             }

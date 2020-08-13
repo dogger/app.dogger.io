@@ -8,7 +8,9 @@ using Destructurama.Attributed;
 using Dogger.Domain.Events.ServerProvisioningStarted;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Services.Amazon.Lightsail;
+using Dogger.Infrastructure.AspNet.Options;
 using MediatR;
+using Microsoft.Extensions.Options;
 using Serilog;
 using Instance = Amazon.Lightsail.Model.Instance;
 
@@ -20,6 +22,7 @@ namespace Dogger.Domain.Services.Provisioning.States.CreateLightsailInstance
         private readonly ILightsailOperationService lightsailOperationService;
         private readonly IAmazonLightsail amazonLightsailClient;
         private readonly ILogger logger;
+        private readonly IOptionsMonitor<AwsOptions> awsOptionsMonitor;
 
         private Instance? createdInstance;
         private string[]? currentOperationIds;
@@ -45,12 +48,14 @@ namespace Dogger.Domain.Services.Provisioning.States.CreateLightsailInstance
             IMediator mediator,
             ILightsailOperationService lightsailOperationService,
             IAmazonLightsail amazonLightsailClient,
-            ILogger logger)
+            ILogger logger,
+            IOptionsMonitor<AwsOptions> awsOptionsMonitor)
         {
             this.mediator = mediator;
             this.lightsailOperationService = lightsailOperationService;
             this.amazonLightsailClient = amazonLightsailClient;
             this.logger = logger;
+            this.awsOptionsMonitor = awsOptionsMonitor;
 
             this.Description = "Provisioning AWS Lightsail instance";
         }
@@ -109,7 +114,7 @@ namespace Dogger.Domain.Services.Provisioning.States.CreateLightsailInstance
             var response = await this.amazonLightsailClient.CreateInstancesAsync(new CreateInstancesRequest()
             {
                 BundleId = this.PlanId,
-                KeyPairName = "dogger-2020-07-22",
+                KeyPairName = this.awsOptionsMonitor.CurrentValue?.KeyPairName,
                 InstanceNames = new[]
                 {
                     this.DatabaseInstance.Name

@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  dogger-setup:
+    environment:
+    - Dogfeed__AdditionalFilePaths__0=/pwd/certs/admin.key
+    - Dogfeed__AdditionalFilePaths__1=/pwd/certs/admin.pem
+    - Dogfeed__AdditionalFilePaths__2=/pwd/certs/node.key
+    - Dogfeed__AdditionalFilePaths__3=/pwd/certs/node.pem
+    - Dogfeed__AdditionalFilePaths__4=/pwd/certs/root-ca.key
+    - Dogfeed__AdditionalFilePaths__5=/pwd/certs/root-ca.pem
+    - Dogfeed__AdditionalFilePaths__6=/pwd/config/elasticsearch.yml
+    - Dogfeed__DockerComposeYmlFilePaths__0=/pwd/docker-compose.yml
+    - Dogfeed__DockerComposeYmlFilePaths__1=/pwd/docker-compose.app-dogger-io.yml
+    - Dogfeed__BuildArguments__ELASTICSEARCH_ADMIN_KEY_PASSWORD=${ELASTICSEARCH_ADMIN_KEY_PASSWORD}
+    - Dogfeed__BuildArguments__ELASTICSEARCH_INSTANCE_PASSWORD={ELASTICSEARCH_INSTANCE_PASSWORD}
