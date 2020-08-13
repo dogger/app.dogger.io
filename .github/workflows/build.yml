@@ -140,9 +140,11 @@ jobs:
           
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ffMathy --password-stdin
           
-          docker-compose up\
+          DOGGER_TAG=${{github.sha}}\
+          docker-compose
             -f docker-compose.setup.yml\
             -f docker-compose.setup.app-dogger-io.yml
+            up
 
             #-e DOGFEED=true\
             #-e DOGFEED_Sql__ConnectionString="Server=dogger-mssql.cilzcbhfqhkd.eu-west-1.rds.amazonaws.com,1433;Database=dogger;User #Id=admin;Password=${{ secrets.SQL_PASSWORD }}"\
