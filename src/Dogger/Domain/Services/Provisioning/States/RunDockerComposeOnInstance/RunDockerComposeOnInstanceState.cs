@@ -70,8 +70,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
         private static async Task ClearExistingDoggerFilesAsync(ISshClient sshClient)
         {
-            await RemoveDirectoryAsync(sshClient, "dogger");
-            await EnsureDirectoryAsync(sshClient, "dogger");
+            await RemoveDirectoryAsync(sshClient, ".");
         }
 
         private static async Task RemoveDirectoryAsync(ISshClient sshClient, string path)
@@ -129,25 +128,25 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
                     SshResponseSensitivity.ContainsNoSensitiveData,
-                    $"cd dogger && @@environmentVariablesPrefix docker-compose @@dockerComposeYmlFilePathArguments down --rmi all --volumes --remove-orphans",
+                    $"@@environmentVariablesPrefix docker-compose @@dockerComposeYmlFilePathArguments down --rmi all --volumes --remove-orphans",
                     GetDockerComposeArguments());
 
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
                     SshResponseSensitivity.ContainsNoSensitiveData,
-                    $"cd dogger && @@environmentVariablesPrefix docker-compose @@dockerComposeYmlFilePathArguments pull --include-deps",
+                    $"@@environmentVariablesPrefix docker-compose @@dockerComposeYmlFilePathArguments pull --include-deps",
                     GetDockerComposeArguments());
 
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
                     SshResponseSensitivity.MayContainSensitiveData,
-                    $"cd dogger && @@environmentVariablesPrefix docker-compose @@dockerComposeYmlFilePathArguments build --force-rm --parallel --no-cache @@buildArguments",
+                    $"@@environmentVariablesPrefix docker-compose @@dockerComposeYmlFilePathArguments build --force-rm --parallel --no-cache @@buildArguments",
                     GetDockerComposeBuildArguments(buildArgumentsArgument));
 
                 await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.ProhibitRetries,
                     SshResponseSensitivity.MayContainSensitiveData,
-                    $"cd dogger && @@environmentVariablesPrefix docker-compose @@dockerComposeYmlFilePathArguments --compatibility up --detach --remove-orphans --always-recreate-deps --force-recreate --renew-anon-volumes",
+                    $"@@environmentVariablesPrefix docker-compose @@dockerComposeYmlFilePathArguments --compatibility up --detach --remove-orphans --always-recreate-deps --force-recreate --renew-anon-volumes",
                     GetDockerComposeArguments());
             }
             catch (SshCommandExecutionException ex) when (ex.Result.ExitCode == 1)
@@ -155,7 +154,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
                 var listFilesDump = await sshClient.ExecuteCommandAsync(
                     SshRetryPolicy.AllowRetries,
                     SshResponseSensitivity.ContainsNoSensitiveData,
-                    "cd dogger && ls -R");
+                    "ls -R");
 
                 await this.mediator.Send(new ServerDeploymentFailedEvent(
                     InstanceName,
@@ -267,7 +266,7 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
         private async Task<string> GetMergedDockerComposeYmlFileContentsAsync(ISshClient sshClient)
         {
-            var commandText = $"cd dogger && @@environmentVariablesPrefix docker-compose @@dockerComposeYmlFilePathArguments config";
+            var commandText = $"@@environmentVariablesPrefix docker-compose @@dockerComposeYmlFilePathArguments config";
 
             var arguments = GetDockerComposeArguments();
 
@@ -306,15 +305,15 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             if (filePath.Contains("/", StringComparison.InvariantCulture))
             {
                 var folderPath = filePath.Substring(0, filePath.LastIndexOf('/'));
-                await EnsureDirectoryAsync(sshClient, $"./dogger/{folderPath}");
+                await EnsureDirectoryAsync(sshClient, $"./{folderPath}");
             }
 
             await sshClient.TransferFileAsync(
                 SshRetryPolicy.AllowRetries,
-                $"dogger/{filePath}",
+                $"{filePath}",
                 contents);
 
-            await SetUserPermissionsOnPathAsync(sshClient, $"dogger/{filePath}");
+            await SetUserPermissionsOnPathAsync(sshClient, $"{filePath}");
         }
 
         private static string SanitizeRelativePath(string filePath)

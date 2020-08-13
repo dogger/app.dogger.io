@@ -3,7 +3,7 @@
 namespace Dogger.Domain.Services.Provisioning.Arguments
 {
     /// <summary>
-    /// Represents a file located in the "dogger" folder on the server.
+    /// Represents a file located in the root folder on the server.
     /// </summary>
     public class InstanceDockerFile
     {
