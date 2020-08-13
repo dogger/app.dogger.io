@@ -150,10 +150,9 @@ jobs:
           
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ffMathy --password-stdin
           
-          Dogfeed__Tag=${{github.sha}}
-          Dogfeed__DockerRegistry__Username=ffmathy
-          Dogfeed__DockerRegistry__Password="${{ secrets.GITHUB_TOKEN }}"
-
+          Dogfeed__Tag=${{github.sha}} \
+          Dogfeed__DockerRegistry__Username=ffmathy \
+          Dogfeed__DockerRegistry__Password="${{ secrets.GITHUB_TOKEN }}" \
           docker-compose \
             -f docker-compose.setup.yml \
             -f docker-compose.setup.app-dogger-io.yml \
