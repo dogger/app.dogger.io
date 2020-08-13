@@ -117,30 +117,28 @@ jobs:
           PULL_DOG_PRIVATE_KEY: ${{secrets.PULL_DOG_PRIVATE_KEY}}
 
         run: |
-            mkdir pwd
+            mkdir certs
+            mkdir env
 
-            mkdir pwd/certs
-            mkdir pwd/env
+            mkdir elk
+            mkdir elk/certs
+            mkdir elk/config
 
-            mkdir pwd/elk
-            mkdir pwd/elk/certs
-            mkdir pwd/elk/config
+            echo "$ELK_CONFIGURATION_YML_CONTENTS" > ./elk/config/elasticsearch.yml
 
-            echo "$ELK_CONFIGURATION_YML_CONTENTS" > ./pwd/elk/config/elasticsearch.yml
+            echo "$ELK_ADMIN_KEY_CONTENTS" > ./elk/certs/admin.key
+            echo "$ELK_ADMIN_PEM_CONTENTS" > ./elk/certs/admin.pem
+            echo "$ELK_NODE_KEY_CONTENTS" > ./elk/certs/node.key
+            echo "$ELK_NODE_PEM_CONTENTS" > ./elk/certs/node.pem
+            echo "$ELK_ROOT_CA_KEY_CONTENTS" > ./elk/certs/root-ca.key
+            echo "$ELK_ROOT_CA_PEM_CONTENTS" > ./elk/certs/root-ca.pem
 
-            echo "$ELK_ADMIN_KEY_CONTENTS" > ./pwd/elk/certs/admin.key
-            echo "$ELK_ADMIN_PEM_CONTENTS" > ./pwd/elk/certs/admin.pem
-            echo "$ELK_NODE_KEY_CONTENTS" > ./pwd/elk/certs/node.key
-            echo "$ELK_NODE_PEM_CONTENTS" > ./pwd/elk/certs/node.pem
-            echo "$ELK_ROOT_CA_KEY_CONTENTS" > ./pwd/elk/certs/root-ca.key
-            echo "$ELK_ROOT_CA_PEM_CONTENTS" > ./pwd/elk/certs/root-ca.pem
-
-            echo "$DOGGER_ENV" > ./pwd/env/dogger.env
-            echo "$ELASTICSEARCH_ENV" > ./pwd/env/elasticsearch.env
-            echo "$KIBANA_ENV" > ./pwd/env/kibana.env
+            echo "$DOGGER_ENV" > ./env/dogger.env
+            echo "$ELASTICSEARCH_ENV" > ./env/elasticsearch.env
+            echo "$KIBANA_ENV" > ./env/kibana.env
             
-            echo "$LIGHTSAIL_PRIVATE_KEY_PEM" > ./pwd/certs/lightsail.pem
-            echo "$PULL_DOG_PRIVATE_KEY" > ./pwd/certs/pull-dog.pem
+            echo "$LIGHTSAIL_PRIVATE_KEY_PEM" > ./certs/lightsail.pem
+            echo "$PULL_DOG_PRIVATE_KEY" > ./certs/pull-dog.pem
 
 
       - name: Deploy to app.dogger.io
