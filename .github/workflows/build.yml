@@ -26,27 +26,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Run tests
-        working-directory: ./src
-        run: |
-          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml build
-          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml config
-
-          docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml down
-          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from=dogger-tests --scale dogger-setup-tests=0 --scale dogger=0
-          
-          docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml down
-          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from=dogger-setup-tests --scale dogger-tests=0 --scale dogger=0
-
-      - name: Code coverage reporting for Dogger
-        uses: codecov/codecov-action@v1
-        with:
-          file: ./src/TestResults/Dogger/coverage.opencover.xml
-
-      - name: Code coverage reporting for Dogger.Setup
-        uses: codecov/codecov-action@v1
-        with:
-          file: ./src/TestResults/Dogger.Setup/coverage.opencover.xml
+#      - name: Run tests
+#        working-directory: ./src
+#        run: |
+#          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml build
+#          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml config
+#
+#          docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml down
+#          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from=dogger-tests --scale dogger-setup-tests=0 --scale dogger=0
+#          
+#          docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml down
+#          SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from=dogger-setup-tests --scale dogger-tests=0 --scale dogger=0
+#
+#      - name: Code coverage reporting for Dogger
+#        uses: codecov/codecov-action@v1
+#        with:
+#          file: ./src/TestResults/Dogger/coverage.opencover.xml
+#
+#      - name: Code coverage reporting for Dogger.Setup
+#        uses: codecov/codecov-action@v1
+#        with:
+#          file: ./src/TestResults/Dogger.Setup/coverage.opencover.xml
 
   publish-app-dogger-io:
     name: Publish app-dogger-io
@@ -90,6 +90,29 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+          
+      - name: Write secret files
+        working-directory: ./src
+        shell: bash
+        env:
+          ELK_CONFIGURATION_YML_CONTENTS: ${{secrets.ELK_CONFIGURATION_YML_CONTENTS}}
+          ELK_ADMIN_KEY_CONTENTS: ${{secrets.ELK_ADMIN_KEY_CONTENTS}}
+          ELK_ADMIN_PEM_CONTENTS: ${{secrets.ELK_ADMIN_PEM_CONTENTS}}
+          ELK_NODE_KEY_CONTENTS: ${{secrets.ELK_NODE_KEY_CONTENTS}}
+          ELK_NODE_PEM_CONTENTS: ${{secrets.ELK_NODE_PEM_CONTENTS}}
+          ELK_ROOT_CA_KEY_CONTENTS: ${{secrets.ELK_ROOT_CA_KEY_CONTENTS}}
+          ELK_ROOT_CA_PEM_CONTENTS: ${{secrets.ELK_ROOT_CA_PEM_CONTENTS}}
+        run: |
+            mkdir certs
+            mkdir config
+
+            echo "$ELK_CONFIGURATION_YML_CONTENTS" > ./config/elasticsearch.yml
+            echo "$ELK_ADMIN_KEY_CONTENTS" > ./certs/admin.key
+            echo "$ELK_ADMIN_PEM_CONTENTS" > ./certs/admin.pem
+            echo "$ELK_NODE_KEY_CONTENTS" > ./certs/node.key
+            echo "$ELK_NODE_PEM_CONTENTS" > ./certs/node.pem
+            echo "$ELK_ROOT_CA_KEY_CONTENTS" > ./certs/root-ca.key
+            echo "$ELK_ROOT_CA_PEM_CONTENTS" > ./certs/root-ca.pem
 
       - name: Deploy to app.dogger.io
         working-directory: ./src
@@ -100,23 +123,27 @@ jobs:
           
           docker-compose up\
             -f docker-compose.setup.yml\
+            -f docker-compose.setup.app-dogger-io.yml\
             -v $(pwd):/pwd\
             -e DOGGER_TAG=${{ github.sha }}\
             -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}\
             -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}\
             -e AWS_LIGHTSAIL_PRIVATE_KEY_PEM="${{ secrets.AWS_LIGHTSAIL_PRIVATE_KEY_PEM }}"\
+            -e AWS_LIGHTSAIL_KEY_NAME=${{ secrets.AWS_LIGHTSAIL_KEY_NAME }}\
             -e DOCKER_REGISTRY_USERNAME=ffmathy\
             -e DOCKER_REGISTRY_PASSWORD=${{ secrets.GITHUB_TOKEN }}\
-            -e SQL_HOST=dogger-mssql.cilzcbhfqhkd.eu-west-1.rds.amazonaws.com\
+            -e ENCRYPTION_PEPPER=${{ secrets.ENCRYPTION_PEPPER }}\
+            -e SQL_HOST={{ secrets.SQL_HOST }}\
             -e SQL_DATABASE=dogger\
             -e SQL_USERNAME=admin\
             -e SQL_PASSWORD=${{ secrets.SQL_PASSWORD }}\
             -e SLACK_INCOMING_WEBHOOK_URL=${{ secrets.SLACK_INCOMING_URL }}\
-            -e DOCKER_COMPOSE_YML_FILE_PATHS="/pwd/docker-compose.yml;/pwd/docker-compose.app-dogger-io.yml"\
             -e ELASTICSEARCH_ADMIN_KEY_PASSWORD="${{ secrets.ELK_ADMIN_KEY_PASSWORD }}"\
             -e ELASTICSEARCH_INSTANCE_PASSWORD="${{ secrets.ELK_PASSWORD }}"\
             -e STRIPE_PUBLISHABLE_KEY="${{ secrets.STRIPE_SECRET_KEY_LIVE }}"\
             -e STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY_LIVE }}"\
+            -e ELASTICSEARCH_ADMIN_KEY_PASSWORD="${{ secrets.ELK_ADMIN_KEY_PASSWORD }}"\
+            -e ELASTICSEARCH_INSTANCE_PASSWORD="${{ secrets.ELK_PASSWORD }}"
 
             #-e DOGFEED=true\
             #-e DOGFEED_Sql__ConnectionString="Server=dogger-mssql.cilzcbhfqhkd.eu-west-1.rds.amazonaws.com,1433;Database=dogger;User #Id=admin;Password=${{ secrets.SQL_PASSWORD }}"\
