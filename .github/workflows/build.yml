@@ -141,9 +141,9 @@ jobs:
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ffMathy --password-stdin
           
           DOGGER_TAG=${{github.sha}}\
-          docker-compose
+          docker-compose\
             -f docker-compose.setup.yml\
-            -f docker-compose.setup.app-dogger-io.yml
+            -f docker-compose.setup.app-dogger-io.yml\
             up
 
             #-e DOGFEED=true\
