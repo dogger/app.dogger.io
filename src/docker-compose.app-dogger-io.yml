@@ -11,16 +11,8 @@ services:
     container_name: elasticsearch
     networks:
     - network
-    environment:
-    - node.name=elasticsearch
-    - discovery.type=single-node
-    - ES_JAVA_OPTS=-Xms256m -Xmx256m
-    - ROOT_CA=root-ca.pem
-    - ADMIN_PEM=admin.pem
-    - ADMIN_KEY=admin.key
-    - ADMIN_KEY_PASS=${ELASTICSEARCH_ADMIN_KEY_PASSWORD}
-    - ELASTIC_PWD=elastic
-    - KIBANA_PWD={ELASTICSEARCH_INSTANCE_PASSWORD}
+    env_file:
+     - /pwd/env/elasticsearch.env
     ulimits:
       memlock:
         soft: -1
@@ -40,11 +32,8 @@ services:
     container_name: kibana
     networks:
     - network
-    environment:
-    - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
-    - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
-    - ELASTICSEARCH_USERNAME=kibana
-    - ELASTICSEARCH_PASSWORD={ELASTICSEARCH_INSTANCE_PASSWORD}
+    env_file:
+     - /pwd/env/kibana.env
     ports:
       - "5601:5601"
     restart: always
