@@ -70,19 +70,10 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
         private static async Task ClearExistingDoggerFilesAsync(ISshClient sshClient)
         {
-            await RemoveDirectoryAsync(sshClient, ".");
-        }
-
-        private static async Task RemoveDirectoryAsync(ISshClient sshClient, string path)
-        {
             await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
                 SshResponseSensitivity.MayContainSensitiveData,
-                $"sudo rm @fileName -rf",
-                new Dictionary<string, string?>()
-                {
-                    {"fileName", $"./{path}"}
-                });
+                $"sudo rm * -rf");
         }
 
         private static async Task EnsureDirectoryAsync(ISshClient sshClient, string path)
