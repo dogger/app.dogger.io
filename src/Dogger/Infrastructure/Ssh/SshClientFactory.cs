@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
 using Dogger.Infrastructure.AspNet.Options;
+using Dogger.Infrastructure.IO;
 using Dogger.Infrastructure.Secrets;
 using Serilog;
 using Microsoft.Extensions.Options;
 using Polly;
 using Renci.SshNet;
 using Renci.SshNet.Common;
+using File = System.IO.File;
 
 namespace Dogger.Infrastructure.Ssh
 {
@@ -22,26 +24,31 @@ namespace Dogger.Infrastructure.Ssh
         private readonly ISecretsScanner secretsScanner;
         private readonly IOptionsMonitor<AwsOptions> awsOptionsMonitor;
         private readonly IAmazonLightsail amazonLightsail;
+        private readonly IFile file;
 
         public SshClientFactory(
             ILogger logger,
             ISecretsScanner secretsScanner,
             IOptionsMonitor<AwsOptions> awsOptionsMonitor,
-            IAmazonLightsail amazonLightsail)
+            IAmazonLightsail amazonLightsail,
+            IFile file)
         {
             this.logger = logger;
             this.secretsScanner = secretsScanner;
             this.awsOptionsMonitor = awsOptionsMonitor;
             this.amazonLightsail = amazonLightsail;
+            this.file = file;
         }
 
         public async Task<ISshClient> CreateForLightsailInstanceAsync(string ipAddress)
         {
-            var privateKey = this.awsOptionsMonitor
+            var privateKeyPath = this.awsOptionsMonitor
                 .CurrentValue
-                .LightsailPrivateKeyPem;
-            if (string.IsNullOrWhiteSpace(privateKey))
-                privateKey = await GetDefaultPrivateKeyAsync();
+                .LightsailPrivateKeyPath;
+
+            var privateKey = string.IsNullOrWhiteSpace(privateKeyPath) ? 
+                await GetDefaultPrivateKeyAsync() :
+                await file.ReadAllTextAsync(privateKeyPath);
 
             var privateKeyPemBytes = Encoding.UTF8.GetBytes(privateKey);
 
@@ -59,7 +66,7 @@ namespace Dogger.Infrastructure.Ssh
             var client = new SshClient(
                 new SshClientDecorator(
                     new Renci.SshNet.SshClient(connectionInfo),
-                    new Renci.SshNet.SftpClient(connectionInfo)),
+                    new SftpClient(connectionInfo)),
                 this.logger,
                 secretsScanner);
 
@@ -84,7 +91,9 @@ namespace Dogger.Infrastructure.Ssh
 
         private async Task<string> GetDefaultPrivateKeyAsync()
         {
-            var response = await amazonLightsail.DownloadDefaultKeyPairAsync(new DownloadDefaultKeyPairRequest());
+            var response = await amazonLightsail.DownloadDefaultKeyPairAsync(
+                new DownloadDefaultKeyPairRequest());
+
             return response.PrivateKeyBase64;
         }
     }

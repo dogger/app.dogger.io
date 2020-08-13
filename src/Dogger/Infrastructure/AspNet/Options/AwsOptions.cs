@@ -13,7 +13,7 @@ namespace Dogger.Infrastructure.AspNet.Options
         public string? SecretAccessKey { get; set; }
 
         [NotLogged]
-        public string? LightsailPrivateKeyPem { get; set; }
+        public string? LightsailPrivateKeyPath { get; set; }
 
         [NotLogged]
         public string? KeyPairName { get; set; }

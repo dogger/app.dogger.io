@@ -339,7 +339,14 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 
-/src/*.sh
-/src/*.bat
 /src/Dogger/ngrok.exe
 /src/Dogger/windows-amd64.zip
+
+**/*.env
+**/*.pem
+**/*.key
+
+
+/src/pwd/**
+
+/src/*

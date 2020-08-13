@@ -79,7 +79,11 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
                 SshResponseSensitivity.MayContainSensitiveData,
-                $"sudo rm ./{path} -rf");
+                $"sudo rm @fileName -rf",
+                new Dictionary<string, string?>()
+                {
+                    {"fileName", $"./{path}"}
+                });
         }
 
         private static async Task EnsureDirectoryAsync(ISshClient sshClient, string path)
@@ -87,7 +91,11 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
             await sshClient.ExecuteCommandAsync(
                 SshRetryPolicy.AllowRetries,
                 SshResponseSensitivity.MayContainSensitiveData,
-                $"mkdir -m 777 -p ./{path}");
+                $"mkdir -m 777 -p @fileName",
+                new Dictionary<string, string?>()
+                {
+                    {"fileName", $"./{path}"}
+                });
 
             await SetUserPermissionsOnPathAsync(sshClient, path);
         }
@@ -114,7 +122,6 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
             await AuthenticateDockerAsync(sshClient);
 
-            var filesArgument = GetDockerComposeFilesCommandLineArgumentString();
             var buildArgumentsArgument = PrependArgumentNameToStrings("--build-arg", GetBuildArgumentAssignments());
 
             try

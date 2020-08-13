@@ -7,7 +7,7 @@ namespace Dogger.Infrastructure.AspNet.Options.GitHub
     public class GitHubPullDogOptions
     {
         [NotLogged]
-        public string? PrivateKey { get; set; }
+        public string? PrivateKeyPath { get; set; }
 
         [NotLogged]
         public int? AppIdentifier { get; set; }

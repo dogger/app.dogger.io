@@ -128,19 +128,17 @@ namespace Dogger.Infrastructure.Ioc
 
         private void ConfigureGitHub()
         {
-            this.Services.AddTransient(p =>
+            this.Services.AddSingleton(p =>
             {
+                var file = p.GetRequiredService<IFile>();
+
                 var pullDogOptions = GetPullDogOptions();
 
-                var privateKey = 
-                    pullDogOptions?.PrivateKey?.Replace("\\n", "\n", StringComparison.InvariantCulture) ??
-                    throw new InvalidOperationException("Could not find private key");
+                var privateKeyPath = 
+                    pullDogOptions?.PrivateKeyPath ??
+                    throw new InvalidOperationException("Pull Dog private key path was not found.");
 
-                if (string.IsNullOrWhiteSpace(privateKey))
-                {
-                    return new GitHubClient(new ProductHeaderValue("pull-dog"));
-                }
-
+                var privateKey = file.ReadAllText(privateKeyPath);
                 return ConstructGitHubClientWithPrivateKey(privateKey);
             });
 

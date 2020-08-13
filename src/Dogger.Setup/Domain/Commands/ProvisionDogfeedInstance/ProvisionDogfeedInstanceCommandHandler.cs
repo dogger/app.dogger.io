@@ -26,7 +26,6 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
         private readonly IProvisioningService provisioningService;
         private readonly IMediator mediator;
         private readonly IFile file;
-        private readonly IConfiguration configuration;
 
         private readonly IOptionsMonitor<DogfeedOptions> dogfeedOptionsMonitor;
 
@@ -37,13 +36,11 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
             IMediator mediator,
             IOptionsMonitor<DogfeedOptions> dogfeedOptionsMonitor,
             IFile file,
-            IConfiguration configuration,
             DataContext dataContext)
         {
             this.provisioningService = provisioningService;
             this.mediator = mediator;
             this.file = file;
-            this.configuration = configuration;
             this.dataContext = dataContext;
             this.dogfeedOptionsMonitor = dogfeedOptionsMonitor;
         }

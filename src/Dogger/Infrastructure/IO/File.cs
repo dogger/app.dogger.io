@@ -10,5 +10,15 @@ namespace Dogger.Infrastructure.IO
         {
             return await System.IO.File.ReadAllBytesAsync(path);
         }
+
+        public async Task<string> ReadAllTextAsync(string path)
+        {
+            return await System.IO.File.ReadAllTextAsync(path);
+        }
+
+        public string ReadAllText(string path)
+        {
+            return System.IO.File.ReadAllText(path);
+        }
     }
 }

@@ -60,7 +60,6 @@ namespace Dogger.Setup.Domain.Services
                 try
                 {
                     var loadBalancer = await GetMainLoadBalancerAsync();
-                    throw new InvalidOperationException("BREAKPOINT");
 
                     await AttachInstanceToLoadBalancerAsync(
                         newInstance,

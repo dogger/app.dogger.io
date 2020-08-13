@@ -2,6 +2,8 @@ version: '3.4'
 
 services:
   dogger:
+    env_file:
+     - ./env/dogger.env
     depends_on:
      - "elasticsearch"
      - "kibana"
@@ -12,14 +14,14 @@ services:
     networks:
     - network
     env_file:
-     - /pwd/env/elasticsearch.env
+     - ./env/elasticsearch.env
     ulimits:
       memlock:
         soft: -1
         hard: -1
     volumes:
-      - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-      - ./certs:/usr/share/elasticsearch/config/certificates
+      - ./elk/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elk/certs:/usr/share/elasticsearch/config/certificates
     restart: always
     healthcheck:
       test: curl -X GET -f -k -u 'elastic:elastic' https://localhost:9200 || exit 1
@@ -33,7 +35,7 @@ services:
     networks:
     - network
     env_file:
-     - /pwd/env/kibana.env
+     - ./env/kibana.env
     ports:
       - "5601:5601"
     restart: always
