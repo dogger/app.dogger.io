@@ -58,13 +58,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Build Dockerfile
+      - name: Build Docker images
         working-directory: ./src
         run: |
           docker build . --file Dogger/Dockerfile --tag dogger-image
           docker build . --file Dogger.Setup/Dockerfile --tag dogger-setup-image
 
-      - name: Tag Docker image
+      - name: Tag Docker images
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ffMathy --password-stdin
 
@@ -74,10 +74,10 @@ jobs:
           docker tag dogger-setup-image docker.pkg.github.com/dogger/app.dogger.io/dogger-setup:${{github.sha}}
           docker tag dogger-setup-image docker.pkg.github.com/dogger/app.dogger.io/dogger-setup:latest
 
-      - name: Push Docker image to Docker Hub
+      - name: Push Docker images to Docker Hub
         working-directory: ./src
         run: |
-          echo "Pushing image to Docker Hub."
+          echo "Pushing images to Docker Hub."
 
           docker push docker.pkg.github.com/dogger/app.dogger.io/dogger
           docker push docker.pkg.github.com/dogger/app.dogger.io/dogger-setup
