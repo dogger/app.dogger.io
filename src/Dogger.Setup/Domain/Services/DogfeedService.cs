@@ -77,8 +77,6 @@ namespace Dogger.Setup.Domain.Services
                 }
                 catch
                 {
-                    await Task.Delay(1000 * 60 * 15);
-
                     await DestroyInstanceByNameAsync(newInstance.Name);
                     throw;
                 }
