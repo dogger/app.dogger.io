@@ -64,7 +64,7 @@ namespace Dogger.Infrastructure.Logging
                         new ElasticsearchSink(
                             new ElasticsearchSinkOptions(new Uri(elasticsearchLoggingUrl))
                             {
-                                FailureCallback = e => Console.WriteLine($"Unable to log message with template {e.MessageTemplate}"),
+                                FailureCallback = e => Console.WriteLine($"Unable to log message {e.MessageTemplate}"),
                                 EmitEventFailure =
                                     EmitEventFailureHandling.WriteToSelfLog |
                                     EmitEventFailureHandling.RaiseCallback,
