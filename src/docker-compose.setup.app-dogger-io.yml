@@ -21,6 +21,3 @@ services:
 
     - Dogfeed__DockerComposeYmlFilePaths__0=/pwd/docker-compose.yml
     - Dogfeed__DockerComposeYmlFilePaths__1=/pwd/docker-compose.app-dogger-io.yml
-
-    - GitHub__PullDog__PrivateKeyPath=/pwd/certs/pull-dog.pem
-    - Aws__LightsailPrivateKeyPath=/pwd/certs/lightsail.pem
