@@ -128,7 +128,7 @@ namespace Dogger.Infrastructure.Ioc
 
         private void ConfigureGitHub()
         {
-            this.Services.AddSingleton(p =>
+            this.Services.AddTransient(p =>
             {
                 var file = p.GetRequiredService<IFile>();
 
