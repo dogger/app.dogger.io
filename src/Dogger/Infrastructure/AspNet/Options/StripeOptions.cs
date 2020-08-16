@@ -8,8 +8,5 @@ namespace Dogger.Infrastructure.AspNet.Options
     {
         [NotLogged]
         public string? SecretKey { get; set; }
-
-        [NotLogged]
-        public string? PublishableKey { get; set; }
     }
 }
