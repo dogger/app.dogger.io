@@ -123,7 +123,7 @@ namespace Dogger.Infrastructure.Ioc
         private void ConfigureAuth0()
         {
             this.Services.AddOptionalSingleton<IManagementApiClientFactory, ManagementApiClientFactory>(
-                this.OnPremisesManifest.HasStripe);
+                this.OnPremisesManifest.HasAuth0);
         }
 
         private void ConfigureGitHub()

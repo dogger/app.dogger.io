@@ -21,6 +21,17 @@ namespace Dogger.Infrastructure.Configuration
             }
         }
 
+        public bool HasAuth0
+        {
+            get
+            {
+                var options = Get<Auth0Options>();
+                return
+                    !string.IsNullOrWhiteSpace(options?.ClientSecret) &&
+                    !string.IsNullOrWhiteSpace(options?.ClientId);
+            }
+        }
+
         private T Get<T>()
         {
             return this.configuration.GetSection<T>();
