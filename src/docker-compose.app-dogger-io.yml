@@ -14,7 +14,9 @@ services:
     image: xtermi2/elasticsearch-searchguard:7.6.1
     container_name: elasticsearch
     networks:
-    - network
+      network:
+        aliases:
+          - elasticsearch
     env_file:
     - ./env/elasticsearch.env
     ulimits:
