@@ -2,7 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using Dogger.Infrastructure.IO;
 using Dogger.Tests.TestHelpers;
+using NSubstitute;
+using Octokit;
 
 namespace Dogger.Tests.Controllers
 {
@@ -20,7 +23,10 @@ namespace Dogger.Tests.Controllers
                 .Where(x => x.IsClass)
                 .Where(x => x.Name.EndsWith(nameof(Controller)));
 
-            var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
+            var serviceProvider = TestServiceProviderFactory.CreateUsingStartup(services =>
+            {
+                services.AddSingleton(Substitute.For<IGitHubClient>());
+            });
 
             //Act
             var controllerInstances = controllerTypes

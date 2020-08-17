@@ -12,6 +12,8 @@ using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
 using Dogger.Infrastructure.AspNet.Options.GitHub;
+using Dogger.Infrastructure.GitHub;
+using Dogger.Infrastructure.IO;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
@@ -24,6 +26,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using Octokit;
 
 namespace Dogger.Tests.Controllers.PullDog.Webhooks
 {
@@ -68,6 +71,8 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                     PullDogSettings = new PullDogSettings()
                 });
 
+            var fakeGitHubClient = Substitute.For<IGitHubClient>();
+
             var fakeHandler1 = Substitute.For<IWebhookPayloadHandler>();
             var fakeHandler2 = Substitute.For<IWebhookPayloadHandler>();
             var fakeHandler3 = Substitute.For<IWebhookPayloadHandler>();
@@ -82,6 +87,8 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             {
                 IocConfiguration = services =>
                 {
+                    services.AddSingleton(fakeGitHubClient);
+
                     services.AddSingleton(fakeMediator);
 
                     services.AddSingleton(fakeHandler1);
@@ -139,10 +146,13 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             var fakeHandler = Substitute.For<IWebhookPayloadHandler>();
 
+            var fakeGitHubClient = Substitute.For<IGitHubClient>();
+
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
+                    services.AddSingleton(fakeGitHubClient);
                     services.AddSingleton(fakeMediator);
                     services.AddSingleton(fakeHandler);
 
@@ -203,6 +213,8 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             var fakeWebhookPayloadHandler = Substitute.For<IWebhookPayloadHandler>();
 
+            var fakeGitHubClient = Substitute.For<IGitHubClient>();
+
             var fakeConfigurationCommitPayloadHandler = Substitute.For<IConfigurationPayloadHandler>();
             fakeConfigurationCommitPayloadHandler
                 .CanHandle(Arg.Any<WebhookPayload>())
@@ -212,6 +224,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             {
                 IocConfiguration = services =>
                 {
+                    services.AddSingleton(fakeGitHubClient);
                     services.AddSingleton(fakeMediator);
                     services.AddSingleton(fakeWebhookPayloadHandler);
 
@@ -278,12 +291,15 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                     PullDogSettings = new PullDogSettings()
                 });
 
+            var fakeGitHubClient = Substitute.For<IGitHubClient>();
+
             var fakeWebhookPayloadHandler = Substitute.For<IWebhookPayloadHandler>();
 
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
                 {
+                    services.AddSingleton(fakeGitHubClient);
                     services.AddSingleton(fakeMediator);
                     services.AddSingleton(fakeWebhookPayloadHandler);
 
@@ -343,6 +359,8 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                     PullDogSettings = new PullDogSettings()
                 });
 
+            var fakeGitHubClient = Substitute.For<IGitHubClient>();
+
             var fakeWebhookPayloadHandler = Substitute.For<IWebhookPayloadHandler>();
             fakeWebhookPayloadHandler
                 .CanHandle(Arg.Any<WebhookPayload>())
@@ -352,6 +370,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             {
                 IocConfiguration = services =>
                 {
+                    services.AddSingleton(fakeGitHubClient);
                     services.AddSingleton(fakeMediator);
                     services.AddSingleton(fakeWebhookPayloadHandler);
 
@@ -416,6 +435,8 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                     PullDogSettings = new PullDogSettings()
                 });
 
+            var fakeGitHubClient = Substitute.For<IGitHubClient>();
+
             var fakeWebhookPayloadHandler = Substitute.For<IWebhookPayloadHandler>();
             fakeWebhookPayloadHandler
                 .CanHandle(Arg.Any<WebhookPayload>())
@@ -425,6 +446,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             {
                 IocConfiguration = services =>
                 {
+                    services.AddSingleton(fakeGitHubClient);
                     services.AddSingleton(fakeMediator);
                     services.AddSingleton(fakeWebhookPayloadHandler);
 
@@ -455,8 +477,16 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
         public async Task PullDogWebhook_AuthenticPayload_ReturnsNoContent()
         {
             //Arrange
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
+            {
+                IocConfiguration = services =>
+                {
+                    services.AddSingleton(Substitute.For<IGitHubClient>());
+                }
+            });
+
             environment.Configuration["GitHub:PullDog:WebhookSecret"] = "some-webhook-secret";
+            environment.Configuration["GitHub:PullDog:PrivateKeyPath"] = "some-private-key-path";
 
             using var httpClient = new HttpClient();
 

@@ -7,8 +7,10 @@ using Amazon.Lightsail.Model;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
+using Dogger.Infrastructure.AspNet.Options;
 using Dogger.Infrastructure.IO;
 using Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance;
+using Dogger.Setup.Infrastructure;
 using Dogger.Setup.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments;
@@ -16,6 +18,7 @@ using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 
@@ -36,6 +39,19 @@ namespace Dogger.Setup.Tests.Domain.Commands
 
             var fakeFile = Substitute.For<IFile>();
 
+            var fakeDogfeedOptionsMonitor = Substitute.For<IOptionsMonitor<DogfeedOptions>>();
+            fakeDogfeedOptionsMonitor
+                .CurrentValue
+                .Returns(new DogfeedOptions()
+                {
+                    DockerComposeYmlFilePaths = new[] { "dummy" },
+                    DockerRegistry = new DockerRegistryOptions()
+                    {
+                        Username = "dummy",
+                        Password = "dummy"
+                    }
+                });
+
             await using var environment = await DoggerSetupIntegrationTestEnvironment.CreateAsync(new DoggerSetupEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
@@ -43,6 +59,7 @@ namespace Dogger.Setup.Tests.Domain.Commands
                     services.AddSingleton(fakeProvisioningService);
                     services.AddSingleton(fakeAmazonLightsail);
                     services.AddSingleton(fakeFile);
+                    services.AddSingleton(fakeDogfeedOptionsMonitor);
                 }
             });
 
@@ -71,6 +88,19 @@ namespace Dogger.Setup.Tests.Domain.Commands
 
             var fakeFile = Substitute.For<IFile>();
 
+            var fakeDogfeedOptionsMonitor = Substitute.For<IOptionsMonitor<DogfeedOptions>>();
+            fakeDogfeedOptionsMonitor
+                .CurrentValue
+                .Returns(new DogfeedOptions()
+                {
+                    DockerComposeYmlFilePaths = new[] { "dummy" },
+                    DockerRegistry = new DockerRegistryOptions()
+                    {
+                        Username = "dummy",
+                        Password = "dummy"
+                    }
+                });
+
             await using var environment = await DoggerSetupIntegrationTestEnvironment.CreateAsync(new DoggerSetupEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
@@ -78,6 +108,7 @@ namespace Dogger.Setup.Tests.Domain.Commands
                     services.AddSingleton(fakeProvisioningService);
                     services.AddSingleton(fakeAmazonLightsail);
                     services.AddSingleton(fakeFile);
+                    services.AddSingleton(fakeDogfeedOptionsMonitor);
                 }
             });
 
@@ -106,6 +137,19 @@ namespace Dogger.Setup.Tests.Domain.Commands
 
             var fakeFile = Substitute.For<IFile>();
 
+            var fakeDogfeedOptionsMonitor = Substitute.For<IOptionsMonitor<DogfeedOptions>>();
+            fakeDogfeedOptionsMonitor
+                .CurrentValue
+                .Returns(new DogfeedOptions()
+                {
+                    DockerComposeYmlFilePaths = new[] { "dummy" },
+                    DockerRegistry = new DockerRegistryOptions()
+                    {
+                        Username = "dummy",
+                        Password = "dummy"
+                    }
+                });
+
             await using var environment = await DoggerSetupIntegrationTestEnvironment.CreateAsync(new DoggerSetupEnvironmentSetupOptions()
             {
                 IocConfiguration = services =>
@@ -113,6 +157,7 @@ namespace Dogger.Setup.Tests.Domain.Commands
                     services.AddSingleton(fakeProvisioningService);
                     services.AddSingleton(fakeAmazonLightsail);
                     services.AddSingleton(fakeFile);
+                    services.AddSingleton(fakeDogfeedOptionsMonitor);
                 }
             });
 
