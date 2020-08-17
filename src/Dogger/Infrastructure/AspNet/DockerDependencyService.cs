@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Docker.DotNet;
 using Docker.DotNet.Models;
 using Dogger.Domain.Models;
+using Dogger.Infrastructure.AspNet.Options;
 using Dogger.Infrastructure.Ioc;
 using FluffySpoon.AspNet.NGrok;
 using Microsoft.Data.SqlClient;
@@ -17,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Stripe;
+using static Microsoft.Extensions.Configuration.ConfigurationExtensions;
 
 namespace Dogger.Infrastructure.AspNet
 {
@@ -383,6 +385,11 @@ namespace Dogger.Infrastructure.AspNet
             services.AddSingleton<IDockerDependencyService>(p => p.GetRequiredService<DockerDependencyService>());
 
             services.AddHostedService(p => p.GetRequiredService<DockerDependencyService>());
+
+            services.AddDbContextPool<DataContext>(optionsBuilder =>
+            {
+                optionsBuilder.UseSqlServer(GetSqlConnectionStringForDatabase("dogger"));
+            });
         }
     }
 }

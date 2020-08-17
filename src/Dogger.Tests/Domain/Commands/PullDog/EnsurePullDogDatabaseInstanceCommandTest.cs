@@ -24,7 +24,13 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_ExistingClusterInstanceFoundAndPaidUser_ReusesExistingInstanceAndUpdatesExpiry()
         {
             //Arrange
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
+            {
+                IocConfiguration = services =>
+                {
+                    services.AddSingleton(Substitute.For<IPullDogRepositoryClientFactory>());
+                }
+            });
 
             var user = new User()
             {
@@ -93,7 +99,13 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_ExistingClusterInstanceFoundAndDemoUserWithNoExpiry_ReducesExpiryToAnHour()
         {
             //Arrange
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
+            {
+                IocConfiguration = services =>
+                {
+                    services.AddSingleton(Substitute.For<IPullDogRepositoryClientFactory>());
+                }
+            });
 
             var pullDogPullRequest = new PullDogPullRequest()
             {
@@ -157,7 +169,13 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_ExistingClusterInstanceFoundAndDemoUserWithMoreThanOneHourExpiry_ReducesExpiryToAnHour()
         {
             //Arrange
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
+            {
+                IocConfiguration = services =>
+                {
+                    services.AddSingleton(Substitute.For<IPullDogRepositoryClientFactory>());
+                }
+            });
 
             var pullDogPullRequest = new PullDogPullRequest()
             {

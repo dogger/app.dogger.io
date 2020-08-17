@@ -9,7 +9,7 @@ namespace Microsoft.Extensions.Configuration
 {
     public static class ConfigurationExtensions
     {
-        public static string GetSectionNameFor<TOptions>(this IConfiguration _)
+        public static string GetSectionNameFor<TOptions>()
         {
             const string optionsSuffix = "Options";
 
@@ -23,6 +23,11 @@ namespace Microsoft.Extensions.Configuration
             }
 
             return configurationKey;
+        }
+
+        public static string GetSectionNameFor<TOptions>(this IConfiguration? _)
+        {
+            return GetSectionNameFor<TOptions>();
         }
 
         public static TOptions GetSection<TOptions>(this IConfiguration configuration, string? name = null)

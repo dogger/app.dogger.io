@@ -208,3 +208,6 @@ dotnet_diagnostic.CA1716.severity = none
 
 # CA1308: Normalize strings to uppercase
 dotnet_diagnostic.CA1308.severity = none
+
+# CS0436: Type conflicts with imported type
+dotnet_diagnostic.CS0436.severity = none

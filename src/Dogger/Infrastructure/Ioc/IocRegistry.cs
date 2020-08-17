@@ -268,11 +268,10 @@ namespace Dogger.Infrastructure.Ioc
                     var sqlOptions = this.Configuration.GetSection<SqlOptions>();
                     var connectionString = sqlOptions?.ConnectionString;
 
-                    var hasConnectionString = !string.IsNullOrWhiteSpace(connectionString);
-                    if (hasConnectionString)
+                    if (!string.IsNullOrWhiteSpace(connectionString))
                     {
                         optionsBuilder.UseSqlServer(
-                            connectionString, 
+                            connectionString,
                             options => options
                                 .EnableRetryOnFailure(3, TimeSpan.FromSeconds(1), Array.Empty<int>()));
                     }
@@ -283,8 +282,7 @@ namespace Dogger.Infrastructure.Ioc
                             .ConfigureWarnings(w => w
                                 .Ignore(InMemoryEventId.TransactionIgnoredWarning));
                     }
-                },
-                1);
+                });
 
             this.Services.AddScoped<IDatabaseMigrator, DatabaseMigrator>();
         }
