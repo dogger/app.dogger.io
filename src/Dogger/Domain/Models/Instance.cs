@@ -32,5 +32,4 @@ namespace Dogger.Domain.Models
             CreatedAtUtc = DateTime.UtcNow;
         }
     }
-
 }
