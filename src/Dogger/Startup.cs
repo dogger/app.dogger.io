@@ -177,7 +177,14 @@ namespace Dogger
             {
                 options.AddDefaultPolicy(
                     builder => builder
-                        .WithOrigins("https://dogger.io")
+                        .WithOrigins(Debugger.IsAttached ?
+                            new [] {
+                                "http://localhost:8000",
+                                "http://localhost:9000"
+                            } :
+                            new [] { 
+                                "https://dogger.io"
+                            })
                         .AllowAnyHeader()
                         .AllowAnyMethod());
             });

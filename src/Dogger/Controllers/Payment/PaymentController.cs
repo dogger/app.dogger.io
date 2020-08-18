@@ -52,13 +52,14 @@ namespace Dogger.Controllers.Payment
 
         [Route("coupon")]
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(CouponCodeResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCoupon()
         {
             var user = await this.mediator.Send(new EnsureUserForIdentityCommand(User));
             var coupon = await this.mediator.Send(new GetCouponForUserQuery(user));
             if (coupon == null)
-                return Ok(null);
+                return NoContent();
 
             return Ok(mapper.Map<CouponCodeResponse>(coupon));
         }
