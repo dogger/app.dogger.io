@@ -13,6 +13,7 @@ namespace Dogger.Controllers.Payment
 
             CreateMap<PromotionCode, CouponCodeResponse>()
                 .ForMember(x => x.Code, x => x.MapFrom(y => y.Code))
+                .ForMember(x => x.Name, x => x.MapFrom(y => y.Coupon.Name))
                 .ForMember(x => x.AmountOffInHundreds, x => x.MapFrom(y => y.Coupon.AmountOff))
                 .ForMember(x => x.AmountOffInPercentage, x => x.MapFrom(y => y.Coupon.PercentOff));
         }
