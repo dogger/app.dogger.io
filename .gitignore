@@ -345,8 +345,3 @@ healthchecksdb
 **/*.env
 **/*.pem
 **/*.key
-
-
-/src/pwd/**
-
-/src/*
