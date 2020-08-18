@@ -123,6 +123,7 @@
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1CCFED15EBBC4448904EEC6DBE39311F/Field/=RETURN_005FTYPE/@KeyIndexDefined">True</s:Boolean>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1CCFED15EBBC4448904EEC6DBE39311F/Field/=RETURN_005FTYPE/Order/@EntryValue">2</s:Int64>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1CCFED15EBBC4448904EEC6DBE39311F/Reformat/@EntryValue">True</s:Boolean>
+	
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1CCFED15EBBC4448904EEC6DBE39311F/Scope/=E8F0594528C33E45BBFEC6CFE851095D/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1CCFED15EBBC4448904EEC6DBE39311F/Scope/=E8F0594528C33E45BBFEC6CFE851095D/Type/@EntryValue">InCSharpProjectFile</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1CCFED15EBBC4448904EEC6DBE39311F/Section/=60C322EE6F1ECF43944077D6A48EA7C4/@KeyIndexDefined">True</s:Boolean>
@@ -135,7 +136,7 @@ using MediatR;&#xD;
 &#xD;
 namespace $NAMESPACE$&#xD;
 {&#xD;
-  class $CLASS$Handler : IRequestHandler&lt;$CLASS$, $RETURN_TYPE$&gt; {&#xD;
+  public class $CLASS$Handler : IRequestHandler&lt;$CLASS$, $RETURN_TYPE$&gt; {&#xD;
 	public async Task&lt;$RETURN_TYPE$&gt; Handle(&#xD;
 		$CLASS$ request,&#xD;
 		CancellationToken cancellationToken)&#xD;
@@ -144,7 +145,54 @@ namespace $NAMESPACE$&#xD;
 	}&#xD;
   }&#xD;
 }</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1CCFED15EBBC4448904EEC6DBE39311F/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1CCFED15EBBC4448904EEC6DBE39311F/Section/=730CDEBA9E53BB4CBCA574154DF74FD4/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1CCFED15EBBC4448904EEC6DBE39311F/Section/=730CDEBA9E53BB4CBCA574154DF74FD4/LocationSelectorConfig/@EntryValue">&lt;RelativeConfig Project="$PROJECT$.Tests" Folder="$RELPATH$" File="$NAME$Test.cs" /&gt;</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1CCFED15EBBC4448904EEC6DBE39311F/Section/=730CDEBA9E53BB4CBCA574154DF74FD4/LocationSelectorName/@EntryValue">manual</s:String>
+	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1CCFED15EBBC4448904EEC6DBE39311F/Section/=730CDEBA9E53BB4CBCA574154DF74FD4/Order/@EntryValue">1</s:Int64>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1CCFED15EBBC4448904EEC6DBE39311F/Section/=730CDEBA9E53BB4CBCA574154DF74FD4/SectionPlain/Text/@EntryValue">using System;&#xD;
+using System.Threading.Tasks;&#xD;
+using Microsoft.Extensions.DependencyInjection;&#xD;
+using Microsoft.VisualStudio.TestTools.UnitTesting;&#xD;
+using $NAMESPACE$;&#xD;
+&#xD;
+namespace $NAMESPACE$&#xD;
+{&#xD;
+    [TestClass]&#xD;
+    public class $CLASS$Test&#xD;
+    {&#xD;
+        [TestMethod]&#xD;
+        [TestCategory(TestCategories.IntegrationCategory)]&#xD;
+        public async Task Handle_SomeIntegrationCondition_SomeOutcome()&#xD;
+        {&#xD;
+            //Arrange&#xD;
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();&#xD;
+&#xD;
+            //Act&#xD;
+            var result = await environment.Mediator.Send(&#xD;
+                new $CLASS$());&#xD;
+&#xD;
+            //Assert&#xD;
+			Assert.Fail("Not implemented.");&#xD;
+        }&#xD;
+&#xD;
+        [TestMethod]&#xD;
+        [TestCategory(TestCategories.UnitCategory)]&#xD;
+        public async Task Handle_SomeUnitCondition_SomeOutcome()&#xD;
+        {&#xD;
+            //Arrange&#xD;
+			var handler = new $CLASS$Handler();&#xD;
+&#xD;
+            //Act&#xD;
+            var result = await handler.Handle(&#xD;
+                new $CLASS$(),&#xD;
+				default);&#xD;
+&#xD;
+            //Assert&#xD;
+			Assert.Fail("Not implemented.");&#xD;
+        }&#xD;
+	}&#xD;
+}</s:String>
+	
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=1CCFED15EBBC4448904EEC6DBE39311F/Text/@EntryValue">using System.Threading;&#xD;
 using System.Threading.Tasks;&#xD;
 using MediatR;&#xD;

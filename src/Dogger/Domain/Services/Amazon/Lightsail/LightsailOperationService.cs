@@ -51,7 +51,7 @@ namespace Dogger.Domain.Services.Amazon.Lightsail
                 }
 
                 await this.time.WaitAsync(1000);
-            };
+            }
         }
 
         private async Task<Operation[]> RefreshStillRunningOperationsAsync(

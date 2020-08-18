@@ -32,7 +32,7 @@ namespace Dogger.Infrastructure.Configuration
             }
         }
 
-        private T Get<T>()
+        private T Get<T>() where T : new()
         {
             return this.configuration.GetSection<T>();
         }

@@ -251,6 +251,8 @@ namespace Dogger.Infrastructure.Ioc
             this.Services.AddOptionalSingleton<PaymentMethodService>(isStripeConfigured);
             this.Services.AddOptionalSingleton<SubscriptionService>(isStripeConfigured);
             this.Services.AddOptionalSingleton<WebhookEndpointService>(isStripeConfigured);
+            this.Services.AddOptionalSingleton<PromotionCodeService>(isStripeConfigured);
+            this.Services.AddOptionalSingleton<CouponService>(isStripeConfigured);
 
             this.Services.AddOptionalSingleton<IStripeClient, StripeClient>(
                 _ => new StripeClient(

@@ -27,7 +27,7 @@ namespace Dogger.Infrastructure.AspNet
     {
         private readonly IServiceProvider serviceProvider;
 
-        private const string sqlPassword = "hNxX9Qz2";
+        private const string SqlPassword = "hNxX9Qz2";
 
         private DataContext? dataContext;
         private CustomerService? customerService;
@@ -274,7 +274,7 @@ namespace Dogger.Infrastructure.AspNet
                 "localhost";
 
             var sqlServerPort = GetDockerSqlServerPort();
-            var connectionString = $@"Server={server},{sqlServerPort};Database={database};User Id=SA;Password={sqlPassword}";
+            var connectionString = $@"Server={server},{sqlServerPort};Database={database};User Id=SA;Password={SqlPassword}";
 
             Console.WriteLine("Using connection string " + connectionString);
 
@@ -371,7 +371,7 @@ namespace Dogger.Infrastructure.AspNet
                         } :
                         null
                 },
-                Env = new List<string>() { "ACCEPT_EULA=Y", $"SA_PASSWORD={sqlPassword}" },
+                Env = new List<string>() { "ACCEPT_EULA=Y", $"SA_PASSWORD={SqlPassword}" },
                 Image = "mcr.microsoft.com/mssql/server:2019-latest",
                 Name = hostname,
                 Hostname = hostname

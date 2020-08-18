@@ -70,9 +70,10 @@ namespace Dogger
                     registry.RegisterDelayedHostedServices();
                 });
 
-        /// <summary>
-        /// Used by Entity Framework when running console commands for migrations etc. It must have this signature.
-        /// </summary>
+        [SuppressMessage(
+            "CodeQuality", 
+            "IDE0051:Remove unused private members", 
+            Justification = "This is used for Entity Framework when running console commands for migrations etc. It must have this signature.")]
         private static IHostBuilder CreateHostBuilder(string[] args) => CreateDoggerHostBuilder(null, args);
     }
 }

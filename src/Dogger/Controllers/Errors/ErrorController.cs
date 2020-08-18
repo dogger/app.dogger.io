@@ -38,6 +38,7 @@ namespace Dogger.Controllers.Errors
         [Route("/errors/throw")]
         [AllowAnonymous]
         [ExcludeFromCodeCoverage]
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "This is a controller method.")]
         public IActionResult ThrowError()
         {
             throw new Exception("This is some error.");

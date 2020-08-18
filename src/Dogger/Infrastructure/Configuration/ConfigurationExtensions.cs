@@ -30,11 +30,12 @@ namespace Microsoft.Extensions.Configuration
             return GetSectionNameFor<TOptions>();
         }
 
-        public static TOptions GetSection<TOptions>(this IConfiguration configuration, string? name = null)
+        public static TOptions GetSection<TOptions>(this IConfiguration configuration, string? name = null) where TOptions : new()
         {
             return configuration
                 .GetSection(name ?? GetSectionNameFor<TOptions>(configuration))
-                .Get<TOptions>();
+                .Get<TOptions>() ?? 
+                new TOptions();
         }
     }
 }

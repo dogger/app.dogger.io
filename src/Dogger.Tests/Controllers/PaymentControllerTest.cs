@@ -1,7 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Dogger.Controllers.Payment;
+using Dogger.Domain.Commands.Payment.ApplyCouponCodeForUser;
 using Dogger.Domain.Commands.Payment.SetActivePaymentMethodForUser;
 using Dogger.Domain.Queries.Payment;
+using Dogger.Domain.Queries.Payment.GetActivePaymentMethodForUser;
+using Dogger.Domain.Queries.Payment.GetCouponForUser;
 using Dogger.Infrastructure;
 using Dogger.Tests.TestHelpers;
 using MediatR;
@@ -14,6 +17,87 @@ namespace Dogger.Tests.Controllers
     [TestClass]
     public class PaymentControllerTest
     {
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public async Task GetCoupon_CouponExists_CouponReturned()
+        {
+            //Arrange
+            var fakeMediator = Substitute.For<IMediator>();
+            fakeMediator
+                .Send(Arg.Any<GetCouponForUserQuery>())
+                .Returns(new PromotionCode()
+                {
+                    Code = "some-promotion-code"
+                });
+
+            var mapper = AutoMapperFactory.CreateValidMapper();
+
+            var controller = new PaymentController(
+                fakeMediator,
+                mapper);
+            controller.FakeAuthentication("some-identity-name");
+
+            //Act
+            var response = await controller.GetCoupon();
+
+            //Assert
+            var coupon = response.ToObject<CouponCodeResponse>();
+            Assert.IsNotNull(coupon);
+            Assert.AreEqual("some-promotion-code", coupon.Code);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public async Task GetCoupon_CouponDoesNotExist_NullReturned()
+        {
+            //Arrange
+            var fakeMediator = Substitute.For<IMediator>();
+            fakeMediator
+                .Send(Arg.Any<GetCouponForUserQuery>())
+                .Returns((PromotionCode)null);
+
+            var mapper = AutoMapperFactory.CreateValidMapper();
+
+            var controller = new PaymentController(
+                fakeMediator,
+                mapper);
+            controller.FakeAuthentication("some-identity-name");
+
+            //Act
+            var response = await controller.GetCoupon();
+
+            //Assert
+            var coupon = response.ToObject<CouponCodeResponse>();
+            Assert.IsNull(coupon);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.UnitCategory)]
+        public async Task ApplyCoupon_UserSignedIn_AppliesCoupon()
+        {
+            //Arrange
+            var fakeMediator = Substitute.For<IMediator>();
+
+            var mapper = AutoMapperFactory.CreateValidMapper();
+
+            var controller = new PaymentController(
+                fakeMediator,
+                mapper);
+            controller.FakeAuthentication("some-identity-name");
+
+            //Act
+            var result = await controller.ApplyCoupon("some-coupon-code");
+
+            //Assert
+            var response = result.ToObject<ApplyCouponResponse>();
+            Assert.IsTrue(response.WasApplied);
+
+            await fakeMediator
+                .Received(1)
+                .Send(Arg.Is<ApplyCouponCodeForUserCommand>(arg =>
+                    arg.CouponCode == "some-coupon-code"));
+        }
+
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
         public async Task GetCurrentPaymentMethod_ActivePaymentMethodExists_PaymentMethodReturned()
