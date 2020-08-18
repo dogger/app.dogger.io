@@ -77,6 +77,10 @@ namespace Dogger.Tests.Controllers
         {
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
+            fakeMediator
+                .Send(Arg.Is<ApplyCouponCodeForUserCommand>(args =>
+                    args.CouponCode == "some-coupon-code"))
+                .Returns(true);
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
