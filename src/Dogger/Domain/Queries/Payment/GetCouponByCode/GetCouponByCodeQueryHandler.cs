@@ -1,7 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dogger.Domain.Queries.Payment.GetCouponById;
 using Dogger.Infrastructure.Ioc;
 using MediatR;
 using Stripe;
@@ -28,11 +28,15 @@ namespace Dogger.Domain.Queries.Payment.GetCouponByCode
             var promotionCodes = await this.stripePromotionCodeService.ListAsync(
                 new PromotionCodeListOptions()
                 {
-                    Code = request.Code
+                    Code = request.Code,
+                    Expand = new List<string>()
+                    {
+                        "data.coupon.applies_to"
+                    }
                 },
                 default,
                 cancellationToken);
-            return promotionCodes.Data.SingleOrDefault();
+            return promotionCodes.Data.SingleOrDefault(x => x.Active);
         }
     }
 }

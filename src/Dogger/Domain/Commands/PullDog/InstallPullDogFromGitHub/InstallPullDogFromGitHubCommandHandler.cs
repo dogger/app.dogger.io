@@ -4,20 +4,16 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Dogger.Domain.Commands.Auth0.CreateAuth0User;
 using Dogger.Domain.Commands.PullDog.AddPullDogToGitHubRepositories;
-using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
+using Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails;
 using Dogger.Domain.Models;
-using Dogger.Domain.Queries.Auth0.GetAuth0UserFromEmails;
 using Dogger.Domain.Queries.Auth0.GetAuth0UserFromGitHubUserId;
-using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Infrastructure.Encryption;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Infrastructure.Ioc;
 using MediatR;
 using Octokit;
 using Slack.Webhooks;
-using User = Auth0.ManagementApi.Models.User;
 
 namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
 {
@@ -79,38 +75,30 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
                 });
             }
 
-            var validatedEmails = emails
+            var validatedEmailsOrderedByImportance = emails
                 .Where(x => x.Verified)
-                .ToArray();
-            if (validatedEmails.Length == 0)
+                .OrderByDescending(x => 
+                    (x.Primary ? 2 : 0) +
+                    (x.Visibility == EmailVisibility.Public ? 1 : 0))
+                .Select(x => x.Email)
+                .ToList();
+            if (validatedEmailsOrderedByImportance.Count == 0)
                 throw new InvalidOperationException("The user does not have any validated emails.");
 
-            var auth0User = await EnsureAuth0UserForGitHubUserAsync(
-                currentUser.Id,
-                validatedEmails,
+            var auth0User = await this.mediator.Send(
+                new GetAuth0UserFromGitHubUserIdQuery(currentUser.Id), 
                 cancellationToken);
+            if (auth0User?.EmailVerified == true)
+                validatedEmailsOrderedByImportance.Insert(0, auth0User.Email);
 
-            var preferredEmail =
-                validatedEmails.SingleOrDefault(x => x.Primary) ??
-                validatedEmails.First();
             var user = await this.mediator.Send(
-                new EnsureUserForIdentityCommand(
-                    auth0User.UserId,
-                    preferredEmail.Email),
+                new InstallPullDogFromEmailsCommand(validatedEmailsOrderedByImportance.ToArray())
+                {
+                    Plan = request.Plan
+                },
                 cancellationToken);
             if (user.PullDogSettings == null)
-            {
-                var plan = await this.mediator.Send(
-                    new GetDemoPlanQuery(),
-                    cancellationToken);
-                user.PullDogSettings = new PullDogSettings()
-                {
-                    PlanId = plan.Id,
-                    PoolSize = 0,
-                    EncryptedApiKey = await this.aesEncryptionHelper.EncryptAsync(
-                        Guid.NewGuid().ToString())
-                };
-            }
+                throw new InvalidOperationException("Pull Dog settings were not installed properly on user.");
 
             var installationClient = await this.gitHubClientFactory.CreateInstallationClientAsync(request.InstallationId);
             var installedRepositories = await installationClient.GitHubApps.Installation.GetAllRepositoriesForCurrent();
@@ -130,21 +118,6 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
             await dataContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
-        }
-
-        private async Task<User> EnsureAuth0UserForGitHubUserAsync(
-            int userId, 
-            IEnumerable<EmailAddress> userEmails, 
-            CancellationToken cancellationToken)
-        {
-            var emailStrings = userEmails
-                .Select(x => x.Email)
-                .ToArray();
-            return
-                await this.mediator.Send(new GetAuth0UserFromGitHubUserIdQuery(userId), cancellationToken) ??
-                await this.mediator.Send(new GetAuth0UserFromEmailsQuery(emailStrings), cancellationToken) ??
-                await this.mediator.Send(new CreateAuth0UserCommand(emailStrings), cancellationToken) ??
-                throw new InvalidOperationException("No user could be created.");
         }
     }
 }

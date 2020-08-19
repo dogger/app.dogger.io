@@ -17,7 +17,6 @@ using Dogger.Domain.Queries.Clusters.GetConnectionDetails;
 using Dogger.Domain.Queries.Instances.GetContainerLogs;
 using Dogger.Domain.Queries.Instances.GetInstanceByName;
 using Dogger.Domain.Queries.Instances.GetProvisionedClustersWithInstancesForUser;
-using Dogger.Infrastructure;
 using Dogger.Infrastructure.Docker.Engine;
 using Dogger.Infrastructure.Docker.Yml;
 using Dogger.Tests.TestHelpers;
@@ -56,7 +55,7 @@ namespace Dogger.Tests.Controllers
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 mapper);
             controller.FakeAuthentication("some-identity-name");
@@ -88,7 +87,7 @@ namespace Dogger.Tests.Controllers
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 mapper);
 
@@ -134,7 +133,7 @@ namespace Dogger.Tests.Controllers
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 mapper);
 
@@ -185,7 +184,7 @@ namespace Dogger.Tests.Controllers
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 mapper);
 
@@ -228,7 +227,7 @@ namespace Dogger.Tests.Controllers
 
             var fakeMapper = Substitute.For<IMapper>();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 fakeMapper);
             controller.FakeAuthentication("some-identity-name");
@@ -273,7 +272,7 @@ namespace Dogger.Tests.Controllers
 
             var fakeMapper = Substitute.For<IMapper>();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 fakeMapper);
             controller.FakeAuthentication("some-identity-name");
@@ -309,7 +308,7 @@ namespace Dogger.Tests.Controllers
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 mapper);
             controller.FakeAuthentication("some-identity-name");
@@ -350,7 +349,7 @@ namespace Dogger.Tests.Controllers
 
             var fakeMapper = Substitute.For<IMapper>();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 fakeMapper);
             controller.FakeAuthentication("some-identity-name");
@@ -396,7 +395,7 @@ namespace Dogger.Tests.Controllers
 
             var fakeMapper = Substitute.For<IMapper>();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 fakeMapper);
             controller.FakeAuthentication("some-identity-name");
@@ -454,7 +453,7 @@ namespace Dogger.Tests.Controllers
 
             var fakeMapper = Substitute.For<IMapper>();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 fakeMapper);
             controller.FakeAuthentication("some-identity-name");
@@ -506,7 +505,7 @@ namespace Dogger.Tests.Controllers
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 mapper);
             controller.FakeAuthentication("some-identity-name");
@@ -554,7 +553,7 @@ namespace Dogger.Tests.Controllers
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 mapper);
             controller.FakeAuthentication("some-identity-name");
@@ -587,7 +586,7 @@ namespace Dogger.Tests.Controllers
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 mapper);
             controller.FakeAuthentication("main-some-identity-name");
@@ -615,7 +614,7 @@ namespace Dogger.Tests.Controllers
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 mapper);
             controller.FakeAuthentication("some-identity-name");
@@ -658,7 +657,7 @@ namespace Dogger.Tests.Controllers
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 mapper);
             controller.FakeAuthentication("some-identity-name");
@@ -709,7 +708,7 @@ namespace Dogger.Tests.Controllers
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 mapper);
 
@@ -760,7 +759,7 @@ namespace Dogger.Tests.Controllers
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 mapper);
 
@@ -793,7 +792,7 @@ namespace Dogger.Tests.Controllers
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 mapper);
 
@@ -813,7 +812,7 @@ namespace Dogger.Tests.Controllers
             var fakeMediator = Substitute.For<IMediator>();
             var mapper = AutoMapperFactory.CreateValidMapper();
 
-            var controller = new ClustersController(
+            var controller = new DealsController(
                 fakeMediator,
                 mapper);
 

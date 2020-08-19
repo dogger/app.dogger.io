@@ -13,7 +13,6 @@ using Microsoft.Extensions.Options;
 using Polly;
 using Renci.SshNet;
 using Renci.SshNet.Common;
-using File = System.IO.File;
 
 namespace Dogger.Infrastructure.Ssh
 {

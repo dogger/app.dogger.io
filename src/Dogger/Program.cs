@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using Dogger.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
@@ -12,8 +10,6 @@ using Dogger.Infrastructure.Database;
 using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Logging;
 using FluffySpoon.AspNet.NGrok;
-using Microsoft.AspNetCore.Http;
-using NSubstitute;
 using Serilog;
 
 namespace Dogger

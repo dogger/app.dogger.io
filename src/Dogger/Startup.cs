@@ -1,5 +1,4 @@
-﻿using Dogger.Infrastructure;
-using Dogger.Infrastructure.AspNet;
+﻿using Dogger.Infrastructure.AspNet;
 using Dogger.Infrastructure.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +24,6 @@ using Dogger.Infrastructure.Ioc;
 using FluffySpoon.AspNet.NGrok;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Octokit;
 
 namespace Dogger
 {

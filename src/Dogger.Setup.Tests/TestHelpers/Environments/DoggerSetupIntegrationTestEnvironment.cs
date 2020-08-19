@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Dogger.Tests.TestHelpers.Environments;
-using Dogger.Tests.TestHelpers.Environments.Dogger;
 
 namespace Dogger.Setup.Tests.TestHelpers.Environments
 {
