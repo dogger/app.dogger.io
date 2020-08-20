@@ -1,8 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromId;
+using Dogger.Domain.Queries.Plans.GetSupportedPlans;
+using Dogger.Domain.Queries.Plans.GetSupportedPullDogPlans;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
+using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
 
 namespace Dogger.Tests.Domain.Queries.Plans.GetPullDogPlanFromId
 {
@@ -10,34 +14,28 @@ namespace Dogger.Tests.Domain.Queries.Plans.GetPullDogPlanFromId
     public class GetPullDogPlanFromIdQueryTest
     {
         [TestMethod]
-        [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_SomeIntegrationCondition_SomeOutcome()
-        {
-            //Arrange
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
-
-            //Act
-            var result = await environment.Mediator.Send(
-                new GetPullDogPlanFromIdQuery());
-
-            //Assert
-            Assert.Fail("Not implemented.");
-        }
-
-        [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task Handle_SomeUnitCondition_SomeOutcome()
+        public async Task Handle_ValidPlanSpecified_ReturnsMatchingPlan()
         {
             //Arrange
-            var handler = new GetPullDogPlanFromIdQueryHandler();
+            var fakeMediator = Substitute.For<IMediator>();
+            fakeMediator
+                .Send(Arg.Any<GetSupportedPullDogPlansQuery>())
+                .Returns(new[]
+                {
+                    new PullDogPlan("non-matching", 0, 0), 
+                    new PullDogPlan("some-id", 0, 0)
+                });
+
+            var handler = new GetPullDogPlanFromIdQueryHandler(fakeMediator);
 
             //Act
             var result = await handler.Handle(
-                new GetPullDogPlanFromIdQuery(),
+                new GetPullDogPlanFromIdQuery("some-id"),
                 default);
 
             //Assert
-            Assert.Fail("Not implemented.");
+            Assert.AreEqual("some-id", result.Id);
         }
     }
 }

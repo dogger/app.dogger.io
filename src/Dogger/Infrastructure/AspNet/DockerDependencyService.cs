@@ -131,8 +131,10 @@ namespace Dogger.Infrastructure.AspNet
             if (this.webhookEndpointService == null)
                 return;
 
-            var existingEndpoints = await this.webhookEndpointService.ListAsync();
-            foreach (var endpoint in existingEndpoints.Data)
+            var existingEndpoints = await this.webhookEndpointService
+                .ListAutoPagingAsync()
+                .ToListAsync();
+            foreach (var endpoint in existingEndpoints)
             {
                 try
                 {
@@ -153,7 +155,9 @@ namespace Dogger.Infrastructure.AspNet
             if (!ShouldDeleteExistingData())
                 return;
 
-            var customersToDelete = await this.customerService.ListAsync();
+            var customersToDelete = await this.customerService
+                .ListAutoPagingAsync()
+                .ToListAsync();
             foreach (var customer in customersToDelete)
             {
                 if (DateTime.Now - customer.Created < TimeSpan.FromHours(1))

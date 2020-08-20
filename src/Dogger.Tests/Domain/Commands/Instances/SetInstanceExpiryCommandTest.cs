@@ -63,6 +63,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             {
                 var instances = await dataContext
                     .Instances
+                    .AsQueryable()
                     .ToArrayAsync();
 
                 Assert.AreEqual(1, instances.Length);

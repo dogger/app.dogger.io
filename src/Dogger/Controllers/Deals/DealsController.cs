@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Dogger.Domain.Commands.Payment.AdjustUserBalance;
 using Dogger.Domain.Commands.Payment.ApplyCouponCodeForUser;
 using Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails;
 using Dogger.Domain.Queries.Payment.GetCouponByCode;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
+using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 
 namespace Dogger.Controllers.Deals
 {
@@ -27,7 +30,8 @@ namespace Dogger.Controllers.Deals
         [AllowAnonymous]
         public async Task<IActionResult> ApplyAppSumo([FromBody] ApplyAppSumoRequest request)
         {
-            if (!request.Code.StartsWith("APPSUMO", StringComparison.InvariantCultureIgnoreCase))
+            var codeRequested = request.Code.ToUpperInvariant();
+            if (!codeRequested.StartsWith("APPSUMO", StringComparison.InvariantCulture))
                 return BadRequest("Invalid coupon code for deal.");
 
             var appSumoPlan = await this.mediator.Send(new GetPullDogPlanFromSettingsQuery(
@@ -45,18 +49,33 @@ namespace Dogger.Controllers.Deals
                     Plan = appSumoPlan
                 });
 
-            var couponCode = await this.mediator.Send(new GetCouponByCodeQuery(request.Code));
+            var couponCode = await this.mediator.Send(new GetCouponByCodeQuery(codeRequested));
             if (couponCode == null)
                 return NotFound("Coupon code does not exist.");
 
-            var applied = await this.mediator.Send(
-                new ApplyCouponCodeForUserCommand(
-                    user, 
-                    request.Code));
+            var applied = await this.mediator.Send(new ApplyCouponCodeForUserCommand(user, codeRequested));
             if (!applied)
                 return BadRequest("The code was not applied.");
 
+            await this.mediator.Send(new AdjustUserBalanceCommand(
+                user,
+                GetAmountToCompensateForInHundreds(couponCode, appSumoPlan),
+                $"DEAL_{codeRequested}"));
+
             return Ok();
+        }
+
+        private static int GetAmountToCompensateForInHundreds(PromotionCode couponCode, PullDogPlan appSumoPlan)
+        {
+            var percentageOff = couponCode.Coupon.PercentOff;
+            if (percentageOff == null)
+                throw new InvalidOperationException("Expected AppSumo coupon to have a percentage off.");
+
+            var percentageOfOriginalPrice = 100 - percentageOff.Value;
+            var monthlyPriceAfterPercentageOff = (int) Math.Floor((appSumoPlan.PriceInHundreds / 100m) * percentageOfOriginalPrice);
+
+            var yearlyPriceAfterPercentageOff = monthlyPriceAfterPercentageOff * 12;
+            return yearlyPriceAfterPercentageOff;
         }
     }
 

@@ -23,6 +23,7 @@ namespace Dogger.Domain.Queries.Instances.GetExpiredInstances
             var now = DateTime.UtcNow;
             return await this.dataContext
                 .Instances
+                .AsQueryable()
                 .Where(x => 
                     x.ExpiresAtUtc != null && 
                     x.ExpiresAtUtc < now)

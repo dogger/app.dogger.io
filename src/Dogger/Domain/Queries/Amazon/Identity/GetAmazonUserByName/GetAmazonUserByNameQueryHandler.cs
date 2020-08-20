@@ -19,7 +19,9 @@ namespace Dogger.Domain.Queries.Amazon.Identity.GetAmazonUserByName
 
         public async Task<AmazonUser> Handle(GetAmazonUserByNameQuery request, CancellationToken cancellationToken)
         {
-            var amazonUser = await this.dataContext.AmazonUsers
+            var amazonUser = await this.dataContext
+                .AmazonUsers
+                .AsQueryable()
                 .Where(x => x.Name == request.Name)
                 .SingleOrDefaultAsync(cancellationToken);
             return amazonUser;

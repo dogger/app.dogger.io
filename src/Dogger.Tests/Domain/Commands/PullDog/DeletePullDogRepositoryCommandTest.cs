@@ -49,8 +49,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
             });
 
-            Assert.AreEqual(1, await environment.DataContext.PullDogRepositories.CountAsync());
-            Assert.AreEqual(2, await environment.DataContext.PullDogPullRequests.CountAsync());
+            Assert.AreEqual(1, await environment.DataContext.PullDogRepositories.AsQueryable().CountAsync());
+            Assert.AreEqual(2, await environment.DataContext.PullDogPullRequests.AsQueryable().CountAsync());
 
             //Act
             await environment.Mediator.Send(new DeletePullDogRepositoryCommand(
@@ -59,8 +59,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Assert
             await environment.WithFreshDataContext(async dataContext =>
             {
-                Assert.AreEqual(0, await dataContext.PullDogRepositories.CountAsync());
-                Assert.AreEqual(0, await dataContext.PullDogPullRequests.CountAsync());
+                Assert.AreEqual(0, await dataContext.PullDogRepositories.AsQueryable().CountAsync());
+                Assert.AreEqual(0, await dataContext.PullDogPullRequests.AsQueryable().CountAsync());
             });
         }
 
@@ -116,7 +116,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
             });
 
-            Assert.AreEqual(3, await environment.DataContext.PullDogRepositories.CountAsync());
+            Assert.AreEqual(3, await environment.DataContext.PullDogRepositories.AsQueryable().CountAsync());
 
             //Act
             await environment.Mediator.Send(new DeletePullDogRepositoryCommand(
@@ -127,6 +127,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             {
                 var repositories = await dataContext
                     .PullDogRepositories
+                    .AsQueryable()
                     .ToListAsync();
                 Assert.AreEqual(2, repositories.Count);
 

@@ -30,6 +30,7 @@ namespace Dogger.Domain.Queries.PullDog.GetRepositoriesForUser
         {
             var databaseRepositories = await dataContext
                 .PullDogRepositories
+                .AsQueryable()
                 .Where(x => x.PullDogSettings.UserId == request.UserId)
                 .ToListAsync(cancellationToken);
 

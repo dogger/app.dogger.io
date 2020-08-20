@@ -25,18 +25,21 @@ namespace Dogger.Domain.Queries.Payment.GetCouponByCode
             if (this.stripePromotionCodeService == null)
                 return null;
 
-            var promotionCodes = await this.stripePromotionCodeService.ListAsync(
-                new PromotionCodeListOptions()
-                {
-                    Code = request.Code,
-                    Expand = new List<string>()
+            return await this.stripePromotionCodeService
+                .ListAutoPagingAsync(
+                    new PromotionCodeListOptions()
                     {
-                        "data.coupon.applies_to"
-                    }
-                },
-                default,
-                cancellationToken);
-            return promotionCodes.Data.SingleOrDefault(x => x.Active);
+                        Code = request.Code,
+                        Expand = new List<string>()
+                        {
+                            "data.coupon.applies_to"
+                        }
+                    },
+                    default,
+                    cancellationToken)
+                .SingleOrDefaultAsync(
+                    x => x.Active, 
+                    cancellationToken);
         }
     }
 }

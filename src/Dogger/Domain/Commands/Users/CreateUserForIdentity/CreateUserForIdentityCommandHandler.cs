@@ -70,10 +70,12 @@ namespace Dogger.Domain.Commands.Users.CreateUserForIdentity
             if (this.stripeCustomerService == null)
                 return null;
 
-            var existingCustomersResponse = await this.stripeCustomerService.ListAsync(new CustomerListOptions()
-            {
-                Email = request.Email
-            });
+            var existingCustomersResponse = await this.stripeCustomerService
+                .ListAutoPagingAsync(new CustomerListOptions()
+                {
+                    Email = request.Email
+                })
+                .ToListAsync();
             var existingCustomer = existingCustomersResponse.FirstOrDefault();
             return existingCustomer;
         }
