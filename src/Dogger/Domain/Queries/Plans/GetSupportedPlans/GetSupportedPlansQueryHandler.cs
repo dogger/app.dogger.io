@@ -69,10 +69,7 @@ namespace Dogger.Domain.Queries.Plans.GetSupportedPlans
 
         private static int GetPullDogPriceFromBundle(Bundle bundle, int amount)
         {
-            var price = GetBasePriceFromBundle(bundle) * amount;
-            if (amount == 1)
-                price += GetDoggerEarningsFromBundle(bundle);
-
+            var price = GetBasePriceFromBundle(bundle) * amount * 4;
             return Normalize(price);
         }
 
