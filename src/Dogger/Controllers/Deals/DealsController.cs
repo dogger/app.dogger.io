@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Payment.AdjustUserBalance;
 using Dogger.Domain.Commands.Payment.ApplyCouponCodeForUser;
+using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
 using Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails;
 using Dogger.Domain.Queries.Payment.GetCouponByCode;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
@@ -61,6 +62,8 @@ namespace Dogger.Controllers.Deals
                 user,
                 GetAmountToCompensateForInHundreds(couponCode, appSumoPlan),
                 $"DEAL_{codeRequested}"));
+
+            await this.mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
 
             return Ok();
         }
