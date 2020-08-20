@@ -1,9 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Controllers.Deals;
 using Dogger.Domain.Commands.Payment.AdjustUserBalance;
 using Dogger.Domain.Commands.Payment.ApplyCouponCodeForUser;
+using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
 using Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails;
+using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Payment.GetCouponByCode;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
@@ -141,6 +144,15 @@ namespace Dogger.Tests.Controllers
                     args.CouponCode == "APPSUMO_TOTALLY_VALID_CODE"))
                 .Returns(true);
 
+            var user = new User()
+            {
+                Id = Guid.NewGuid()
+            };
+            fakeMediator
+                .Send(Arg.Is<InstallPullDogFromEmailsCommand>(args =>
+                    args.Emails.Single() == "some-email@example.com"))
+                .Returns(user);
+
             var controller = new DealsController(fakeMediator);
 
             //Act
@@ -179,6 +191,15 @@ namespace Dogger.Tests.Controllers
                     args.CouponCode == "APPSUMO_TOTALLY_VALID_CODE"))
                 .Returns(true);
 
+            var user = new User()
+            {
+                Id = Guid.NewGuid()
+            };
+            fakeMediator
+                .Send(Arg.Is<InstallPullDogFromEmailsCommand>(args =>
+                    args.Emails.Single() == "some-email@example.com"))
+                .Returns(user);
+
             var controller = new DealsController(fakeMediator);
 
             //Act
@@ -194,6 +215,56 @@ namespace Dogger.Tests.Controllers
                 .Send(Arg.Is<AdjustUserBalanceCommand>(args =>
                     args.IdempotencyId == "DEAL_APPSUMO_TOTALLY_VALID_CODE" &&
                     args.AdjustmentInHundreds == 120_00));
+        }
+        
+        [TestMethod]
+        public async Task ApplyAppSumo_ValidConditions_UpdatesSubscription()
+        {
+            //Arrange
+            var fakeMediator = Substitute.For<IMediator>();
+            fakeMediator
+                .Send(Arg.Any<GetPullDogPlanFromSettingsQuery>())
+                .Returns(new PullDogPlan("dummy", 40_00, 0));
+
+            fakeMediator
+                .Send(Arg.Is<GetCouponByCodeQuery>(args =>
+                    args.Code == "APPSUMO_TOTALLY_VALID_CODE"))
+                .Returns(new PromotionCode()
+                {
+                    Coupon = new Coupon()
+                    {
+                        PercentOff = 75
+                    }
+                });
+
+            fakeMediator
+                .Send(Arg.Is<ApplyCouponCodeForUserCommand>(args =>
+                    args.CouponCode == "APPSUMO_TOTALLY_VALID_CODE"))
+                .Returns(true);
+
+            var user = new User()
+            {
+                Id = Guid.NewGuid()
+            };
+            fakeMediator
+                .Send(Arg.Is<InstallPullDogFromEmailsCommand>(args =>
+                    args.Emails.Single() == "some-email@example.com"))
+                .Returns(user);
+
+            var controller = new DealsController(fakeMediator);
+
+            //Act
+            await controller.ApplyAppSumo(new ApplyAppSumoRequest()
+            {
+                Email = "some-email@example.com",
+                Code = "APPSUMO_TOTALLY_VALID_CODE"
+            });
+
+            //Assert
+            await fakeMediator
+                .Received(1)
+                .Send(Arg.Is<UpdateUserSubscriptionCommand>(args =>
+                    args.UserId == user.Id));
         }
     }
 }
