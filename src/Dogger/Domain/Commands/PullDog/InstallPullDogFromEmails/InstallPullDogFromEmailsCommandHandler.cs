@@ -52,7 +52,7 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails
 
                 user.PullDogSettings = new PullDogSettings()
                 {
-                    PlanId = request.Plan?.Id ?? doggerDemoPlan.Id,
+                    PlanId = request.Plan?.DoggerPlan?.Id ?? doggerDemoPlan.Id,
                     PoolSize = request.Plan?.PoolSize ?? 0,
                     EncryptedApiKey = await this.aesEncryptionHelper.EncryptAsync(
                         Guid.NewGuid().ToString())

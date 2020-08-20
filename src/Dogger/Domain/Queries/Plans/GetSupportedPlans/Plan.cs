@@ -20,6 +20,9 @@ namespace Dogger.Domain.Queries.Plans.GetSupportedPlans
             this.PriceInHundreds = priceInHundreds;
             this.Bundle = bundle;
             this.PullDogPlans = pullDogPlans;
+
+            foreach (var pullDogPlan in pullDogPlans)
+                pullDogPlan.DoggerPlan = this;
         }
     }
 }

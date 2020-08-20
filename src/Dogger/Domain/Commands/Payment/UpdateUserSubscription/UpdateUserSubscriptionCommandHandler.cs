@@ -226,7 +226,7 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
                     user.PullDogSettings.PoolSize),
                 cancellationToken);
             if (pullDogPlan == null)
-                throw new InvalidOperationException("Could not find a pull dog plan that matched.");
+                throw new InvalidOperationException("Could not find a Pull Dog plan that matched.");
 
             var availablePullDogPlans = await this.mediator.Send(
                 new GetSupportedPullDogPlansQuery(),

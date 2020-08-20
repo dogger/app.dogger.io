@@ -86,6 +86,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromEmails
                     .Include(x => x.PullDogSettings)
                     .ThenInclude(x => x.Repositories)
                     .SingleAsync();
+
                 var settings = user.PullDogSettings;
                 Assert.IsNotNull(settings);
             });
