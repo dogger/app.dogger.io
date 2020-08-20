@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Dogger.Infrastructure.Ioc;
-using Microsoft.Extensions.DependencyInjection;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -38,6 +34,7 @@ namespace Microsoft.Extensions.DependencyInjection
             where TService : class
             where TImplementation : class, TService
         {
+            services.AddSingleton<TImplementation>();
             services.AddOptionalSingleton<TService, TImplementation>(
                 provider => provider.GetRequiredService<TImplementation>(),
                 () => condition);

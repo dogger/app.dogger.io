@@ -10,7 +10,6 @@ using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Queries.Users.GetUserById;
 using Dogger.Tests.TestHelpers;
-using Dogger.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

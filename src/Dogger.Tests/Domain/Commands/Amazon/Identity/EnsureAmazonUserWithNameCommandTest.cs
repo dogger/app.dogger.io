@@ -7,7 +7,6 @@ using Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonUserWithName;
 using Dogger.Domain.Models;
 using Dogger.Infrastructure.Encryption;
 using Dogger.Tests.TestHelpers;
-using Dogger.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

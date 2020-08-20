@@ -47,6 +47,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             {
                 var repositories = await dataContext
                     .PullDogRepositories
+                    .AsQueryable()
                     .ToListAsync();
                 Assert.AreEqual(2, repositories.Count);
 

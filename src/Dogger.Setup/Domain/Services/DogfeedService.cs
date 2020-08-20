@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
@@ -14,7 +11,6 @@ using Dogger.Domain.Queries.Amazon.Lightsail.GetAllInstances;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLoadBalancerByName;
 using Dogger.Domain.Services.Provisioning;
-using Dogger.Infrastructure;
 using Dogger.Infrastructure.Time;
 using Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance;
 using MediatR;

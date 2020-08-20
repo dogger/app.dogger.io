@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Dogger.Infrastructure;
 using Dogger.Infrastructure.Configuration;
 using Dogger.Infrastructure.Logging;
 using Dogger.Setup.Domain.Services;

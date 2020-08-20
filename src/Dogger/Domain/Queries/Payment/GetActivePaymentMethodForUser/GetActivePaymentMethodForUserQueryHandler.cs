@@ -22,12 +22,16 @@ namespace Dogger.Domain.Queries.Payment.GetActivePaymentMethodForUser
             if (this.stripePaymentMethodService == null)
                 return null;
 
-            var paymentMethods = await this.stripePaymentMethodService.ListAsync(new PaymentMethodListOptions()
-            {
-                Customer = request.User.StripeCustomerId,
-                Type = "card"
-            }, default, cancellationToken);
-            return paymentMethods.SingleOrDefault();
+            return await this.stripePaymentMethodService
+                .ListAutoPagingAsync(
+                    new PaymentMethodListOptions()
+                    {
+                        Customer = request.User.StripeCustomerId,
+                        Type = "card"
+                    }, 
+                    default, 
+                    cancellationToken)
+                .SingleOrDefaultAsync(cancellationToken);
         }
     }
 }

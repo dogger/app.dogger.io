@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Auth0.CreateAuth0User;
+using Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails;
 using Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
 using Dogger.Domain.Models;
@@ -13,7 +14,6 @@ using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.TestHelpers;
-using Dogger.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +23,7 @@ using NSubstitute;
 using Octokit;
 using User = Octokit.User;
 
-namespace Dogger.Tests.Domain.Commands.PullDog
+namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromGitHub
 {
     [TestClass]
     public class InstallPullDogFromGitHubCommandTest
@@ -121,9 +121,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
 
             fakeMediator
-                .Send(Arg.Is<EnsureUserForIdentityCommand>(args =>
-                    args.Email == "email-2@example.com" &&
-                    args.IdentityName == "auth0-user-id"))
+                .Send(Arg.Is<InstallPullDogFromEmailsCommand>(args =>
+                    args.Emails.First() == "email-2@example.com"))
                 .Returns(userInDatabase);
 
             var fakeGitHubInstallationClient = await fakeGitHubClientFactory.CreateInstallationClientAsync(1337);
@@ -173,192 +172,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_ExistingAuth0UserByEmailsPresent_SetsSettingsOnUser()
-        {
-            //Arrange
-            var fakeMediator = Substitute.For<IMediator>();
-            var fakeGitHubClientFactory = Substitute.For<IGitHubClientFactory>();
-
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
-            {
-                IocConfiguration = services =>
-                {
-                    services.AddSingleton(fakeGitHubClientFactory);
-                    services.AddSingleton(fakeMediator);
-                }
-            });
-
-            var userInDatabase = new Dogger.Domain.Models.User() {
-                StripeCustomerId = "dummy"
-            };
-            await environment.DataContext.Users.AddAsync(userInDatabase);
-            await environment.DataContext.SaveChangesAsync();
-
-            fakeMediator
-                .Send(Arg.Any<GetDemoPlanQuery>())
-                .Returns(
-                    new Dogger.Domain.Queries.Plans.GetSupportedPlans.Plan(
-                        "demo-plan-id",
-                        1337,
-                        new Bundle()
-                        {
-                            Price = 1337,
-                            BundleId = "demo-plan-id"
-                        },
-                        Array.Empty<PullDogPlan>()));
-
-            fakeMediator
-                .Send(Arg.Any<GetAuth0UserFromEmailsQuery>())
-                .Returns(new global::Auth0.ManagementApi.Models.User()
-                {
-                    UserId = "auth0-user-id"
-                });
-
-            fakeMediator
-                .Send(Arg.Is<EnsureUserForIdentityCommand>(args =>
-                    args.Email == "email-2@example.com" &&
-                    args.IdentityName == "auth0-user-id"))
-                .Returns(userInDatabase);
-
-            var fakeGitHubInstallationClient = await fakeGitHubClientFactory.CreateInstallationClientAsync(1337);
-            fakeGitHubInstallationClient
-                .GitHubApps
-                .Installation
-                .GetAllRepositoriesForCurrent()
-                .Returns(new RepositoriesResponse(0, Array.Empty<Repository>()));
-
-            var fakeGitHubClient = await fakeGitHubClientFactory.CreateInstallationInitiatorClientAsync("some-code");
-            fakeGitHubClient
-                .User
-                .Current()
-                .Returns(new User());
-
-            fakeGitHubClient
-                .User
-                .Email
-                .GetAll()
-                .Returns(new[]
-                {
-                    new EmailAddress("email-1@example.com", true, false, EmailVisibility.Public),
-                    new EmailAddress("email-2@example.com", true, true, EmailVisibility.Public),
-                    new EmailAddress("email-3@example.com", true, false, EmailVisibility.Public)
-                });
-
-            //Act
-            await environment.Mediator.Send(new InstallPullDogFromGitHubCommand(
-                "some-code",
-                1337));
-
-            //Assert
-            await environment.WithFreshDataContext(async dataContext =>
-            {
-                var user = await dataContext
-                    .Users
-                    .Include(x => x.PullDogSettings)
-                    .ThenInclude(x => x.Repositories)
-                    .SingleAsync();
-                var settings = user.PullDogSettings;
-                Assert.IsNotNull(settings);
-            });
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_NoExistingAuth0UserPresent_CreatesNewAuth0User()
-        {
-            //Arrange
-            var fakeMediator = Substitute.For<IMediator>();
-            var fakeGitHubClientFactory = Substitute.For<IGitHubClientFactory>();
-
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
-            {
-                IocConfiguration = services =>
-                {
-                    services.AddSingleton(fakeGitHubClientFactory);
-                    services.AddSingleton(fakeMediator);
-                }
-            });
-
-            var userInDatabase = new Dogger.Domain.Models.User()
-            {
-                StripeCustomerId = "dummy"
-            };
-            await environment.DataContext.Users.AddAsync(userInDatabase);
-            await environment.DataContext.SaveChangesAsync();
-
-            fakeMediator
-                .Send(Arg.Any<GetDemoPlanQuery>())
-                .Returns(
-                    new Dogger.Domain.Queries.Plans.GetSupportedPlans.Plan(
-                        "demo-plan-id",
-                        1337,
-                        new Bundle()
-                        {
-                            Price = 1337,
-                            BundleId = "demo-plan-id"
-                        },
-                        Array.Empty<PullDogPlan>()));
-
-            fakeMediator
-                .Send(Arg.Any<CreateAuth0UserCommand>())
-                .Returns(new global::Auth0.ManagementApi.Models.User()
-                {
-                    UserId = "auth0-user-id"
-                });
-
-            fakeMediator
-                .Send(Arg.Is<EnsureUserForIdentityCommand>(args =>
-                    args.Email == "email-2@example.com" &&
-                    args.IdentityName == "auth0-user-id"))
-                .Returns(userInDatabase);
-
-            var fakeGitHubInstallationClient = await fakeGitHubClientFactory.CreateInstallationClientAsync(1337);
-            fakeGitHubInstallationClient
-                .GitHubApps
-                .Installation
-                .GetAllRepositoriesForCurrent()
-                .Returns(new RepositoriesResponse(0, Array.Empty<Repository>()));
-
-            var fakeGitHubClient = await fakeGitHubClientFactory.CreateInstallationInitiatorClientAsync("some-code");
-            fakeGitHubClient
-                .User
-                .Current()
-                .Returns(new User());
-
-            fakeGitHubClient
-                .User
-                .Email
-                .GetAll()
-                .Returns(new[]
-                {
-                    new EmailAddress("email-1@example.com", true, false, EmailVisibility.Public),
-                    new EmailAddress("email-2@example.com", true, true, EmailVisibility.Public),
-                    new EmailAddress("email-3@example.com", true, false, EmailVisibility.Public)
-                });
-
-            //Act
-            await environment.Mediator.Send(new InstallPullDogFromGitHubCommand(
-                "some-code",
-                1337));
-
-            //Assert
-            await environment.WithFreshDataContext(async dataContext =>
-            {
-                var user = await dataContext
-                    .Users
-                    .Include(x => x.PullDogSettings)
-                    .SingleAsync();
-                var settings = user.PullDogSettings;
-                Assert.IsNotNull(settings);
-            });
-
-            await fakeMediator
-                .Received(1)
-                .Send(Arg.Any<CreateAuth0UserCommand>());
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_PullDogSettingsAlreadyExist_UpdatesInstallationId()
         {
             //Arrange
@@ -402,9 +215,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
 
             fakeMediator
-                .Send(Arg.Is<EnsureUserForIdentityCommand>(args =>
-                    args.Email == "email-2@example.com" &&
-                    args.IdentityName == "auth0-user-id"))
+                .Send(Arg.Is<InstallPullDogFromEmailsCommand>(args =>
+                    args.Emails.First() == "email-2@example.com"))
                 .Returns(userInDatabase);
 
             var fakeGitHubInstallationClient = await fakeGitHubClientFactory.CreateInstallationClientAsync(1337);

@@ -3,7 +3,6 @@ using AutoMapper;
 using Dogger.Domain.Commands.Payment.ApplyCouponCodeForUser;
 using Dogger.Domain.Commands.Payment.SetActivePaymentMethodForUser;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
-using Dogger.Domain.Queries.Payment;
 using Dogger.Domain.Queries.Payment.GetActivePaymentMethodForUser;
 using Dogger.Domain.Queries.Payment.GetCouponForUser;
 using MediatR;

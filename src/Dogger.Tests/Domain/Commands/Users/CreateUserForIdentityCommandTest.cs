@@ -6,7 +6,6 @@ using Dogger.Domain.Commands.Users.CreateUserForIdentity;
 using Dogger.Domain.Models;
 using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
-using Dogger.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

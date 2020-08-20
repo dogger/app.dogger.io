@@ -25,6 +25,7 @@ namespace Dogger.Domain.Commands.PullDog.DeleteAllPullDogInstancesForUser
         {
             var instancesToDelete = await this.dataContext
                 .Instances
+                .AsQueryable()
                 .Where(x =>
                     x.PullDogPullRequest != null &&
                     x.PullDogPullRequest!.PullDogRepository.PullDogSettings.UserId == request.UserId)

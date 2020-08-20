@@ -2,12 +2,11 @@
 using Dogger.Controllers.Payment;
 using Dogger.Domain.Commands.Payment.ApplyCouponCodeForUser;
 using Dogger.Domain.Commands.Payment.SetActivePaymentMethodForUser;
-using Dogger.Domain.Queries.Payment;
 using Dogger.Domain.Queries.Payment.GetActivePaymentMethodForUser;
 using Dogger.Domain.Queries.Payment.GetCouponForUser;
-using Dogger.Infrastructure;
 using Dogger.Tests.TestHelpers;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Stripe;
@@ -67,8 +66,7 @@ namespace Dogger.Tests.Controllers
             var response = await controller.GetCoupon();
 
             //Assert
-            var coupon = response.ToObject<CouponCodeResponse>();
-            Assert.IsNull(coupon);
+            Assert.AreEqual(StatusCodes.Status204NoContent, response.GetStatusCode());
         }
 
         [TestMethod]

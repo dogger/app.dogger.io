@@ -253,6 +253,7 @@ namespace Dogger.Infrastructure.Ioc
             this.Services.AddOptionalSingleton<WebhookEndpointService>(isStripeConfigured);
             this.Services.AddOptionalSingleton<PromotionCodeService>(isStripeConfigured);
             this.Services.AddOptionalSingleton<CouponService>(isStripeConfigured);
+            this.Services.AddOptionalSingleton<CustomerBalanceTransactionService>(isStripeConfigured);
 
             this.Services.AddOptionalSingleton<IStripeClient, StripeClient>(
                 _ => new StripeClient(
@@ -284,7 +285,8 @@ namespace Dogger.Infrastructure.Ioc
                             .ConfigureWarnings(w => w
                                 .Ignore(InMemoryEventId.TransactionIgnoredWarning));
                     }
-                });
+                },
+                1);
 
             this.Services.AddScoped<IDatabaseMigrator, DatabaseMigrator>();
         }

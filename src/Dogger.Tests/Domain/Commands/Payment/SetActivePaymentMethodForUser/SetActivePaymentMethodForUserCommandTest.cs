@@ -154,12 +154,13 @@ namespace Dogger.Tests.Domain.Commands.Payment.SetActivePaymentMethodForUser
             string stripeCustomerId,
             string paymentMethodId)
         {
-            var list = await paymentMethodService.ListAsync(new PaymentMethodListOptions()
-            {
-                Customer = stripeCustomerId,
-                Type = "card"
-            });
-            return list.Data.SingleOrDefault(x => x.Id == paymentMethodId);
+            return await paymentMethodService
+                .ListAutoPagingAsync(new PaymentMethodListOptions()
+                {
+                    Customer = stripeCustomerId,
+                    Type = "card"
+                })
+                .SingleOrDefaultAsync(x => x.Id == paymentMethodId);
         }
 
         private static async Task<PaymentMethod> CreatePaymentMethodAsync(PaymentMethodService paymentMethodService)

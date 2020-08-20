@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Dogger.Domain.Queries.Users.GetUserByIdentityName
 {
-    public class GetUserByIdentityNameQuery : IRequest<User>
+    public class GetUserByIdentityNameQuery : IRequest<User?>
     {
         public string IdentityName { get; }
 

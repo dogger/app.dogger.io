@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
@@ -13,10 +12,7 @@ using Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance;
 using Dogger.Setup.Infrastructure;
 using Dogger.Setup.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers;
-using Dogger.Tests.TestHelpers.Environments;
-using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

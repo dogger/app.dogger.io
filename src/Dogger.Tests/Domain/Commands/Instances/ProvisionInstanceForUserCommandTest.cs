@@ -14,7 +14,6 @@ using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Ssh;
 using Dogger.Infrastructure.Time;
 using Dogger.Tests.TestHelpers;
-using Dogger.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

@@ -3,7 +3,6 @@ using System.Net.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using Dogger.Tests.TestHelpers;
-using Dogger.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;

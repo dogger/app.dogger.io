@@ -6,7 +6,6 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetRepositoriesForUser;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.TestHelpers;
-using Dogger.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

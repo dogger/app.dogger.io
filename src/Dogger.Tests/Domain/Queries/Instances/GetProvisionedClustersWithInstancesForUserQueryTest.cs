@@ -6,7 +6,6 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Queries.Instances.GetProvisionedClustersWithInstancesForUser;
 using Dogger.Tests.TestHelpers;
-using Dogger.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;

@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using Dogger.Infrastructure.IO;
 using Dogger.Tests.TestHelpers;
 using NSubstitute;
 using Octokit;

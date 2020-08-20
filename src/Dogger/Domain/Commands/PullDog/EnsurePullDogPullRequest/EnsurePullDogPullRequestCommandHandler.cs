@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using MediatR;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -41,11 +42,17 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest
             }
             catch (DbUpdateException ex) when (ex.IsUniqueConstraintViolation())
             {
-                return await GetExistingPullRequestAsync(request, cancellationToken);
+                var conflictingPullRequest = await GetExistingPullRequestAsync(request, cancellationToken);
+                return conflictingPullRequest!;
+            }
+            catch (DbUpdateException dbe) when(dbe.InnerException is SqlException sqe)
+            {
+                this.logger.Error("An unknown database error occured while ensuring a Pull Dog pull request with code {Code}.", sqe.Number);
+                throw;
             }
         }
 
-        private async Task<PullDogPullRequest> GetExistingPullRequestAsync(EnsurePullDogPullRequestCommand request, CancellationToken cancellationToken)
+        private async Task<PullDogPullRequest?> GetExistingPullRequestAsync(EnsurePullDogPullRequestCommand request, CancellationToken cancellationToken)
         {
             return await this.dataContext
                 .PullDogPullRequests

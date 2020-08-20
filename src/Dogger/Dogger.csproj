@@ -70,6 +70,7 @@
     <PackageReference Include="SSH.NET" Version="2016.1.0" />
     <PackageReference Include="Stripe.net" Version="37.33.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
+    <PackageReference Include="System.Linq.Async" Version="4.1.1" />
     <PackageReference Include="YamlDotNet" Version="8.1.2" />
   </ItemGroup>
 

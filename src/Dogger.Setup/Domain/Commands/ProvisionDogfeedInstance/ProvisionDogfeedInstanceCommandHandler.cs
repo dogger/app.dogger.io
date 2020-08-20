@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Clusters.EnsureClusterWithId;
@@ -14,9 +12,7 @@ using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Infrastructure.IO;
 using Dogger.Setup.Infrastructure;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using File = System.IO.File;
 using Instance = Dogger.Domain.Models.Instance;
 
 namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance

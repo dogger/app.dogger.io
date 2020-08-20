@@ -6,7 +6,6 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Tests.TestHelpers;
-using Dogger.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

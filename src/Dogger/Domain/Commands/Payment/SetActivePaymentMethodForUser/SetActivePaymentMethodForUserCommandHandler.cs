@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Infrastructure.Ioc;
@@ -31,11 +32,15 @@ namespace Dogger.Domain.Commands.Payment.SetActivePaymentMethodForUser
             if (user.StripeCustomerId == null)
                 throw new NoStripeCustomerIdException();
 
-            var existingPaymentMethods = await this.paymentMethodService.ListAsync(new PaymentMethodListOptions()
-            {
-                Customer = user.StripeCustomerId,
-                Type = "card"
-            }, cancellationToken: cancellationToken);
+            var existingPaymentMethods = await this.paymentMethodService
+                .ListAutoPagingAsync(
+                    new PaymentMethodListOptions()
+                    {
+                        Customer = user.StripeCustomerId,
+                        Type = "card"
+                    }, 
+                    cancellationToken: cancellationToken)
+                .ToListAsync(cancellationToken);
 
             await this.paymentMethodService.AttachAsync(
                 request.PaymentMethodId,

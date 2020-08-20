@@ -12,7 +12,6 @@ using Dogger.Infrastructure.GitHub;
 using Dogger.Infrastructure.GitHub.Octokit;
 using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
-using Dogger.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -135,7 +134,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .Clusters
                     .Include(x => x.Instances)
                     .FirstOrDefaultAsync(x => x.Id == clusterId);
-                var refreshedInstance = await dataContext.Instances.FirstOrDefaultAsync(x => x.Name == "some-instance-name");
+                var refreshedInstance = await dataContext
+                    .Instances
+                    .AsQueryable()
+                    .FirstOrDefaultAsync(x => x.Name == "some-instance-name");
 
                 Assert.IsNotNull(refreshedInstance);
                 Assert.IsNotNull(refreshedCluster);
@@ -271,7 +273,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .Clusters
                     .Include(x => x.Instances)
                     .FirstOrDefaultAsync(x => x.Id == clusterId);
-                var refreshedInstance = await dataContext.Instances.FirstOrDefaultAsync(x => x.Name == "some-instance-name");
+                var refreshedInstance = await dataContext
+                    .Instances
+                    .AsQueryable()
+                    .FirstOrDefaultAsync(x => x.Name == "some-instance-name");
 
                 Assert.IsNull(refreshedInstance);
                 Assert.IsNotNull(refreshedCluster);
@@ -279,7 +284,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 Assert.AreEqual(1, refreshedCluster.Instances.Count);
                 Assert.AreNotEqual("some-instance-name", refreshedCluster.Instances.Single().Name);
 
-                Assert.AreEqual(1, await dataContext.PullDogPullRequests.CountAsync());
+                Assert.AreEqual(1, await dataContext
+                    .PullDogPullRequests
+                    .AsQueryable()
+                    .CountAsync());
             });
         }
 
@@ -410,7 +418,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .Clusters
                     .Include(x => x.Instances)
                     .FirstOrDefaultAsync(x => x.Id == clusterId);
-                var refreshedInstance = await dataContext.Instances.FirstOrDefaultAsync(x => x.Name == "some-instance-name");
+                var refreshedInstance = await dataContext
+                    .Instances
+                    .AsQueryable()
+                    .FirstOrDefaultAsync(x => x.Name == "some-instance-name");
 
                 Assert.IsNull(refreshedInstance);
                 Assert.IsNotNull(refreshedCluster);
@@ -418,7 +429,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 Assert.AreEqual(1, refreshedCluster.Instances.Count);
                 Assert.AreNotEqual("some-instance-name", refreshedCluster.Instances.Single().Name);
 
-                Assert.AreEqual(2, await dataContext.PullDogPullRequests.CountAsync());
+                Assert.AreEqual(2, await dataContext
+                    .PullDogPullRequests
+                    .AsQueryable()
+                    .CountAsync());
             });
         }
 
@@ -484,7 +498,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .Clusters
                     .Include(x => x.Instances)
                     .FirstOrDefaultAsync(x => x.Id == clusterId);
-                var refreshedInstance = await dataContext.Instances.FirstOrDefaultAsync(x => x.Name == "some-instance-name");
+                var refreshedInstance = await dataContext
+                    .Instances
+                    .AsQueryable()
+                    .FirstOrDefaultAsync(x => x.Name == "some-instance-name");
 
                 Assert.IsNull(refreshedInstance);
                 Assert.IsNotNull(refreshedCluster);

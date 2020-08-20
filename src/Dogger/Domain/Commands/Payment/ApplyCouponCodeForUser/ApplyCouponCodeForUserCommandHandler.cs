@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Queries.Payment.GetCouponByCode;
-using Dogger.Domain.Queries.Payment.GetCouponById;
 using Dogger.Infrastructure.Ioc;
 using MediatR;
 using Stripe;

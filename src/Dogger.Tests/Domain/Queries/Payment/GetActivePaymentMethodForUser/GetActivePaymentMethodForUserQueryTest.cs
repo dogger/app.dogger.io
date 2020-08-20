@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Payment.SetActivePaymentMethodForUser;
 using Dogger.Domain.Commands.Users.CreateUserForIdentity;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Payment.GetActivePaymentMethodForUser;
 using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;

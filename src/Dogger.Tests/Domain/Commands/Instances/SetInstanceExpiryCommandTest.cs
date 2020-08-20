@@ -6,7 +6,6 @@ using Dogger.Domain.Commands.Instances.RegisterInstanceAsProvisioned;
 using Dogger.Domain.Commands.Instances.SetInstanceExpiry;
 using Dogger.Domain.Models;
 using Dogger.Tests.TestHelpers;
-using Dogger.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -64,6 +63,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             {
                 var instances = await dataContext
                     .Instances
+                    .AsQueryable()
                     .ToArrayAsync();
 
                 Assert.AreEqual(1, instances.Length);

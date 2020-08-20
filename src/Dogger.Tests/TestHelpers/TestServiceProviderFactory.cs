@@ -3,7 +3,6 @@ using System.Linq;
 using Amazon.IdentityManagement;
 using Amazon.Lightsail;
 using Dogger.Domain.Services.Amazon.Lightsail;
-using Dogger.Infrastructure;
 using Dogger.Infrastructure.AspNet;
 using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Time;
