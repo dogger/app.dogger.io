@@ -238,7 +238,7 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
             return new SubscriptionItemOptions()
             {
                 Id = existingSubscriptionItem?.Id,
-                Plan = pullDogPlan.Id,
+                Plan = $"{pullDogPlan.Id}_v2",
                 Quantity = 1
             };
         }

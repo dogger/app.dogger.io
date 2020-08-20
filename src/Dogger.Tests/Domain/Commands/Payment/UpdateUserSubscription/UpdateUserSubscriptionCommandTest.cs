@@ -310,7 +310,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     "some-subscription-id",
                     Arg.Is<SubscriptionUpdateOptions>(args =>
                         args.Prorate == true &&
-                        args.Items[0].Plan == "some-pull-dog-plan" &&
+                        args.Items[0].Plan == "some-pull-dog-plan_v2" &&
                         args.Items[0].Id == "some-subscription-item" &&
                         args.Items[0].Quantity == 1),
                     default,
@@ -395,7 +395,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     "some-subscription-id",
                     Arg.Is<SubscriptionUpdateOptions>(args =>
                         args.Prorate == true &&
-                        args.Items[0].Plan == "some-pull-dog-plan" &&
+                        args.Items[0].Plan == "some-pull-dog-plan_v2" &&
                         args.Items[0].Id == null &&
                         args.Items[0].Quantity == 1),
                     default,
@@ -684,7 +684,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     "some-subscription-id",
                     Arg.Is<SubscriptionUpdateOptions>(args =>
                         args.Prorate == true &&
-                        args.Items[0].Plan == "some-new-pull-dog-plan" &&
+                        args.Items[0].Plan == "some-new-pull-dog-plan_v2" &&
                         args.Items[0].Id == "some-subscription-item-id" &&
                         args.Items[0].Quantity == 1),
                     default,
