@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Auth0.CreateAuth0User;
+using Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails;
 using Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
 using Dogger.Domain.Models;
@@ -120,9 +121,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromGitHub
                 });
 
             fakeMediator
-                .Send(Arg.Is<EnsureUserForIdentityCommand>(args =>
-                    args.Email == "email-2@example.com" &&
-                    args.IdentityName == "auth0-user-id"))
+                .Send(Arg.Is<InstallPullDogFromEmailsCommand>(args =>
+                    args.Emails.First() == "email-2@example.com"))
                 .Returns(userInDatabase);
 
             var fakeGitHubInstallationClient = await fakeGitHubClientFactory.CreateInstallationClientAsync(1337);
@@ -215,9 +215,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromGitHub
                 });
 
             fakeMediator
-                .Send(Arg.Is<EnsureUserForIdentityCommand>(args =>
-                    args.Email == "email-2@example.com" &&
-                    args.IdentityName == "auth0-user-id"))
+                .Send(Arg.Is<InstallPullDogFromEmailsCommand>(args =>
+                    args.Emails.First() == "email-2@example.com"))
                 .Returns(userInDatabase);
 
             var fakeGitHubInstallationClient = await fakeGitHubClientFactory.CreateInstallationClientAsync(1337);

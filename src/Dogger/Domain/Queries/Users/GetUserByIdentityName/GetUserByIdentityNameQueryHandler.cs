@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Dogger.Domain.Queries.Users.GetUserByIdentityName
 {
-    public class GetUserByIdentityNameQueryHandler : IRequestHandler<GetUserByIdentityNameQuery, User>
+    public class GetUserByIdentityNameQueryHandler : IRequestHandler<GetUserByIdentityNameQuery, User?>
     {
         private readonly DataContext dataContext;
 
@@ -18,7 +18,7 @@ namespace Dogger.Domain.Queries.Users.GetUserByIdentityName
             this.dataContext = dataContext;
         }
 
-        public async Task<User> Handle(GetUserByIdentityNameQuery request, CancellationToken cancellationToken)
+        public async Task<User?> Handle(GetUserByIdentityNameQuery request, CancellationToken cancellationToken)
         {
             if(string.IsNullOrWhiteSpace(request.IdentityName))
                 throw new IdentityNameNotProvidedException();

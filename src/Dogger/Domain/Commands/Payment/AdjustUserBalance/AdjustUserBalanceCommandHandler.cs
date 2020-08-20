@@ -28,18 +28,20 @@ namespace Dogger.Domain.Commands.Payment.AdjustUserBalance
             if (this.stripeBalanceService == null)
                 return Unit.Value;
 
-            var idempotencyId = request.IdempotencyId.ToUpperInvariant();
-
-            var alreadyMadeAdjustment = await HasBalanceAdjustmentAlreadyBeenMadeAsync(request, cancellationToken);
+            var alreadyMadeAdjustment = await HasBalanceAdjustmentAlreadyBeenMadeAsync(
+                request, 
+                cancellationToken);
             if (alreadyMadeAdjustment)
                 return Unit.Value;
-
+            
+            var idempotencyId = SanitizeIdempotencyId(request);
             await this.stripeBalanceService.CreateAsync(
                 request.User.StripeCustomerId,
                 new CustomerBalanceTransactionCreateOptions()
                 {
                     Amount = -request.AdjustmentInHundreds,
                     Description = "Idempotency ID: " + idempotencyId,
+                    Currency = "usd",
                     Metadata = new Dictionary<string, string>()
                     {
                         {
@@ -53,6 +55,11 @@ namespace Dogger.Domain.Commands.Payment.AdjustUserBalance
             return Unit.Value;
         }
 
+        private static string SanitizeIdempotencyId(AdjustUserBalanceCommand request)
+        {
+            return request.IdempotencyId.ToUpperInvariant();
+        }
+
         private async Task<bool> HasBalanceAdjustmentAlreadyBeenMadeAsync(
             AdjustUserBalanceCommand request, 
             CancellationToken cancellationToken)
@@ -60,17 +67,19 @@ namespace Dogger.Domain.Commands.Payment.AdjustUserBalance
             if (this.stripeBalanceService == null)
                 throw new InvalidOperationException("Stripe balance service was not instantiated.");
 
-            return await this.stripeBalanceService
+            var existingAdjustments = await this.stripeBalanceService
                 .ListAutoPagingAsync(
                     request.User.StripeCustomerId,
                     default,
                     default,
                     cancellationToken)
+                .ToListAsync(cancellationToken);
+            
+            var idempotencyId = SanitizeIdempotencyId(request);
+            return existingAdjustments
                 .Select(x => x.Metadata)
                 .Where(x => x.ContainsKey(IdempotencyKeyName))
-                .AnyAsync(
-                    x => x[IdempotencyKeyName] == request.IdempotencyId,
-                    cancellationToken);
+                .Any(x => x[IdempotencyKeyName] == idempotencyId);
         }
     }
 }

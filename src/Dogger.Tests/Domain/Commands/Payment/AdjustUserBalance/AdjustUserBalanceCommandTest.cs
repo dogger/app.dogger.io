@@ -20,10 +20,13 @@ namespace Dogger.Tests.Domain.Commands.Payment.AdjustUserBalance
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var user = new User();
+            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
+            var customer = await stripeCustomerService.CreateAsync(new CustomerCreateOptions());
 
-            await environment.DataContext.Users.AddAsync(user);
-            await environment.DataContext.SaveChangesAsync();
+            var user = new User()
+            {
+                StripeCustomerId = customer.Id
+            };
 
             //Act
             await environment.Mediator.Send(
@@ -40,9 +43,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.AdjustUserBalance
                 .SingleOrDefaultAsync();
             Assert.IsNotNull(balanceAdjustment);
 
-            Assert.AreEqual(23_45, balanceAdjustment.Amount);
-            Assert.AreEqual("Idempotency ID: some-idempotency-id", balanceAdjustment.Description);
-            Assert.AreEqual("some-idempotency-id", balanceAdjustment.Metadata[AdjustUserBalanceCommandHandler.IdempotencyKeyName]);
+            Assert.AreEqual(-23_45, balanceAdjustment.Amount);
+            Assert.AreEqual("Idempotency ID: SOME-IDEMPOTENCY-ID", balanceAdjustment.Description);
+            Assert.AreEqual("SOME-IDEMPOTENCY-ID", balanceAdjustment.Metadata[AdjustUserBalanceCommandHandler.IdempotencyKeyName]);
         }
 
         [TestMethod]
@@ -52,10 +55,13 @@ namespace Dogger.Tests.Domain.Commands.Payment.AdjustUserBalance
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var user = new User();
+            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
+            var customer = await stripeCustomerService.CreateAsync(new CustomerCreateOptions());
 
-            await environment.DataContext.Users.AddAsync(user);
-            await environment.DataContext.SaveChangesAsync();
+            var user = new User()
+            {
+                StripeCustomerId = customer.Id
+            };
 
             //Act
             await environment.Mediator.Send(
@@ -65,37 +71,45 @@ namespace Dogger.Tests.Domain.Commands.Payment.AdjustUserBalance
                     "some-idempotency-id"));
 
             //Assert
-            Assert.Fail();
+            var refreshedCustomer = await stripeCustomerService.GetAsync(user.StripeCustomerId);
+            Assert.AreEqual(-23_45, refreshedCustomer.Balance);
         }
 
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_ExistingTransactionFound_DoesNothing()
+        public async Task Handle_ExistingTransactionAlreadyCreatedWithSameIdempotencyId_DoesNothing()
         {
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var user = new User();
+            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
+            var customer = await stripeCustomerService.CreateAsync(new CustomerCreateOptions());
 
-            await environment.DataContext.Users.AddAsync(user);
-            await environment.DataContext.SaveChangesAsync();
+            var user = new User()
+            {
+                StripeCustomerId = customer.Id
+            };
+
+            await environment.Mediator.Send(
+                new AdjustUserBalanceCommand(
+                    user,
+                    12_34,
+                    "some-idempotency-id"));
 
             //Act
             await environment.Mediator.Send(
                 new AdjustUserBalanceCommand(
                     user,
-                    23_45,
+                    45_67,
                     "some-idempotency-id"));
 
             //Assert
             var stripeBalanceService = environment.ServiceProvider.GetRequiredService<CustomerBalanceTransactionService>();
 
-            var balanceAdjustment = await stripeBalanceService
+            var balanceAdjustmentCount = await stripeBalanceService
                 .ListAutoPagingAsync(user.StripeCustomerId)
-                .SingleOrDefaultAsync();
-            Assert.IsNull(balanceAdjustment);
-
-            Assert.Fail();
+                .CountAsync();
+            Assert.AreEqual(1, balanceAdjustmentCount);
         }
 
         [TestMethod]
@@ -105,22 +119,30 @@ namespace Dogger.Tests.Domain.Commands.Payment.AdjustUserBalance
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var user = new User();
+            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
+            var customer = await stripeCustomerService.CreateAsync(new CustomerCreateOptions());
 
-            await environment.DataContext.Users.AddAsync(user);
-            await environment.DataContext.SaveChangesAsync();
+            var user = new User()
+            {
+                StripeCustomerId = customer.Id
+            };
 
             //Act
             await environment.Mediator.Send(
                 new AdjustUserBalanceCommand(
                     user,
-                    23_45,
-                    "some-idempotency-id"));
+                    1_00,
+                    "some-idempotency-id-1"));
+
+            await environment.Mediator.Send(
+                new AdjustUserBalanceCommand(
+                    user,
+                    2_00,
+                    "some-idempotency-id-2"));
 
             //Assert
-            var stripeBalanceService = environment.ServiceProvider.GetRequiredService<CustomerBalanceTransactionService>();
-
-            Assert.Fail();
+            var refreshedCustomer = await stripeCustomerService.GetAsync(user.StripeCustomerId);
+            Assert.AreEqual(-3_00, refreshedCustomer.Balance);
         }
     }
 }

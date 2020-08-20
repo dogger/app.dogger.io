@@ -67,7 +67,7 @@ namespace Dogger.Controllers.Deals
 
         private static int GetAmountToCompensateForInHundreds(PromotionCode couponCode, PullDogPlan appSumoPlan)
         {
-            var percentageOff = couponCode.Coupon.PercentOff;
+            var percentageOff = couponCode.Coupon?.PercentOff;
             if (percentageOff == null)
                 throw new InvalidOperationException("Expected AppSumo coupon to have a percentage off.");
 

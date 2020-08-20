@@ -66,7 +66,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromEmails
 
             fakeMediator
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(args =>
-                    args.Email == "email-2@example.com" &&
+                    args.Email == "email-1@example.com" &&
                     args.IdentityName == "auth0-user-id"))
                 .Returns(userInDatabase);
 
@@ -135,7 +135,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromEmails
 
             fakeMediator
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(args =>
-                    args.Email == "email-2@example.com" &&
+                    args.Email == "email-1@example.com" &&
                     args.IdentityName == "auth0-user-id"))
                 .Returns(userInDatabase);
 

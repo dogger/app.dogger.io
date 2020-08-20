@@ -19,12 +19,16 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails
         private readonly IMediator mediator;
         private readonly IAesEncryptionHelper aesEncryptionHelper;
 
+        private readonly DataContext dataContext;
+
         public InstallPullDogFromEmailsCommandHandler(
             IMediator mediator,
-            IAesEncryptionHelper aesEncryptionHelper)
+            IAesEncryptionHelper aesEncryptionHelper,
+            DataContext dataContext)
         {
             this.mediator = mediator;
             this.aesEncryptionHelper = aesEncryptionHelper;
+            this.dataContext = dataContext;
         }
 
         public async Task<DoggerUser> Handle(
@@ -53,6 +57,8 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails
                     EncryptedApiKey = await this.aesEncryptionHelper.EncryptAsync(
                         Guid.NewGuid().ToString())
                 };
+
+                await this.dataContext.SaveChangesAsync(cancellationToken);
             }
 
             return user;
