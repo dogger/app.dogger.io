@@ -37,9 +37,7 @@ namespace Dogger.Domain.Queries.Payment.GetCouponByCode
                     },
                     default,
                     cancellationToken)
-                .SingleOrDefaultAsync(
-                    x => x.Active, 
-                    cancellationToken);
+                .SingleOrDefaultAsync(cancellationToken);
         }
     }
 }
