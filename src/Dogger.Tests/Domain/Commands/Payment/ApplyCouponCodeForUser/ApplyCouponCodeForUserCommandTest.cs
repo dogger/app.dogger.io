@@ -62,6 +62,51 @@ namespace Dogger.Tests.Domain.Commands.Payment.ApplyCouponCodeForUser
             Assert.IsNotNull(customer?.Discount?.Coupon);
             Assert.AreEqual(1_00, customer.Discount.Coupon.AmountOff);
         }
+
+        [TestMethod]
+        [TestCategory(TestCategories.IntegrationCategory)]
+        public async Task Handle_ValidConditions_IncrementsRedemptionCountOnPromotionCode()
+        {
+            //Arrange
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
+
+            var user = await environment.Mediator.Send(
+                new CreateUserForIdentityCommand(
+                    TestClaimsPrincipalFactory.CreateWithIdentityName("some-identity-name")));
+            
+            var couponService = environment
+                .ServiceProvider
+                .GetRequiredService<CouponService>();
+            var coupon = await couponService.CreateAsync(
+                new CouponCreateOptions()
+                {
+                    AmountOff = 1_00,
+                    Duration = "forever",
+                    Currency = "USD"
+                });
+
+            var promotionCodeService = environment
+                .ServiceProvider
+                .GetRequiredService<PromotionCodeService>();
+            var promotionCode = await promotionCodeService.CreateAsync(
+                new PromotionCodeCreateOptions()
+                {
+                    Coupon = coupon.Id,
+                    Code = Guid.NewGuid()
+                        .ToString()
+                        .Replace("-", "")
+                });
+
+            //Act
+            var result = await environment.Mediator.Send(
+                new ApplyCouponCodeForUserCommand(user, promotionCode.Code));
+
+            //Assert
+            Assert.IsTrue(result);
+
+            var refreshedPromotionCode = await promotionCodeService.GetAsync(promotionCode.Id);
+            Assert.AreEqual(1, refreshedPromotionCode.TimesRedeemed);
+        }
     }
 }
 

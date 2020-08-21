@@ -33,11 +33,14 @@ namespace Dogger.Domain.Commands.Payment.ApplyCouponCodeForUser
             if (promotionCode == null)
                 return false;
 
+            if (promotionCode.TimesRedeemed >= promotionCode.MaxRedemptions)
+                return true;
+
             await this.stripeCustomerService.UpdateAsync(
                 request.User.StripeCustomerId,
                 new CustomerUpdateOptions()
                 {
-                    Coupon = promotionCode.Coupon.Id
+                    PromotionCode = promotionCode.Id
                 },
                 default,
                 cancellationToken);

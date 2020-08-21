@@ -45,7 +45,8 @@ namespace Dogger.Tests.Domain.Queries.Payment.GetCouponForUser
                     Coupon = coupon.Id,
                     Code = Guid.NewGuid()
                         .ToString()
-                        .Replace("-", "")
+                        .Replace("-", ""),
+                    Customer = user.StripeCustomerId
                 });
 
             await environment.Mediator.Send(new ApplyCouponCodeForUserCommand(user, promotionCode.Code));
