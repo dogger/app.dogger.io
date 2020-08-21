@@ -36,7 +36,7 @@ namespace Dogger.Controllers.Deals
                 return BadRequest("Invalid coupon code for deal.");
 
             var appSumoPlan = await this.mediator.Send(new GetPullDogPlanFromSettingsQuery(
-                "small_2_0",
+                "micro_2_0",
                 1));
             if (appSumoPlan == null)
                 throw new InvalidOperationException("Could not find AppSumo plan.");
