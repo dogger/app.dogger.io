@@ -70,14 +70,12 @@ namespace Dogger.Domain.Commands.Users.CreateUserForIdentity
             if (this.stripeCustomerService == null)
                 return null;
 
-            var existingCustomersResponse = await this.stripeCustomerService
+            return await this.stripeCustomerService
                 .ListAutoPagingAsync(new CustomerListOptions()
                 {
-                    Email = request.Email
+                    Email = request.Email.ToLowerInvariant()
                 })
-                .ToListAsync();
-            var existingCustomer = existingCustomersResponse.FirstOrDefault();
-            return existingCustomer;
+                .FirstOrDefaultAsync();
         }
 
         private async Task CreateNewStripeCustomerForUserAsync(User user, CreateUserForIdentityCommand request)
@@ -87,7 +85,7 @@ namespace Dogger.Domain.Commands.Users.CreateUserForIdentity
 
             var customer = await this.stripeCustomerService.CreateAsync(new CustomerCreateOptions()
             {
-                Email = request.Email,
+                Email = request.Email.ToLowerInvariant(),
                 Metadata = new Dictionary<string, string?>()
                 {
                     { "UserId", user.Id.ToString() },
