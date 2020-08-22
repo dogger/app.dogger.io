@@ -2,6 +2,12 @@
 {
     public class RepositoriesResponse
     {
-        public RepositoryResponse[]? Repositories { get; set; }
+        public RepositoriesResponse(
+            RepositoryResponse[] repositories)
+        {
+            this.Repositories = repositories;
+        }
+
+        public RepositoryResponse[] Repositories { get; }
     }
 }

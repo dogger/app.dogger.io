@@ -46,18 +46,19 @@ namespace Dogger.Controllers.Registry
 
         private async Task<IActionResult> HandleGetLoginAsync(User? authenticatedUser)
         {
-            var repositoryName = authenticatedUser?.Id == null ? "demo" : authenticatedUser.Id.ToString();
-            var repositoryResponse = await this.mediator.Send(new EnsureRepositoryWithNameCommand(repositoryName)
-            {
-                UserId = authenticatedUser?.Id
-            });
-            var login = await this.mediator.Send(new GetRepositoryLoginForUserQuery(repositoryResponse.WriteUser));
-            return Ok(new LoginResponse()
-            {
-                Username = login.Username,
-                Password = login.Password,
-                Url = repositoryResponse.HostName
-            });
+            var repositoryName = authenticatedUser?.Id.ToString() ?? "demo";
+
+            var repositoryResponse = await this.mediator.Send(
+                new EnsureRepositoryWithNameCommand(repositoryName)
+                {
+                    UserId = authenticatedUser?.Id
+                });
+            var login = await this.mediator.Send(
+                new GetRepositoryLoginForUserQuery(repositoryResponse.WriteUser));
+            return Ok(new LoginResponse(
+                login.Username,
+                login.Password,
+                repositoryResponse.HostName));
         }
     }
 

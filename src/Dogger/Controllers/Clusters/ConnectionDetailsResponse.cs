@@ -9,16 +9,14 @@ namespace Dogger.Controllers.Clusters
     {
         public ConnectionDetailsResponse(
             string ipAddress,
-            string? hostName,
             IEnumerable<ExposedPort> ports)
         {
             IpAddress = ipAddress;
-            HostName = hostName;
             Ports = ports;
         }
 
         public string IpAddress { get; }
-        public string? HostName { get; }
+        public string? HostName { get; set; }
 
         public IEnumerable<ExposedPort> Ports { get; }
     }
