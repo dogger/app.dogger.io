@@ -72,17 +72,21 @@ namespace Dogger.Controllers.PullDog.Webhooks
             var correlationId = correlationIdValues.Single();
             this.HttpContext.TraceIdentifier = correlationId;
 
-            this.logger.Debug("Received webhook with correlation ID {GitHubCorrelationId} and payload {@Payload}.", correlationId, payload);
-
             if (!await IsGithubPushAllowedAsync())
                 return NotFound();
 
-            this.HttpContext.Items.Add(WebhookSignatureVerificationKeyName, true);
+            using (LogContext.PushProperty("CorrelationId", correlationId))
+            using (LogContext.PushProperty("Payload", payload, true))
+            {
+                this.logger.Debug("Received authentic webhook.");
 
-            return await this.dataContext.ExecuteInTransactionAsync(
-                async () => await HandlePayloadAsync(payload),
-                default,
-                cancellationToken);
+                this.HttpContext.Items.Add(WebhookSignatureVerificationKeyName, true);
+
+                return await this.dataContext.ExecuteInTransactionAsync(
+                    async () => await HandlePayloadAsync(payload),
+                    default,
+                    cancellationToken);
+            }
         }
 
         private async Task<IActionResult> HandlePayloadAsync(WebhookPayload payload)
@@ -157,7 +161,7 @@ namespace Dogger.Controllers.PullDog.Webhooks
         }
 
         private async Task<PullDogPullRequest?> GetPullRequestFromPayloadAsync(
-            WebhookPayload payload, 
+            WebhookPayload payload,
             PullDogRepository repository)
         {
             var pullRequestHandle = GetPullRequestHandleFromPayload(payload);
