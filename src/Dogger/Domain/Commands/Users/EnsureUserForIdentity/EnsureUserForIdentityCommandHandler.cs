@@ -49,7 +49,7 @@ namespace Dogger.Domain.Commands.Users.EnsureUserForIdentity
             }
             catch (DbUpdateException dbe) when (dbe.InnerException is SqlException sqe)
             {
-                this.logger.Error("An unknown database error occured while ensuring a Pull Dog pull request with code {Code}.", sqe.Number);
+                this.logger.Error("An unknown database error occured while ensuring a identity with code {Code}.", sqe.Number);
                 throw;
             }
         }
