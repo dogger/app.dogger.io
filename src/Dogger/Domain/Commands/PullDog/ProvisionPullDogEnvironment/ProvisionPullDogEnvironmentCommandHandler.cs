@@ -15,6 +15,7 @@ using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Docker.Yml;
 using Dogger.Infrastructure.Ioc;
+using Dogger.Infrastructure.Slack;
 using MediatR;
 using Slack.Webhooks;
 
@@ -24,20 +25,17 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
     {
         private readonly IMediator mediator;
         private readonly IProvisioningService provisioningService;
-        private readonly ISlackClient? slackClient;
         private readonly IPullDogFileCollectorFactory pullDogFileCollectorFactory;
         private readonly IPullDogRepositoryClientFactory pullDogRepositoryClientFactory;
 
         public ProvisionPullDogEnvironmentCommandHandler(
             IMediator mediator,
             IProvisioningService provisioningService,
-            IOptionalService<ISlackClient> slackClient,
             IPullDogFileCollectorFactory pullDogFileCollectorFactory,
             IPullDogRepositoryClientFactory pullDogRepositoryClientFactory)
         {
             this.mediator = mediator;
             this.provisioningService = provisioningService;
-            this.slackClient = slackClient.Value;
             this.pullDogFileCollectorFactory = pullDogFileCollectorFactory;
             this.pullDogRepositoryClientFactory = pullDogRepositoryClientFactory;
         }
@@ -165,38 +163,22 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
 
         private async Task ReportProvisioningToSlackAsync(ProvisionPullDogEnvironmentCommand request)
         {
-            if (this.slackClient == null)
-                return;
-
-            await this.slackClient.PostAsync(
-                new SlackMessage()
+            await this.mediator.Send(
+                new SendSlackMessageCommand("A Pull Dog instance is being provisioned :sunglasses:")
                 {
-                    Text = "A Pull Dog instance is being provisioned.",
-                    Attachments = new List<SlackAttachment>()
+                    Fields = new List<SlackField>()
                     {
-                        new SlackAttachment()
+                        new SlackField()
                         {
-                            Fields = new List<SlackField>()
-                            {
-                                new SlackField()
-                                {
-                                    Title = "Repository handle",
-                                    Value = request.Repository.Handle,
-                                    Short = true
-                                },
-                                new SlackField()
-                                {
-                                    Title = "Pull request handle",
-                                    Value = request.PullRequestHandle,
-                                    Short = true
-                                },
-                                new SlackField()
-                                {
-                                    Title = "Installation ID",
-                                    Value = request.Repository.GitHubInstallationId.ToString(),
-                                    Short = true
-                                }
-                            }
+                            Title = "Repository handle",
+                            Value = request.Repository.Handle,
+                            Short = true
+                        },
+                        new SlackField()
+                        {
+                            Title = "Pull request handle",
+                            Value = request.PullRequestHandle,
+                            Short = true
                         }
                     }
                 });

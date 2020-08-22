@@ -51,7 +51,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+            
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -63,7 +63,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -111,7 +110,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new ConfigurationFile(new List<string> { "some-docker-compose-path" }));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+            
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -123,7 +122,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -153,7 +151,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+            
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -165,7 +163,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -200,7 +197,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+            
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -216,7 +213,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -260,7 +256,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+            
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -272,7 +268,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -318,7 +313,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+            
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -335,7 +330,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -374,7 +368,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new PullDogPullRequest());
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+            
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -390,7 +384,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -431,7 +424,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+            
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -443,7 +436,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -488,7 +480,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+            
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -500,7 +492,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -544,7 +535,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+            
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -556,7 +547,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 

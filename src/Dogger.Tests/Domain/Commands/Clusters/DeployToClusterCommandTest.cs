@@ -41,12 +41,9 @@ namespace Dogger.Tests.Domain.Commands.Clusters
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
-
             var handler = new DeployToClusterCommandHandler(
                 fakeProvisioningService,
-                fakeMediator,
-                fakeSlackClient);
+                fakeMediator);
 
             //Assert
             await handler.Handle(new DeployToClusterCommand(Array.Empty<string>())
@@ -82,14 +79,11 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                     }
                 });
 
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
-
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
             var handler = new DeployToClusterCommandHandler(
                 fakeProvisioningService,
-                fakeMediator,
-                fakeSlackClient);
+                fakeMediator);
 
             //Assert
             var exception = await Assert.ThrowsExceptionAsync<NotAuthorizedToAccessClusterException>(async () =>
@@ -122,14 +116,13 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                     }
                 });
 
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+            
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
             var handler = new DeployToClusterCommandHandler(
                 fakeProvisioningService,
-                fakeMediator,
-                fakeSlackClient);
+                fakeMediator);
 
             //Assert
             var exception = await Assert.ThrowsExceptionAsync<NotAuthorizedToAccessClusterException>(async () =>
@@ -163,14 +156,13 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                     }
                 });
 
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+            
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
             var handler = new DeployToClusterCommandHandler(
                 fakeProvisioningService,
-                fakeMediator,
-                fakeSlackClient);
+                fakeMediator);
 
             //Assert
             var exception = await Assert.ThrowsExceptionAsync<NotAuthorizedToAccessClusterException>(async () => 
@@ -194,14 +186,13 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 .Send(Arg.Any<EnsureClusterWithIdCommand>())
                 .Returns((Cluster)null);
 
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+            
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
             var handler = new DeployToClusterCommandHandler(
                 fakeProvisioningService,
-                fakeMediator,
-                fakeSlackClient);
+                fakeMediator);
 
             //Assert
             var exception = await Assert.ThrowsExceptionAsync<ClusterNotFoundException>(async () =>  
@@ -237,14 +228,11 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                     }
                 });
 
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
-
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
             var handler = new DeployToClusterCommandHandler(
                 fakeProvisioningService,
-                fakeMediator,
-                fakeSlackClient);
+                fakeMediator);
 
             //Assert
             await handler.Handle(new DeployToClusterCommand(Array.Empty<string>())
@@ -269,14 +257,11 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 .Send(Arg.Any<GetClusterForUserQuery>())
                 .Returns((Cluster)null);
 
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
-
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
             var handler = new DeployToClusterCommandHandler(
                 fakeProvisioningService,
-                fakeMediator,
-                fakeSlackClient);
+                fakeMediator);
 
             //Assert
             var exception = await Assert.ThrowsExceptionAsync<ClusterNotFoundException>(async () =>

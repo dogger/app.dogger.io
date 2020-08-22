@@ -40,6 +40,9 @@ namespace Dogger.Controllers.PullDog.Webhooks.Models
     public class InstallationRepositoryReferencePayload
     {
         public long Id { get; set; }
+
+        [JsonPropertyName("full_name")]
+        public string FullName { get; set; }
     }
 
 }
