@@ -5,19 +5,7 @@ namespace Dogger.Controllers.Jobs
     [ExcludeFromCodeCoverage]
     public class JobStatusResponse
     {
-        public JobStatusResponse(
-            string stateDescription, 
-            bool isEnded, 
-            bool isSucceeded, 
-            bool isFailed)
-        {
-            StateDescription = stateDescription;
-            IsEnded = isEnded;
-            IsSucceeded = isSucceeded;
-            IsFailed = isFailed;
-        }
-
-        public string StateDescription { get; set; }
+        public string StateDescription { get; set; } = null!;
 
         public bool IsEnded { get; set; }
 

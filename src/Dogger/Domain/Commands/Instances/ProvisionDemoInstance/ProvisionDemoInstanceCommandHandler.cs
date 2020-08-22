@@ -8,7 +8,6 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
-using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Mediatr.Database;
 using Dogger.Infrastructure.Slack;
 using MediatR;

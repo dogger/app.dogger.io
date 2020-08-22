@@ -13,13 +13,11 @@ using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Docker.Yml;
-using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Slack.Webhooks;
 using YamlDotNet.Core;
 
 namespace Dogger.Tests.Domain.Commands.PullDog

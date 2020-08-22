@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Dogger.Domain.Queries.Amazon.Identity.GetAmazonUserByName
 {
-    public class GetAmazonUserByNameQuery : IRequest<AmazonUser>
+    public class GetAmazonUserByNameQuery : IRequest<AmazonUser?>
     {
         public string Name { get; }
 

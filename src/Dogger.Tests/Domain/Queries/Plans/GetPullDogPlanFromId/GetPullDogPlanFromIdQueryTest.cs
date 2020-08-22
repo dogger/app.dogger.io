@@ -3,7 +3,6 @@ using Dogger.Domain.Queries.Plans.GetPullDogPlanFromId;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Queries.Plans.GetSupportedPullDogPlans;
 using Dogger.Tests.TestHelpers;
-using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;

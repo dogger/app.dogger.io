@@ -8,12 +8,10 @@ using Dogger.Domain.Queries.Clusters.GetClusterById;
 using Dogger.Domain.Queries.Clusters.GetClusterForUser;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
-using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using Slack.Webhooks;
 
 namespace Dogger.Tests.Domain.Commands.Clusters
 {

@@ -9,6 +9,7 @@ using Amazon.IdentityManagement.Model;
 using Dogger.Domain.Commands.Amazon.ElasticContainerRegistry.EnsureRepositoryWithName;
 using Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonUserWithName;
 using Dogger.Domain.Models;
+using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.Amazon.ElasticContainerRegistry.GetRepositoryByName;
 using Dogger.Tests.TestHelpers;
 using MediatR;
@@ -309,10 +310,10 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
 
             fakeMediator
                 .Send(Arg.Is<EnsureAmazonUserWithNameCommand>(args => args.Name == "environment-ecr-read-some-repository-name"))
-                .Returns(new AmazonUser()
-                {
-                    Name = "environment-ecr-read-some-repository-name"
-                });
+                .Returns(new AmazonUserBuilder()
+                    .WithDummyData()
+                    .WithName("environment-ecr-read-some-repository-name")
+                    .Build());
 
             var fakeHostEnvironment = Substitute.For<IHostEnvironment>();
             fakeHostEnvironment.EnvironmentName.Returns("environment");
@@ -376,10 +377,10 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
 
             fakeMediator
                 .Send(Arg.Is<EnsureAmazonUserWithNameCommand>(args => args.Name == "environment-ecr-write-some-repository-name"))
-                .Returns(new AmazonUser()
-                {
-                    Name = "environment-ecr-write-some-repository-name"
-                });
+                .Returns(new AmazonUserBuilder()
+                    .WithDummyData()
+                    .WithName("environment-ecr-write-some-repository-name")
+                    .Build());
 
             var fakeHostEnvironment = Substitute.For<IHostEnvironment>();
             fakeHostEnvironment.EnvironmentName.Returns("environment");

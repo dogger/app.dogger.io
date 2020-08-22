@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,7 +8,6 @@ using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
 using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Infrastructure.Slack;
-using Flurl.Util;
 using MediatR;
 using Serilog;
 using Slack.Webhooks;

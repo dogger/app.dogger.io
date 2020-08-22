@@ -6,7 +6,6 @@ using Dogger.Domain.Commands.Clusters.EnsureClusterForUser;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
-using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Slack;
 using MediatR;
 using Slack.Webhooks;

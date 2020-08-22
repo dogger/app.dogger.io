@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Dogger.Domain.Queries.Amazon.Identity.GetAmazonUserByName
 {
-    public class GetAmazonUserByNameQueryHandler : IRequestHandler<GetAmazonUserByNameQuery, AmazonUser>
+    public class GetAmazonUserByNameQueryHandler : IRequestHandler<GetAmazonUserByNameQuery, AmazonUser?>
     {
         private readonly DataContext dataContext;
 
@@ -17,7 +17,7 @@ namespace Dogger.Domain.Queries.Amazon.Identity.GetAmazonUserByName
             this.dataContext = dataContext;
         }
 
-        public async Task<AmazonUser> Handle(GetAmazonUserByNameQuery request, CancellationToken cancellationToken)
+        public async Task<AmazonUser?> Handle(GetAmazonUserByNameQuery request, CancellationToken cancellationToken)
         {
             var amazonUser = await this.dataContext
                 .AmazonUsers

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Slack;
 using Dogger.Tests.TestHelpers;
-using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Slack.Webhooks;

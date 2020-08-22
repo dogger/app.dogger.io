@@ -14,7 +14,6 @@ using Dogger.Domain.Services.Provisioning.Arguments;
 using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Docker.Yml;
-using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Slack;
 using MediatR;
 using Slack.Webhooks;

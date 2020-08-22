@@ -4,7 +4,7 @@ using Amazon.IdentityManagement;
 using Amazon.IdentityManagement.Model;
 using Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonGroupWithName;
 using Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonUserWithName;
-using Dogger.Domain.Models;
+using Dogger.Domain.Models.Builders;
 using Dogger.Infrastructure.Encryption;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
@@ -31,13 +31,10 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.AmazonUsers.AddAsync(new AmazonUser()
-                {
-                    Id = userId,
-                    Name = "some-name",
-                    EncryptedAccessKeyId = Array.Empty<byte>(),
-                    EncryptedSecretAccessKey = Array.Empty<byte>()
-                });
+                await dataContext.AmazonUsers.AddAsync(new AmazonUserBuilder()
+                    .WithDummyData()
+                    .WithId(userId)
+                    .Build());
             });
 
             //Act

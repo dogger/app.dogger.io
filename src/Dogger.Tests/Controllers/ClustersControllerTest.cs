@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Dogger.Controllers.Clusters;
-using Dogger.Controllers.Deals;
 using Dogger.Domain.Commands.Amazon.ElasticContainerRegistry.EnsureRepositoryWithName;
 using Dogger.Domain.Commands.Clusters.DeployToCluster;
 using Dogger.Domain.Commands.Clusters.EnsureClusterWithId;

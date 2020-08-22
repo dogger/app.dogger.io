@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using AutoMapper;
+using Dogger.Controllers.Jobs;
 using Dogger.Domain.Queries.Instances.GetContainerLogs;
 using Dogger.Domain.Queries.Instances.GetProvisionedClustersWithInstancesForUser;
 using Dogger.Domain.Services.Provisioning;
@@ -11,7 +12,6 @@ namespace Dogger.Controllers.Clusters
         public ClustersMappingProfile()
         {
             CreateMap<UserClusterResponse, ClusterResponse>()
-                .ForMember(x => x.Id, x => x.MapFrom(y => y.Id))
                 .ForMember(x => x.Instances, x => x.MapFrom(y => y.Instances));
 
             CreateMap<ProvisioningJob, DeployToClusterResponse>()

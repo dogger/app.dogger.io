@@ -1,6 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using Dogger.Domain.Models;
+﻿using System.Threading.Tasks;
+using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.Amazon.Identity.GetAmazonUserByName;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
@@ -34,24 +33,18 @@ namespace Dogger.Tests.Domain.Queries.Amazon.Identity
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.AmazonUsers.AddAsync(new AmazonUser()
-                {
-                    Name = "user-1",
-                    EncryptedSecretAccessKey = Array.Empty<byte>(),
-                    EncryptedAccessKeyId = Array.Empty<byte>()
-                });
-                await dataContext.AmazonUsers.AddAsync(new AmazonUser()
-                {
-                    Name = "user-2",
-                    EncryptedSecretAccessKey = Array.Empty<byte>(),
-                    EncryptedAccessKeyId = Array.Empty<byte>()
-                });
-                await dataContext.AmazonUsers.AddAsync(new AmazonUser()
-                {
-                    Name = "user-3",
-                    EncryptedSecretAccessKey = Array.Empty<byte>(),
-                    EncryptedAccessKeyId = Array.Empty<byte>()
-                });
+                await dataContext.AmazonUsers.AddAsync(new AmazonUserBuilder()
+                    .WithDummyData()
+                    .WithName("user-1")
+                    .Build());
+                await dataContext.AmazonUsers.AddAsync(new AmazonUserBuilder()
+                    .WithDummyData()
+                    .WithName("user-2")
+                    .Build());
+                await dataContext.AmazonUsers.AddAsync(new AmazonUserBuilder()
+                    .WithDummyData()
+                    .WithName("user-3")
+                    .Build());
             });
 
             //Act
