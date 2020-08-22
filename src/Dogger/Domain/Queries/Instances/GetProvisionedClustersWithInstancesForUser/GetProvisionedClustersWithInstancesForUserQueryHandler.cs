@@ -32,10 +32,9 @@ namespace Dogger.Domain.Queries.Instances.GetProvisionedClustersWithInstancesFor
                     x.Instances.Any(i => i.IsProvisioned))
                 .ToArrayAsync(cancellationToken);
             var instances = await Task.WhenAll(clusters
-                .Select(async cluster => new UserClusterResponse()
-                {
-                    Id = cluster.Id,
-                    Instances = await Task.WhenAll(cluster
+                .Select(async cluster => new UserClusterResponse(
+                    cluster.Id,
+                    await Task.WhenAll(cluster
                         .Instances
                         .Select(async instance => new UserClusterInstanceResponse(
                             amazonModel: 
@@ -43,8 +42,7 @@ namespace Dogger.Domain.Queries.Instances.GetProvisionedClustersWithInstancesFor
                                     new GetLightsailInstanceByNameQuery(instance.Name),
                                     cancellationToken) ??
                                 throw new InvalidOperationException("Could not find Lightsail instance."),
-                            databaseModel: instance)))
-                }));
+                            databaseModel: instance))))));
             return instances.ToArray();
         }
     }

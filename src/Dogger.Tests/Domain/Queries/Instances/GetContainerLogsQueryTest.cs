@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lightsail.Model;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
@@ -66,14 +67,14 @@ namespace Dogger.Tests.Domain.Queries.Instances
                 .GetContainersAsync()
                 .Returns(new[]
                 {
-                    new ContainerResponse()
-                    {
-                        Id = "some-container-1"
-                    },
-                    new ContainerResponse()
-                    {
-                        Id = "some-container-2"
-                    }
+                    new ContainerResponse(
+                        "some-container-1",
+                        "dummy",
+                        Array.Empty<string>()),
+                    new ContainerResponse(
+                        "some-container-2",
+                        "dummy",
+                        Array.Empty<string>())
                 });
 
             var fakeDockerEngineClientFactory = Substitute.For<IDockerEngineClientFactory>();

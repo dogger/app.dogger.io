@@ -688,15 +688,13 @@ namespace Dogger.Tests.Controllers
                 .Returns(new[]
                 {
                     new ContainerLogsResponse(
-                        new ContainerResponse()
-                        {
-                            Id = "some-id",
-                            Names = new[]
+                        new ContainerResponse(
+                            "some-id",
+                            "some-image",
+                            new []
                             {
                                 "some-name"
-                            },
-                            Image = "some-image"
-                        },
+                            }),
                         "some-logs")
                 });
 
@@ -739,15 +737,13 @@ namespace Dogger.Tests.Controllers
                 .Returns(new[]
                 {
                     new ContainerLogsResponse(
-                        new ContainerResponse()
-                        {
-                            Id = "some-id",
-                            Names = new[]
+                        new ContainerResponse(
+                            "some-id",
+                            "some-image",
+                            new []
                             {
                                 "some-name"
-                            },
-                            Image = "some-image"
-                        },
+                            }),
                         "some-logs")
                 });
 

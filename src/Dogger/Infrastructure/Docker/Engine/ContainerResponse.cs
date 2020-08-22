@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
 
 namespace Dogger.Infrastructure.Docker.Engine
 {
@@ -16,5 +16,15 @@ namespace Dogger.Infrastructure.Docker.Engine
         
         [JsonPropertyName(nameof(Image))]
         public string Image { get; set; }
+
+        public ContainerResponse(
+            string id, 
+            string image, 
+            string[] names)
+        {
+            this.Id = id;
+            this.Image = image;
+            this.Names = names;
+        }
     }
 }
