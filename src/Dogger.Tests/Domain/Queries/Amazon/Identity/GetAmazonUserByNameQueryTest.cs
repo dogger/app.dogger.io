@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.Amazon.Identity.GetAmazonUserByName;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -33,16 +34,13 @@ namespace Dogger.Tests.Domain.Queries.Amazon.Identity
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.AmazonUsers.AddAsync(new AmazonUserBuilder()
-                    .WithDummyData()
+                await dataContext.AmazonUsers.AddAsync(new TestAmazonUserBuilder()
                     .WithName("user-1")
                     .Build());
-                await dataContext.AmazonUsers.AddAsync(new AmazonUserBuilder()
-                    .WithDummyData()
+                await dataContext.AmazonUsers.AddAsync(new TestAmazonUserBuilder()
                     .WithName("user-2")
                     .Build());
-                await dataContext.AmazonUsers.AddAsync(new AmazonUserBuilder()
-                    .WithDummyData()
+                await dataContext.AmazonUsers.AddAsync(new TestAmazonUserBuilder()
                     .WithName("user-3")
                     .Build());
             });

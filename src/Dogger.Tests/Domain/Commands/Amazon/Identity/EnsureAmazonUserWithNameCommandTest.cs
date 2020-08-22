@@ -6,6 +6,7 @@ using Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonGroupWithName;
 using Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonUserWithName;
 using Dogger.Domain.Models.Builders;
 using Dogger.Infrastructure.Encryption;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -31,8 +32,8 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.AmazonUsers.AddAsync(new AmazonUserBuilder()
-                    .WithDummyData()
+                await dataContext.AmazonUsers.AddAsync(new TestAmazonUserBuilder()
+                    
                     .WithName("some-name")
                     .WithId(userId)
                     .Build());

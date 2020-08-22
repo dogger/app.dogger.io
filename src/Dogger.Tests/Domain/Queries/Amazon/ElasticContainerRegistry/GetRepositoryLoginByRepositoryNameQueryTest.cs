@@ -7,6 +7,7 @@ using Amazon.ECR.Model;
 using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.Amazon.ElasticContainerRegistry.GetRepositoryLoginByRepositoryName;
 using Dogger.Domain.Services.Amazon.Identity;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -46,8 +47,8 @@ namespace Dogger.Tests.Domain.Queries.Amazon.ElasticContainerRegistry
 
             //Act
             var loginResponse = await handler.Handle(
-                new GetRepositoryLoginForUserQuery(new AmazonUserBuilder()
-                    .WithDummyData()
+                new GetRepositoryLoginForUserQuery(new TestAmazonUserBuilder()
+                    
                     .WithName("some-amazon-username")
                     .Build()),
                 default);

@@ -16,5 +16,25 @@ namespace Dogger.Domain.Models.Builders
 
         public Guid? Id { get; }
         public TModel? Reference { get; }
+
+        public static implicit operator TModel(EntityReference<TModel> entityReference)
+        {
+            return entityReference.Reference!;
+        }
+
+        public static implicit operator Guid(EntityReference<TModel> entityReference)
+        {
+            return entityReference.Id!.Value;
+        }
+
+        public static implicit operator Guid?(EntityReference<TModel> entityReference)
+        {
+            return entityReference.Id;
+        }
+
+        public static implicit operator EntityReference<TModel>(TModel model)
+        {
+            return new EntityReference<TModel>(model);
+        }
     }
 }

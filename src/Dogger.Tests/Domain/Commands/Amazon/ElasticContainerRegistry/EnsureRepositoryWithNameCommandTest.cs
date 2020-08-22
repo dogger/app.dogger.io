@@ -11,6 +11,7 @@ using Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonUserWithName;
 using Dogger.Domain.Models;
 using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.Amazon.ElasticContainerRegistry.GetRepositoryByName;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.Extensions.Hosting;
@@ -310,8 +311,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
 
             fakeMediator
                 .Send(Arg.Is<EnsureAmazonUserWithNameCommand>(args => args.Name == "environment-ecr-read-some-repository-name"))
-                .Returns(new AmazonUserBuilder()
-                    .WithDummyData()
+                .Returns(new TestAmazonUserBuilder()
                     .WithName("environment-ecr-read-some-repository-name")
                     .Build());
 
@@ -377,8 +377,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
 
             fakeMediator
                 .Send(Arg.Is<EnsureAmazonUserWithNameCommand>(args => args.Name == "environment-ecr-write-some-repository-name"))
-                .Returns(new AmazonUserBuilder()
-                    .WithDummyData()
+                .Returns(new TestAmazonUserBuilder()
                     .WithName("environment-ecr-write-some-repository-name")
                     .Build());
 

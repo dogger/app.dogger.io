@@ -2,7 +2,7 @@
 
 namespace Dogger.Domain.Models.Builders
 {
-    public class AmazonUserBuilder : IAmazonUserBuilder
+    public class AmazonUserBuilder : IModelBuilder<AmazonUser>
     {
         private Guid id;
         private string? name;
