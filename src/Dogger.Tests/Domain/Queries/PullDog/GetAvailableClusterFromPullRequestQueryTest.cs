@@ -6,6 +6,7 @@ using Dogger.Domain.Commands.Clusters.EnsureClusterWithId;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest;
 using Dogger.Domain.Services.PullDog;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -43,7 +44,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 Substitute.For<IPullDogRepositoryClientFactory>());
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<PullDogDemoInstanceAlreadyProvisionedException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<PullDogDemoInstanceAlreadyProvisionedException>(async () =>
                 await handler.Handle(
                     new GetAvailableClusterFromPullRequestQuery(
                         new PullDogPullRequest()
@@ -53,7 +54,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                             {
                                 PullDogSettings = new PullDogSettings()
                                 {
-                                    User = new User(),
+                                    User = new TestUserBuilder().Build(),
                                     PoolSize = 0
                                 }
                             }
@@ -78,7 +79,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 fakeMediator,
                 Substitute.For<IPullDogRepositoryClientFactory>());
 
-            var user = new User();
+            var user = new TestUserBuilder().Build();
 
             //Act
             var cluster = await handler.Handle(
@@ -107,14 +108,11 @@ namespace Dogger.Tests.Domain.Queries.PullDog
         public async Task Handle_NonZeroPoolSizeAndClusterFull_ThrowsException()
         {
             //Arrange
-            var user = new User()
-            {
-                Id = Guid.NewGuid()
-            };
+            var user = new TestUserBuilder().Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
-                .Send(Arg.Is<EnsureClusterForUserCommand>(args => 
+                .Send(Arg.Is<EnsureClusterForUserCommand>(args =>
                     args.ClusterName == "pull-dog" &&
                     args.UserId == user.Id))
                 .Returns(new Cluster()
@@ -169,10 +167,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
         public async Task Handle_NonZeroPoolSizeAndNoExistingInstancesInCluster_ReturnsCluster()
         {
             //Arrange
-            var user = new User()
-            {
-                Id = Guid.NewGuid()
-            };
+            var user = new TestUserBuilder().Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator

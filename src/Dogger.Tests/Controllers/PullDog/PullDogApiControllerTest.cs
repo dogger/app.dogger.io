@@ -15,6 +15,7 @@ using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Encryption;
 using Dogger.Infrastructure.GitHub.Octokit;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -38,10 +39,9 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(args =>
                     args.IdentityName == "some-identity-name"))
-                .Returns(new User()
-                {
-                    PullDogSettings = null
-                });
+                .Returns(new TestUserBuilder()
+                    .WithPullDogSettings(null)
+                    .Build());
 
             var fakeMapper = Substitute.For<IMapper>();
             var fakeAesEncryptionHelper = Substitute.For<IAesEncryptionHelper>();
@@ -72,10 +72,9 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(args =>
                     args.IdentityName == "some-identity-name"))
-                .Returns(new User()
-                {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestUserBuilder()
+                    .WithPullDogSettings(new PullDogSettings())
+                    .Build());
 
             var fakeMapper = Substitute.For<IMapper>();
             var fakeAesEncryptionHelper = Substitute.For<IAesEncryptionHelper>();
@@ -447,7 +446,7 @@ namespace Dogger.Tests.Controllers.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             var fakeMapper = Substitute.For<IMapper>();
             var fakeAesEncryptionHelper = Substitute.For<IAesEncryptionHelper>();
@@ -479,15 +478,14 @@ namespace Dogger.Tests.Controllers.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User()
-                {
-                    PullDogSettings = new PullDogSettings()
+                .Returns(new TestUserBuilder()
+                    .WithPullDogSettings(new PullDogSettings()
                     {
                         PoolSize = 1337,
                         PlanId = "some-plan-id",
                         EncryptedApiKey = new byte[] { 1 }
-                    }
-                });
+                    })
+                    .Build());
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -523,7 +521,7 @@ namespace Dogger.Tests.Controllers.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             var fakeMapper = Substitute.For<IMapper>();
             var fakeAesEncryptionHelper = Substitute.For<IAesEncryptionHelper>();
@@ -549,9 +547,9 @@ namespace Dogger.Tests.Controllers.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User() {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestUserBuilder()
+                    .WithPullDogSettings(new PullDogSettings())
+                    .Build());
 
             fakeMediator
                 .Send(Arg.Any<GetRepositoriesForUserQuery>())

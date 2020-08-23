@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Payment.AdjustUserBalance;
 using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,10 +24,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.AdjustUserBalance
             var stripeCustomerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
             var customer = await stripeCustomerService.CreateAsync(new CustomerCreateOptions());
 
-            var user = new User()
-            {
-                StripeCustomerId = customer.Id
-            };
+            var user = new TestUserBuilder()
+                .WithStripeCustomerId(customer.Id)
+                .Build();
 
             //Act
             await environment.Mediator.Send(
@@ -58,10 +58,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.AdjustUserBalance
             var stripeCustomerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
             var customer = await stripeCustomerService.CreateAsync(new CustomerCreateOptions());
 
-            var user = new User()
-            {
-                StripeCustomerId = customer.Id
-            };
+            var user = new TestUserBuilder()
+                .WithStripeCustomerId(customer.Id)
+                .Build();
 
             //Act
             await environment.Mediator.Send(
@@ -85,10 +84,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.AdjustUserBalance
             var stripeCustomerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
             var customer = await stripeCustomerService.CreateAsync(new CustomerCreateOptions());
 
-            var user = new User()
-            {
-                StripeCustomerId = customer.Id
-            };
+            var user = new TestUserBuilder()
+                .WithStripeCustomerId(customer.Id)
+                .Build();
 
             await environment.Mediator.Send(
                 new AdjustUserBalanceCommand(
@@ -122,10 +120,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.AdjustUserBalance
             var stripeCustomerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
             var customer = await stripeCustomerService.CreateAsync(new CustomerCreateOptions());
 
-            var user = new User()
-            {
-                StripeCustomerId = customer.Id
-            };
+            var user = new TestUserBuilder()
+                .WithStripeCustomerId(customer.Id)
+                .Build();
 
             //Act
             await environment.Mediator.Send(

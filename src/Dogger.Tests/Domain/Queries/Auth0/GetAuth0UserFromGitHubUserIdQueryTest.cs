@@ -6,6 +6,7 @@ using Auth0.ManagementApi.Paging;
 using Dogger.Domain.Queries.Auth0.GetAuth0UserFromGitHubUserId;
 using Dogger.Infrastructure.Auth.Auth0;
 using Dogger.Infrastructure.Ioc;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;

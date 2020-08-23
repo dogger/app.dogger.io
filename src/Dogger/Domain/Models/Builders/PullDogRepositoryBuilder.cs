@@ -2,6 +2,10 @@
 {
     public class PullDogRepositoryBuilder : IModelBuilder<PullDogRepository>
     {
-        
+
+        public PullDogRepository Build()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

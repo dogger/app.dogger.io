@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Clusters.EnsureClusterForUser;
 using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,11 +21,8 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var matchingClusterId = Guid.NewGuid();
-            var user = new User()
-            {
-                StripeCustomerId = "dummy",
-                Clusters = new List<Cluster>()
-                {
+            var user = new TestUserBuilder()
+                .WithClusters(
                     new Cluster()
                     {
                         Name = "some-non-matching-cluster-1"
@@ -37,9 +35,8 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                     new Cluster()
                     {
                         Name = "some-non-matching-cluster-2"
-                    }
-                }
-            };
+                    })
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);
@@ -65,11 +62,8 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var user = new User()
-            {
-                StripeCustomerId = "dummy",
-                Clusters = new List<Cluster>()
-                {
+            var user = new TestUserBuilder()
+                .WithClusters(
                     new Cluster()
                     {
                         Name = "some-non-matching-cluster-1"
@@ -77,9 +71,9 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                     new Cluster()
                     {
                         Name = "some-non-matching-cluster-2"
-                    }
-                }
-            };
+                    })
+                .Build();
+
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);

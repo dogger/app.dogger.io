@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.OverrideConfigurationForPullRequest;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.PullDog;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
@@ -31,10 +32,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     {
                         EncryptedApiKey = Array.Empty<byte>(),
                         PlanId = "dummy",
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        }
+                        User = new TestUserBuilder().Build()
                     }
                 }
             };

@@ -1,0 +1,20 @@
+{
+    "files.exclude": {
+        "**/.vs/": true,
+        "**/.vscode/": true,
+        "**/*.csproj": true,
+        "**/*.DotSettings": true,
+        "**/*.sln": true,
+        "**/bin/": true,
+        "**/obj/": true,
+        "**/TestResults/": true
+    },
+    "csharp.semanticHighlighting.enabled": true,
+    "omnisharp.enableEditorConfigSupport": true,
+    "omnisharp.enableRoslynAnalyzers": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "diffEditor.codeLens": true,
+    "files.eol": "\n",
+    "files.maxMemoryForLargeFilesMB": 8192
+}

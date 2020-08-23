@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Instances.RegisterInstanceAsProvisioned;
 using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
@@ -138,10 +139,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     }
                 });
 
-            var existingUser = new User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var existingUser = new TestUserBuilder().Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(existingUser);
@@ -219,11 +217,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     }
                 });
 
-            var existingUser = new User()
-            {
-                StripeCustomerId = "dummy",
-                StripeSubscriptionId = "some-subscription-id"
-            };
+            var existingUser = new TestUserBuilder()
+                .WithStripeSubscriptionId("some-subscription-id")
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(existingUser);
@@ -282,10 +278,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     }
                 });
 
-            var existingUser = new User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var existingUser = new TestUserBuilder().Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(existingUser);
@@ -354,10 +347,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     }
                 });
 
-            var existingUser = new User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var existingUser = new TestUserBuilder().Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(existingUser);

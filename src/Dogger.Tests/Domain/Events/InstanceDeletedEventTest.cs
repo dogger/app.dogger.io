@@ -6,6 +6,7 @@ using Dogger.Domain.Events.InstanceDeleted;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
 using Dogger.Domain.Services.PullDog;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -50,10 +51,7 @@ namespace Dogger.Tests.Domain.Events
                             PullDogSettings = new PullDogSettings()
                             {
                                 PlanId = "dummy",
-                                User = new User()
-                                {
-                                    StripeCustomerId = "dummy"
-                                },
+                                User = new TestUserBuilder().Build(),
                                 EncryptedApiKey = Array.Empty<byte>()
                             }
                         }
@@ -116,10 +114,7 @@ namespace Dogger.Tests.Domain.Events
                             PullDogSettings = new PullDogSettings()
                             {
                                 PlanId = "dummy",
-                                User = new User()
-                                {
-                                    StripeCustomerId = "dummy"
-                                },
+                                User = new TestUserBuilder().Build(),
                                 EncryptedApiKey = Array.Empty<byte>()
                             }
                         }

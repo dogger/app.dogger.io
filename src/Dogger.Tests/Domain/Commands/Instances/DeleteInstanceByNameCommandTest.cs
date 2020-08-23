@@ -11,6 +11,7 @@ using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Infrastructure.GitHub.Octokit;
 using Dogger.Infrastructure.Ioc;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
@@ -222,10 +223,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                                 {
                                     PlanId = "dummy",
                                     EncryptedApiKey = Array.Empty<byte>(),
-                                    User = new User()
-                                    {
-                                        StripeCustomerId = "dummy"
-                                    }
+                                    User = new TestUserBuilder().Build()
                                 }
                             }
                         }
@@ -245,10 +243,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                                 {
                                     PlanId = "dummy",
                                     EncryptedApiKey = Array.Empty<byte>(),
-                                    User = new User()
-                                    {
-                                        StripeCustomerId = "dummy"
-                                    }
+                                    User = new TestUserBuilder().Build()
                                 }
                             }
                         }
@@ -367,10 +362,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                                 {
                                     PlanId = "dummy",
                                     EncryptedApiKey = Array.Empty<byte>(),
-                                    User = new User()
-                                    {
-                                        StripeCustomerId = "dummy"
-                                    }
+                                    User = new TestUserBuilder().Build()
                                 }
                             }
                         }
@@ -390,10 +382,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                                 {
                                     PlanId = "dummy",
                                     EncryptedApiKey = Array.Empty<byte>(),
-                                    User = new User()
-                                    {
-                                        StripeCustomerId = "dummy"
-                                    }
+                                    User = new TestUserBuilder().Build()
                                 }
                             }
                         }
@@ -572,10 +561,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             var clusterId = Guid.NewGuid();
-            var user = new User()
-            {
-                StripeCustomerId = customer.Id
-            };
+            var user = new TestUserBuilder()
+                .WithStripeCustomerId(customer.Id)
+                .Build();
 
             var cluster = new Cluster()
             {
@@ -675,10 +663,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             var clusterId = Guid.NewGuid();
-            var user = new User()
-            {
-                StripeCustomerId = customer.Id
-            };
+            var user = new TestUserBuilder()
+                .WithStripeCustomerId(customer.Id)
+                .Build();
 
             var cluster = new Cluster()
             {
@@ -778,11 +765,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             var clusterId = Guid.NewGuid();
-            var user = new User()
-            {
-                StripeCustomerId = customer.Id,
-                StripeSubscriptionId = subscription.Id
-            };
+            var user = new TestUserBuilder()
+                .WithStripeCustomerId(customer.Id)
+                .WithStripeSubscriptionId(subscription.Id)
+                .Build();
 
             var cluster = new Cluster()
             {

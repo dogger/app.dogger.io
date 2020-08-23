@@ -19,6 +19,7 @@ using Dogger.Domain.Queries.Instances.GetInstanceByName;
 using Dogger.Domain.Queries.Instances.GetProvisionedClustersWithInstancesForUser;
 using Dogger.Infrastructure.Docker.Engine;
 using Dogger.Infrastructure.Docker.Yml;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -44,7 +45,7 @@ namespace Dogger.Tests.Controllers
                     Arg.Is<EnsureUserForIdentityCommand>(
                         args => args.IdentityName == "some-identity-name"), 
                     default)
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetProvisionedClustersWithInstancesForUserQuery>(), default)
@@ -120,12 +121,12 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new AmazonUser(),
-                    new AmazonUser()));
+                    new TestAmazonUserBuilder().Build(),
+                    new TestAmazonUserBuilder().Build()));
 
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<EnsureClusterWithIdCommand>())
@@ -171,12 +172,12 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new AmazonUser(), 
-                    new AmazonUser()));
+                    new TestAmazonUserBuilder().Build(), 
+                    new TestAmazonUserBuilder().Build()));
 
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<EnsureClusterWithIdCommand>())
@@ -209,7 +210,7 @@ namespace Dogger.Tests.Controllers
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetClusterForUserQuery>(args =>
@@ -254,7 +255,7 @@ namespace Dogger.Tests.Controllers
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetClusterForUserQuery>(args =>
@@ -304,7 +305,7 @@ namespace Dogger.Tests.Controllers
 
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
@@ -331,7 +332,7 @@ namespace Dogger.Tests.Controllers
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetRepositoryLoginForUserQuery>())
@@ -344,8 +345,8 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new AmazonUser(),
-                    new AmazonUser()));
+                    new TestAmazonUserBuilder().Build(),
+                    new TestAmazonUserBuilder().Build()));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -377,7 +378,7 @@ namespace Dogger.Tests.Controllers
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetRepositoryLoginForUserQuery>())
@@ -390,8 +391,8 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new AmazonUser(),
-                    new AmazonUser()));
+                    new TestAmazonUserBuilder().Build(),
+                    new TestAmazonUserBuilder().Build()));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -428,13 +429,13 @@ namespace Dogger.Tests.Controllers
         public async Task Deploy_UserIdGiven_DeployToClusterCommandFiredWithAuthorizationFromRepository()
         {
             //Arrange
-            var readUser = new AmazonUser();
-            var writeUser = new AmazonUser();
+            var readUser = new TestAmazonUserBuilder().Build();
+            var writeUser = new TestAmazonUserBuilder().Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetRepositoryLoginForUserQuery>(arg => 
@@ -496,12 +497,12 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new AmazonUser(),
-                    new AmazonUser()));
+                    new TestAmazonUserBuilder().Build(),
+                    new TestAmazonUserBuilder().Build()));
 
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
@@ -544,12 +545,12 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new AmazonUser(),
-                    new AmazonUser()));
+                    new TestAmazonUserBuilder().Build(),
+                    new TestAmazonUserBuilder().Build()));
 
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 

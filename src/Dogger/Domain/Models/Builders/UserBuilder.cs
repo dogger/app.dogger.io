@@ -48,11 +48,16 @@ namespace Dogger.Domain.Models.Builders
             return this;
         }
 
-        public UserBuilder WithStripeInformation(
-            string? stripeCustomerId,
-            string? stripeSubscriptionId)
+        public UserBuilder WithStripeCustomerId(
+            string? stripeCustomerId)
         {
             this.stripeCustomerId = stripeCustomerId;
+            return this;
+        }
+
+        public UserBuilder WithStripeSubscriptionId(
+            string? stripeSubscriptionId)
+        {
             this.stripeSubscriptionId = stripeSubscriptionId;
             return this;
         }

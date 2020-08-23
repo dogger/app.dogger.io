@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -39,10 +40,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 await dataContext.PullDogSettings.AddAsync(new PullDogSettings()
                 {
                     PlanId = "dummy",
-                    User = new User()
-                    {
-                        StripeCustomerId = "dummy"
-                    },
+                    User = new TestUserBuilder().Build(),
                     EncryptedApiKey = Array.Empty<byte>(),
                     Repositories = new List<PullDogRepository>()
                     {
@@ -56,10 +54,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 await dataContext.PullDogSettings.AddAsync(new PullDogSettings()
                 {
                     PlanId = "dummy",
-                    User = new User()
-                    {
-                        StripeCustomerId = "dummy"
-                    },
+                    User = new TestUserBuilder().Build(),
                     EncryptedApiKey = Array.Empty<byte>(),
                     Repositories = new List<PullDogRepository>()
                     {
@@ -73,10 +68,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 await dataContext.PullDogSettings.AddAsync(new PullDogSettings()
                 {
                     PlanId = "dummy",
-                    User = new User()
-                    {
-                        StripeCustomerId = "dummy"
-                    },
+                    User = new TestUserBuilder().Build(),
                     EncryptedApiKey = Array.Empty<byte>(),
                     Repositories = new List<PullDogRepository>()
                     {

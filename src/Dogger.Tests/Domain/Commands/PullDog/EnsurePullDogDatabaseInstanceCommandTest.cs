@@ -5,6 +5,7 @@ using Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest;
 using Dogger.Domain.Services.PullDog;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -31,10 +32,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 }
             });
 
-            var user = new User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder().Build();
 
             var pullDogPullRequest = new PullDogPullRequest()
             {
@@ -114,10 +112,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     Handle = "dummy",
                     PullDogSettings = new PullDogSettings()
                     {
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        },
+                        User = new TestUserBuilder().Build(),
                         PoolSize = 0,
                         PlanId = "dummy",
                         EncryptedApiKey = Array.Empty<byte>()
@@ -184,10 +179,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     Handle = "dummy",
                     PullDogSettings = new PullDogSettings()
                     {
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        },
+                        User = new TestUserBuilder().Build(),
                         PoolSize = 0,
                         PlanId = "dummy",
                         EncryptedApiKey = Array.Empty<byte>()
@@ -249,10 +241,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     Handle = "dummy",
                     PullDogSettings = new PullDogSettings()
                     {
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        },
+                        User = new TestUserBuilder().Build(),
                         PoolSize = 0,
                         PlanId = "dummy",
                         EncryptedApiKey = Array.Empty<byte>()
@@ -299,10 +288,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_NoExistingClusterInstanceFoundAndPaidUser_ReturnsNewPersistedInstanceWithProperValuesAndExpiry()
         {
             //Arrange
-            var user = new User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder().Build();
             var pullDogPullRequest = new PullDogPullRequest()
             {
                 Handle = "dummy",

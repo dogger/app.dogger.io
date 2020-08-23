@@ -4,6 +4,7 @@ using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -73,10 +74,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                             PullDogSettings = new PullDogSettings()
                             {
                                 PlanId = "dummy",
-                                User = new User()
-                                {
-                                    StripeCustomerId = "dummy"
-                                },
+                                User = new TestUserBuilder().Build(),
                                 EncryptedApiKey = Array.Empty<byte>()
                             }
                         }
@@ -100,8 +98,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await fakeMediator
                 .Received(1)
                 .Send(
-                    Arg.Is<DeleteInstanceByNameCommand>(args => 
-                        args.Name == "some-instance-name"), 
+                    Arg.Is<DeleteInstanceByNameCommand>(args =>
+                        args.Name == "some-instance-name"),
                     default);
         }
     }

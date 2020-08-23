@@ -5,7 +5,8 @@ namespace Dogger.Domain.Models.Builders
 {
     public class ClusterBuilder : IModelBuilder<Cluster>
     {
-        private Guid? id;
+        private Guid id;
+
         private string? name;
 
         private EntityReference<User>? user;
@@ -17,7 +18,7 @@ namespace Dogger.Domain.Models.Builders
             this.instances = Array.Empty<Instance>();
         }
 
-        public ClusterBuilder WithId(Guid? id)
+        public ClusterBuilder WithId(Guid id)
         {
             this.id = id;
             return this;
@@ -53,8 +54,8 @@ namespace Dogger.Domain.Models.Builders
             {
                 Id = this.id,
                 Name = this.name,
-                User = this.user,
-                UserId = this.user
+                User = this.user?.Reference,
+                UserId = this.user?.Id
             };
 
             cluster.Instances.AddRange(this.instances);

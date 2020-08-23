@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
 using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
@@ -24,10 +25,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 Handle = "some-repository-handle",
                 PullDogSettings = new PullDogSettings()
                 {
-                    User = new User()
-                    {
-                        StripeCustomerId = "dummy"
-                    },
+                    User = new TestUserBuilder().Build(),
                     PlanId = "dummy",
                     EncryptedApiKey = Array.Empty<byte>()
                 }
@@ -67,10 +65,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 Handle = "some-repository-handle",
                 PullDogSettings = new PullDogSettings()
                 {
-                    User = new User()
-                    {
-                        StripeCustomerId = "dummy"
-                    },
+                    User = new TestUserBuilder().Build(),
                     PlanId = "dummy",
                     EncryptedApiKey = Array.Empty<byte>()
                 }

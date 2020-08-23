@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
+using Dogger.Domain.Models.Builders;
 using Dogger.Infrastructure;
 using Dogger.Infrastructure.Ioc;
 using MediatR;
@@ -97,19 +98,14 @@ namespace Dogger.Domain.Commands.Users.CreateUserForIdentity
 
         private async Task<User> AddUserToDatabaseAsync(CreateUserForIdentityCommand request)
         {
-            var user = new User() {
-                StripeCustomerId = string.Empty
-            };
+            var user = new UserBuilder()
+                .WithStripeCustomerId(string.Empty)
+                .WithIdentities(new Identity()
+                {
+                    Name = request.IdentityName
+                })
+                .Build();
 
-            var identity = new Identity()
-            {
-                Name = request.IdentityName,
-                User = user
-            };
-
-            user.Identities.Add(identity);
-
-            await this.dataContext.Identities.AddAsync(identity);
             await this.dataContext.Users.AddAsync(user);
 
             await this.dataContext.SaveChangesAsync();

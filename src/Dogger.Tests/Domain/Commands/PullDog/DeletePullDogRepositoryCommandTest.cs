@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
 using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
@@ -30,10 +31,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     {
                         EncryptedApiKey = Array.Empty<byte>(),
                         PlanId = "dummy",
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        }
+                        User = new TestUserBuilder().Build()
                     },
                     PullRequests = new List<PullDogPullRequest>()
                     {
@@ -80,10 +78,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     {
                         EncryptedApiKey = Array.Empty<byte>(),
                         PlanId = "dummy",
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        }
+                        User = new TestUserBuilder().Build()
                     },
                 });
 
@@ -94,10 +89,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     {
                         EncryptedApiKey = Array.Empty<byte>(),
                         PlanId = "dummy",
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        }
+                        User = new TestUserBuilder().Build()
                     },
                 });
 
@@ -108,10 +100,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     {
                         EncryptedApiKey = Array.Empty<byte>(),
                         PlanId = "dummy",
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        }
+                        User = new TestUserBuilder().Build()
                     },
                 });
             });

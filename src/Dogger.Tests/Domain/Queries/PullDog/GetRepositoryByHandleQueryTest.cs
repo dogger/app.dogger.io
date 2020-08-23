@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
@@ -43,10 +44,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 Handle = "some-repository-handle",
                 PullDogSettings = new PullDogSettings()
                 {
-                    User = new User()
-                    {
-                        StripeCustomerId = "dummy"
-                    },
+                    User = new TestUserBuilder().Build(),
                     PlanId = "dummy",
                     EncryptedApiKey = Array.Empty<byte>()
                 }

@@ -2,6 +2,10 @@
 {
     public class InstanceBuilder : IModelBuilder<InstanceBuilder>
     {
-        
+
+        public InstanceBuilder Build()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

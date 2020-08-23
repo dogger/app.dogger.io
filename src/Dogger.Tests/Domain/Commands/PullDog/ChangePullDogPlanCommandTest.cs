@@ -9,6 +9,7 @@ using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Queries.Users.GetUserById;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -30,20 +31,18 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var user = new User()
-            {
-                PullDogSettings = null,
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder()
+                .WithPullDogSettings(null)
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);
             });
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await environment.Mediator.Send(new ChangePullDogPlanCommand(
-                    user.Id, 
+                    user.Id,
                     1337,
                     "some-plan-id")));
 
@@ -58,7 +57,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
-                .Send(Arg.Is<GetPullDogPlanFromSettingsQuery>(args => 
+                .Send(Arg.Is<GetPullDogPlanFromSettingsQuery>(args =>
                     args.DoggerPlanId == "some-plan-id"))
                 .Returns((PullDogPlan)null);
 
@@ -68,15 +67,13 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
 
-            var user = new User()
-            {
-                PullDogSettings = new PullDogSettings()
+            var user = new TestUserBuilder()
+                .WithPullDogSettings(new PullDogSettings()
                 {
                     PlanId = "dummy",
                     EncryptedApiKey = Array.Empty<byte>()
-                },
-                StripeCustomerId = "dummy"
-            };
+                })
+                .Build();
             fakeMediator
                 .Send(Arg.Is<GetUserByIdQuery>(args => args.UserId == user.Id))
                 .Returns(user);
@@ -119,15 +116,13 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
 
-            var user = new User()
-            {
-                PullDogSettings = new PullDogSettings()
+            var user = new TestUserBuilder()
+                .WithPullDogSettings(new PullDogSettings()
                 {
                     PlanId = "dummy",
                     EncryptedApiKey = Array.Empty<byte>()
-                },
-                StripeCustomerId = "dummy"
-            };
+                })
+                .Build();
             fakeMediator
                 .Send(Arg.Is<GetUserByIdQuery>(args => args.UserId == user.Id))
                 .Returns(user);
@@ -170,16 +165,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
 
-            var databaseUser = new User()
-            {
-                StripeCustomerId = "dummy",
-                PullDogSettings = new PullDogSettings()
+            var databaseUser = new TestUserBuilder()
+                .WithPullDogSettings(new PullDogSettings()
                 {
                     PoolSize = 1337,
                     EncryptedApiKey = Array.Empty<byte>(),
                     PlanId = "dummy"
-                }
-            };
+                })
+                .Build();
             fakeMediator
                 .Send(Arg.Is<GetUserByIdQuery>(args => args.UserId == databaseUser.Id))
                 .Returns(databaseUser);
@@ -219,7 +212,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new Plan(
                     "some-demo-plan-id",
                     0,
-                    new Bundle(), 
+                    new Bundle(),
                     Array.Empty<PullDogPlan>()));
 
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
@@ -228,16 +221,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
 
-            var databaseUser = new User()
-            {
-                StripeCustomerId = "dummy",
-                PullDogSettings = new PullDogSettings()
+            var databaseUser = new TestUserBuilder()
+                .WithPullDogSettings(new PullDogSettings()
                 {
                     PoolSize = 1337,
                     EncryptedApiKey = Array.Empty<byte>(),
                     PlanId = "dummy"
-                }
-            };
+                })
+                .Build();
             fakeMediator
                 .Send(Arg.Is<GetUserByIdQuery>(args => args.UserId == databaseUser.Id))
                 .Returns(databaseUser);
@@ -284,16 +275,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
 
-            var databaseUser = new User()
-            {
-                StripeCustomerId = "dummy",
-                PullDogSettings = new PullDogSettings()
+            var databaseUser = new TestUserBuilder()
+                .WithPullDogSettings(new PullDogSettings()
                 {
                     PoolSize = 1337,
                     EncryptedApiKey = Array.Empty<byte>(),
                     PlanId = "dummy"
-                }
-            };
+                })
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -337,16 +326,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
 
-            var databaseUser = new User()
-            {
-                StripeCustomerId = "dummy",
-                PullDogSettings = new PullDogSettings()
+            var databaseUser = new TestUserBuilder()
+                .WithPullDogSettings(new PullDogSettings()
                 {
                     PoolSize = 1337,
                     EncryptedApiKey = Array.Empty<byte>(),
                     PlanId = "some-plan-id"
-                }
-            };
+                })
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -399,16 +386,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
 
-            var databaseUser = new User()
-            {
-                StripeCustomerId = "dummy",
-                PullDogSettings = new PullDogSettings()
+            var databaseUser = new TestUserBuilder()
+                .WithPullDogSettings(new PullDogSettings()
                 {
                     PoolSize = 1337,
                     EncryptedApiKey = Array.Empty<byte>(),
                     PlanId = "some-plan-id"
-                }
-            };
+                })
+                .Build();
             fakeMediator
                 .Send(Arg.Is<GetUserByIdQuery>(args => args.UserId == databaseUser.Id))
                 .Returns(databaseUser);
@@ -417,7 +402,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 await dataContext.Users.AddAsync(databaseUser));
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<TestException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<TestException>(async () =>
                 await environment.Mediator.Send(new ChangePullDogPlanCommand(
                     databaseUser.Id,
                     1338,
@@ -459,16 +444,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
 
-            var databaseUser = new User()
-            {
-                StripeCustomerId = "dummy",
-                PullDogSettings = new PullDogSettings()
+            var databaseUser = new TestUserBuilder()
+                .WithPullDogSettings(new PullDogSettings()
                 {
                     PoolSize = 1337,
                     EncryptedApiKey = Array.Empty<byte>(),
                     PlanId = "dummy"
-                }
-            };
+                })
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {

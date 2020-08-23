@@ -7,6 +7,7 @@ namespace Dogger.Tests.Domain.Models
     {
         public TestAmazonUserBuilder()
         {
+            WithId(Guid.NewGuid());
             WithName("dummy");
             WithAwsCredentials(
                 Array.Empty<byte>(),

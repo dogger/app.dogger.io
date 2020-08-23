@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetRepositoriesForUser;
 using Dogger.Infrastructure.GitHub;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,15 +28,13 @@ namespace Dogger.Tests.Domain.Queries.PullDog
 
             var userId = Guid.NewGuid();
             await environment.WithFreshDataContext(async dataContext =>
-                await dataContext.Users.AddAsync(new User()
-                {
-                    Id = userId,
-                    StripeCustomerId = "dummy",
-                    PullDogSettings = null
-                }));
+                await dataContext.Users.AddAsync(new TestUserBuilder()
+                    .WithId(userId)
+                    .WithPullDogSettings(null)
+                    .Build()));
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await environment.Mediator.Send(
                     new GetRepositoriesForUserQuery(userId)));
 
@@ -52,16 +51,14 @@ namespace Dogger.Tests.Domain.Queries.PullDog
 
             var userId = Guid.NewGuid();
             await environment.WithFreshDataContext(async dataContext =>
-                await dataContext.Users.AddAsync(new User()
-                {
-                    Id = userId,
-                    StripeCustomerId = "dummy",
-                    PullDogSettings = new PullDogSettings()
+                await dataContext.Users.AddAsync(new TestUserBuilder()
+                    .WithId(userId)
+                    .WithPullDogSettings(new PullDogSettings()
                     {
                         PlanId = "dummy",
                         EncryptedApiKey = Array.Empty<byte>()
-                    }
-                }));
+                    })
+                    .Build()));
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
@@ -80,11 +77,9 @@ namespace Dogger.Tests.Domain.Queries.PullDog
 
             var userId = Guid.NewGuid();
             await environment.WithFreshDataContext(async dataContext =>
-                await dataContext.Users.AddAsync(new User()
-                {
-                    Id = userId,
-                    StripeCustomerId = "dummy",
-                    PullDogSettings = new PullDogSettings()
+                await dataContext.Users.AddAsync(new TestUserBuilder()
+                    .WithId(userId)
+                    .WithPullDogSettings(new PullDogSettings()
                     {
                         PlanId = "dummy",
                         EncryptedApiKey = Array.Empty<byte>(),
@@ -95,8 +90,8 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                                 Handle = "dummy"
                             }
                         }
-                    }
-                }));
+                    })
+                    .Build()));
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
@@ -119,7 +114,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 .Installation
                 .GetAllRepositoriesForCurrent()
                 .Returns(new RepositoriesResponse(
-                    2, 
+                    2,
                     new[]
                     {
                         new Repository(1),
@@ -133,11 +128,9 @@ namespace Dogger.Tests.Domain.Queries.PullDog
 
             var userId = Guid.NewGuid();
             await environment.WithFreshDataContext(async dataContext =>
-                await dataContext.Users.AddAsync(new User()
-                {
-                    Id = userId,
-                    StripeCustomerId = "dummy",
-                    PullDogSettings = new PullDogSettings()
+                await dataContext.Users.AddAsync(new TestUserBuilder()
+                    .WithId(userId)
+                    .WithPullDogSettings(new PullDogSettings()
                     {
                         PlanId = "dummy",
                         EncryptedApiKey = Array.Empty<byte>(),
@@ -154,8 +147,8 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                                 GitHubInstallationId = 1337
                             }
                         }
-                    }
-                }));
+                    })
+                    .Build()));
 
             //Act
             var repositories = await environment.Mediator.Send(
@@ -200,11 +193,9 @@ namespace Dogger.Tests.Domain.Queries.PullDog
 
             var userId = Guid.NewGuid();
             await environment.WithFreshDataContext(async dataContext =>
-                await dataContext.Users.AddAsync(new User()
-                {
-                    Id = userId,
-                    StripeCustomerId = "dummy",
-                    PullDogSettings = new PullDogSettings()
+                await dataContext.Users.AddAsync(new TestUserBuilder()
+                    .WithId(userId)
+                    .WithPullDogSettings(new PullDogSettings()
                     {
                         PlanId = "dummy",
                         EncryptedApiKey = Array.Empty<byte>(),
@@ -217,8 +208,8 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                                 Id = Guid.NewGuid()
                             }
                         }
-                    }
-                }));
+                    })
+                    .Build()));
 
             //Act
             var repositories = await environment.Mediator.Send(

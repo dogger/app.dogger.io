@@ -5,6 +5,7 @@ using Auth0.ManagementApi.Models;
 using Dogger.Domain.Queries.Auth0.GetAuth0UserFromEmails;
 using Dogger.Infrastructure.Auth.Auth0;
 using Dogger.Infrastructure.Ioc;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -24,7 +25,7 @@ namespace Dogger.Tests.Domain.Queries.Auth0
             var handler = new GetAuth0UserFromEmailsQueryHandler(fakeManagementApiClientFactory);
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await handler.Handle(
                     new GetAuth0UserFromEmailsQuery(Array.Empty<string>()),
                     default));
@@ -55,7 +56,7 @@ namespace Dogger.Tests.Domain.Queries.Auth0
 
             //Act
             var user = await handler.Handle(
-                new GetAuth0UserFromEmailsQuery(new []
+                new GetAuth0UserFromEmailsQuery(new[]
                 {
                     "non-matching-1@example.com",
                     "matching@example.com",

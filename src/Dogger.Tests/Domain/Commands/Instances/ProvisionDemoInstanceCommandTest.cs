@@ -8,6 +8,7 @@ using Dogger.Domain.Commands.Instances.ProvisionDemoInstance;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
@@ -41,10 +42,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 var demoCluster = new Cluster()
                 {
                     Id = DataContext.DemoClusterId,
-                    User = new User()
-                    {
-                        StripeCustomerId = "dummy"
-                    },
+                    User = new TestUserBuilder().Build(),
                     Instances = new List<Instance>()
                     {
                         new Instance()
@@ -89,10 +87,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 var demoCluster = new Cluster()
                 {
                     Id = DataContext.DemoClusterId,
-                    User = new User()
-                    {
-                        StripeCustomerId = "dummy"
-                    },
+                    User = new TestUserBuilder().Build(),
                     Instances = new List<Instance>()
                     {
                         new Instance()
@@ -137,10 +132,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 var demoCluster = new Cluster()
                 {
                     Id = DataContext.DemoClusterId,
-                    User = new User()
-                    {
-                        StripeCustomerId = "dummy"
-                    },
+                    User = new TestUserBuilder().Build(),
                     Instances = new List<Instance>()
                     {
                         new Instance()
@@ -192,11 +184,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 var demoCluster = new Cluster()
                 {
                     Id = DataContext.DemoClusterId,
-                    User = new User()
-                    {
-                        Id = userId,
-                        StripeCustomerId = "dummy"
-                    },
+                    User = new TestUserBuilder().Build(),
                     Instances = new List<Instance>()
                     {
                         new Instance()
@@ -305,11 +293,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Users.AddAsync(new User()
-                {
-                    Id = someAuthenticatedUserId,
-                    StripeCustomerId = "dummy"
-                });
+                await dataContext.Users.AddAsync(new TestUserBuilder()
+                    .WithId(someAuthenticatedUserId)
+                    .Build());
             });
 
             //Act

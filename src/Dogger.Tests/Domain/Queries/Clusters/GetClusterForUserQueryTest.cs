@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Clusters.GetClusterForUser;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,11 +25,9 @@ namespace Dogger.Tests.Domain.Queries.Clusters
             {
                 await dataContext.Clusters.AddAsync(new Cluster()
                 {
-                    User = new User()
-                    {
-                        Id = fakeUserId,
-                        StripeCustomerId = "dummy"
-                    }
+                    User = new TestUserBuilder()
+                        .WithId(fakeUserId)
+                        .Build()
                 });
             });
 
@@ -49,11 +48,9 @@ namespace Dogger.Tests.Domain.Queries.Clusters
             var fakeUserId = Guid.NewGuid();
             var fakeClusterId = Guid.NewGuid();
 
-            var user = new User()
-            {
-                Id = fakeUserId,
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder()
+                .WithId(fakeUserId)
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -88,11 +85,9 @@ namespace Dogger.Tests.Domain.Queries.Clusters
 
             var fakeUserId = Guid.NewGuid();
 
-            var user = new User()
-            {
-                Id = fakeUserId,
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder()
+                .WithId(fakeUserId)
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -107,7 +102,7 @@ namespace Dogger.Tests.Domain.Queries.Clusters
             });
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<ClusterQueryTooBroadException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<ClusterQueryTooBroadException>(async () =>
                 await environment.Mediator.Send(new GetClusterForUserQuery(fakeUserId)));
 
             //Assert

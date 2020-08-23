@@ -12,6 +12,7 @@ using Dogger.Domain.Queries.Payment.GetActivePaymentMethodForUser;
 using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Domain.Queries.Plans.GetPlanById;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -106,10 +107,9 @@ namespace Dogger.Tests.Controllers
             fakeMediator
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(
                     args => args.IdentityName == "some-identity-name"))
-                .Returns(new User()
-                {
-                    Id = fakeAuthenticatedUserId
-                });
+                .Returns(new TestUserBuilder()
+                    .WithId(fakeAuthenticatedUserId)
+                    .Build());
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -208,10 +208,9 @@ namespace Dogger.Tests.Controllers
             fakeMediator
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(
                     args => args.IdentityName == "some-identity-name"))
-                .Returns(new User()
-                {
-                    Id = signedInUserId
-                });
+                .Returns(new TestUserBuilder()
+                    .WithId(signedInUserId)
+                    .Build());
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
@@ -252,10 +251,9 @@ namespace Dogger.Tests.Controllers
             fakeMediator
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(
                     args => args.IdentityName == "some-identity-name"))
-                .Returns(new User()
-                {
-                    Id = signedInUserId
-                });
+                .Returns(new TestUserBuilder()
+                    .WithId(signedInUserId)
+                    .Build());
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
@@ -301,10 +299,9 @@ namespace Dogger.Tests.Controllers
             fakeMediator
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(
                     args => args.IdentityName == "some-identity-name"))
-                .Returns(new User()
-                {
-                    Id = signedInUserId
-                });
+                .Returns(new TestUserBuilder()
+                    .WithId(signedInUserId)
+                    .Build());
 
             var fakeMapper = Substitute.For<IMapper>();
 

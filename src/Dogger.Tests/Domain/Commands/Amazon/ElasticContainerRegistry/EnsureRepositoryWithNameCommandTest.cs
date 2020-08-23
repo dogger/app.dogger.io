@@ -43,7 +43,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureAmazonUserWithNameCommand>())
-                .Returns(new AmazonUser());
+                .Returns(new TestAmazonUserBuilder().Build());
 
             var handler = new EnsureRepositoryWithNameCommandHandler(
                 fakeAmazonEcr,
@@ -95,7 +95,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
 
             fakeMediator
                 .Send(Arg.Any<EnsureAmazonUserWithNameCommand>())
-                .Returns(new AmazonUser());
+                .Returns(new TestAmazonUserBuilder().Build());
 
             var handler = new EnsureRepositoryWithNameCommandHandler(
                 fakeAmazonEcr,
@@ -152,7 +152,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
 
             fakeMediator
                 .Send(Arg.Any<EnsureAmazonUserWithNameCommand>())
-                .Returns(new AmazonUser());
+                .Returns(new TestAmazonUserBuilder().Build());
 
             var handler = new EnsureRepositoryWithNameCommandHandler(
                 fakeAmazonEcr,
@@ -207,7 +207,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
 
             fakeMediator
                 .Send(Arg.Any<EnsureAmazonUserWithNameCommand>())
-                .Returns(new AmazonUser());
+                .Returns(new TestAmazonUserBuilder().Build());
 
             var handler = new EnsureRepositoryWithNameCommandHandler(
                 fakeAmazonEcr,
@@ -265,7 +265,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
 
             fakeMediator
                 .Send(Arg.Any<EnsureAmazonUserWithNameCommand>())
-                .Returns(new AmazonUser());
+                .Returns(new TestAmazonUserBuilder().Build());
 
             var handler = new EnsureRepositoryWithNameCommandHandler(
                 fakeAmazonEcr,
@@ -307,7 +307,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureAmazonUserWithNameCommand>())
-                .Returns(new AmazonUser());
+                .Returns(new TestAmazonUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<EnsureAmazonUserWithNameCommand>(args => args.Name == "environment-ecr-read-some-repository-name"))
@@ -373,7 +373,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureAmazonUserWithNameCommand>())
-                .Returns(new AmazonUser());
+                .Returns(new TestAmazonUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<EnsureAmazonUserWithNameCommand>(args => args.Name == "environment-ecr-write-some-repository-name"))
@@ -443,7 +443,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureAmazonUserWithNameCommand>())
-                .Returns(new AmazonUser());
+                .Returns(new TestAmazonUserBuilder().Build());
 
             var handler = new EnsureRepositoryWithNameCommandHandler(
                 fakeAmazonEcr,
