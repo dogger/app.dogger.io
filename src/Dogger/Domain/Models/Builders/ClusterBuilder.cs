@@ -36,7 +36,7 @@ namespace Dogger.Domain.Models.Builders
             return this;
         }
 
-        public ClusterBuilder WithUser(Guid? user)
+        public ClusterBuilder WithUser(Guid user)
         {
             this.user = new EntityReference<User>(user);
             return this;

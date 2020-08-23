@@ -35,11 +35,17 @@ namespace Dogger.Domain.Models.Builders
 
         public AmazonUserBuilder WithUser(User? user)
         {
+            if (user == null)
+            {
+                this.user = null;
+                return this;
+            }
+
             this.user = new EntityReference<User>(user);
             return this;
         }
 
-        public AmazonUserBuilder WithUser(Guid? userId)
+        public AmazonUserBuilder WithUser(Guid userId)
         {
             this.user = new EntityReference<User>(userId);
             return this;

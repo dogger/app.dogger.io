@@ -100,10 +100,9 @@ namespace Dogger.Domain.Commands.Users.CreateUserForIdentity
         {
             var user = new UserBuilder()
                 .WithStripeCustomerId(string.Empty)
-                .WithIdentities(new Identity()
-                {
-                    Name = request.IdentityName
-                })
+                .WithIdentities(new IdentityBuilder()
+                    .WithName(request.IdentityName)
+                    .Build())
                 .Build();
 
             await this.dataContext.Users.AddAsync(user);

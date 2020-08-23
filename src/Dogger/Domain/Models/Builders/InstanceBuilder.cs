@@ -73,7 +73,7 @@ namespace Dogger.Domain.Models.Builders
             return new Instance()
             {
                 Cluster = this.cluster.Reference!,
-                ClusterId = this.cluster.Id!.Value,
+                ClusterId = this.cluster.Id!,
                 CreatedAtUtc = this.createdAtUtc,
                 ExpiresAtUtc = this.expiresAtUtc,
                 Id = this.id,
