@@ -36,10 +36,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
                 await dataContext.Instances.AddAsync(new Instance()
                 {
-                    Cluster = new Cluster()
-                    {
-                        User = user
-                    },
+                    Cluster = new TestClusterBuilder()
+                        .WithUser(user)
+                        .Build(),
                     Name = "dummy",
                     PlanId = "dummy",
                     PullDogPullRequest = null
@@ -81,10 +80,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
                 await dataContext.Instances.AddAsync(new Instance()
                 {
-                    Cluster = new Cluster()
-                    {
-                        User = otherUser
-                    },
+                    Cluster = new TestClusterBuilder()
+                        .WithUser(otherUser)
+                        .Build(),
                     Name = "dummy",
                     PlanId = "dummy",
                     PullDogPullRequest = new PullDogPullRequest()
@@ -135,10 +133,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
                 await dataContext.Instances.AddAsync(new Instance()
                 {
-                    Cluster = new Cluster()
-                    {
-                        User = user
-                    },
+                    Cluster = new TestClusterBuilder()
+                        .WithUser(user)
+                        .Build(),
                     Name = "some-name",
                     PlanId = "dummy",
                     PullDogPullRequest = new PullDogPullRequest()

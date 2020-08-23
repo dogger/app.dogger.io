@@ -5,7 +5,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build-dotnet
 WORKDIR /src
-COPY ["Dogger/Dogger.csproj", "Dogger/"]
+COPY ["src/Dogger/Dogger.csproj", "Dogger/"]
 RUN dotnet tool restore
 RUN dotnet restore "Dogger/Dogger.csproj"
 COPY . .

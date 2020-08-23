@@ -24,16 +24,13 @@ namespace Dogger.Tests.Domain.Queries.Clusters
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Clusters.AddAsync(new Cluster()
-                {
-                    Id = guid1
-                });
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithId(guid1)
+                    .Build());
 
-                await dataContext.Clusters.AddAsync(new Cluster()
-                {
-                    Id = guid2,
-                    Instances = new List<Instance>()
-                    {
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithId(guid2)
+                    .WithInstances(
                         new Instance()
                         {
                             Name = "non-demo",
@@ -43,9 +40,8 @@ namespace Dogger.Tests.Domain.Queries.Clusters
                         {
                             Name = "demo",
                             PlanId = "dummy"
-                        }
-                    }
-                });
+                        })
+                    .Build());
             });
 
             //Act

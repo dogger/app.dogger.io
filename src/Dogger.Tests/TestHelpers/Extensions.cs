@@ -49,8 +49,7 @@ namespace Dogger.Tests
 
         public static int? GetStatusCode(this IActionResult httpResponseMessage)
         {
-            var objectResult = httpResponseMessage as IStatusCodeActionResult;
-            if (objectResult == null)
+            if (!(httpResponseMessage is IStatusCodeActionResult objectResult))
                 throw new InvalidOperationException($"Can't retrieve status code from this action result of type {httpResponseMessage.GetType().FullName}.\nJSON: " + JsonSerializer.Serialize(httpResponseMessage));
 
             Debug.Assert(objectResult.StatusCode != null, "objectResult.StatusCode != null");

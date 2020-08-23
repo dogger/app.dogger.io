@@ -58,13 +58,13 @@ namespace Dogger.Tests.Domain.Provisioning.States
             state.DatabaseInstance = new Dogger.Domain.Models.Instance()
             {
                 Name = "dummy",
-                Cluster = new Cluster()
+                Cluster = new TestClusterBuilder().Build()
             };
 
             await state.InitializeAsync();
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<StateUpdateException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<StateUpdateException>(async () =>
                 await state.UpdateAsync());
 
             //Assert
@@ -151,7 +151,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
             state.DatabaseInstance = new Dogger.Domain.Models.Instance()
             {
                 Name = "dummy",
-                Cluster = new Cluster()
+                Cluster = new TestClusterBuilder().Build()
             };
 
             await state.InitializeAsync();
@@ -198,7 +198,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
             state.DatabaseInstance = new Dogger.Domain.Models.Instance()
             {
                 Name = "dummy",
-                Cluster = new Cluster()
+                Cluster = new TestClusterBuilder().Build()
             };
 
             await state.InitializeAsync();
@@ -265,7 +265,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
             state.DatabaseInstance = new Dogger.Domain.Models.Instance()
             {
                 Name = "some-instance-name",
-                Cluster = new Cluster()
+                Cluster = new TestClusterBuilder().Build()
             };
 
             await state.InitializeAsync();
@@ -305,11 +305,10 @@ namespace Dogger.Tests.Domain.Provisioning.States
             {
                 Id = fakeInstanceId,
                 Name = "some-instance-name",
-                Cluster = new Cluster()
-                {
-                    Id = fakeClusterId,
-                    UserId = fakeUserId
-                }
+                Cluster = new TestClusterBuilder()
+                    .WithId(fakeClusterId)
+                    .WithUser(fakeUserId)
+                    .Build()
             };
 
             //Act
@@ -380,7 +379,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
             state.DatabaseInstance = new Dogger.Domain.Models.Instance()
             {
                 Name = "some-instance-name",
-                Cluster = new Cluster()
+                Cluster = new TestClusterBuilder().Build()
             };
 
             await state.InitializeAsync();

@@ -50,7 +50,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 {
                     Name = "some-instance-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster()
+                    Cluster = new TestClusterBuilder().Build()
                 });
             });
 
@@ -100,7 +100,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 {
                     Name = "some-instance-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster()
+                    Cluster = new TestClusterBuilder().Build()
                 });
             });
 
@@ -154,11 +154,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     Id = fakeInstanceId,
                     Name = "some-instance-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster()
-                    {
-                        Id = fakeClusterId,
-                        User = existingUser
-                    }
+                    Cluster = new TestClusterBuilder()
+                        .WithId(fakeClusterId)
+                        .WithUser(existingUser)
+                        .Build()
                 });
             });
 
@@ -234,11 +233,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     Id = fakeInstanceId,
                     Name = "some-instance-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster()
-                    {
-                        Id = fakeClusterId,
-                        User = existingUser
-                    }
+                    Cluster = new TestClusterBuilder()
+                        .WithId(fakeClusterId)
+                        .WithUser(existingUser)
+                        .Build()
                 });
             });
 
@@ -292,10 +290,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 {
                     Name = "some-instance-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster()
-                    {
-                        User = existingUser
-                    },
+                    Cluster = new TestClusterBuilder()
+                        .WithUser(existingUser)
+                        .Build(),
                     IsProvisioned = false
                 });
             });
@@ -361,10 +358,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 {
                     Name = "some-instance-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster()
-                    {
-                        User = existingUser
-                    }
+                    Cluster = new TestClusterBuilder()
+                        .WithUser(existingUser)
+                        .Build()
                 });
             });
 

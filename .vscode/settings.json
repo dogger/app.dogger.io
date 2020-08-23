@@ -1,10 +1,7 @@
 {
     "files.exclude": {
         "**/.vs/": true,
-        "**/.vscode/": true,
-        "**/*.csproj": true,
         "**/*.DotSettings": true,
-        "**/*.sln": true,
         "**/bin/": true,
         "**/obj/": true,
         "**/TestResults/": true
@@ -12,9 +9,20 @@
     "csharp.semanticHighlighting.enabled": true,
     "omnisharp.enableEditorConfigSupport": true,
     "omnisharp.enableRoslynAnalyzers": true,
+    "omnisharp.autoStart": true,
+    "omnisharp.useEditorFormattingSettings": true,
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
     "diffEditor.codeLens": true,
     "files.eol": "\n",
-    "files.maxMemoryForLargeFilesMB": 8192
+    "files.maxMemoryForLargeFilesMB": 8192,
+    "autoHide.autoHidePanel": true,
+    "autoHide.panelDelay": 0,
+    "autoHide.sideBarDelay": 0,
+    "coverage-gutters.showGutterCoverage": true,
+    "coverage-gutters.lcovname": "lcov.info",
+    "coverage-gutters.customizable.status-bar-toggler-watchCoverageAndVisibleEditors-enabled": true,
+    "csharp.maxProjectFileCountForDiagnosticAnalysis": 0,
+    "omnisharp.maxFindSymbolsItems": 100000,
+    "terminal.integrated.scrollback": 10000
 }

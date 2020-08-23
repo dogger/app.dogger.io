@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Destructurama.Attributed;
 
+#pragma warning disable CA2227
+
 namespace Dogger.Domain.Models
 {
     [ExcludeFromCodeCoverage]

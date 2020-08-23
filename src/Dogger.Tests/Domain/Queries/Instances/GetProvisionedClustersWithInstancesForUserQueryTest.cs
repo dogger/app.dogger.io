@@ -75,10 +75,8 @@ namespace Dogger.Tests.Domain.Queries.Instances
             {
                 await dataContext.Users.AddAsync(new TestUserBuilder()
                     .WithId(userId)
-                    .WithClusters(new Cluster()
-                    {
-                        Instances = new List<Instance>()
-                        {
+                    .WithClusters(new TestClusterBuilder()
+                        .WithInstances(
                             new Instance()
                             {
                                 Name = "some-instance-1",
@@ -90,9 +88,8 @@ namespace Dogger.Tests.Domain.Queries.Instances
                                 Name = "some-instance-2",
                                 PlanId = "dummy",
                                 IsProvisioned = false
-                            }
-                        }
-                    })
+                            })
+                        .Build())
                     .Build());
             });
 
@@ -159,10 +156,8 @@ namespace Dogger.Tests.Domain.Queries.Instances
             {
                 await dataContext.Users.AddAsync(new TestUserBuilder()
                     .WithId(userId)
-                    .WithClusters(new Cluster()
-                    {
-                        Instances = new List<Instance>()
-                        {
+                    .WithClusters(new TestClusterBuilder()
+                        .WithInstances(
                             new Instance()
                             {
                                 Name = "some-instance-1",
@@ -174,9 +169,8 @@ namespace Dogger.Tests.Domain.Queries.Instances
                                 Name = "some-instance-2",
                                 PlanId = "dummy",
                                 IsProvisioned = true
-                            }
-                        }
-                    })
+                            })
+                        .Build())
                     .Build());
             });
 
@@ -252,10 +246,8 @@ namespace Dogger.Tests.Domain.Queries.Instances
             {
                 await dataContext.Users.AddAsync(new TestUserBuilder()
                     .WithId(userId)
-                    .WithClusters(new Cluster()
-                    {
-                        Instances = new List<Instance>()
-                        {
+                    .WithClusters(new TestClusterBuilder()
+                        .WithInstances(
                             new Instance()
                             {
                                 Name = "some-instance-1",
@@ -267,9 +259,8 @@ namespace Dogger.Tests.Domain.Queries.Instances
                                 Name = "some-instance-2",
                                 PlanId = "dummy",
                                 IsProvisioned = true
-                            }
-                        }
-                    })
+                            })
+                        .Build())
                     .Build());
             });
 

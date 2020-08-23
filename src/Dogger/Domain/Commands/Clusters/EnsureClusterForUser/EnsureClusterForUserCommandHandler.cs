@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
+using Dogger.Domain.Models.Builders;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,11 +32,10 @@ namespace Dogger.Domain.Commands.Clusters.EnsureClusterForUser
             if (cluster != null)
                 return cluster;
 
-            var newCluster = new Cluster()
-            {
-                UserId = request.UserId,
-                Name = request.ClusterName
-            };
+            var newCluster = new ClusterBuilder()
+                .WithUser(request.UserId)
+                .WithName(request.ClusterName)
+                .Build();
             await this.dataContext.Clusters.AddAsync(newCluster, cancellationToken);
             await this.dataContext.SaveChangesAsync(cancellationToken);
 

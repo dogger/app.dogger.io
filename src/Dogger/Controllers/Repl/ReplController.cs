@@ -39,8 +39,8 @@ namespace Dogger.Controllers.Repl
 
         private static string GetReplUrl(IHostEnvironment hostEnvironment)
         {
-            return hostEnvironment.IsDevelopment() ? 
-                "http://localhost:3002/" : 
+            return hostEnvironment.IsDevelopment() ?
+                "http://localhost:3002/" :
                 "http://dogger-cli-repl:3001/";
         }
 
@@ -93,7 +93,7 @@ namespace Dogger.Controllers.Repl
 
             const string bearerPrefix = "Bearer ";
             if (headerValue.StartsWith(bearerPrefix, StringComparison.InvariantCulture))
-                headerValue = headerValue.Substring(bearerPrefix.Length);
+                headerValue = headerValue[bearerPrefix.Length..];
 
             return headerValue;
         }
@@ -106,7 +106,7 @@ namespace Dogger.Controllers.Repl
                 return;
             }
 
-            this.Response.StatusCode = (int) response.StatusCode;
+            this.Response.StatusCode = (int)response.StatusCode;
 
             var stream = await response.Content.ReadAsStreamAsync();
             await stream.CopyToAsync(this.Response.Body);

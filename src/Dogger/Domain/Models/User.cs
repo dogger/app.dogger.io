@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Destructurama.Attributed;
 
-#pragma warning disable 8618
-
 namespace Dogger.Domain.Models
 {
     [ExcludeFromCodeCoverage]

@@ -22,9 +22,9 @@ namespace Dogger.Setup.Domain.Services
 {
     public class DogfeedService : IDogfeedService
     {
-        private const string instanceName = ProvisioningService.ProtectedResourcePrefix + "instance";
-        private const string loadBalancerName = ProvisioningService.ProtectedResourcePrefix + "load-balancer";
-        private const string ipName = ProvisioningService.ProtectedResourcePrefix + "ip";
+        private const string InstanceName = ProvisioningService.ProtectedResourcePrefix + "instance";
+        private const string LoadBalancerName = ProvisioningService.ProtectedResourcePrefix + "load-balancer";
+        private const string IpName = ProvisioningService.ProtectedResourcePrefix + "ip";
 
         private readonly IProvisioningService provisioningService;
         private readonly IMediator mediator;
@@ -87,7 +87,7 @@ namespace Dogger.Setup.Domain.Services
         {
             await this.mediator.Send(new AssignStaticIpToInstanceCommand(
                 newInstance.Name,
-                ipName));
+                IpName));
         }
 
         private async Task CleanUpAsync()
@@ -100,7 +100,7 @@ namespace Dogger.Setup.Domain.Services
         private async Task<LoadBalancer> GetMainLoadBalancerAsync()
         {
             return
-                await this.mediator.Send(new GetLoadBalancerByNameQuery(loadBalancerName)) ??
+                await this.mediator.Send(new GetLoadBalancerByNameQuery(LoadBalancerName)) ??
                 throw new InvalidOperationException("No load balancer was found.");
         }
 
@@ -205,32 +205,13 @@ namespace Dogger.Setup.Domain.Services
 
         private async Task<Instance> ProvisionNewDogfeedInstanceAsync()
         {
-            var newInstanceName = $"{instanceName}-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
+            var newInstanceName = $"{InstanceName}-{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
 
             await this.mediator.Send(new ProvisionDogfeedInstanceCommand(newInstanceName));
             await this.provisioningService.ProcessPendingJobsAsync();
 
             return await this.mediator.Send(new GetLightsailInstanceByNameQuery(newInstanceName)) ??
                 throw new InvalidOperationException("Could not fetch newly created instance.");
-        }
-
-        public static void MoveDogfeedPrefixedEnvironmentVariableIntoConfiguration(IConfigurationBuilder configurationBuilder)
-        {
-            const string dogfeedEnvironmentVariableKeyPrefix = "DOGFEED_";
-
-            var configurationValues = Environment
-                .GetEnvironmentVariables()
-                .Cast<DictionaryEntry>()
-                .Select(x => x.Key.ToString()!)
-                .Where(x => x.StartsWith(
-                    dogfeedEnvironmentVariableKeyPrefix,
-                    StringComparison.InvariantCulture))
-                .ToDictionary(
-                    x => x
-                        .Substring(dogfeedEnvironmentVariableKeyPrefix.Length)
-                        .Replace("__", ":", StringComparison.InvariantCulture),
-                    Environment.GetEnvironmentVariable);
-            configurationBuilder.AddInMemoryCollection(configurationValues);
         }
     }
 }

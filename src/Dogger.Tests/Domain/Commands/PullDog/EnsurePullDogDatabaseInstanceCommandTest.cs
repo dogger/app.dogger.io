@@ -55,11 +55,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 Name = "existing-instance",
                 PlanId = "dummy",
                 PullDogPullRequest = pullDogPullRequest,
-                Cluster = new Cluster()
-                {
-                    Name = "pull-dog",
-                    User = user
-                }
+                Cluster = new TestClusterBuilder()
+                    .WithName("pull-dog")
+                    .WithUser(user)
+                    .Build()
             };
 
             await environment.DataContext.Instances.AddAsync(oldInstance);
@@ -125,10 +124,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 Name = "existing-instance",
                 PlanId = "dummy",
                 PullDogPullRequest = pullDogPullRequest,
-                Cluster = new Cluster()
-                {
-                    Id = DataContext.PullDogDemoClusterId
-                }
+                Cluster = new TestClusterBuilder()
+                    .WithId(DataContext.PullDogDemoClusterId)
+                    .Build()
             };
 
             await environment.DataContext.Instances.AddAsync(oldInstance);
@@ -192,10 +190,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 Name = "existing-instance",
                 PlanId = "dummy",
                 PullDogPullRequest = pullDogPullRequest,
-                Cluster = new Cluster()
-                {
-                    Id = DataContext.PullDogDemoClusterId
-                }
+                Cluster = new TestClusterBuilder()
+                    .WithId(DataContext.PullDogDemoClusterId)
+                    .Build()
             };
 
             await environment.DataContext.Instances.AddAsync(oldInstance);
@@ -253,7 +250,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             fakeMediator
                 .Send(Arg.Is<GetAvailableClusterFromPullRequestQuery>(args =>
                     args.PullRequest == pullDogPullRequest))
-                .Returns(new Cluster());
+                .Returns(new TestClusterBuilder().Build());
 
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
@@ -309,11 +306,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             fakeMediator
                 .Send(Arg.Is<GetAvailableClusterFromPullRequestQuery>(args =>
                     args.PullRequest == pullDogPullRequest))
-                .Returns(new Cluster()
-                {
-                    Name = "pull-dog",
-                    User = user
-                });
+                .Returns(new TestClusterBuilder()
+                    .WithName("pull-dog")
+                    .WithUser(user)
+                    .Build());
 
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {

@@ -23,12 +23,11 @@ namespace Dogger.Tests.Domain.Queries.Clusters
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Clusters.AddAsync(new Cluster()
-                {
-                    User = new TestUserBuilder()
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithUser(new TestUserBuilder()
                         .WithId(fakeUserId)
-                        .Build()
-                });
+                        .Build())
+                    .Build());
             });
 
             //Act
@@ -54,15 +53,13 @@ namespace Dogger.Tests.Domain.Queries.Clusters
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Clusters.AddAsync(new Cluster()
-                {
-                    User = user
-                });
-                await dataContext.Clusters.AddAsync(new Cluster()
-                {
-                    Id = fakeClusterId,
-                    User = user
-                });
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithUser(user)
+                    .Build());
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithId(fakeClusterId)
+                    .WithUser(user)
+                    .Build());
             });
 
             //Act
@@ -91,14 +88,13 @@ namespace Dogger.Tests.Domain.Queries.Clusters
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Clusters.AddAsync(new Cluster()
-                {
-                    User = user
-                });
-                await dataContext.Clusters.AddAsync(new Cluster()
-                {
-                    User = user
-                });
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithUser(user)
+                    .Build());
+
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithUser(user)
+                    .Build());
             });
 
             //Act

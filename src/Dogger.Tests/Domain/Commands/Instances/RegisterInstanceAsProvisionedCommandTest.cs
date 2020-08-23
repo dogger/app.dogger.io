@@ -27,13 +27,13 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<InstanceNotFoundException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<InstanceNotFoundException>(async () =>
                 await environment.Mediator.Send(new RegisterInstanceAsProvisionedCommand("some-instance-name")));
 
             //Assert
             Assert.IsNotNull(exception);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_InstanceFound_ProvisionedFlagSetInDatabase()
@@ -47,7 +47,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 {
                     Name = "some-instance-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster()
+                    Cluster = new TestClusterBuilder().Build()
                 });
             });
 
@@ -66,7 +66,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 Assert.IsTrue(instances.Single().IsProvisioned);
             });
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_UserNotFound_NoStripeSubscriptionCreated()
@@ -95,7 +95,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 {
                     Name = "some-instance-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster()
+                    Cluster = new TestClusterBuilder().Build()
                 });
             });
 
@@ -110,7 +110,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     default,
                     default);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_UserFoundWithNoExistingSubscription_StripeSubscriptionCreatedWithProperDetails()
@@ -149,11 +149,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     Id = fakeInstanceId,
                     Name = "some-instance-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster()
-                    {
-                        Id = fakeClusterId,
-                        User = existingUser
-                    }
+                    Cluster = new TestClusterBuilder()
+                        .WithId(fakeClusterId)
+                        .WithUser(existingUser)
+                        .Build()
                 });
             });
 
@@ -167,14 +166,14 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await fakeSubscriptionService
                 .ReceivedWithAnyArgs(1)
                 .CreateAsync(
-                    Arg.Is<SubscriptionCreateOptions>(args => 
+                    Arg.Is<SubscriptionCreateOptions>(args =>
                         args.Metadata["InstanceId"] == fakeInstanceId.ToString() &&
                         args.Metadata["ClusterId"] == fakeClusterId.ToString() &&
                         args.Metadata["InstanceName"] == "some-instance-name"),
                     default,
                     default);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_UserFoundWithExistingSubscription_StripeSubscriptionUpdatedWithProperDetails()
@@ -229,11 +228,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     Id = fakeInstanceId,
                     Name = "some-instance-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster()
-                    {
-                        Id = fakeClusterId,
-                        User = existingUser
-                    }
+                    Cluster = new TestClusterBuilder()
+                        .WithId(fakeClusterId)
+                        .WithUser(existingUser)
+                        .Build()
                 });
             });
 
@@ -255,7 +253,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     default,
                     default);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_StripeExceptionThrown_NoDatabaseChangesMade()
@@ -287,10 +285,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 {
                     Name = "some-instance-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster()
-                    {
-                        User = existingUser
-                    },
+                    Cluster = new TestClusterBuilder()
+                        .WithUser(existingUser)
+                        .Build(),
                     IsProvisioned = false
                 });
             });
@@ -315,7 +312,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 Assert.IsFalse(instances.Single().IsProvisioned);
             });
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_SubscriptionRequiresAction_NotImplementedExceptionThrown()
@@ -356,10 +353,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 {
                     Name = "some-instance-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster()
-                    {
-                        User = existingUser
-                    }
+                    Cluster = new TestClusterBuilder()
+                        .WithUser(existingUser)
+                        .Build()
                 });
             });
 

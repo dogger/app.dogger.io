@@ -27,7 +27,6 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Run tests
-        working-directory: ./src
         run: |
           SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml build
           SQL_HOST=mssql-test-container docker-compose -f docker-compose.sql-server.yml -f docker-compose.test.yml config
@@ -41,12 +40,12 @@ jobs:
       - name: Code coverage reporting for Dogger
         uses: codecov/codecov-action@v1
         with:
-          file: ./src/TestResults/Dogger/coverage.opencover.xml
+          file: ./TestResults/Dogger/coverage.opencover.xml
 
       - name: Code coverage reporting for Dogger.Setup
         uses: codecov/codecov-action@v1
         with:
-          file: ./src/TestResults/Dogger.Setup/coverage.opencover.xml
+          file: ./TestResults/Dogger.Setup/coverage.opencover.xml
 
   publish-app-dogger-io:
     name: Publish app-dogger-io
@@ -60,7 +59,6 @@ jobs:
 
 
       - name: Build Docker images
-        working-directory: ./src
         run: |
           docker build . --file Dogger/Dockerfile --tag dogger-image
           docker build . --file Dogger.Setup/Dockerfile --tag dogger-setup-image
@@ -78,7 +76,6 @@ jobs:
 
 
       - name: Push Docker images to Docker Hub
-        working-directory: ./src
         run: |
           echo "Pushing images to Docker Hub."
 
@@ -97,7 +94,6 @@ jobs:
           
 
       - name: Write secret files
-        working-directory: ./src
         shell: bash
         env:
           ELK_CONFIGURATION_YML_CONTENTS: ${{secrets.ELK_CONFIGURATION_YML_CONTENTS}}
@@ -142,7 +138,6 @@ jobs:
 
 
       - name: Deploy to app.dogger.io
-        working-directory: ./src
         run: |
           echo "Starting dogfeed process."
           

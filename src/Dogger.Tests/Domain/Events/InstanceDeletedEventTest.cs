@@ -41,7 +41,7 @@ namespace Dogger.Tests.Domain.Events
                 {
                     Name = "some-instance-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster(),
+                    Cluster = new TestClusterBuilder().Build(),
                     PullDogPullRequest = new PullDogPullRequest()
                     {
                         Handle = "some-pull-request-handle",
@@ -104,7 +104,7 @@ namespace Dogger.Tests.Domain.Events
                 {
                     Name = "some-instance-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster(),
+                    Cluster = new TestClusterBuilder().Build(),
                     PullDogPullRequest = new PullDogPullRequest()
                     {
                         Handle = "some-pull-request-handle",

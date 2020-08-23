@@ -336,24 +336,6 @@ namespace Dogger.Setup.Tests.Domain.Services
         }
 
         [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
-        public async Task Dogfeed_DogfeedPrefixedEnvironmentVariable_MovesEnvironmentVariableIntoCurrentEnvironmentVariables()
-        {
-            //Arrange
-            Environment.SetEnvironmentVariable("DOGFEED_FOO", "some-value");
-
-            var configurationBuilder = new ConfigurationBuilder();
-
-            //Act
-            DogfeedService.MoveDogfeedPrefixedEnvironmentVariableIntoConfiguration(configurationBuilder);
-
-            //Assert
-            var configuration = configurationBuilder.Build();
-            var value = configuration["FOO"];
-            Assert.AreEqual("some-value", value);
-        }
-
-        [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Dogfeed_ExistingRedundantInstances_DestroysRedundantInstances()
         {

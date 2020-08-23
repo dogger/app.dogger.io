@@ -26,16 +26,12 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<GetClusterByIdQuery>())
-                .Returns(new Cluster()
-                {
-                    Instances = new List<Instance>()
+                .Returns(new TestClusterBuilder()
+                    .WithInstances(new Instance()
                     {
-                        new Instance()
-                        {
-                            Name = "some-instance-name"
-                        }
-                    }
-                });
+                        Name = "some-instance-name"
+                    })
+                    .Build());
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -65,17 +61,12 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<GetClusterByIdQuery>())
-                .Returns(new Cluster()
-                {
-                    Id = Guid.NewGuid(),
-                    Instances = new List<Instance>()
+                .Returns(new TestClusterBuilder()
+                    .WithInstances(new Instance()
                     {
-                        new Instance()
-                        {
-                            Name = "some-instance-name"
-                        }
-                    }
-                });
+                        Name = "some-instance-name"
+                    })
+                    .Build());
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -103,18 +94,12 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<GetClusterByIdQuery>())
-                .Returns(new Cluster()
-                {
-                    Instances = new List<Instance>()
+                .Returns(new TestClusterBuilder()
+                    .WithInstances(new Instance()
                     {
-                        new Instance()
-                        {
-                            Name = "some-instance-name"
-                        }
-                    }
-                });
-
-            
+                        Name = "some-instance-name"
+                    })
+                    .Build());
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -142,19 +127,13 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<GetClusterByIdQuery>())
-                .Returns(new Cluster()
-                {
-                    UserId = Guid.NewGuid(),
-                    Instances = new List<Instance>()
+                .Returns(new TestClusterBuilder()
+                    .WithUser(Guid.NewGuid())
+                    .WithInstances(new Instance()
                     {
-                        new Instance()
-                        {
-                            Name = "some-instance-name"
-                        }
-                    }
-                });
-
-            
+                        Name = "some-instance-name"
+                    })
+                    .Build());
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -163,7 +142,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 fakeMediator);
 
             //Assert
-            var exception = await Assert.ThrowsExceptionAsync<NotAuthorizedToAccessClusterException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<NotAuthorizedToAccessClusterException>(async () =>
                 await handler.Handle(new DeployToClusterCommand(Array.Empty<string>())
                 {
                     UserId = null,
@@ -184,7 +163,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 .Send(Arg.Any<EnsureClusterWithIdCommand>())
                 .Returns((Cluster)null);
 
-            
+
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -193,7 +172,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 fakeMediator);
 
             //Assert
-            var exception = await Assert.ThrowsExceptionAsync<ClusterNotFoundException>(async () =>  
+            var exception = await Assert.ThrowsExceptionAsync<ClusterNotFoundException>(async () =>
                 await handler.Handle(new DeployToClusterCommand(Array.Empty<string>())
                 {
                     UserId = null,
@@ -214,17 +193,13 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<GetClusterForUserQuery>())
-                .Returns(new Cluster()
-                {
-                    UserId = fakeUserId,
-                    Instances = new List<Instance>()
+                .Returns(new TestClusterBuilder()
+                    .WithUser(fakeUserId)
+                    .WithInstances(new Instance()
                     {
-                        new Instance()
-                        {
-                            Name = "some-instance-name"
-                        }
-                    }
-                });
+                        Name = "some-instance-name"
+                    })
+                    .Build());
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 

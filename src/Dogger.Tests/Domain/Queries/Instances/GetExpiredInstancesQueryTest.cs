@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
+using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.Instances.GetExpiredInstances;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
@@ -23,7 +24,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
                 {
                     Name = "dummy",
                     PlanId = "dummy",
-                    Cluster = new Cluster()
+                    Cluster = new TestClusterBuilder().Build()
                 }));
 
             //Act
@@ -47,7 +48,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
                     Name = "dummy",
                     PlanId = "dummy",
                     ExpiresAtUtc = DateTime.UtcNow.AddMinutes(1),
-                    Cluster = new Cluster()
+                    Cluster = new TestClusterBuilder().Build()
                 }));
 
             //Act
@@ -72,7 +73,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
                     Name = "non-expiring-1",
                     PlanId = "dummy",
                     ExpiresAtUtc = DateTime.UtcNow.AddMinutes(1),
-                    Cluster = new Cluster()
+                    Cluster = new TestClusterBuilder().Build()
                 });
 
                 await dataContext.Instances.AddAsync(new Instance()
@@ -80,7 +81,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
                     Name = "expiring-1",
                     PlanId = "dummy",
                     ExpiresAtUtc = DateTime.UtcNow.AddMinutes(-1),
-                    Cluster = new Cluster()
+                    Cluster = new TestClusterBuilder().Build()
                 });
 
                 await dataContext.Instances.AddAsync(new Instance()
@@ -88,7 +89,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
                     Name = "non-expiring-2",
                     PlanId = "dummy",
                     ExpiresAtUtc = DateTime.UtcNow.AddMinutes(3),
-                    Cluster = new Cluster()
+                    Cluster = new TestClusterBuilder().Build()
                 });
 
                 await dataContext.Instances.AddAsync(new Instance()
@@ -96,7 +97,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
                     Name = "expiring-2",
                     PlanId = "dummy",
                     ExpiresAtUtc = DateTime.UtcNow.AddMinutes(-3),
-                    Cluster = new Cluster()
+                    Cluster = new TestClusterBuilder().Build()
                 });
             });
 

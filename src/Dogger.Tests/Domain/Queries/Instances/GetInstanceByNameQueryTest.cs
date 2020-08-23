@@ -37,13 +37,13 @@ namespace Dogger.Tests.Domain.Queries.Instances
                 {
                     Name = "non-matching-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster()
+                    Cluster = new TestClusterBuilder().Build()
                 });
                 await dataContext.Instances.AddAsync(new Instance()
                 {
                     Name = "some-instance-name",
                     PlanId = "dummy",
-                    Cluster = new Cluster()
+                    Cluster = new TestClusterBuilder().Build()
                 });
             });
 

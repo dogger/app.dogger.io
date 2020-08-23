@@ -1,5 +1,6 @@
 ﻿using System;
 using Dogger.Domain.Models.Builders;
+using Bogus;
 
 namespace Dogger.Tests.Domain.Models
 {
@@ -8,7 +9,7 @@ namespace Dogger.Tests.Domain.Models
         public TestAmazonUserBuilder()
         {
             WithId(Guid.NewGuid());
-            WithName("dummy");
+            WithName(Guid.NewGuid().ToString());
             WithAwsCredentials(
                 Array.Empty<byte>(),
                 Array.Empty<byte>());

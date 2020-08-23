@@ -19,12 +19,11 @@ namespace Dogger.Tests.Domain.Commands.Clusters
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Clusters.AddAsync(new Cluster());
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder().Build());
 
-                await dataContext.Clusters.AddAsync(new Cluster()
-                {
-                    Id = DataContext.DemoClusterId
-                });
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithId(DataContext.DemoClusterId)
+                    .Build());
             });
 
             //Act

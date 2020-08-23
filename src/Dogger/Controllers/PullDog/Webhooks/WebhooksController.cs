@@ -31,7 +31,7 @@ namespace Dogger.Controllers.PullDog.Webhooks
     {
         public const string WebhookSignatureVerificationKeyName = "IsWebhookSignatureVerified";
 
-        private const string sha1Prefix = "sha1=";
+        private const string Sha1Prefix = "sha1=";
 
         private readonly IMediator mediator;
         private readonly ILogger logger;
@@ -202,14 +202,14 @@ namespace Dogger.Controllers.PullDog.Webhooks
             var payload = await reader.ReadToEndAsync();
 
             var signatureWithPrefixString = (string)signatureWithPrefix;
-            if (!signatureWithPrefixString.StartsWith(sha1Prefix, StringComparison.OrdinalIgnoreCase))
+            if (!signatureWithPrefixString.StartsWith(Sha1Prefix, StringComparison.OrdinalIgnoreCase))
                 return false;
 
             var options = this.gitHubOptionsMonitor.CurrentValue.PullDog;
             if (options?.WebhookSecret == null)
                 throw new InvalidOperationException("The webhook secret could not be found.");
 
-            var signature = signatureWithPrefixString.Substring(sha1Prefix.Length);
+            var signature = signatureWithPrefixString[Sha1Prefix.Length..];
             var secret = Encoding.UTF8.GetBytes(options.WebhookSecret);
             var payloadBytes = Encoding.UTF8.GetBytes(payload);
 

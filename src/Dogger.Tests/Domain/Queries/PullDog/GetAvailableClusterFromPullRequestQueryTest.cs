@@ -25,19 +25,16 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Is<EnsureClusterWithIdCommand>(args => args.Id == DataContext.PullDogDemoClusterId))
-                .Returns(new Cluster()
-                {
-                    Instances = new List<Instance>()
-                    {
+                .Returns(new TestClusterBuilder()
+                    .WithInstances(
                         new Instance()
                         {
                             PullDogPullRequest = new PullDogPullRequest()
                             {
                                 Handle = "pr-1"
                             }
-                        }
-                    }
-                });
+                        })
+                    .Build());
 
             var handler = new GetAvailableClusterFromPullRequestQueryHandler(
                 fakeMediator,
@@ -73,7 +70,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Is<EnsureClusterWithIdCommand>(args => args.Id == DataContext.PullDogDemoClusterId))
-                .Returns(new Cluster());
+                .Returns(new TestClusterBuilder().Build());
 
             var handler = new GetAvailableClusterFromPullRequestQueryHandler(
                 fakeMediator,
@@ -115,10 +112,8 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 .Send(Arg.Is<EnsureClusterForUserCommand>(args =>
                     args.ClusterName == "pull-dog" &&
                     args.UserId == user.Id))
-                .Returns(new Cluster()
-                {
-                    Instances = new List<Instance>()
-                    {
+                .Returns(new TestClusterBuilder()
+                    .WithInstances(
                         new Instance()
                         {
                             PullDogPullRequest = new PullDogPullRequest()
@@ -132,9 +127,8 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                             {
                                 Handle = "dummy-2"
                             }
-                        }
-                    }
-                });
+                        })
+                    .Build());
 
             var handler = new GetAvailableClusterFromPullRequestQueryHandler(
                 fakeMediator,
@@ -174,10 +168,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 .Send(Arg.Is<EnsureClusterForUserCommand>(args =>
                     args.ClusterName == "pull-dog" &&
                     args.UserId == user.Id))
-                .Returns(new Cluster()
-                {
-                    Instances = new List<Instance>()
-                });
+                .Returns(new TestClusterBuilder().Build());
 
             var handler = new GetAvailableClusterFromPullRequestQueryHandler(
                 fakeMediator,

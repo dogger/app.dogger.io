@@ -97,11 +97,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             var clusterId = Guid.NewGuid();
-            var cluster = new Cluster()
-            {
-                Id = clusterId,
-                Instances = new List<Instance>()
-                {
+            var cluster = new TestClusterBuilder()
+                .WithId(clusterId)
+                .WithInstances(
                     new Instance()
                     {
                         Name = "not-matching",
@@ -111,9 +109,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     {
                         Name = "some-instance-name",
                         PlanId = "dummy"
-                    }
-                }
-            };
+                    })
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -204,11 +201,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             var clusterId = Guid.NewGuid();
-            var cluster = new Cluster()
-            {
-                Id = clusterId,
-                Instances = new List<Instance>()
-                {
+            var cluster = new TestClusterBuilder()
+                .WithId(clusterId)
+                .WithInstances(
                     new Instance()
                     {
                         Name = "not-matching",
@@ -247,9 +242,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                                 }
                             }
                         }
-                    }
-                }
-            };
+                    })
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -343,11 +337,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             var clusterId = Guid.NewGuid();
-            var cluster = new Cluster()
-            {
-                Id = clusterId,
-                Instances = new List<Instance>()
-                {
+            var cluster = new TestClusterBuilder()
+                .WithId(clusterId)
+                .WithInstances(
                     new Instance()
                     {
                         Name = "not-matching",
@@ -386,9 +378,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                                 }
                             }
                         }
-                    }
-                }
-            };
+                    })
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -452,11 +443,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             var clusterId = Guid.NewGuid();
-            var cluster = new Cluster()
-            {
-                Id = clusterId,
-                Instances = new List<Instance>()
-                {
+            var cluster = new TestClusterBuilder()
+                .WithId(clusterId)
+                .WithInstances(
                     new Instance()
                     {
                         Name = "not-matching",
@@ -466,9 +455,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     {
                         Name = "some-instance-name",
                         PlanId = "dummy"
-                    }
-                }
-            };
+                    })
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -565,12 +553,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .WithStripeCustomerId(customer.Id)
                 .Build();
 
-            var cluster = new Cluster()
-            {
-                Id = clusterId,
-                User = user,
-                UserId = user.Id
-            };
+            var cluster = new TestClusterBuilder()
+                .WithId(clusterId)
+                .WithUser(user)
+                .Build();
             user.Clusters.Add(cluster);
 
             var instance = new Instance()
@@ -667,12 +653,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .WithStripeCustomerId(customer.Id)
                 .Build();
 
-            var cluster = new Cluster()
-            {
-                Id = clusterId,
-                User = user,
-                UserId = user.Id
-            };
+            var cluster = new TestClusterBuilder()
+                .WithId(clusterId)
+                .WithUser(user)
+                .Build();
             user.Clusters.Add(cluster);
 
             var instance = new Instance()
@@ -770,12 +754,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .WithStripeSubscriptionId(subscription.Id)
                 .Build();
 
-            var cluster = new Cluster()
-            {
-                Id = clusterId,
-                User = user,
-                UserId = user.Id
-            };
+            var cluster = new TestClusterBuilder()
+                .WithId(clusterId)
+                .WithUser(user)
+                .Build();
             user.Clusters.Add(cluster);
 
             var instance = new Instance()

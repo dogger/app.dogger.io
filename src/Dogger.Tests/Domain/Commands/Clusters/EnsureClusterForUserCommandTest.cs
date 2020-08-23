@@ -23,19 +23,15 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             var matchingClusterId = Guid.NewGuid();
             var user = new TestUserBuilder()
                 .WithClusters(
-                    new Cluster()
-                    {
-                        Name = "some-non-matching-cluster-1"
-                    },
-                    new Cluster()
-                    {
-                        Id = matchingClusterId,
-                        Name = "some-matching-cluster"
-                    },
-                    new Cluster()
-                    {
-                        Name = "some-non-matching-cluster-2"
-                    })
+                    new TestClusterBuilder()
+                        .WithName("some-non-matching-cluster-1")
+                        .Build(),
+                    new TestClusterBuilder()
+                        .WithName("some-matching-cluster")
+                        .Build(),
+                    new TestClusterBuilder()
+                        .WithName("some-non-matching-cluster-2")
+                        .Build())
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -64,14 +60,12 @@ namespace Dogger.Tests.Domain.Commands.Clusters
 
             var user = new TestUserBuilder()
                 .WithClusters(
-                    new Cluster()
-                    {
-                        Name = "some-non-matching-cluster-1"
-                    },
-                    new Cluster()
-                    {
-                        Name = "some-non-matching-cluster-2"
-                    })
+                    new TestClusterBuilder()
+                        .WithName("some-non-matching-cluster-1")
+                        .Build(),
+                    new TestClusterBuilder()
+                        .WithName("some-non-matching-cluster-2")
+                        .Build())
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
