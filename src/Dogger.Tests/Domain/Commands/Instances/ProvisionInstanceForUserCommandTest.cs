@@ -233,7 +233,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     TestClaimsPrincipalFactory.CreateWithIdentityName("some-identity-name")));
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<TestException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<TestException>(async () =>
                 await environment.Mediator.Send(
                     new ProvisionInstanceForUserCommand(
                         new Plan(

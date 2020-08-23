@@ -50,16 +50,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 }
             };
 
-            var oldInstance = new Instance()
-            {
-                Name = "existing-instance",
-                PlanId = "dummy",
-                PullDogPullRequest = pullDogPullRequest,
-                Cluster = new TestClusterBuilder()
+            var oldInstance = new TestInstanceBuilder()
+                .WithName("existing-instance")
+                .WithPullDogPullRequest(pullDogPullRequest)
+                .WithCluster(new TestClusterBuilder()
                     .WithName("pull-dog")
                     .WithUser(user)
-                    .Build()
-            };
+                    .Build())
+                .Build();
 
             await environment.DataContext.Instances.AddAsync(oldInstance);
             await environment.DataContext.SaveChangesAsync();
@@ -119,15 +117,13 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 }
             };
 
-            var oldInstance = new Instance()
-            {
-                Name = "existing-instance",
-                PlanId = "dummy",
-                PullDogPullRequest = pullDogPullRequest,
-                Cluster = new TestClusterBuilder()
+            var oldInstance = new TestInstanceBuilder()
+                .WithName("existing-instance")
+                .WithPullDogPullRequest(pullDogPullRequest)
+                .WithCluster(new TestClusterBuilder()
                     .WithId(DataContext.PullDogDemoClusterId)
-                    .Build()
-            };
+                    .Build())
+                .Build();
 
             await environment.DataContext.Instances.AddAsync(oldInstance);
             await environment.DataContext.SaveChangesAsync();
@@ -185,15 +181,13 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 }
             };
 
-            var oldInstance = new Instance()
-            {
-                Name = "existing-instance",
-                PlanId = "dummy",
-                PullDogPullRequest = pullDogPullRequest,
-                Cluster = new TestClusterBuilder()
+            var oldInstance = new TestInstanceBuilder()
+                .WithName("existing-instance")
+                .WithPullDogPullRequest(pullDogPullRequest)
+                .WithCluster(new TestClusterBuilder()
                     .WithId(DataContext.PullDogDemoClusterId)
-                    .Build()
-            };
+                    .Build())
+                .Build();
 
             await environment.DataContext.Instances.AddAsync(oldInstance);
             await environment.DataContext.SaveChangesAsync();

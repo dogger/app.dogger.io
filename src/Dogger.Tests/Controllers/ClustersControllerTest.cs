@@ -217,10 +217,9 @@ namespace Dogger.Tests.Controllers
                 .Send(Arg.Is<GetClusterForUserQuery>(args =>
                     args.ClusterId == default))
                 .Returns(new TestClusterBuilder()
-                    .WithInstances(new Dogger.Domain.Models.Instance()
-                    {
-                        Name = "some-instance-name"
-                    })
+                    .WithInstances(new TestInstanceBuilder()
+                        .WithName("some-instance-name")
+                        .Build())
                     .Build());
 
             var fakeMapper = Substitute.For<IMapper>();
@@ -258,10 +257,9 @@ namespace Dogger.Tests.Controllers
                 .Send(Arg.Is<GetClusterForUserQuery>(args =>
                     args.ClusterId == fakeClusterId))
                 .Returns(new TestClusterBuilder()
-                    .WithInstances(new Dogger.Domain.Models.Instance()
-                    {
-                        Name = "some-instance-name"
-                    })
+                    .WithInstances(new TestInstanceBuilder()
+                        .WithName("some-instance-name")
+                        .Build())
                     .Build());
 
             var fakeMapper = Substitute.For<IMapper>();
@@ -696,7 +694,7 @@ namespace Dogger.Tests.Controllers
                     Arg.Is<GetInstanceByNameQuery>(arg =>
                         arg.Name == "demo"),
                     default)
-                .Returns(new Dogger.Domain.Models.Instance());
+                .Returns(new TestInstanceBuilder().Build());
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
@@ -745,7 +743,7 @@ namespace Dogger.Tests.Controllers
                     Arg.Is<GetInstanceByNameQuery>(arg =>
                         arg.Name == "some-instance-name"),
                     default)
-                .Returns(new Dogger.Domain.Models.Instance());
+                .Returns(new TestInstanceBuilder().Build());
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 

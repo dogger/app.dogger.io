@@ -1,11 +1,20 @@
 using System;
 using Dogger.Domain.Models.Builders;
 
-public class TestClusterBuilder : ClusterBuilder
+namespace Dogger.Tests.Domain.Models
 {
-    public TestClusterBuilder()
+    public class TestClusterBuilder : ClusterBuilder
     {
-        WithId(Guid.NewGuid());
-        WithName(Guid.NewGuid().ToString());
+        public TestClusterBuilder()
+        {
+            WithId(Guid.NewGuid());
+            WithName(Guid.NewGuid().ToString());
+        }
+
+        public TestClusterBuilder WithUser()
+        {
+            WithUser(new TestUserBuilder().Build());
+            return this;
+        }
     }
 }

@@ -37,12 +37,10 @@ namespace Dogger.Tests.Domain.Events
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new TestClusterBuilder().Build(),
-                    PullDogPullRequest = new PullDogPullRequest()
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster()
+                    .WithName("some-instance-name")
+                    .WithPullDogPullRequest(new PullDogPullRequest()
                     {
                         Handle = "some-pull-request-handle",
                         PullDogRepository = new PullDogRepository()
@@ -55,8 +53,8 @@ namespace Dogger.Tests.Domain.Events
                                 EncryptedApiKey = Array.Empty<byte>()
                             }
                         }
-                    }
-                });
+                    })
+                    .Build());
             });
 
             var createdInstance = await environment
@@ -100,12 +98,10 @@ namespace Dogger.Tests.Domain.Events
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new TestClusterBuilder().Build(),
-                    PullDogPullRequest = new PullDogPullRequest()
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster()
+                    .WithName("some-instance-name")
+                    .WithPullDogPullRequest(new PullDogPullRequest()
                     {
                         Handle = "some-pull-request-handle",
                         PullDogRepository = new PullDogRepository()
@@ -118,8 +114,8 @@ namespace Dogger.Tests.Domain.Events
                                 EncryptedApiKey = Array.Empty<byte>()
                             }
                         }
-                    }
-                });
+                    })
+                    .Build());
             });
 
             var createdInstance = await environment

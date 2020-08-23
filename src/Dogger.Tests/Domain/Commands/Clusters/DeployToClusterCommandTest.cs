@@ -8,6 +8,7 @@ using Dogger.Domain.Queries.Clusters.GetClusterById;
 using Dogger.Domain.Queries.Clusters.GetClusterForUser;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -27,10 +28,9 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             fakeMediator
                 .Send(Arg.Any<GetClusterByIdQuery>())
                 .Returns(new TestClusterBuilder()
-                    .WithInstances(new Instance()
-                    {
-                        Name = "some-instance-name"
-                    })
+                    .WithInstances(new TestInstanceBuilder()
+                        .WithName("some-instance-name")
+                        .Build())
                     .Build());
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
@@ -62,10 +62,9 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             fakeMediator
                 .Send(Arg.Any<GetClusterByIdQuery>())
                 .Returns(new TestClusterBuilder()
-                    .WithInstances(new Instance()
-                    {
-                        Name = "some-instance-name"
-                    })
+                    .WithInstances(new TestInstanceBuilder()
+                        .WithName("some-instance-name")
+                        .Build())
                     .Build());
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
@@ -95,10 +94,9 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             fakeMediator
                 .Send(Arg.Any<GetClusterByIdQuery>())
                 .Returns(new TestClusterBuilder()
-                    .WithInstances(new Instance()
-                    {
-                        Name = "some-instance-name"
-                    })
+                    .WithInstances(new TestInstanceBuilder()
+                        .WithName("some-instance-name")
+                        .Build())
                     .Build());
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
@@ -129,10 +127,9 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 .Send(Arg.Any<GetClusterByIdQuery>())
                 .Returns(new TestClusterBuilder()
                     .WithUser(Guid.NewGuid())
-                    .WithInstances(new Instance()
-                    {
-                        Name = "some-instance-name"
-                    })
+                    .WithInstances(new TestInstanceBuilder()
+                        .WithName("some-instance-name")
+                        .Build())
                     .Build());
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
@@ -162,8 +159,6 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             fakeMediator
                 .Send(Arg.Any<EnsureClusterWithIdCommand>())
                 .Returns((Cluster)null);
-
-
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -195,10 +190,9 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 .Send(Arg.Any<GetClusterForUserQuery>())
                 .Returns(new TestClusterBuilder()
                     .WithUser(fakeUserId)
-                    .WithInstances(new Instance()
-                    {
-                        Name = "some-instance-name"
-                    })
+                    .WithInstances(new TestInstanceBuilder()
+                        .WithName("some-instance-name")
+                        .Build())
                     .Build());
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();

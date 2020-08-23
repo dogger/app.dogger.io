@@ -40,13 +40,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await environment.WithFreshDataContext(async dataContext =>
             {
                 var demoCluster = new TestClusterBuilder()
+                    .WithUser()
                     .WithId(DataContext.DemoClusterId)
-                    .WithUser(new TestUserBuilder().Build())
-                    .WithInstances(new Instance()
-                    {
-                        Name = "dummy",
-                        PlanId = "dummy"
-                    })
+                    .WithInstances(new TestInstanceBuilder().Build())
                     .Build();
                 await dataContext.Clusters.AddAsync(demoCluster);
             });
@@ -81,13 +77,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await environment.WithFreshDataContext(async dataContext =>
             {
                 var demoCluster = new TestClusterBuilder()
+                    .WithUser()
                     .WithId(DataContext.DemoClusterId)
-                    .WithUser(new TestUserBuilder().Build())
-                    .WithInstances(new Instance()
-                    {
-                        Name = "dummy",
-                        PlanId = "dummy"
-                    })
+                    .WithInstances(new TestInstanceBuilder().Build())
                     .Build();
                 await dataContext.Clusters.AddAsync(demoCluster);
             });
@@ -122,13 +114,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await environment.WithFreshDataContext(async dataContext =>
             {
                 var demoCluster = new TestClusterBuilder()
+                    .WithUser()
                     .WithId(DataContext.DemoClusterId)
-                    .WithUser(new TestUserBuilder().Build())
-                    .WithInstances(new Instance()
-                    {
-                        Name = "dummy",
-                        PlanId = "dummy"
-                    })
+                    .WithInstances(new TestInstanceBuilder().Build())
                     .Build();
                 await dataContext.Clusters.AddAsync(demoCluster);
             });
@@ -170,13 +158,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await environment.WithFreshDataContext(async dataContext =>
             {
                 var demoCluster = new TestClusterBuilder()
+                    .WithUser()
                     .WithId(DataContext.DemoClusterId)
-                    .WithUser(new TestUserBuilder().Build())
-                    .WithInstances(new Instance()
-                    {
-                        Name = "dummy",
-                        PlanId = "dummy"
-                    })
+                    .WithInstances(new TestInstanceBuilder().Build())
                     .Build();
                 await dataContext.Clusters.AddAsync(demoCluster);
             });

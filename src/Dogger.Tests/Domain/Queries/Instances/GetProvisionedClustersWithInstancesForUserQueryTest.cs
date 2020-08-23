@@ -77,18 +77,14 @@ namespace Dogger.Tests.Domain.Queries.Instances
                     .WithId(userId)
                     .WithClusters(new TestClusterBuilder()
                         .WithInstances(
-                            new Instance()
-                            {
-                                Name = "some-instance-1",
-                                PlanId = "dummy",
-                                IsProvisioned = false
-                            },
-                            new Instance()
-                            {
-                                Name = "some-instance-2",
-                                PlanId = "dummy",
-                                IsProvisioned = false
-                            })
+                            new TestInstanceBuilder()
+                                .WithName("some-instance-1")
+                                .WithProvisionedStatus(false)
+                                .Build(),
+                            new TestInstanceBuilder()
+                                .WithName("some-instance-2")
+                                .WithProvisionedStatus(false)
+                                .Build())
                         .Build())
                     .Build());
             });
@@ -158,18 +154,14 @@ namespace Dogger.Tests.Domain.Queries.Instances
                     .WithId(userId)
                     .WithClusters(new TestClusterBuilder()
                         .WithInstances(
-                            new Instance()
-                            {
-                                Name = "some-instance-1",
-                                PlanId = "dummy",
-                                IsProvisioned = true
-                            },
-                            new Instance()
-                            {
-                                Name = "some-instance-2",
-                                PlanId = "dummy",
-                                IsProvisioned = true
-                            })
+                            new TestInstanceBuilder()
+                                .WithName("some-instance-1")
+                                .WithProvisionedStatus(true)
+                                .Build(),
+                            new TestInstanceBuilder()
+                                .WithName("some-instance-2")
+                                .WithProvisionedStatus(true)
+                                .Build())
                         .Build())
                     .Build());
             });
@@ -248,18 +240,14 @@ namespace Dogger.Tests.Domain.Queries.Instances
                     .WithId(userId)
                     .WithClusters(new TestClusterBuilder()
                         .WithInstances(
-                            new Instance()
-                            {
-                                Name = "some-instance-1",
-                                PlanId = "dummy",
-                                IsProvisioned = true
-                            },
-                            new Instance()
-                            {
-                                Name = "some-instance-2",
-                                PlanId = "dummy",
-                                IsProvisioned = true
-                            })
+                            new TestInstanceBuilder()
+                                .WithName("some-instance-1")
+                                .WithProvisionedStatus(true)
+                                .Build(),
+                            new TestInstanceBuilder()
+                                .WithName("some-instance-2")
+                                .WithProvisionedStatus(true)
+                                .Build())
                         .Build())
                     .Build());
             });

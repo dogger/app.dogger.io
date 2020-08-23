@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Infrastructure.Mediatr.Database;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;

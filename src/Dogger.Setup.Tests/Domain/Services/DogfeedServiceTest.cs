@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
+using Dogger.Domain.Models;
 using Dogger.Domain.Commands.Amazon.Lightsail.AssignStaticIpToInstance;
 using Dogger.Domain.Commands.Amazon.Lightsail.AttachInstancesToLoadBalancer;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
@@ -14,6 +15,7 @@ using Dogger.Domain.Services.Provisioning;
 using Dogger.Infrastructure.Time;
 using Dogger.Setup.Domain.Services;
 using Dogger.Setup.Tests.TestHelpers.Environments;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -41,10 +43,9 @@ namespace Dogger.Setup.Tests.Domain.Services
             fakeMediator
                 .Send(Arg.Any<GetAllInstancesQuery>())
                 .Returns(
-                    new[]
+                    new Instance[]
                     {
-                        new Instance()
-                        {
+                        new Instance() {
                             Name = "new-instance"
                         }
                     });
@@ -98,14 +99,12 @@ namespace Dogger.Setup.Tests.Domain.Services
             fakeMediator
                 .Send(Arg.Any<GetAllInstancesQuery>())
                 .Returns(
-                    new[]
+                    new Instance[]
                     {
-                        new Instance()
-                        {
+                        new Instance() {
                             Name = "new-instance"
                         },
-                        new Instance()
-                        {
+                        new Instance() {
                             Name = "old-instance"
                         }
                     });
@@ -164,18 +163,15 @@ namespace Dogger.Setup.Tests.Domain.Services
             fakeMediator
                 .Send(Arg.Any<GetAllInstancesQuery>())
                 .Returns(
-                    new[]
+                    new Instance[]
                     {
-                        new Instance()
-                        {
+                        new Instance() {
                             Name = "some-random-instance"
                         },
-                        new Instance()
-                        {
+                        new Instance() {
                             Name = "main-attached-instance-from-load-balancer"
                         },
-                        new Instance()
-                        {
+                        new Instance() {
                             Name = "main-detached-instance-from-load-balancer"
                         }
                     });

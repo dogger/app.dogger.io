@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Instances.GetInstanceByName;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -33,18 +34,15 @@ namespace Dogger.Tests.Domain.Queries.Instances
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "non-matching-name",
-                    PlanId = "dummy",
-                    Cluster = new TestClusterBuilder().Build()
-                });
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new TestClusterBuilder().Build()
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster()
+                    .WithName("non-matching-name")
+                    .Build());
+
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster()
+                    .WithName("some-instance-name")
+                    .Build());
             });
 
             //Act

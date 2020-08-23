@@ -34,15 +34,12 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             {
                 await dataContext.Users.AddAsync(user);
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Cluster = new TestClusterBuilder()
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster(new TestClusterBuilder()
                         .WithUser(user)
-                        .Build(),
-                    Name = "dummy",
-                    PlanId = "dummy",
-                    PullDogPullRequest = null
-                });
+                        .Build())
+                    .WithPullDogPullRequest(null)
+                    .Build());
             });
 
             //Act
@@ -78,14 +75,11 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 await dataContext.Users.AddAsync(matchedUser);
                 await dataContext.Users.AddAsync(otherUser);
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Cluster = new TestClusterBuilder()
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster(new TestClusterBuilder()
                         .WithUser(otherUser)
-                        .Build(),
-                    Name = "dummy",
-                    PlanId = "dummy",
-                    PullDogPullRequest = new PullDogPullRequest()
+                        .Build())
+                    .WithPullDogPullRequest(new PullDogPullRequest()
                     {
                         Handle = "dummy",
                         PullDogRepository = new PullDogRepository()
@@ -98,8 +92,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                                 EncryptedApiKey = Array.Empty<byte>()
                             }
                         }
-                    }
-                });
+                    })
+                    .Build());
             });
 
             //Act
@@ -131,14 +125,12 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             {
                 await dataContext.Users.AddAsync(user);
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Cluster = new TestClusterBuilder()
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster(new TestClusterBuilder()
                         .WithUser(user)
-                        .Build(),
-                    Name = "some-name",
-                    PlanId = "dummy",
-                    PullDogPullRequest = new PullDogPullRequest()
+                        .Build())
+                    .WithName("some-name")
+                    .WithPullDogPullRequest(new PullDogPullRequest()
                     {
                         Handle = "dummy",
                         PullDogRepository = new PullDogRepository()
@@ -151,8 +143,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                                 EncryptedApiKey = Array.Empty<byte>()
                             }
                         }
-                    }
-                });
+                    })
+                    .Build());
             });
 
             //Act

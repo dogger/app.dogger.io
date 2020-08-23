@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Clusters.EnsureClusterWithId;
 using Dogger.Domain.Models;
+using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
@@ -52,8 +53,8 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDemoInstance
             var cluster = await mediator.Send(new EnsureClusterWithIdCommand(DataContext.DemoClusterId), cancellationToken);
             if (cluster.Instances.Count > 0)
             {
-                var isDemoClusterOwnedByCurrentAuthenticatedUser = 
-                    cluster.UserId != default && 
+                var isDemoClusterOwnedByCurrentAuthenticatedUser =
+                    cluster.UserId != default &&
                     cluster.UserId == request.AuthenticatedUserId;
                 if (isDemoClusterOwnedByCurrentAuthenticatedUser)
                     return this.provisioningService.GetCompletedJob();
@@ -62,14 +63,13 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDemoInstance
             }
 
             var plan = await mediator.Send(new GetDemoPlanQuery(), cancellationToken);
-            var instance = new Instance()
-            {
-                Name = "demo",
-                Cluster = cluster,
-                IsProvisioned = false,
-                PlanId = plan.Id,
-                ExpiresAtUtc = DateTime.UtcNow.AddMinutes(30)
-            };
+            var instance = new InstanceBuilder()
+                .WithName("demo")
+                .WithCluster(cluster)
+                .WithProvisionedStatus(false)
+                .WithPlanId(plan.Id)
+                .WithExpiredDate(DateTime.UtcNow.AddMinutes(30))
+                .Build();
 
             cluster.UserId = request.AuthenticatedUserId;
 

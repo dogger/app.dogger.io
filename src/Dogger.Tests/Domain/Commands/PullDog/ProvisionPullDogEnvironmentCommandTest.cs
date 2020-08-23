@@ -13,6 +13,7 @@ using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Docker.Yml;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -30,10 +31,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_ValidProvisionConditionsGiven_SchedulesJobWithPullDogDatabaseInstance()
         {
             //Arrange
-            var databaseInstance = new Instance()
-            {
-                Name = "some-instance-name"
-            };
+            var databaseInstance = new TestInstanceBuilder()
+                .WithName("some-instance-name")
+                .Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
@@ -49,7 +49,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -89,10 +89,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_ValidProvisionConditionsGiven_SchedulesJobWithDockerComposeContents()
         {
             //Arrange
-            var databaseInstance = new Instance()
-            {
-                Name = "some-instance-name"
-            };
+            var databaseInstance = new TestInstanceBuilder()
+                .WithName("some-instance-name")
+                .Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
@@ -108,7 +107,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new ConfigurationFile(new List<string> { "some-docker-compose-path" }));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -149,7 +148,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -195,7 +194,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -254,7 +253,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -311,7 +310,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -366,7 +365,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new PullDogPullRequest());
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -422,7 +421,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -478,7 +477,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -533,7 +532,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 

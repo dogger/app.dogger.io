@@ -4,6 +4,7 @@ using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Events.ServerDeploymentFailed;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Instances.GetInstanceByName;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -46,7 +47,7 @@ namespace Dogger.Tests.Domain.Events
             fakeMediator
                 .Send(Arg.Is<GetInstanceByNameQuery>(args =>
                     args.Name == "some-instance-name"))
-                .Returns(new Instance());
+                .Returns(new TestInstanceBuilder().Build());
 
             var handler = new ServerDeploymentFailedEventHandler(fakeMediator);
 
@@ -78,10 +79,9 @@ namespace Dogger.Tests.Domain.Events
             fakeMediator
                 .Send(Arg.Is<GetInstanceByNameQuery>(args =>
                     args.Name == "some-instance-name"))
-                .Returns(new Instance()
-                {
-                    PullDogPullRequest = new PullDogPullRequest()
-                });
+                .Returns(new TestInstanceBuilder()
+                    .WithPullDogPullRequest(new PullDogPullRequest())
+                    .Build());
 
             var handler = new ServerDeploymentFailedEventHandler(fakeMediator);
 

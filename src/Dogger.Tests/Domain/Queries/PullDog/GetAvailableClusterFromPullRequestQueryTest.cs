@@ -27,13 +27,12 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 .Send(Arg.Is<EnsureClusterWithIdCommand>(args => args.Id == DataContext.PullDogDemoClusterId))
                 .Returns(new TestClusterBuilder()
                     .WithInstances(
-                        new Instance()
-                        {
-                            PullDogPullRequest = new PullDogPullRequest()
+                        new TestInstanceBuilder()
+                            .WithPullDogPullRequest(new PullDogPullRequest()
                             {
                                 Handle = "pr-1"
-                            }
-                        })
+                            })
+                            .Build())
                     .Build());
 
             var handler = new GetAvailableClusterFromPullRequestQueryHandler(
@@ -114,20 +113,18 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                     args.UserId == user.Id))
                 .Returns(new TestClusterBuilder()
                     .WithInstances(
-                        new Instance()
-                        {
-                            PullDogPullRequest = new PullDogPullRequest()
+                        new TestInstanceBuilder()
+                            .WithPullDogPullRequest(new PullDogPullRequest()
                             {
                                 Handle = "dummy-1"
-                            }
-                        },
-                        new Instance()
-                        {
-                            PullDogPullRequest = new PullDogPullRequest()
+                            })
+                            .Build(),
+                        new TestInstanceBuilder()
+                            .WithPullDogPullRequest(new PullDogPullRequest()
                             {
                                 Handle = "dummy-2"
-                            }
-                        })
+                            })
+                            .Build())
                     .Build());
 
             var handler = new GetAvailableClusterFromPullRequestQueryHandler(

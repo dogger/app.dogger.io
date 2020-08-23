@@ -1,0 +1,22 @@
+using System;
+using Dogger.Domain.Models.Builders;
+
+namespace Dogger.Tests.Domain.Models
+{
+    public class TestInstanceBuilder : InstanceBuilder
+    {
+        public TestInstanceBuilder()
+        {
+            WithId(Guid.NewGuid());
+            WithName(Guid.NewGuid().ToString());
+            WithPlanId(Guid.NewGuid().ToString());
+            WithCluster();
+        }
+
+        public TestInstanceBuilder WithCluster()
+        {
+            WithCluster(new TestClusterBuilder().Build());
+            return this;
+        }
+    }
+}

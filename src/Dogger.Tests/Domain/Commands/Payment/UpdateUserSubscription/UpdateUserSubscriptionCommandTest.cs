@@ -64,16 +64,12 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .WithStripeSubscriptionId("some-subscription-id")
                 .WithClusters(new TestClusterBuilder()
                     .WithInstances(
-                        new Instance()
-                        {
-                            PlanId = "some-plan-id-1",
-                            Name = "dummy-1"
-                        },
-                        new Instance()
-                        {
-                            PlanId = "some-plan-id-2",
-                            Name = "dummy-2"
-                        })
+                        new TestInstanceBuilder()
+                            .WithPlanId("some-plan-id-1")
+                            .Build(),
+                        new TestInstanceBuilder()
+                            .WithPlanId("some-plan-id-2")
+                            .Build())
                     .Build())
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
@@ -143,16 +139,12 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .WithStripeSubscriptionId("some-subscription-id")
                 .WithClusters(new TestClusterBuilder()
                     .WithInstances(
-                        new Instance()
-                        {
-                            PlanId = "some-plan-id-1",
-                            Name = "dummy-1"
-                        },
-                        new Instance()
-                        {
-                            PlanId = "some-plan-id-1",
-                            Name = "dummy-2"
-                        })
+                        new TestInstanceBuilder()
+                            .WithPlanId("some-plan-id-1")
+                            .Build(),
+                        new TestInstanceBuilder()
+                            .WithPlanId("some-plan-id-1")
+                            .Build())
                     .Build())
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
@@ -253,11 +245,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .Build();
             user.Clusters.Add(new TestClusterBuilder()
                 .WithUser(user)
-                .WithInstances(new Instance()
-                {
-                    PlanId = "some-plan-id",
-                    Name = "dummy",
-                    PullDogPullRequest = new PullDogPullRequest()
+                .WithInstances(new TestInstanceBuilder()
+                    .WithPlanId("some-plan-id")
+                    .WithPullDogPullRequest(new PullDogPullRequest()
                     {
                         Handle = "dummy",
                         PullDogRepository = new PullDogRepository()
@@ -271,8 +261,8 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                                 User = user
                             }
                         }
-                    }
-                })
+                    })
+                    .Build())
                 .Build());
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -510,11 +500,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             var user = new TestUserBuilder()
                 .WithStripeSubscriptionId("some-subscription-id")
                 .WithClusters(new TestClusterBuilder()
-                    .WithInstances(new Instance()
-                    {
-                        PlanId = "some-new-plan-id",
-                        Name = "dummy"
-                    })
+                    .WithInstances(new TestInstanceBuilder()
+                        .WithPlanId("some-new-plan-id")
+                        .Build())
                     .Build())
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
@@ -686,11 +674,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .WithStripeCustomerId("some-customer-id")
                 .WithStripeSubscriptionId(null)
                 .WithClusters(new TestClusterBuilder()
-                    .WithInstances(new Instance()
-                    {
-                        PlanId = "some-plan-id",
-                        Name = "dummy"
-                    })
+                    .WithInstances(new TestInstanceBuilder()
+                        .WithPlanId("some-plan-id")
+                        .Build())
                     .Build())
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
@@ -746,11 +732,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             var user = new TestUserBuilder()
                 .WithStripeSubscriptionId(null)
                 .WithClusters(new TestClusterBuilder()
-                    .WithInstances(new Instance()
-                    {
-                        PlanId = "some-plan-id",
-                        Name = "dummy"
-                    })
+                    .WithInstances(new TestInstanceBuilder()
+                        .WithPlanId("some-plan-id")
+                        .Build())
                     .Build())
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>

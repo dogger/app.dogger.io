@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Clusters.EnsureClusterForUser;
 using Dogger.Domain.Models;
+using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Infrastructure.Slack;
@@ -30,7 +31,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionInstanceForUser
         }
 
         public async Task<IProvisioningJob> Handle(
-            ProvisionInstanceForUserCommand request, 
+            ProvisionInstanceForUserCommand request,
             CancellationToken cancellationToken)
         {
             await this.mediator.Send(
@@ -55,16 +56,15 @@ namespace Dogger.Domain.Commands.Instances.ProvisionInstanceForUser
                 cancellationToken);
 
             var cluster = await mediator.Send(
-                new EnsureClusterForUserCommand(request.User.Id), 
+                new EnsureClusterForUserCommand(request.User.Id),
                 cancellationToken);
 
-            var instance = new Instance()
-            {
-                Name = $"{request.User.Id}_{Guid.NewGuid()}",
-                Cluster = cluster,
-                IsProvisioned = false,
-                PlanId = request.Plan.Id
-            };
+            var instance = new InstanceBuilder()
+                .WithName($"{request.User.Id}_{Guid.NewGuid()}")
+                .WithCluster(cluster)
+                .WithProvisionedStatus(false)
+                .WithPlanId(request.Plan.Id)
+                .Build();
 
             cluster.Instances.Add(instance);
             await this.dataContext.Instances.AddAsync(instance, cancellationToken);

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.Instances.GetExpiredInstances;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,12 +21,9 @@ namespace Dogger.Tests.Domain.Queries.Instances
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             await environment.WithFreshDataContext(async dataContext =>
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "dummy",
-                    PlanId = "dummy",
-                    Cluster = new TestClusterBuilder().Build()
-                }));
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster()
+                    .Build()));
 
             //Act
             var expiredInstances = await environment.Mediator.Send(new GetExpiredInstancesQuery());
@@ -43,13 +41,10 @@ namespace Dogger.Tests.Domain.Queries.Instances
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             await environment.WithFreshDataContext(async dataContext =>
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "dummy",
-                    PlanId = "dummy",
-                    ExpiresAtUtc = DateTime.UtcNow.AddMinutes(1),
-                    Cluster = new TestClusterBuilder().Build()
-                }));
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster()
+                    .WithExpiredDate(DateTime.UtcNow.AddMinutes(1))
+                    .Build()));
 
             //Act
             var expiredInstances = await environment.Mediator.Send(new GetExpiredInstancesQuery());
@@ -68,37 +63,30 @@ namespace Dogger.Tests.Domain.Queries.Instances
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "non-expiring-1",
-                    PlanId = "dummy",
-                    ExpiresAtUtc = DateTime.UtcNow.AddMinutes(1),
-                    Cluster = new TestClusterBuilder().Build()
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster()
+                    .WithName("non-expiring-1")
+                    .WithExpiredDate(DateTime.UtcNow.AddMinutes(1))
+                    .Build());
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "expiring-1",
-                    PlanId = "dummy",
-                    ExpiresAtUtc = DateTime.UtcNow.AddMinutes(-1),
-                    Cluster = new TestClusterBuilder().Build()
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster()
+                    .WithName("expiring-1")
+                    .WithExpiredDate(DateTime.UtcNow.AddMinutes(-1))
+                    .Build());
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "non-expiring-2",
-                    PlanId = "dummy",
-                    ExpiresAtUtc = DateTime.UtcNow.AddMinutes(3),
-                    Cluster = new TestClusterBuilder().Build()
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster()
+                    .WithName("non-expiring-2")
+                    .WithExpiredDate(DateTime.UtcNow.AddMinutes(3))
+                    .Build());
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "expiring-2",
-                    PlanId = "dummy",
-                    ExpiresAtUtc = DateTime.UtcNow.AddMinutes(-3),
-                    Cluster = new TestClusterBuilder().Build()
-                });
+
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster()
+                    .WithName("expiring-2")
+                    .WithExpiredDate(DateTime.UtcNow.AddMinutes(-3))
+                    .Build());
             });
 
             //Act

@@ -45,7 +45,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
             Assert.IsNotNull(response);
             Assert.AreEqual(0, response.Count);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
         public async Task Handle_MultipleContainersPresent_ContainerLogsAreFetchedFromEveryContainer()

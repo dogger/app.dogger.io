@@ -157,7 +157,7 @@ dotnet_diagnostic.CA1819.severity = none
 dotnet_diagnostic.CS8618.severity = warning
 
 # CA2227: Collection properties should be read only
-dotnet_diagnostic.CA2227.severity = suggestion
+dotnet_diagnostic.CA2227.severity = none
 
 # CA1724: Type names should not match namespaces
 dotnet_diagnostic.CA1724.severity = suggestion
@@ -216,7 +216,6 @@ dotnet_diagnostic.CS0436.severity = none
 dotnet_diagnostic.CA1032.severity = none
 
 [src/Dogger/Domain/Models/*.cs]
-dotnet_diagnostic.CA2227.severity = none
 dotnet_diagnostic.CS8618.severity = none
 
 [src/Dogger{.Tests,.Setup.Tests}/**.cs]

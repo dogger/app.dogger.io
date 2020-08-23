@@ -100,16 +100,12 @@ namespace Dogger.Tests.Domain.Commands.Instances
             var cluster = new TestClusterBuilder()
                 .WithId(clusterId)
                 .WithInstances(
-                    new Instance()
-                    {
-                        Name = "not-matching",
-                        PlanId = "dummy"
-                    },
-                    new Instance()
-                    {
-                        Name = "some-instance-name",
-                        PlanId = "dummy"
-                    })
+                    new TestInstanceBuilder()
+                        .WithName("not-matching")
+                        .Build(),
+                    new TestInstanceBuilder()
+                        .WithName("some-instance-name")
+                        .Build())
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -204,11 +200,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
             var cluster = new TestClusterBuilder()
                 .WithId(clusterId)
                 .WithInstances(
-                    new Instance()
-                    {
-                        Name = "not-matching",
-                        PlanId = "dummy",
-                        PullDogPullRequest = new PullDogPullRequest()
+                    new TestInstanceBuilder()
+                        .WithName("not-matching")
+                        .WithPullDogPullRequest(new PullDogPullRequest()
                         {
                             Handle = "dummy",
                             PullDogRepository = new PullDogRepository()
@@ -221,13 +215,11 @@ namespace Dogger.Tests.Domain.Commands.Instances
                                     User = new TestUserBuilder().Build()
                                 }
                             }
-                        }
-                    },
-                    new Instance()
-                    {
-                        Name = "some-instance-name",
-                        PlanId = "dummy",
-                        PullDogPullRequest = new PullDogPullRequest()
+                        })
+                        .Build(),
+                    new TestInstanceBuilder()
+                        .WithName("some-instance-name")
+                        .WithPullDogPullRequest(new PullDogPullRequest()
                         {
                             Handle = "1339",
                             PullDogRepository = new PullDogRepository()
@@ -241,8 +233,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                                     User = new TestUserBuilder().Build()
                                 }
                             }
-                        }
-                    })
+                        })
+                        .Build())
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -340,11 +332,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
             var cluster = new TestClusterBuilder()
                 .WithId(clusterId)
                 .WithInstances(
-                    new Instance()
-                    {
-                        Name = "not-matching",
-                        PlanId = "dummy",
-                        PullDogPullRequest = new PullDogPullRequest()
+                    new TestInstanceBuilder()
+                        .WithName("not-matching")
+                        .WithPullDogPullRequest(new PullDogPullRequest()
                         {
                             Handle = "dummy",
                             PullDogRepository = new PullDogRepository()
@@ -357,13 +347,11 @@ namespace Dogger.Tests.Domain.Commands.Instances
                                     User = new TestUserBuilder().Build()
                                 }
                             }
-                        }
-                    },
-                    new Instance()
-                    {
-                        Name = "some-instance-name",
-                        PlanId = "dummy",
-                        PullDogPullRequest = new PullDogPullRequest()
+                        })
+                        .Build(),
+                    new TestInstanceBuilder()
+                        .WithName("some-instance-name")
+                        .WithPullDogPullRequest(new PullDogPullRequest()
                         {
                             Handle = "1339",
                             PullDogRepository = new PullDogRepository()
@@ -377,8 +365,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                                     User = new TestUserBuilder().Build()
                                 }
                             }
-                        }
-                    })
+                        })
+                        .Build())
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -446,16 +434,12 @@ namespace Dogger.Tests.Domain.Commands.Instances
             var cluster = new TestClusterBuilder()
                 .WithId(clusterId)
                 .WithInstances(
-                    new Instance()
-                    {
-                        Name = "not-matching",
-                        PlanId = "dummy"
-                    },
-                    new Instance()
-                    {
-                        Name = "some-instance-name",
-                        PlanId = "dummy"
-                    })
+                    new TestInstanceBuilder()
+                        .WithName("not-matching")
+                        .Build(),
+                    new TestInstanceBuilder()
+                        .WithName("some-instance-name")
+                        .Build())
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -559,15 +543,12 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .Build();
             user.Clusters.Add(cluster);
 
-            var instance = new Instance()
-            {
-                Id = fakeInstanceId,
-                Name = "some-instance-name",
-                PlanId = "dummy",
-                Cluster = cluster,
-                ClusterId = cluster.Id,
-                IsProvisioned = false
-            };
+            var instance = new TestInstanceBuilder()
+                .WithId(fakeInstanceId)
+                .WithName("some-instance-name")
+                .WithCluster(cluster)
+                .WithProvisionedStatus(false)
+                .Build();
             cluster.Instances.Add(instance);
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -659,15 +640,12 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .Build();
             user.Clusters.Add(cluster);
 
-            var instance = new Instance()
-            {
-                Id = fakeInstanceId,
-                Name = "some-instance-name",
-                PlanId = "dummy",
-                Cluster = cluster,
-                ClusterId = cluster.Id,
-                IsProvisioned = true
-            };
+            var instance = new TestInstanceBuilder()
+                .WithId(fakeInstanceId)
+                .WithName("some-instance-name")
+                .WithCluster(cluster)
+                .WithProvisionedStatus(true)
+                .Build();
             cluster.Instances.Add(instance);
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -760,15 +738,12 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .Build();
             user.Clusters.Add(cluster);
 
-            var instance = new Instance()
-            {
-                Id = fakeInstanceId,
-                Name = "some-instance-name",
-                PlanId = "dummy",
-                Cluster = cluster,
-                ClusterId = cluster.Id,
-                IsProvisioned = true
-            };
+            var instance = new TestInstanceBuilder()
+                .WithId(fakeInstanceId)
+                .WithName("some-instance-name")
+                .WithCluster(cluster)
+                .WithProvisionedStatus(true)
+                .Build();
             cluster.Instances.Add(instance);
 
             await environment.WithFreshDataContext(async dataContext =>

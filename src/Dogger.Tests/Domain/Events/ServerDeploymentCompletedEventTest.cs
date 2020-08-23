@@ -6,6 +6,7 @@ using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Clusters.GetConnectionDetails;
 using Dogger.Domain.Queries.Instances.GetInstanceByName;
 using Dogger.Infrastructure.Docker.Yml;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -26,7 +27,7 @@ namespace Dogger.Tests.Domain.Events
             var handler = new ServerDeploymentCompletedEventHandler(fakeMediator);
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await handler.Handle(
                     new ServerDeploymentCompletedEvent("some-instance-name"),
                     default));
@@ -47,10 +48,9 @@ namespace Dogger.Tests.Domain.Events
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Is<GetInstanceByNameQuery>(args => args.Name == "some-instance-name"))
-                .Returns(new Instance()
-                {
-                    PullDogPullRequest = null
-                });
+                .Returns(new TestInstanceBuilder()
+                    .WithPullDogPullRequest(null)
+                    .Build());
 
             var handler = new ServerDeploymentCompletedEventHandler(fakeMediator);
 
@@ -73,10 +73,9 @@ namespace Dogger.Tests.Domain.Events
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Is<GetInstanceByNameQuery>(args => args.Name == "some-instance-name"))
-                .Returns(new Instance()
-                {
-                    PullDogPullRequest = new PullDogPullRequest()
-                });
+                .Returns(new TestInstanceBuilder()
+                    .WithPullDogPullRequest(new PullDogPullRequest())
+                    .Build());
 
             var handler = new ServerDeploymentCompletedEventHandler(fakeMediator);
 
@@ -102,10 +101,9 @@ namespace Dogger.Tests.Domain.Events
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Is<GetInstanceByNameQuery>(args => args.Name == "some-instance-name"))
-                .Returns(new Instance()
-                {
-                    PullDogPullRequest = new PullDogPullRequest()
-                });
+                .Returns(new TestInstanceBuilder()
+                    .WithPullDogPullRequest(new PullDogPullRequest())
+                    .Build());
 
             fakeMediator
                 .Send(Arg.Is<GetConnectionDetailsQuery>(args => args.ClusterId == "some-instance-name"))
@@ -131,7 +129,7 @@ namespace Dogger.Tests.Domain.Events
             //Assert
             await fakeMediator
                 .Received(1)
-                .Send(Arg.Is<UpsertPullRequestCommentCommand>(args => 
+                .Send(Arg.Is<UpsertPullRequestCommentCommand>(args =>
                     args.Content.Contains("some-host-name") &&
                     args.Content.Contains("1337") &&
                     args.Content.Contains("UDP")));

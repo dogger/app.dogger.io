@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Clusters.GetClusterById;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -31,16 +32,12 @@ namespace Dogger.Tests.Domain.Queries.Clusters
                 await dataContext.Clusters.AddAsync(new TestClusterBuilder()
                     .WithId(guid2)
                     .WithInstances(
-                        new Instance()
-                        {
-                            Name = "non-demo",
-                            PlanId = "dummy"
-                        },
-                        new Instance()
-                        {
-                            Name = "demo",
-                            PlanId = "dummy"
-                        })
+                        new TestInstanceBuilder()
+                            .WithName("non-demo")
+                            .Build(),
+                        new TestInstanceBuilder()
+                            .WithName("demo")
+                            .Build())
                     .Build());
             });
 

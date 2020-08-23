@@ -14,6 +14,12 @@ namespace Dogger.Tests.Domain.Models
                 Array.Empty<byte>(),
                 Array.Empty<byte>());
         }
+
+        public TestAmazonUserBuilder WithUser()
+        {
+            WithUser(new TestUserBuilder().Build());
+            return this;
+        }
     }
 
 }

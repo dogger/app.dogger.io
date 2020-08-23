@@ -43,12 +43,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new TestClusterBuilder().Build()
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithName("some-instance-name")
+                    .Build());
             });
 
             //Act
@@ -91,12 +88,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new TestClusterBuilder().Build()
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithName("some-instance-name")
+                    .Build());
             });
 
             //Act
@@ -144,16 +138,14 @@ namespace Dogger.Tests.Domain.Commands.Instances
             {
                 await dataContext.Users.AddAsync(existingUser);
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Id = fakeInstanceId,
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new TestClusterBuilder()
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithId(fakeInstanceId)
+                    .WithName("some-instance-name")
+                    .WithCluster(new TestClusterBuilder()
                         .WithId(fakeClusterId)
                         .WithUser(existingUser)
-                        .Build()
-                });
+                        .Build())
+                    .Build());
             });
 
             //Act
@@ -223,16 +215,14 @@ namespace Dogger.Tests.Domain.Commands.Instances
             {
                 await dataContext.Users.AddAsync(existingUser);
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Id = fakeInstanceId,
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new TestClusterBuilder()
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithId(fakeInstanceId)
+                    .WithName("some-instance-name")
+                    .WithCluster(new TestClusterBuilder()
                         .WithId(fakeClusterId)
                         .WithUser(existingUser)
-                        .Build()
-                });
+                        .Build())
+                    .Build());
             });
 
             //Act
@@ -281,15 +271,13 @@ namespace Dogger.Tests.Domain.Commands.Instances
             {
                 await dataContext.Users.AddAsync(existingUser);
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new TestClusterBuilder()
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithName("some-instance-name")
+                    .WithCluster(new TestClusterBuilder()
                         .WithUser(existingUser)
-                        .Build(),
-                    IsProvisioned = false
-                });
+                        .Build())
+                    .WithProvisionedStatus(false)
+                    .Build());
             });
 
             //Act
@@ -349,14 +337,12 @@ namespace Dogger.Tests.Domain.Commands.Instances
             {
                 await dataContext.Users.AddAsync(existingUser);
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new TestClusterBuilder()
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithName("some-instance-name")
+                    .WithCluster(new TestClusterBuilder()
                         .WithUser(existingUser)
-                        .Build()
-                });
+                        .Build())
+                    .Build());
             });
 
             //Act
