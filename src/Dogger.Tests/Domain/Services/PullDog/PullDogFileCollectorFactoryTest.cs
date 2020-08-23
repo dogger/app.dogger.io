@@ -2,6 +2,7 @@
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Docker.Yml;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -25,7 +26,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                 fakeDockerComposeParserFactory,
                 Substitute.For<ILogger>());
 
-            var pullDogPullRequest = new PullDogPullRequest();
+            var pullDogPullRequest = new TestPullDogPullRequestBuilder().Build();
 
             //Act
             var collector = await factory.CreateAsync(pullDogPullRequest);

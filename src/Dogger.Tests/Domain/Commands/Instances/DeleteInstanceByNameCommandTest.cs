@@ -201,28 +201,14 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .WithId(clusterId)
                 .WithInstances(
                     new TestInstanceBuilder()
+                        .WithPullDogPullRequest()
                         .WithName("not-matching")
-                        .WithPullDogPullRequest(new PullDogPullRequest()
-                        {
-                            Handle = "dummy",
-                            PullDogRepository = new PullDogRepository()
-                            {
-                                Handle = "dummy",
-                                PullDogSettings = new PullDogSettings()
-                                {
-                                    PlanId = "dummy",
-                                    EncryptedApiKey = Array.Empty<byte>(),
-                                    User = new TestUserBuilder().Build()
-                                }
-                            }
-                        })
                         .Build(),
                     new TestInstanceBuilder()
                         .WithName("some-instance-name")
-                        .WithPullDogPullRequest(new PullDogPullRequest()
-                        {
-                            Handle = "1339",
-                            PullDogRepository = new PullDogRepository()
+                        .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                            .WithHandle("1339")
+                            .WithPullDogRepository(new PullDogRepository()
                             {
                                 Handle = "1338",
                                 GitHubInstallationId = 1337,
@@ -232,8 +218,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                                     EncryptedApiKey = Array.Empty<byte>(),
                                     User = new TestUserBuilder().Build()
                                 }
-                            }
-                        })
+                            })
+                            .Build())
                         .Build())
                 .Build();
 
@@ -334,27 +320,15 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .WithInstances(
                     new TestInstanceBuilder()
                         .WithName("not-matching")
-                        .WithPullDogPullRequest(new PullDogPullRequest()
-                        {
-                            Handle = "dummy",
-                            PullDogRepository = new PullDogRepository()
-                            {
-                                Handle = "dummy",
-                                PullDogSettings = new PullDogSettings()
-                                {
-                                    PlanId = "dummy",
-                                    EncryptedApiKey = Array.Empty<byte>(),
-                                    User = new TestUserBuilder().Build()
-                                }
-                            }
-                        })
+                        .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                            .WithPullDogRepository()
+                            .Build())
                         .Build(),
                     new TestInstanceBuilder()
                         .WithName("some-instance-name")
-                        .WithPullDogPullRequest(new PullDogPullRequest()
-                        {
-                            Handle = "1339",
-                            PullDogRepository = new PullDogRepository()
+                        .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                            .WithHandle("1339")
+                            .WithPullDogRepository(new PullDogRepository()
                             {
                                 Handle = "1338",
                                 GitHubInstallationId = 1337,
@@ -364,8 +338,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                                     EncryptedApiKey = Array.Empty<byte>(),
                                     User = new TestUserBuilder().Build()
                                 }
-                            }
-                        })
+                            })
+                            .Build())
                         .Build())
                 .Build();
 

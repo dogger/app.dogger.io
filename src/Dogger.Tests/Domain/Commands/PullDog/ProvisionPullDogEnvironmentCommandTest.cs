@@ -42,7 +42,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
@@ -100,7 +100,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
@@ -187,7 +187,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
@@ -246,7 +246,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
@@ -303,7 +303,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
@@ -362,7 +362,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -414,7 +414,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
@@ -470,7 +470,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
@@ -522,7 +522,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())

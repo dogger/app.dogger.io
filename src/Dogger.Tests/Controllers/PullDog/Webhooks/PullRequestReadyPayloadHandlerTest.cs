@@ -3,6 +3,7 @@ using Dogger.Controllers.PullDog.Webhooks.Handlers;
 using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
 using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -192,13 +193,12 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             //Act
             await handler.HandleAsync(new WebhookPayloadContext(
-                new WebhookPayload(), 
+                new WebhookPayload(),
                 null!,
                 databaseRepository,
-                new PullDogPullRequest()
-                {
-                    Handle = "1338"
-                }));
+                new TestPullDogPullRequestBuilder()
+                    .WithHandle("1338")
+                    .Build()));
 
             //Assert
             await fakeMediator

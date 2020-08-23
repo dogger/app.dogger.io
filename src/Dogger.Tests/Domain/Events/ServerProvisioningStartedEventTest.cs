@@ -54,7 +54,7 @@ namespace Dogger.Tests.Domain.Events
             await handler.Handle(
                 new ServerProvisioningStartedEvent(
                     new TestInstanceBuilder()
-                        .WithPullDogPullRequest(new PullDogPullRequest())
+                        .WithPullDogPullRequest(new TestPullDogPullRequestBuilder().Build())
                         .Build()),
                 default);
 
@@ -83,7 +83,7 @@ namespace Dogger.Tests.Domain.Events
             await handler.Handle(
                 new ServerProvisioningStartedEvent(
                     new TestInstanceBuilder()
-                        .WithPullDogPullRequest(new PullDogPullRequest())
+                        .WithPullDogPullRequest(new TestPullDogPullRequestBuilder().Build())
                         .Build()),
                 default);
 

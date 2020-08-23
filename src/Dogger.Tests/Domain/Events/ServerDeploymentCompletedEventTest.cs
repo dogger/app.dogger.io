@@ -74,7 +74,7 @@ namespace Dogger.Tests.Domain.Events
             fakeMediator
                 .Send(Arg.Is<GetInstanceByNameQuery>(args => args.Name == "some-instance-name"))
                 .Returns(new TestInstanceBuilder()
-                    .WithPullDogPullRequest(new PullDogPullRequest())
+                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder().Build())
                     .Build());
 
             var handler = new ServerDeploymentCompletedEventHandler(fakeMediator);
@@ -102,7 +102,7 @@ namespace Dogger.Tests.Domain.Events
             fakeMediator
                 .Send(Arg.Is<GetInstanceByNameQuery>(args => args.Name == "some-instance-name"))
                 .Returns(new TestInstanceBuilder()
-                    .WithPullDogPullRequest(new PullDogPullRequest())
+                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder().Build())
                     .Build());
 
             fakeMediator

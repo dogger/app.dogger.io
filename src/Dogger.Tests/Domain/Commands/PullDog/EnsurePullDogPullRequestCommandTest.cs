@@ -32,11 +32,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             };
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.PullDogPullRequests.AddAsync(new PullDogPullRequest()
-                {
-                    Handle = "some-pull-request-handle",
-                    PullDogRepository = pullDogRepository
-                });
+                await dataContext.PullDogPullRequests.AddAsync(new TestPullDogPullRequestBuilder()
+                    .WithHandle("some-pull-request-handle")
+                    .WithPullDogRepository(pullDogRepository)
+                    .Build());
             });
 
             //Act

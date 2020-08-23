@@ -28,10 +28,9 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 .Returns(new TestClusterBuilder()
                     .WithInstances(
                         new TestInstanceBuilder()
-                            .WithPullDogPullRequest(new PullDogPullRequest()
-                            {
-                                Handle = "pr-1"
-                            })
+                            .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                                .WithHandle("pr-1")
+                                .Build())
                             .Build())
                     .Build());
 
@@ -43,18 +42,17 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             var exception = await Assert.ThrowsExceptionAsync<PullDogDemoInstanceAlreadyProvisionedException>(async () =>
                 await handler.Handle(
                     new GetAvailableClusterFromPullRequestQuery(
-                        new PullDogPullRequest()
-                        {
-                            Handle = "pr-2",
-                            PullDogRepository = new PullDogRepository()
+                        new TestPullDogPullRequestBuilder()
+                            .WithHandle("pr-2")
+                            .WithPullDogRepository(new PullDogRepository()
                             {
                                 PullDogSettings = new PullDogSettings()
                                 {
                                     User = new TestUserBuilder().Build(),
                                     PoolSize = 0
                                 }
-                            }
-                        }),
+                            })
+                            .Build()),
                     default));
 
             //Assert
@@ -80,18 +78,16 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             //Act
             var cluster = await handler.Handle(
                 new GetAvailableClusterFromPullRequestQuery(
-                    new PullDogPullRequest()
-                    {
-                        Handle = "dummy",
-                        PullDogRepository = new PullDogRepository()
+                    new TestPullDogPullRequestBuilder()
+                        .WithPullDogRepository(new PullDogRepository()
                         {
                             PullDogSettings = new PullDogSettings()
                             {
                                 User = user,
                                 PoolSize = 0
                             }
-                        }
-                    }),
+                        })
+                        .Build()),
                 default);
 
             //Assert
@@ -114,16 +110,10 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 .Returns(new TestClusterBuilder()
                     .WithInstances(
                         new TestInstanceBuilder()
-                            .WithPullDogPullRequest(new PullDogPullRequest()
-                            {
-                                Handle = "dummy-1"
-                            })
+                            .WithPullDogPullRequest()
                             .Build(),
                         new TestInstanceBuilder()
-                            .WithPullDogPullRequest(new PullDogPullRequest()
-                            {
-                                Handle = "dummy-2"
-                            })
+                            .WithPullDogPullRequest()
                             .Build())
                     .Build());
 
@@ -135,18 +125,17 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             var exception = await Assert.ThrowsExceptionAsync<PullDogPoolSizeExceededException>(async () =>
                 await handler.Handle(
                     new GetAvailableClusterFromPullRequestQuery(
-                        new PullDogPullRequest()
-                        {
-                            Handle = "pr-2",
-                            PullDogRepository = new PullDogRepository()
+                        new TestPullDogPullRequestBuilder()
+                            .WithHandle("pr-2")
+                            .WithPullDogRepository(new PullDogRepository()
                             {
                                 PullDogSettings = new PullDogSettings()
                                 {
                                     User = user,
                                     PoolSize = 2
                                 }
-                            }
-                        }),
+                            })
+                            .Build()),
                     default));
 
             //Assert
@@ -174,17 +163,16 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             //Act
             var cluster = await handler.Handle(
                 new GetAvailableClusterFromPullRequestQuery(
-                    new PullDogPullRequest()
-                    {
-                        PullDogRepository = new PullDogRepository()
+                    new TestPullDogPullRequestBuilder()
+                        .WithPullDogRepository(new PullDogRepository()
                         {
                             PullDogSettings = new PullDogSettings()
                             {
                                 User = user,
                                 PoolSize = 1
                             }
-                        }
-                    }),
+                        })
+                        .Build()),
                 default);
 
             //Assert

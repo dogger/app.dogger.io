@@ -247,10 +247,8 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .WithUser(user)
                 .WithInstances(new TestInstanceBuilder()
                     .WithPlanId("some-plan-id")
-                    .WithPullDogPullRequest(new PullDogPullRequest()
-                    {
-                        Handle = "dummy",
-                        PullDogRepository = new PullDogRepository()
+                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                        .WithPullDogRepository(new PullDogRepository()
                         {
                             Handle = "dummy",
                             PullDogSettings = new PullDogSettings()
@@ -260,8 +258,8 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                                 PoolSize = 1,
                                 User = user
                             }
-                        }
-                    })
+                        })
+                        .Build())
                     .Build())
                 .Build());
 

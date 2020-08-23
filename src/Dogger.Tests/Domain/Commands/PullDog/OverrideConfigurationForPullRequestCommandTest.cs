@@ -22,10 +22,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var pullRequest = new PullDogPullRequest()
-            {
-                Handle = "some-handle",
-                PullDogRepository = new PullDogRepository()
+            var pullRequest = new TestPullDogPullRequestBuilder()
+                .WithHandle("some-handle")
+                .WithPullDogRepository(new PullDogRepository()
                 {
                     Handle = "dummy",
                     PullDogSettings = new PullDogSettings()
@@ -34,8 +33,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                         PlanId = "dummy",
                         User = new TestUserBuilder().Build()
                     }
-                }
-            };
+                })
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -48,11 +47,11 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 new ConfigurationFileOverride()
                 {
                     BuildArguments = new Dictionary<string, string>()
-                {
                     {
-                        "foo", "bar"
+                        {
+                            "foo", "bar"
+                        }
                     }
-                }
                 }));
 
             //Assert

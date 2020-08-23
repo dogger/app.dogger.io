@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.RemoveLabelFromGitHubPullRequest;
 using Dogger.Domain.Models;
 using Dogger.Infrastructure.GitHub;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -23,18 +24,17 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 fakeGitHubClientFactory);
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await handler.Handle(
                     new RemoveLabelFromGitHubPullRequestCommand(
-                        new PullDogPullRequest()
-                        {
-                            PullDogRepository = new PullDogRepository()
+                        new TestPullDogPullRequestBuilder()
+                            .WithPullDogRepository(new PullDogRepository()
                             {
                                 GitHubInstallationId = null,
                                 PullDogSettings = new PullDogSettings()
-                            }
-                        },
-                        "some-label"), 
+                            })
+                            .Build(),
+                        "some-label"),
                     default));
 
             //Assert
@@ -55,15 +55,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await handler.Handle(
                     new RemoveLabelFromGitHubPullRequestCommand(
-                        new PullDogPullRequest()
-                        {
-                            PullDogRepository = new PullDogRepository()
+                        new TestPullDogPullRequestBuilder()
+                            .WithPullDogRepository(new PullDogRepository()
                             {
                                 Handle = "invalid-handle",
                                 GitHubInstallationId = 1337,
                                 PullDogSettings = new PullDogSettings()
-                            }
-                        },
+                            })
+                            .Build(),
                         "some-label"),
                     default));
 
@@ -85,16 +84,15 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await handler.Handle(
                     new RemoveLabelFromGitHubPullRequestCommand(
-                        new PullDogPullRequest()
-                        {
-                            Handle = "invalid-handle",
-                            PullDogRepository = new PullDogRepository()
+                        new TestPullDogPullRequestBuilder()
+                            .WithHandle("invalid-handle")
+                            .WithPullDogRepository(new PullDogRepository()
                             {
                                 Handle = "1337",
                                 GitHubInstallationId = 1337,
                                 PullDogSettings = new PullDogSettings()
-                            }
-                        },
+                            })
+                            .Build(),
                         "some-label"),
                     default));
 
@@ -117,16 +115,15 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Act
             await handler.Handle(
                 new RemoveLabelFromGitHubPullRequestCommand(
-                    new PullDogPullRequest()
-                    {
-                        Handle = "1337",
-                        PullDogRepository = new PullDogRepository()
+                    new TestPullDogPullRequestBuilder()
+                        .WithHandle("1337")
+                        .WithPullDogRepository(new PullDogRepository()
                         {
                             Handle = "1337",
                             GitHubInstallationId = 1337,
                             PullDogSettings = new PullDogSettings()
-                        }
-                    },
+                        })
+                        .Build(),
                     "some-label"),
                 default);
 

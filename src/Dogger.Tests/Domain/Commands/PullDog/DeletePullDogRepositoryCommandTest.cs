@@ -35,14 +35,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     },
                     PullRequests = new List<PullDogPullRequest>()
                     {
-                        new PullDogPullRequest()
-                        {
-                            Handle = "dummy-1"
-                        },
-                        new PullDogPullRequest()
-                        {
-                            Handle = "dummy-2"
-                        }
+                        new TestPullDogPullRequestBuilder().Build(),
+                        new TestPullDogPullRequestBuilder().Build()
                     }
                 });
             });

@@ -80,7 +80,7 @@ namespace Dogger.Tests.Domain.Events
                 .Send(Arg.Is<GetInstanceByNameQuery>(args =>
                     args.Name == "some-instance-name"))
                 .Returns(new TestInstanceBuilder()
-                    .WithPullDogPullRequest(new PullDogPullRequest())
+                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder().Build())
                     .Build());
 
             var handler = new ServerDeploymentFailedEventHandler(fakeMediator);

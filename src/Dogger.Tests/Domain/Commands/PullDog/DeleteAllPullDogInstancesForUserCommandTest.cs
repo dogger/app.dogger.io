@@ -79,10 +79,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     .WithCluster(new TestClusterBuilder()
                         .WithUser(otherUser)
                         .Build())
-                    .WithPullDogPullRequest(new PullDogPullRequest()
-                    {
-                        Handle = "dummy",
-                        PullDogRepository = new PullDogRepository()
+                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                        .WithPullDogRepository(new PullDogRepository()
                         {
                             Handle = "dummy",
                             PullDogSettings = new PullDogSettings()
@@ -91,8 +89,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                                 PlanId = "dummy",
                                 EncryptedApiKey = Array.Empty<byte>()
                             }
-                        }
-                    })
+                        })
+                        .Build())
                     .Build());
             });
 
@@ -130,10 +128,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                         .WithUser(user)
                         .Build())
                     .WithName("some-name")
-                    .WithPullDogPullRequest(new PullDogPullRequest()
-                    {
-                        Handle = "dummy",
-                        PullDogRepository = new PullDogRepository()
+                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                        .WithPullDogRepository(new PullDogRepository()
                         {
                             Handle = "dummy",
                             PullDogSettings = new PullDogSettings()
@@ -142,8 +138,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                                 PlanId = "dummy",
                                 EncryptedApiKey = Array.Empty<byte>()
                             }
-                        }
-                    })
+                        })
+                        .Build())
                     .Build());
             });
 

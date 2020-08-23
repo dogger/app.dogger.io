@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
 using Dogger.Domain.Services.PullDog;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -29,7 +30,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
             //Act
             var configuration = await handler.Handle(
                 new GetConfigurationForPullRequestQuery(
-                    new PullDogPullRequest()),
+                    new TestPullDogPullRequestBuilder().Build()),
                 default);
 
             //Assert
@@ -42,10 +43,9 @@ namespace Dogger.Tests.Domain.Services.PullDog
         public async Task Handle_ConfigurationFileOverrideNotPresent_ReturnsOriginalConfiguration()
         {
             //Arrange
-            var fakePullDogPullRequest = new PullDogPullRequest()
-            {
-                ConfigurationOverride = null
-            };
+            var fakePullDogPullRequest = new TestPullDogPullRequestBuilder()
+                .WithConfigurationOverride(null)
+                .Build();
 
             var fakeConfiguration = new ConfigurationFile(new List<string>());
 
@@ -75,16 +75,15 @@ namespace Dogger.Tests.Domain.Services.PullDog
         public async Task Handle_ConfigurationOverridePresentWithBuildArguments_OverridesExistingBuildArguments()
         {
             //Arrange
-            var fakePullDogPullRequest = new PullDogPullRequest()
-            {
-                ConfigurationOverride = new ConfigurationFileOverride()
+            var fakePullDogPullRequest = new TestPullDogPullRequestBuilder()
+                .WithConfigurationOverride(new ConfigurationFileOverride()
                 {
                     BuildArguments = new Dictionary<string, string>()
                     {
                         { "some-new-key", "some-new-value"}
                     }
-                }
-            };
+                })
+                .Build();
 
             var fakeConfiguration = new ConfigurationFile(new List<string>())
             {
@@ -122,13 +121,12 @@ namespace Dogger.Tests.Domain.Services.PullDog
         public async Task Handle_ConfigurationOverridePresentWithConversationMode_OverridesExistingConversationMode()
         {
             //Arrange
-            var fakePullDogPullRequest = new PullDogPullRequest()
-            {
-                ConfigurationOverride = new ConfigurationFileOverride()
+            var fakePullDogPullRequest = new TestPullDogPullRequestBuilder()
+                .WithConfigurationOverride(new ConfigurationFileOverride()
                 {
                     ConversationMode = ConversationMode.MultipleComments
-                }
-            };
+                })
+                .Build();
 
             var fakeConfiguration = new ConfigurationFile(new List<string>())
             {
@@ -161,13 +159,12 @@ namespace Dogger.Tests.Domain.Services.PullDog
         public async Task Handle_ConfigurationOverridePresentWithExpiry_OverridesExistingExpiry()
         {
             //Arrange
-            var fakePullDogPullRequest = new PullDogPullRequest()
-            {
-                ConfigurationOverride = new ConfigurationFileOverride()
+            var fakePullDogPullRequest = new TestPullDogPullRequestBuilder()
+                .WithConfigurationOverride(new ConfigurationFileOverride()
                 {
                     Expiry = TimeSpan.FromMinutes(2)
-                }
-            };
+                })
+                .Build();
 
             var fakeConfiguration = new ConfigurationFile(new List<string>())
             {
@@ -200,13 +197,12 @@ namespace Dogger.Tests.Domain.Services.PullDog
         public async Task Handle_ConfigurationOverridePresentWithLabel_OverridesExistingLabel()
         {
             //Arrange
-            var fakePullDogPullRequest = new PullDogPullRequest()
-            {
-                ConfigurationOverride = new ConfigurationFileOverride()
+            var fakePullDogPullRequest = new TestPullDogPullRequestBuilder()
+                .WithConfigurationOverride(new ConfigurationFileOverride()
                 {
                     Label = "new-label"
-                }
-            };
+                })
+                .Build();
 
             var fakeConfiguration = new ConfigurationFile(new List<string>())
             {

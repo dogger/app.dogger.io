@@ -63,10 +63,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
                     .WithCluster()
                     .WithName("some-instance-name")
-                    .WithPullDogPullRequest(new PullDogPullRequest()
-                    {
-                        Handle = "some-pull-request-handle",
-                        PullDogRepository = new PullDogRepository()
+                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                        .WithHandle("some-pull-request-handle")
+                        .WithPullDogRepository(new PullDogRepository()
                         {
                             Handle = "some-repository-handle",
                             PullDogSettings = new PullDogSettings()
@@ -75,8 +74,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                                 User = new TestUserBuilder().Build(),
                                 EncryptedApiKey = Array.Empty<byte>()
                             }
-                        }
-                    })
+                        })
+                        .Build())
                     .Build());
             });
 

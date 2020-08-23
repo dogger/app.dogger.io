@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.PullDog.GitHub;
 using Dogger.Infrastructure.GitHub.Octokit;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -38,10 +39,9 @@ namespace Dogger.Tests.Domain.Services.PullDog
                         .Build()));
 
             //Act
-            var details = client.GetPullRequestDetails(new PullDogPullRequest()
-            {
-                Handle = "some-handle"
-            });
+            var details = client.GetPullRequestDetails(new TestPullDogPullRequestBuilder()
+                .WithHandle("some-handle")
+                .Build());
 
             //Assert
             Assert.IsNotNull(details);
@@ -104,7 +104,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                     "some-repository-name",
                     "some-path",
                     "some-reference")
-                .Returns(new []
+                .Returns(new[]
                 {
                     new RepositoryContent(
                         default,

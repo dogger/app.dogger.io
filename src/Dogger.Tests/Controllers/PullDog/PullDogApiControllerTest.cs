@@ -112,8 +112,8 @@ namespace Dogger.Tests.Controllers.PullDog
             var fakeAesEncryptionHelper = Substitute.For<IAesEncryptionHelper>();
 
             var controller = new PullDogApiController(
-                fakeMediator, 
-                fakeMapper, 
+                fakeMediator,
+                fakeMapper,
                 fakeAesEncryptionHelper);
 
             //Act
@@ -280,7 +280,7 @@ namespace Dogger.Tests.Controllers.PullDog
         public async Task Provision_ConfigurationOverridePresentInRequest_UpdatesPullRequestConfigurationOverride()
         {
             //Arrange
-            var fakePullDogPullRequest = new PullDogPullRequest();
+            var fakePullDogPullRequest = new TestPullDogPullRequestBuilder().Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
@@ -553,7 +553,7 @@ namespace Dogger.Tests.Controllers.PullDog
 
             fakeMediator
                 .Send(Arg.Any<GetRepositoriesForUserQuery>())
-                .Returns(new [] {
+                .Returns(new[] {
                     new UserRepositoryResponse()
                 });
 

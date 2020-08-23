@@ -18,5 +18,11 @@ namespace Dogger.Tests.Domain.Models
             WithCluster(new TestClusterBuilder().Build());
             return this;
         }
+
+        public TestInstanceBuilder WithPullDogPullRequest()
+        {
+            WithPullDogPullRequest(new TestPullDogPullRequestBuilder().Build());
+            return this;
+        }
     }
 }

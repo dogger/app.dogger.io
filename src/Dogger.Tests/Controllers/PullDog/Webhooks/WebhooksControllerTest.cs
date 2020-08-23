@@ -12,6 +12,7 @@ using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
 using Dogger.Infrastructure.AspNet.Options.GitHub;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -52,13 +53,13 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                     }
                 },
                 null!,
-                null!, 
+                null!,
                 null!);
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Is<EnsurePullDogPullRequestCommand>(args => args.PullRequestHandle == "1339"))
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
@@ -346,7 +347,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             fakeMediator
                 .Send(Arg.Is<EnsurePullDogPullRequestCommand>(args =>
                     args.PullRequestHandle == "1339"))
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
@@ -389,7 +390,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             await fakeWebhookPayloadHandler
                 .Received(1)
-                .HandleAsync(Arg.Is<WebhookPayloadContext>(args => 
+                .HandleAsync(Arg.Is<WebhookPayloadContext>(args =>
                     args.PullRequest != null));
         }
 
@@ -420,9 +421,9 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
-                .Send(Arg.Is<EnsurePullDogPullRequestCommand>(args => 
+                .Send(Arg.Is<EnsurePullDogPullRequestCommand>(args =>
                     args.PullRequestHandle == "1339"))
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
