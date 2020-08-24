@@ -29,7 +29,7 @@ namespace Dogger.Infrastructure.AspNet
             scope = this.serviceProvider.CreateScope();
 
             var time = this.scope.ServiceProvider.GetRequiredService<ITime>();
-            timer = await time.CreateTimerAsync(
+            timer = await time.CreateTimer(
                 Interval,
                 async () => await TickAsync(stoppingToken));
         }

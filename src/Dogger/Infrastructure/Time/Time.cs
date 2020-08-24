@@ -8,7 +8,7 @@ namespace Dogger.Infrastructure.Time
     [ExcludeFromCodeCoverage]
     public class Time : ITime
     {
-        public async Task<Timer> CreateTimerAsync(
+        public Timer CreateTimer(
             TimeSpan interval,
             Func<Task> callback)
         {

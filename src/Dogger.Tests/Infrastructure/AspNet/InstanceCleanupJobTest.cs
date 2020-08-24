@@ -107,7 +107,7 @@ namespace Dogger.Tests.Infrastructure.AspNet
         {
             var fakeTime = Substitute.For<ITime>();
             fakeTime
-                .CreateTimerAsync(
+                .CreateTimer(
                     Arg.Any<TimeSpan>(),
                     Arg.Any<Func<Task>>())
                 .Returns(async callInfo =>

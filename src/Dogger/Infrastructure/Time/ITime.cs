@@ -6,7 +6,7 @@ namespace Dogger.Infrastructure.Time
 {
     public interface ITime
     {
-        Task<Timer> CreateTimerAsync(
+        Timer CreateTimer(
             TimeSpan interval,
             Func<Task> callback);
 
