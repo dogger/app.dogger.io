@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.OverrideConfigurationForPullRequest;
-using Dogger.Domain.Models;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;

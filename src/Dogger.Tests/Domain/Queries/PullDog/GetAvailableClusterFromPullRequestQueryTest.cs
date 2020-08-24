@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dogger.Domain.Commands.Clusters.EnsureClusterForUser;
 using Dogger.Domain.Commands.Clusters.EnsureClusterWithId;
 using Dogger.Domain.Models;

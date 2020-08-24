@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsByHandle;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.Domain.Models;

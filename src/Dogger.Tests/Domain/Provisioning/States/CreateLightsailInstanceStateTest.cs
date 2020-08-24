@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
-using Dogger.Domain.Models;
-using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Services.Amazon.Lightsail;
 using Dogger.Domain.Services.Provisioning.States;

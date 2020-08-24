@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Clusters.GetClusterById;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;

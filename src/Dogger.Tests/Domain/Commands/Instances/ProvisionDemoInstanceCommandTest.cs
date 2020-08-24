@@ -15,7 +15,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using Instance = Dogger.Domain.Models.Instance;
 
 namespace Dogger.Tests.Domain.Commands.Instances
 {

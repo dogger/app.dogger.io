@@ -4,7 +4,6 @@ using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
 using Dogger.Domain.Commands.PullDog.ChangePullDogPlan;
 using Dogger.Domain.Commands.PullDog.DeleteAllPullDogInstancesForUser;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;

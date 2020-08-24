@@ -7,7 +7,6 @@ using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
 using Dogger.Domain.Commands.PullDog.OverrideConfigurationForPullRequest;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsByHandle;
 using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromBranchReference;
 using Dogger.Domain.Queries.PullDog.GetRepositoriesForUser;
@@ -23,7 +22,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Octokit;
 using RepositoriesResponse = Dogger.Controllers.PullDog.Api.RepositoriesResponse;
-using User = Dogger.Domain.Models.User;
 
 namespace Dogger.Tests.Controllers.PullDog
 {

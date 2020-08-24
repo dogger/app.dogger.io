@@ -4,7 +4,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Amazon.ECR;
 using Amazon.ECR.Model;
-using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.Amazon.ElasticContainerRegistry.GetRepositoryLoginByRepositoryName;
 using Dogger.Domain.Services.Amazon.Identity;
 using Dogger.Tests.Domain.Models;

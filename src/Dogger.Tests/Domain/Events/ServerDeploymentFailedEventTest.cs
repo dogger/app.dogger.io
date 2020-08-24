@@ -2,7 +2,6 @@
 using Dogger.Domain.Commands.Instances.SetInstanceExpiry;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Events.ServerDeploymentFailed;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Instances.GetInstanceByName;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;

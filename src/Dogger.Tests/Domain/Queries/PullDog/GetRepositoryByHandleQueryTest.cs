@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Dogger.Domain.Models;
+﻿using System.Threading.Tasks;
 using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;

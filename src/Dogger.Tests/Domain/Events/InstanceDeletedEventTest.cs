@@ -1,9 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.RemoveLabelFromGitHubPullRequest;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Events.InstanceDeleted;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Tests.Domain.Models;

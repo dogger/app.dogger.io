@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetRepositoriesForUser;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.Domain.Models;
@@ -12,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Octokit;
-using User = Dogger.Domain.Models.User;
 
 namespace Dogger.Tests.Domain.Queries.PullDog
 {

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
-using Dogger.Domain.Models;
 using Dogger.Domain.Services.Amazon.Lightsail;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.GitHub;
@@ -21,9 +20,7 @@ using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Octokit;
 using Stripe;
-using Instance = Dogger.Domain.Models.Instance;
 using NotFoundException = Amazon.Lightsail.Model.NotFoundException;
-using User = Dogger.Domain.Models.User;
 
 namespace Dogger.Tests.Domain.Commands.Instances
 {

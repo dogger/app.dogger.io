@@ -5,7 +5,6 @@ using Dogger.Controllers.PullDog.Webhooks.Handlers;
 using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.AddPullDogToGitHubRepositories;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.Domain.Models;

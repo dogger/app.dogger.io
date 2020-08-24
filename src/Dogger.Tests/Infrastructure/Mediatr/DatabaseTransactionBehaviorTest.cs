@@ -3,7 +3,6 @@ using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Infrastructure.Mediatr.Database;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;

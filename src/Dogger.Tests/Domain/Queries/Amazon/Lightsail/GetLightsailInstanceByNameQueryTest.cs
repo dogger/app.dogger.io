@@ -2,7 +2,6 @@
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
-using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;

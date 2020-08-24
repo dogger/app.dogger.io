@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Events.ServerDeploymentCompleted;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Clusters.GetConnectionDetails;
 using Dogger.Domain.Queries.Instances.GetInstanceByName;
 using Dogger.Infrastructure.Docker.Yml;

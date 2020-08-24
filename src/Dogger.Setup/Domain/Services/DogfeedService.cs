@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lightsail;
@@ -14,7 +13,6 @@ using Dogger.Domain.Services.Provisioning;
 using Dogger.Infrastructure.Time;
 using Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 using Serilog;
 using Instance = Amazon.Lightsail.Model.Instance;
 

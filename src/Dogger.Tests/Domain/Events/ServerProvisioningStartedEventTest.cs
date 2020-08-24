@@ -2,7 +2,6 @@
 using Dogger.Domain.Commands.PullDog.AddLabelToGitHubPullRequest;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Events.ServerProvisioningStarted;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Tests.Domain.Models;

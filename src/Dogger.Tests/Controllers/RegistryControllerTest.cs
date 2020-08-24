@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Dogger.Controllers.Registry;
 using Dogger.Domain.Commands.Amazon.ElasticContainerRegistry.EnsureRepositoryWithName;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Amazon.ElasticContainerRegistry.GetRepositoryLoginByRepositoryName;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;

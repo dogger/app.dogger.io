@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Domain.Services.PullDog.GitHub;
 using Dogger.Infrastructure.GitHub.Octokit;
 using Dogger.Tests.Domain.Models;

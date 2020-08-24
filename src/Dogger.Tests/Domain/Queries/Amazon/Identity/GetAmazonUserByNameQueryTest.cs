@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.Amazon.Identity.GetAmazonUserByName;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;

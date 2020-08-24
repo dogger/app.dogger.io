@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.RemoveLabelFromGitHubPullRequest;
-using Dogger.Domain.Models;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;

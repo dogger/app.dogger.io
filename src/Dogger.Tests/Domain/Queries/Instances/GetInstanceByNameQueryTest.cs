@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Instances.GetInstanceByName;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Clusters.GetClusterForUser;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;

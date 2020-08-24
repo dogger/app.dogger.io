@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using AutoMapper;
-using Dogger.Controllers.Jobs;
 using Dogger.Domain.Queries.Instances.GetContainerLogs;
 using Dogger.Domain.Queries.Instances.GetProvisionedClustersWithInstancesForUser;
 using Dogger.Domain.Services.Provisioning;

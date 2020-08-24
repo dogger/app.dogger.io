@@ -1,12 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Controllers.Deals;
 using Dogger.Domain.Commands.Payment.AdjustUserBalance;
 using Dogger.Domain.Commands.Payment.ApplyCouponCodeForUser;
 using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
 using Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Payment.GetCouponByCode;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;

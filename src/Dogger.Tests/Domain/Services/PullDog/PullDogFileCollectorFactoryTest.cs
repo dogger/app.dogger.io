@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Docker.Yml;
 using Dogger.Tests.Domain.Models;

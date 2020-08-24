@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
-using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.Instances.GetExpiredInstances;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Dogger.Tests.Domain.Queries.Instances

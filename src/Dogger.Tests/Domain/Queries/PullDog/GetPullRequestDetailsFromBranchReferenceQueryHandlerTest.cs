@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromBranchReference;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Infrastructure.GitHub.Octokit;

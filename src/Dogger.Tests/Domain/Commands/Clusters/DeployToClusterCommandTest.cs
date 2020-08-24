@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Clusters.DeployToCluster;
 using Dogger.Domain.Commands.Clusters.EnsureClusterWithId;

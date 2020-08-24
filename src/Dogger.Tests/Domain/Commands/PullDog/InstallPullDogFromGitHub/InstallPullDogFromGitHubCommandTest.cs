@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails;
 using Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Auth0.GetAuth0UserFromEmails;
 using Dogger.Domain.Queries.Auth0.GetAuth0UserFromGitHubUserId;
 using Dogger.Domain.Queries.Plans.GetDemoPlan;

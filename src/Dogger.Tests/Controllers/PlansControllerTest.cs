@@ -7,7 +7,6 @@ using Dogger.Controllers.Plans;
 using Dogger.Domain.Commands.Instances.ProvisionDemoInstance;
 using Dogger.Domain.Commands.Instances.ProvisionInstanceForUser;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Payment.GetActivePaymentMethodForUser;
 using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Domain.Queries.Plans.GetPlanById;

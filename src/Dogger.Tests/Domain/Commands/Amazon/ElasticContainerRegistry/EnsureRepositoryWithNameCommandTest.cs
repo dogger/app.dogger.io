@@ -8,8 +8,6 @@ using Amazon.IdentityManagement;
 using Amazon.IdentityManagement.Model;
 using Dogger.Domain.Commands.Amazon.ElasticContainerRegistry.EnsureRepositoryWithName;
 using Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonUserWithName;
-using Dogger.Domain.Models;
-using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.Amazon.ElasticContainerRegistry.GetRepositoryByName;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
