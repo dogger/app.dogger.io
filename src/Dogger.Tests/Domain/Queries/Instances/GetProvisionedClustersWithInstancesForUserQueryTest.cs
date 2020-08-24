@@ -79,8 +79,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
                         .WithInstances(
                             new TestInstanceBuilder()
                                 .WithName("some-instance-1")
-                                .WithProvisionedStatus(false)
-                                .Build(),
+                                .WithProvisionedStatus(false),
                             new TestInstanceBuilder()
                                 .WithName("some-instance-2")
                                 .WithProvisionedStatus(false))));
@@ -153,8 +152,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
                         .WithInstances(
                             new TestInstanceBuilder()
                                 .WithName("some-instance-1")
-                                .WithProvisionedStatus(true)
-                                .Build(),
+                                .WithProvisionedStatus(true),
                             new TestInstanceBuilder()
                                 .WithName("some-instance-2")
                                 .WithProvisionedStatus(true))));
@@ -236,8 +234,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
                         .WithInstances(
                             new TestInstanceBuilder()
                                 .WithName("some-instance-1")
-                                .WithProvisionedStatus(true)
-                                .Build(),
+                                .WithProvisionedStatus(true),
                             new TestInstanceBuilder()
                                 .WithName("some-instance-2")
                                 .WithProvisionedStatus(true))));

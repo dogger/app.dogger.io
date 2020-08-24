@@ -95,8 +95,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 .Returns(new TestClusterBuilder()
                     .WithInstances(
                         new TestInstanceBuilder()
-                            .WithPullDogPullRequest()
-                            .Build(),
+                            .WithPullDogPullRequest(),
                         new TestInstanceBuilder()
                             .WithPullDogPullRequest()));
 

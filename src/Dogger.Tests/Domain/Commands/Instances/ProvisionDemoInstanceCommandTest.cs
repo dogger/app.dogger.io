@@ -158,7 +158,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await environment.WithFreshDataContext(async dataContext =>
             {
                 var demoCluster = new TestClusterBuilder()
-                    .WithUser()
+                    .WithUser(new TestUserBuilder()
+                        .WithId(userId))
                     .WithId(DataContext.DemoClusterId)
                     .WithInstances(new TestInstanceBuilder().Build())
                     .Build();

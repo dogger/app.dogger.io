@@ -459,6 +459,7 @@ namespace Dogger.Tests.Controllers.PullDog
                 .Returns(new TestUserBuilder()
                     .WithPullDogSettings(new TestPullDogSettingsBuilder()
                         .WithPoolSize(1337)
+                        .WithEncryptedApiKey(new byte[] { 1 })
                         .WithPlanId("some-plan-id")));
 
             var fakeMapper = Substitute.For<IMapper>();

@@ -54,7 +54,10 @@ namespace Dogger.Tests.Domain.Provisioning.Flows
             var flow = new ProvisionInstanceStateFlow(
                 "some-plan-id",
                 new TestInstanceBuilder()
-                    .WithName("some-instance-name"));
+                    .WithName("some-instance-name"))
+            {
+                UserId = fakeUserId
+            };
 
             var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
             var stateFactory = new ProvisioningStateFactory(serviceProvider);

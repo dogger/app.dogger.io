@@ -27,8 +27,7 @@ namespace Dogger.Tests.Infrastructure.AspNet
                 .Returns(new Dogger.Domain.Models.Instance[]
                 {
                     new TestInstanceBuilder()
-                        .WithName("some-instance-name-1")
-                        .Build(),
+                        .WithName("some-instance-name-1"),
                     new TestInstanceBuilder()
                         .WithName("some-instance-name-2")
                         .Build()

@@ -101,8 +101,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .WithId(clusterId)
                 .WithInstances(
                     new TestInstanceBuilder()
-                        .WithName("not-matching")
-                        .Build(),
+                        .WithName("not-matching"),
                     new TestInstanceBuilder()
                         .WithName("some-instance-name"))
                 .Build();
@@ -200,8 +199,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .WithInstances(
                     new TestInstanceBuilder()
                         .WithPullDogPullRequest()
-                        .WithName("not-matching")
-                        .Build(),
+                        .WithName("not-matching"),
                     new TestInstanceBuilder()
                         .WithName("some-instance-name")
                         .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
@@ -308,8 +306,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     new TestInstanceBuilder()
                         .WithName("not-matching")
                         .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
-                            .WithPullDogRepository())
-                        .Build(),
+                            .WithPullDogRepository()),
                     new TestInstanceBuilder()
                         .WithName("some-instance-name")
                         .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
@@ -385,8 +382,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .WithId(clusterId)
                 .WithInstances(
                     new TestInstanceBuilder()
-                        .WithName("not-matching")
-                        .Build(),
+                        .WithName("not-matching"),
                     new TestInstanceBuilder()
                         .WithName("some-instance-name"))
                 .Build();

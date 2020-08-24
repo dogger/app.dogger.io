@@ -367,7 +367,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
             var state = serviceProvider.GetRequiredService<CreateLightsailInstanceState>();
             state.PlanId = "dummy";
             state.DatabaseInstance = new TestInstanceBuilder()
-                .WithCluster()
+                .WithName("some-instance-name")
                 .Build();
 
             await state.InitializeAsync();

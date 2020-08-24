@@ -50,6 +50,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             //Act
             var client = await factory.CreateAsync(new TestPullDogPullRequestBuilder()
+                .WithHandle("1")
                 .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                     .WithHandle("2")
                     .WithGitHubInstallationId(1337)));

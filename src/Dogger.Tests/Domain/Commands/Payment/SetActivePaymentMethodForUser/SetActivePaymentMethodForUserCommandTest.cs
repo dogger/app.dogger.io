@@ -27,7 +27,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.SetActivePaymentMethodForUser
             var exception = await Assert.ThrowsExceptionAsync<NoStripeCustomerIdException>(async () =>
                 await environment.Mediator.Send(
                     new SetActivePaymentMethodForUserCommand(
-                        new TestUserBuilder().Build(),
+                        new TestUserBuilder(),
                         "some-payment-method-id")));
 
             //Assert

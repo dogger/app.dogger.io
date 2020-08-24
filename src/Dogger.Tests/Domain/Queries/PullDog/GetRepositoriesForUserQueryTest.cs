@@ -117,8 +117,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                         .WithRepositories(
                             new TestPullDogRepositoryBuilder()
                                 .WithHandle("3")
-                                .WithGitHubInstallationId(1337)
-                                .Build(),
+                                .WithGitHubInstallationId(1337),
                             new TestPullDogRepositoryBuilder()
                                 .WithHandle("4")
                                 .WithGitHubInstallationId(1337)))));

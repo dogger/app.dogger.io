@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
 using Dogger.Domain.Models.Builders;
@@ -6,6 +7,7 @@ using Dogger.Domain.Queries.Instances.GetExpiredInstances;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Dogger.Tests.Domain.Queries.Instances
@@ -76,7 +78,6 @@ namespace Dogger.Tests.Domain.Queries.Instances
                     .WithName("non-expiring-2")
                     .WithExpiredDate(DateTime.UtcNow.AddMinutes(3)));
 
-
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
                     .WithCluster()
                     .WithName("expiring-2")
@@ -90,8 +91,8 @@ namespace Dogger.Tests.Domain.Queries.Instances
             Assert.IsNotNull(expiredInstances);
             Assert.AreEqual(2, expiredInstances.Length);
 
-            Assert.AreEqual("expiring-1", expiredInstances[0].Name);
-            Assert.AreEqual("expiring-2", expiredInstances[1].Name);
+            Assert.IsTrue(expiredInstances.Any(x => x.Name == "expiring-1"));
+            Assert.IsTrue(expiredInstances.Any(x => x.Name == "expiring-2"));
         }
     }
 }

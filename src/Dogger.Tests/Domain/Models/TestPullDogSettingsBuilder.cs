@@ -10,6 +10,8 @@ namespace Dogger.Tests.Domain.Models
         {
             WithId(Guid.NewGuid());
             WithUser();
+            WithPlanId(Guid.NewGuid().ToString());
+            WithEncryptedApiKey(Array.Empty<byte>());
         }
 
         public TestPullDogSettingsBuilder WithUser()

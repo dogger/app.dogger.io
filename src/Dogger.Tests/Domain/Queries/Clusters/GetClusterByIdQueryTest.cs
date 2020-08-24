@@ -32,8 +32,7 @@ namespace Dogger.Tests.Domain.Queries.Clusters
                     .WithId(guid2)
                     .WithInstances(
                         new TestInstanceBuilder()
-                            .WithName("non-demo")
-                            .Build(),
+                            .WithName("non-demo"),
                         new TestInstanceBuilder()
                             .WithName("demo")));
             });

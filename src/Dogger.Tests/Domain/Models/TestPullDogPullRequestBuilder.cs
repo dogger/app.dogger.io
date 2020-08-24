@@ -9,8 +9,10 @@ namespace Dogger.Tests.Domain.Models
         public TestPullDogPullRequestBuilder()
         {
             WithId(Guid.NewGuid());
-            WithHandle(Guid.NewGuid().ToString());
             WithPullDogRepository();
+
+            var random = new Random();
+            WithHandle(random.Next().ToString());
         }
 
         public TestPullDogPullRequestBuilder WithPullDogRepository()

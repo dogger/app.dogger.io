@@ -24,11 +24,10 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             var user = new TestUserBuilder()
                 .WithClusters(
                     new TestClusterBuilder()
-                        .WithName("some-non-matching-cluster-1")
-                        .Build(),
+                        .WithName("some-non-matching-cluster-1"),
                     new TestClusterBuilder()
-                        .WithName("some-matching-cluster")
-                        .Build(),
+                        .WithId(matchingClusterId)
+                        .WithName("some-matching-cluster"),
                     new TestClusterBuilder()
                         .WithName("some-non-matching-cluster-2"))
                 .Build();
@@ -60,8 +59,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             var user = new TestUserBuilder()
                 .WithClusters(
                     new TestClusterBuilder()
-                        .WithName("some-non-matching-cluster-1")
-                        .Build(),
+                        .WithName("some-non-matching-cluster-1"),
                     new TestClusterBuilder()
                         .WithName("some-non-matching-cluster-2"))
                 .Build();

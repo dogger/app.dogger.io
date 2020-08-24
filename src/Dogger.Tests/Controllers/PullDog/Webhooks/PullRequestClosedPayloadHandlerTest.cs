@@ -74,8 +74,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                 null!,
                 null!,
                 new TestPullDogRepositoryBuilder()
-                    .WithHandle("1337")
-                    .Build(),
+                    .WithHandle("1337"),
                 new TestPullDogPullRequestBuilder()
                     .WithHandle("1338")));
 

@@ -54,7 +54,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             //Act
             var repository = await environment.Mediator.Send(new EnsurePullDogRepositoryCommand(
-                new TestPullDogSettingsBuilder().Build(),
+                new TestPullDogSettingsBuilder(),
                 "some-repository-handle"));
 
             //Assert

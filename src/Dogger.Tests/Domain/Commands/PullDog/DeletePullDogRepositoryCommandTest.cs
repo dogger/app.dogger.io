@@ -27,7 +27,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 await dataContext.PullDogRepositories.AddAsync(new TestPullDogRepositoryBuilder()
                     .WithHandle("some-handle")
                     .WithPullRequests(
-                        new TestPullDogPullRequestBuilder().Build(),
+                        new TestPullDogPullRequestBuilder(),
                         new TestPullDogPullRequestBuilder().Build()));
             });
 

@@ -122,7 +122,7 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new TestAmazonUserBuilder().Build(),
+                    new TestAmazonUserBuilder(),
                     new TestAmazonUserBuilder().Build()));
 
             fakeMediator
@@ -173,7 +173,7 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new TestAmazonUserBuilder().Build(),
+                    new TestAmazonUserBuilder(),
                     new TestAmazonUserBuilder().Build()));
 
             fakeMediator
@@ -332,7 +332,7 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new TestAmazonUserBuilder().Build(),
+                    new TestAmazonUserBuilder(),
                     new TestAmazonUserBuilder().Build()));
 
             var fakeMapper = Substitute.For<IMapper>();
@@ -378,7 +378,7 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new TestAmazonUserBuilder().Build(),
+                    new TestAmazonUserBuilder(),
                     new TestAmazonUserBuilder().Build()));
 
             var fakeMapper = Substitute.For<IMapper>();
@@ -484,7 +484,7 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new TestAmazonUserBuilder().Build(),
+                    new TestAmazonUserBuilder(),
                     new TestAmazonUserBuilder().Build()));
 
             fakeMediator
@@ -532,7 +532,7 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new TestAmazonUserBuilder().Build(),
+                    new TestAmazonUserBuilder(),
                     new TestAmazonUserBuilder().Build()));
 
             fakeMediator

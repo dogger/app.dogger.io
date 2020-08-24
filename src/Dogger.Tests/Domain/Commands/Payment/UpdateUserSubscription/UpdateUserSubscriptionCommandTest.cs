@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
 using Dogger.Domain.Models;
@@ -65,8 +66,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .WithClusters(new TestClusterBuilder()
                     .WithInstances(
                         new TestInstanceBuilder()
-                            .WithPlanId("some-plan-id-1")
-                            .Build(),
+                            .WithPlanId("some-plan-id-1"),
                         new TestInstanceBuilder()
                             .WithPlanId("some-plan-id-2")))
                 .Build();
@@ -85,12 +85,14 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     "some-subscription-id",
                     Arg.Is<SubscriptionUpdateOptions>(args =>
                         args.Prorate == true &&
-                        args.Items[0].Plan == "some-plan-id-1" &&
-                        args.Items[0].Id == null &&
-                        args.Items[0].Quantity == 1 &&
-                        args.Items[1].Plan == "some-plan-id-2" &&
-                        args.Items[1].Id == null &&
-                        args.Items[1].Quantity == 1),
+                        args.Items.Any(i => 
+                            i.Plan == "some-plan-id-1" &&
+                            i.Id == null &&
+                            i.Quantity == 1) &&
+                        args.Items.Any(i => 
+                            i.Plan == "some-plan-id-2" &&
+                            i.Id == null &&
+                            i.Quantity == 1)),
                     default,
                     default);
         }
@@ -138,8 +140,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .WithClusters(new TestClusterBuilder()
                     .WithInstances(
                         new TestInstanceBuilder()
-                            .WithPlanId("some-plan-id-1")
-                            .Build(),
+                            .WithPlanId("some-plan-id-1"),
                         new TestInstanceBuilder()
                             .WithPlanId("some-plan-id-1")))
                 .Build();

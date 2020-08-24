@@ -65,16 +65,13 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                     .WithRepositories(
                         new TestPullDogRepositoryBuilder()
                             .WithHandle("correct-1")
-                            .WithGitHubInstallationId(1337)
-                            .Build(),
+                            .WithGitHubInstallationId(1337),
                         new TestPullDogRepositoryBuilder()
                             .WithHandle("incorrect-1")
-                            .WithGitHubInstallationId(1338)
-                            .Build(),
+                            .WithGitHubInstallationId(1338),
                         new TestPullDogRepositoryBuilder()
                             .WithHandle("correct-2")
-                            .WithGitHubInstallationId(1337)
-                            .Build(),
+                            .WithGitHubInstallationId(1337),
                         new TestPullDogRepositoryBuilder()
                             .WithHandle("incorrect-2")
                             .WithGitHubInstallationId(1338)));

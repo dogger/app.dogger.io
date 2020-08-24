@@ -27,7 +27,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await handler.Handle(
                     new GetPullRequestDetailsByHandleQuery(
-                        new TestPullDogRepositoryBuilder().Build(),
+                        new TestPullDogRepositoryBuilder(),
                         "dummy"),
                     default));
 
@@ -55,8 +55,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 new GetPullRequestDetailsByHandleQuery(
                     new TestPullDogRepositoryBuilder()
                         .WithHandle("1338")
-                        .WithGitHubInstallationId(1337)
-                        .Build(),
+                        .WithGitHubInstallationId(1337),
                     "1339"),
                 default);
 
