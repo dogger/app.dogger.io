@@ -24,21 +24,12 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.PullDogRepositories.AddAsync(new PullDogRepository()
-                {
-                    Handle = "some-handle",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        EncryptedApiKey = Array.Empty<byte>(),
-                        PlanId = "dummy",
-                        User = new TestUserBuilder().Build()
-                    },
-                    PullRequests = new List<PullDogPullRequest>()
-                    {
+                await dataContext.PullDogRepositories.AddAsync(new TestPullDogRepositoryBuilder()
+                    .WithHandle("some-handle")
+                    .WithPullRequests(
                         new TestPullDogPullRequestBuilder().Build(),
-                        new TestPullDogPullRequestBuilder().Build()
-                    }
-                });
+                        new TestPullDogPullRequestBuilder().Build())
+                    .Build());
             });
 
             Assert.AreEqual(1, await environment.DataContext.PullDogRepositories.AsQueryable().CountAsync());
@@ -65,38 +56,13 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.PullDogRepositories.AddAsync(new PullDogRepository()
-                {
-                    Handle = "dummy-1",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        EncryptedApiKey = Array.Empty<byte>(),
-                        PlanId = "dummy",
-                        User = new TestUserBuilder().Build()
-                    },
-                });
+                await dataContext.PullDogRepositories.AddAsync(new TestPullDogRepositoryBuilder().Build());
 
-                await dataContext.PullDogRepositories.AddAsync(new PullDogRepository()
-                {
-                    Handle = "some-handle",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        EncryptedApiKey = Array.Empty<byte>(),
-                        PlanId = "dummy",
-                        User = new TestUserBuilder().Build()
-                    },
-                });
+                await dataContext.PullDogRepositories.AddAsync(new TestPullDogRepositoryBuilder()
+                    .WithHandle("some-handle")
+                    .Build());
 
-                await dataContext.PullDogRepositories.AddAsync(new PullDogRepository()
-                {
-                    Handle = "dummy-2",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        EncryptedApiKey = Array.Empty<byte>(),
-                        PlanId = "dummy",
-                        User = new TestUserBuilder().Build()
-                    },
-                });
+                await dataContext.PullDogRepositories.AddAsync(new TestPullDogRepositoryBuilder().Build());
             });
 
             Assert.AreEqual(3, await environment.DataContext.PullDogRepositories.AsQueryable().CountAsync());

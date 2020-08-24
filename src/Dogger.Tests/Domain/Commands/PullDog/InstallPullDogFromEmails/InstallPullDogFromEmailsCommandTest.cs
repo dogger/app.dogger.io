@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using Dogger.Tests.Domain.Models;
 
 namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromEmails
 {
@@ -35,9 +36,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromEmails
                 }
             });
 
-            var userInDatabase = new Dogger.Domain.Models.User() {
-                StripeCustomerId = "dummy"
-            };
+            var userInDatabase = new TestUserBuilder().Build();
             await environment.DataContext.Users.AddAsync(userInDatabase);
             await environment.DataContext.SaveChangesAsync();
 
@@ -69,7 +68,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromEmails
 
             //Act
             await environment.Mediator.Send(new InstallPullDogFromEmailsCommand(
-                new []
+                new[]
                 {
                     "email-1@example.com",
                     "email-2@example.com"
@@ -104,10 +103,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromEmails
                 }
             });
 
-            var userInDatabase = new Dogger.Domain.Models.User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var userInDatabase = new TestUserBuilder().Build();
             await environment.DataContext.Users.AddAsync(userInDatabase);
             await environment.DataContext.SaveChangesAsync();
 
@@ -139,7 +135,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromEmails
 
             //Act
             await environment.Mediator.Send(new InstallPullDogFromEmailsCommand(
-                new []
+                new[]
                 {
                     "email-1@example.com",
                     "email-2@example.com"

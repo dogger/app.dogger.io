@@ -20,16 +20,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var pullDogRepository = new PullDogRepository()
-            {
-                Handle = "some-repository-handle",
-                PullDogSettings = new PullDogSettings()
-                {
-                    User = new TestUserBuilder().Build(),
-                    PlanId = "dummy",
-                    EncryptedApiKey = Array.Empty<byte>()
-                }
-            };
+            var pullDogRepository = new TestPullDogRepositoryBuilder()
+                .WithHandle("some-repository-handle")
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.PullDogPullRequests.AddAsync(new TestPullDogPullRequestBuilder()
@@ -59,16 +52,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var pullDogRepository = new PullDogRepository()
-            {
-                Handle = "some-repository-handle",
-                PullDogSettings = new PullDogSettings()
-                {
-                    User = new TestUserBuilder().Build(),
-                    PlanId = "dummy",
-                    EncryptedApiKey = Array.Empty<byte>()
-                }
-            };
+            var pullDogRepository = new TestPullDogRepositoryBuilder()
+                .WithHandle("some-repository-handle")
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 Assert.AreEqual(0, await dataContext.PullDogPullRequests.CountAsync());

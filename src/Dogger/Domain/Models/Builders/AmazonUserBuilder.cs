@@ -2,7 +2,7 @@
 
 namespace Dogger.Domain.Models.Builders
 {
-    public class AmazonUserBuilder : IModelBuilder<AmazonUser>
+    public class AmazonUserBuilder : ModelBuilder<AmazonUser>
     {
         private Guid id;
         private string? name;
@@ -57,7 +57,7 @@ namespace Dogger.Domain.Models.Builders
             return this;
         }
 
-        public AmazonUser Build()
+        public override AmazonUser Build()
         {
             if (this.encryptedSecretAccessKey == null || this.encryptedAccessKeyId == null)
                 throw new InvalidOperationException("AWS credentials are required.");

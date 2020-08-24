@@ -33,7 +33,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.AmazonUsers.AddAsync(new TestAmazonUserBuilder()
-                    
+
                     .WithName("some-name")
                     .WithId(userId)
                     .Build());
@@ -205,10 +205,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                 }
             });
 
-            var user = new Dogger.Domain.Models.User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder().Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);
@@ -225,7 +222,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
 
             await fakeAmazonIdentityManagementService
                 .Received(1)
-                .AddUserToGroupAsync(Arg.Is<AddUserToGroupRequest>(args => 
+                .AddUserToGroupAsync(Arg.Is<AddUserToGroupRequest>(args =>
                     args.GroupName == "some-group" &&
                     args.UserName == "some-name"));
         }
@@ -246,7 +243,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
             });
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<TestException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<TestException>(async () =>
                 await environment.Mediator.Send(new EnsureAmazonUserWithNameCommand("some-name")));
 
             //Assert
@@ -313,10 +310,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                 }
             });
 
-            var user = new Dogger.Domain.Models.User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder().Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);
@@ -364,10 +358,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                 }
             });
 
-            var user = new Dogger.Domain.Models.User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder().Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);

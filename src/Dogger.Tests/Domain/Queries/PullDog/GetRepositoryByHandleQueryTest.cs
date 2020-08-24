@@ -39,16 +39,9 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var pullDogRepository = new PullDogRepository()
-            {
-                Handle = "some-repository-handle",
-                PullDogSettings = new PullDogSettings()
-                {
-                    User = new TestUserBuilder().Build(),
-                    PlanId = "dummy",
-                    EncryptedApiKey = Array.Empty<byte>()
-                }
-            };
+            var pullDogRepository = new TestPullDogRepositoryBuilder()
+                .WithHandle("some-repository-handle")
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.PullDogRepositories.AddAsync(pullDogRepository);

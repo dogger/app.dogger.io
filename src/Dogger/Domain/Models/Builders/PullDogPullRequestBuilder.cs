@@ -3,7 +3,7 @@ using Dogger.Domain.Services.PullDog;
 
 namespace Dogger.Domain.Models.Builders
 {
-    public class PullDogPullRequestBuilder : IModelBuilder<PullDogPullRequest>
+    public class PullDogPullRequestBuilder : ModelBuilder<PullDogPullRequest>
     {
         private Guid id;
 
@@ -52,7 +52,7 @@ namespace Dogger.Domain.Models.Builders
             return this;
         }
 
-        public PullDogPullRequest Build()
+        public override PullDogPullRequest Build()
         {
             if (instance == null)
                 throw new InvalidOperationException("Instance not specified.");

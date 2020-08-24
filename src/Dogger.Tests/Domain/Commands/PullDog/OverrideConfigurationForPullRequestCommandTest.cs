@@ -24,16 +24,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             var pullRequest = new TestPullDogPullRequestBuilder()
                 .WithHandle("some-handle")
-                .WithPullDogRepository(new PullDogRepository()
-                {
-                    Handle = "dummy",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        EncryptedApiKey = Array.Empty<byte>(),
-                        PlanId = "dummy",
-                        User = new TestUserBuilder().Build()
-                    }
-                })
+                .WithPullDogRepository(new TestPullDogRepositoryBuilder().Build())
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>

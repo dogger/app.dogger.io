@@ -11,6 +11,7 @@ using Dogger.Infrastructure.Encryption;
 using MediatR;
 using User = Auth0.ManagementApi.Models.User;
 using DoggerUser = Dogger.Domain.Models.User;
+using Dogger.Domain.Models.Builders;
 
 namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails
 {
@@ -36,7 +37,7 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails
             CancellationToken cancellationToken)
         {
             var auth0User = await EnsureAuth0UserForEmailsAsync(
-                request.Emails, 
+                request.Emails,
                 cancellationToken);
 
             var user = await this.mediator.Send(
@@ -50,13 +51,12 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails
                     new GetDemoPlanQuery(),
                     cancellationToken);
 
-                user.PullDogSettings = new PullDogSettings()
-                {
-                    PlanId = request.Plan?.DoggerPlan?.Id ?? doggerDemoPlan.Id,
-                    PoolSize = request.Plan?.PoolSize ?? 0,
-                    EncryptedApiKey = await this.aesEncryptionHelper.EncryptAsync(
-                        Guid.NewGuid().ToString())
-                };
+                user.PullDogSettings = new PullDogSettingsBuilder()
+                    .WithPlanId(request.Plan?.DoggerPlan?.Id ?? doggerDemoPlan.Id)
+                    .WithPoolSize(request.Plan?.PoolSize ?? 0)
+                    .WithEncryptedApiKey(await this.aesEncryptionHelper
+                        .EncryptAsync(Guid.NewGuid().ToString()))
+                    .Build();
 
                 await this.dataContext.SaveChangesAsync(cancellationToken);
             }
@@ -65,7 +65,7 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails
         }
 
         private async Task<User> EnsureAuth0UserForEmailsAsync(
-            string[] emails, 
+            string[] emails,
             CancellationToken cancellationToken)
         {
             return

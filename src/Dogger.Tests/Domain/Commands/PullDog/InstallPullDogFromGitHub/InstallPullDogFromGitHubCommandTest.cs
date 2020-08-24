@@ -79,23 +79,15 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromGitHub
                 }
             });
 
-            var userInDatabase = new Dogger.Domain.Models.User()
-            {
-                StripeCustomerId = "dummy",
-                PullDogSettings = new PullDogSettings()
-                {
-                    PlanId = "some-plan-id",
-                    EncryptedApiKey = Array.Empty<byte>(),
-                    Repositories = new List<PullDogRepository>()
-                    {
-                        new PullDogRepository()
-                        {
-                            GitHubInstallationId = 1337,
-                            Handle = "dummy"
-                        }
-                    }
-                }
-            };
+            var userInDatabase = new TestUserBuilder()
+                .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                    .WithPlanId("some-plan-id")
+                    .WithRepositories(
+                        new TestPullDogRepositoryBuilder()
+                            .WithGitHubInstallationId(1337)
+                            .Build())
+                    .Build())
+                .Build();
             await environment.DataContext.Users.AddAsync(userInDatabase);
             await environment.DataContext.SaveChangesAsync();
 
@@ -186,23 +178,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromGitHub
                 }
             });
 
-            var userInDatabase = new Dogger.Domain.Models.User()
-            {
-                StripeCustomerId = "dummy",
-                PullDogSettings = new PullDogSettings()
-                {
-                    PlanId = "some-plan-id",
-                    EncryptedApiKey = Array.Empty<byte>(),
-                    Repositories = new List<PullDogRepository>()
-                    {
-                        new PullDogRepository()
-                        {
-                            GitHubInstallationId = 1337,
-                            Handle = "dummy"
-                        }
-                    }
-                }
-            };
+            var userInDatabase = new TestUserBuilder()
+                .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                    .WithPlanId("some-plan-id")
+                    .WithRepositories(new TestPullDogRepositoryBuilder()
+                        .WithGitHubInstallationId(1337)
+                        .Build())
+                    .Build())
+                .Build();
             await environment.DataContext.Users.AddAsync(userInDatabase);
             await environment.DataContext.SaveChangesAsync();
 

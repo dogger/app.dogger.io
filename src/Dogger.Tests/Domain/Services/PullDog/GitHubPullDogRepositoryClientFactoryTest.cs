@@ -25,11 +25,9 @@ namespace Dogger.Tests.Domain.Services.PullDog
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await factory.CreateAsync(new TestPullDogPullRequestBuilder()
-                    .WithPullDogRepository(new PullDogRepository()
-                    {
-                        GitHubInstallationId = null,
-                        PullDogSettings = new PullDogSettings()
-                    })
+                    .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                        .WithGitHubInstallationId(null)
+                        .Build())
                     .Build()));
 
             //Assert
@@ -54,12 +52,10 @@ namespace Dogger.Tests.Domain.Services.PullDog
 
             //Act
             var client = await factory.CreateAsync(new TestPullDogPullRequestBuilder()
-                .WithPullDogRepository(new PullDogRepository()
-                {
-                    Handle = "2",
-                    GitHubInstallationId = 1337,
-                    PullDogSettings = new PullDogSettings()
-                })
+                .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                    .WithHandle("2")
+                    .WithGitHubInstallationId(1337)
+                    .Build())
                 .Build());
 
             //Assert

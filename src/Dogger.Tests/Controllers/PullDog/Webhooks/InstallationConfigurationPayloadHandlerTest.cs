@@ -8,6 +8,7 @@ using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
 using Dogger.Infrastructure.GitHub;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -130,7 +131,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
         public async Task Handle_ValidConfigurationCommitPayloadWithValidConfigurationFileAndRepositoriesToAdd_AddsRepositoriesToInstallation()
         {
             //Arrange
-            var settings = new PullDogSettings();
+            var settings = new TestPullDogSettingsBuilder().Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
@@ -150,7 +151,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                 {
                     Id = 1338
                 },
-                RepositoriesAdded = new []
+                RepositoriesAdded = new[]
                 {
                     new InstallationRepositoryReferencePayload()
                     {
@@ -178,7 +179,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
         public async Task Handle_ValidConfigurationCommitPayloadWithValidConfigurationFileAndRepositoriesToRemove_RemovesRepositoriesFromInstallation()
         {
             //Arrange
-            var settings = new PullDogSettings();
+            var settings = new TestPullDogSettingsBuilder().Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator

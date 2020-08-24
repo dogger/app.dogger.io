@@ -73,7 +73,7 @@ namespace Dogger.Tests.Controllers.PullDog
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(args =>
                     args.IdentityName == "some-identity-name"))
                 .Returns(new TestUserBuilder()
-                    .WithPullDogSettings(new PullDogSettings())
+                    .WithPullDogSettings()
                     .Build());
 
             var fakeMapper = Substitute.For<IMapper>();
@@ -160,10 +160,9 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
                     args.RepositoryHandle == "some-repository-handle"))
-                .Returns(new PullDogRepository()
-                {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder()
+                    .WithPullDogSettings()
+                    .Build());
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -198,10 +197,7 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
                     args.RepositoryHandle == "some-repository-handle"))
-                .Returns(new PullDogRepository()
-                {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetPullRequestDetailsByHandleQuery>(args =>
@@ -241,10 +237,7 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
                     args.RepositoryHandle == "some-repository-handle"))
-                .Returns(new PullDogRepository()
-                {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetPullRequestDetailsFromBranchReferenceQuery>(args =>
@@ -286,10 +279,7 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
                     args.RepositoryHandle == "some-repository-handle"))
-                .Returns(new PullDogRepository()
-                {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<EnsurePullDogPullRequestCommand>(args =>
@@ -343,10 +333,7 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
                     args.RepositoryHandle == "some-repository-handle"))
-                .Returns(new PullDogRepository()
-                {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetPullRequestDetailsFromBranchReferenceQuery>(args =>
@@ -395,10 +382,7 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
                     args.RepositoryHandle == "some-repository-handle"))
-                .Returns(new PullDogRepository()
-                {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetPullRequestDetailsByHandleQuery>(args =>
@@ -479,12 +463,10 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
                 .Returns(new TestUserBuilder()
-                    .WithPullDogSettings(new PullDogSettings()
-                    {
-                        PoolSize = 1337,
-                        PlanId = "some-plan-id",
-                        EncryptedApiKey = new byte[] { 1 }
-                    })
+                    .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                        .WithPoolSize(1337)
+                        .WithPlanId("some-plan-id")
+                        .Build())
                     .Build());
 
             var fakeMapper = Substitute.For<IMapper>();
@@ -548,7 +530,7 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
                 .Returns(new TestUserBuilder()
-                    .WithPullDogSettings(new PullDogSettings())
+                    .WithPullDogSettings()
                     .Build());
 
             fakeMediator

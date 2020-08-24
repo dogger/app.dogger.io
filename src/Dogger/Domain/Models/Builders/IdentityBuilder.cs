@@ -2,7 +2,7 @@
 
 namespace Dogger.Domain.Models.Builders
 {
-    public class IdentityBuilder : IModelBuilder<Identity>
+    public class IdentityBuilder : ModelBuilder<Identity>
     {
         private Guid id;
 
@@ -34,7 +34,7 @@ namespace Dogger.Domain.Models.Builders
             return this;
         }
 
-        public Identity Build()
+        public override Identity Build()
         {
             if (user == null)
                 throw new InvalidOperationException("User has not been set.");

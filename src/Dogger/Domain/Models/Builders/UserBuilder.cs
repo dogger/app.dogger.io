@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Dogger.Domain.Models.Builders
 {
-    public class UserBuilder : IModelBuilder<User>
+    public class UserBuilder : ModelBuilder<User>
     {
         private Guid id;
 
@@ -68,7 +68,7 @@ namespace Dogger.Domain.Models.Builders
             return this;
         }
 
-        public User Build()
+        public override User Build()
         {
             var user = new User()
             {

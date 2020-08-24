@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Dogger.Domain.Models.Builders
 {
-    public class ClusterBuilder : IModelBuilder<Cluster>
+    public class ClusterBuilder : ModelBuilder<Cluster>
     {
         private Guid id;
 
@@ -48,7 +48,7 @@ namespace Dogger.Domain.Models.Builders
             return this;
         }
 
-        public Cluster Build()
+        public override Cluster Build()
         {
             var cluster = new Cluster()
             {

@@ -73,10 +73,9 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             await handler.HandleAsync(new WebhookPayloadContext(
                 null!,
                 null!,
-                new PullDogRepository()
-                {
-                    Handle = "1337"
-                },
+                new TestPullDogRepositoryBuilder()
+                    .WithHandle("1337")
+                    .Build(),
                 new TestPullDogPullRequestBuilder()
                     .WithHandle("1338")
                     .Build()));

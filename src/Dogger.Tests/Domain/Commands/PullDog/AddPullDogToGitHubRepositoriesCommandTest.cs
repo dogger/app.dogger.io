@@ -22,11 +22,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var user = new TestUserBuilder()
-                .WithPullDogSettings(new PullDogSettings()
-                {
-                    EncryptedApiKey = Array.Empty<byte>(),
-                    PlanId = "dummy"
-                })
+                .WithPullDogSettings()
                 .Build();
             await environment.DataContext.Users.AddAsync(user);
             await environment.DataContext.SaveChangesAsync();

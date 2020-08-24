@@ -122,7 +122,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                     }
                 },
                 null!,
-                new PullDogRepository(),
+                new TestPullDogRepositoryBuilder().Build(),
                 new TestPullDogPullRequestBuilder().Build()));
 
             //Assert
@@ -152,7 +152,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                     }
                 },
                 null!,
-                new PullDogRepository(),
+                new TestPullDogRepositoryBuilder().Build(),
                 new TestPullDogPullRequestBuilder().Build()));
 
             //Assert
@@ -182,7 +182,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                     }
                 },
                 null!,
-                new PullDogRepository(),
+                new TestPullDogRepositoryBuilder().Build(),
                 new TestPullDogPullRequestBuilder().Build()));
 
             //Assert

@@ -63,11 +63,9 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
-                .Returns(new PullDogRepository()
-                {
-                    GitHubInstallationId = 1338,
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder()
+                    .WithGitHubInstallationId(1338)
+                    .Build());
 
             var fakeGitHubClient = Substitute.For<IGitHubClient>();
 
@@ -203,11 +201,9 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
-                .Returns(new PullDogRepository()
-                {
-                    GitHubInstallationId = 1338,
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder()
+                    .WithGitHubInstallationId(1338)
+                    .Build());
 
             var fakeWebhookPayloadHandler = Substitute.For<IWebhookPayloadHandler>();
 
@@ -283,11 +279,9 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
-                .Returns(new PullDogRepository()
-                {
-                    GitHubInstallationId = 13381338,
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder()
+                    .WithGitHubInstallationId(13381338)
+                    .Build());
 
             var fakeGitHubClient = Substitute.For<IGitHubClient>();
 
@@ -351,11 +345,9 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
-                .Returns(new PullDogRepository()
-                {
-                    GitHubInstallationId = 1338,
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder()
+                    .WithGitHubInstallationId(1338)
+                    .Build());
 
             var fakeGitHubClient = Substitute.For<IGitHubClient>();
 
@@ -427,11 +419,9 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
-                .Returns(new PullDogRepository()
-                {
-                    GitHubInstallationId = 1338,
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder()
+                    .WithGitHubInstallationId(1338)
+                    .Build());
 
             var fakeGitHubClient = Substitute.For<IGitHubClient>();
 

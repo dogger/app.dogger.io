@@ -181,11 +181,9 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
         public async Task Handle_PullRequestOpenedPayloadWithValidRepository_ProvisionsPullDogInstance()
         {
             //Arrange
-            var databaseRepository = new PullDogRepository()
-            {
-                Handle = "1337",
-                PullDogSettings = new PullDogSettings()
-            };
+            var databaseRepository = new TestPullDogRepositoryBuilder()
+                .WithHandle("1337")
+                .Build();
 
             var fakeMediator = Substitute.For<IMediator>();
 

@@ -13,7 +13,7 @@ namespace Dogger.Tests.Domain.Models
 
         public TestClusterBuilder WithUser()
         {
-            WithUser(new TestUserBuilder().Build());
+            WithUser(new TestUserBuilder());
             return this;
         }
     }

@@ -68,11 +68,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
 
             var user = new TestUserBuilder()
-                .WithPullDogSettings(new PullDogSettings()
-                {
-                    PlanId = "dummy",
-                    EncryptedApiKey = Array.Empty<byte>()
-                })
+                .WithPullDogSettings()
                 .Build();
             fakeMediator
                 .Send(Arg.Is<GetUserByIdQuery>(args => args.UserId == user.Id))
@@ -117,11 +113,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
 
             var user = new TestUserBuilder()
-                .WithPullDogSettings(new PullDogSettings()
-                {
-                    PlanId = "dummy",
-                    EncryptedApiKey = Array.Empty<byte>()
-                })
+                .WithPullDogSettings()
                 .Build();
             fakeMediator
                 .Send(Arg.Is<GetUserByIdQuery>(args => args.UserId == user.Id))
@@ -166,12 +158,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
 
             var databaseUser = new TestUserBuilder()
-                .WithPullDogSettings(new PullDogSettings()
-                {
-                    PoolSize = 1337,
-                    EncryptedApiKey = Array.Empty<byte>(),
-                    PlanId = "dummy"
-                })
+                .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                    .WithPoolSize(1337)
+                    .Build())
                 .Build();
             fakeMediator
                 .Send(Arg.Is<GetUserByIdQuery>(args => args.UserId == databaseUser.Id))
@@ -222,12 +211,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
 
             var databaseUser = new TestUserBuilder()
-                .WithPullDogSettings(new PullDogSettings()
-                {
-                    PoolSize = 1337,
-                    EncryptedApiKey = Array.Empty<byte>(),
-                    PlanId = "dummy"
-                })
+                .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                    .WithPoolSize(1337)
+                    .Build())
                 .Build();
             fakeMediator
                 .Send(Arg.Is<GetUserByIdQuery>(args => args.UserId == databaseUser.Id))
@@ -276,12 +262,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
 
             var databaseUser = new TestUserBuilder()
-                .WithPullDogSettings(new PullDogSettings()
-                {
-                    PoolSize = 1337,
-                    EncryptedApiKey = Array.Empty<byte>(),
-                    PlanId = "dummy"
-                })
+                .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                    .WithPoolSize(1337)
+                    .Build())
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -327,12 +310,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
 
             var databaseUser = new TestUserBuilder()
-                .WithPullDogSettings(new PullDogSettings()
-                {
-                    PoolSize = 1337,
-                    EncryptedApiKey = Array.Empty<byte>(),
-                    PlanId = "some-plan-id"
-                })
+                .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                    .WithPoolSize(1337)
+                    .WithPlanId("some-plan-id")
+                    .Build())
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -387,12 +368,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
 
             var databaseUser = new TestUserBuilder()
-                .WithPullDogSettings(new PullDogSettings()
-                {
-                    PoolSize = 1337,
-                    EncryptedApiKey = Array.Empty<byte>(),
-                    PlanId = "some-plan-id"
-                })
+                .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                    .WithPoolSize(1337)
+                    .WithPlanId("some-plan-id")
+                    .Build())
                 .Build();
             fakeMediator
                 .Send(Arg.Is<GetUserByIdQuery>(args => args.UserId == databaseUser.Id))
@@ -445,12 +424,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
 
             var databaseUser = new TestUserBuilder()
-                .WithPullDogSettings(new PullDogSettings()
-                {
-                    PoolSize = 1337,
-                    EncryptedApiKey = Array.Empty<byte>(),
-                    PlanId = "dummy"
-                })
+                .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                    .WithPoolSize(1337)
+                    .WithPlanId("some-plan-id")
+                    .Build())
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>

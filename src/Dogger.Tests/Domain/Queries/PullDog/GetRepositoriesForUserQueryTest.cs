@@ -52,12 +52,8 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             var userId = Guid.NewGuid();
             await environment.WithFreshDataContext(async dataContext =>
                 await dataContext.Users.AddAsync(new TestUserBuilder()
+                    .WithPullDogSettings()
                     .WithId(userId)
-                    .WithPullDogSettings(new PullDogSettings()
-                    {
-                        PlanId = "dummy",
-                        EncryptedApiKey = Array.Empty<byte>()
-                    })
                     .Build()));
 
             //Act
@@ -79,18 +75,9 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             await environment.WithFreshDataContext(async dataContext =>
                 await dataContext.Users.AddAsync(new TestUserBuilder()
                     .WithId(userId)
-                    .WithPullDogSettings(new PullDogSettings()
-                    {
-                        PlanId = "dummy",
-                        EncryptedApiKey = Array.Empty<byte>(),
-                        Repositories = new List<PullDogRepository>()
-                        {
-                            new PullDogRepository()
-                            {
-                                Handle = "dummy"
-                            }
-                        }
-                    })
+                    .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                        .WithRepositories(new TestPullDogRepositoryBuilder().Build())
+                        .Build())
                     .Build()));
 
             //Act
@@ -130,24 +117,17 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             await environment.WithFreshDataContext(async dataContext =>
                 await dataContext.Users.AddAsync(new TestUserBuilder()
                     .WithId(userId)
-                    .WithPullDogSettings(new PullDogSettings()
-                    {
-                        PlanId = "dummy",
-                        EncryptedApiKey = Array.Empty<byte>(),
-                        Repositories = new List<PullDogRepository>()
-                        {
-                            new PullDogRepository()
-                            {
-                                Handle = "3",
-                                GitHubInstallationId = 1337
-                            },
-                            new PullDogRepository()
-                            {
-                                Handle = "4",
-                                GitHubInstallationId = 1337
-                            }
-                        }
-                    })
+                    .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                        .WithRepositories(
+                            new TestPullDogRepositoryBuilder()
+                                .WithHandle("3")
+                                .WithGitHubInstallationId(1337)
+                                .Build(),
+                            new TestPullDogRepositoryBuilder()
+                                .WithHandle("4")
+                                .WithGitHubInstallationId(1337)
+                                .Build())
+                        .Build())
                     .Build()));
 
             //Act
@@ -195,20 +175,12 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             await environment.WithFreshDataContext(async dataContext =>
                 await dataContext.Users.AddAsync(new TestUserBuilder()
                     .WithId(userId)
-                    .WithPullDogSettings(new PullDogSettings()
-                    {
-                        PlanId = "dummy",
-                        EncryptedApiKey = Array.Empty<byte>(),
-                        Repositories = new List<PullDogRepository>()
-                        {
-                            new PullDogRepository()
-                            {
-                                GitHubInstallationId = 1337,
-                                Handle = "2",
-                                Id = Guid.NewGuid()
-                            }
-                        }
-                    })
+                    .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                        .WithRepositories(new TestPullDogRepositoryBuilder()
+                            .WithHandle("2")
+                            .WithGitHubInstallationId(1337)
+                            .Build())
+                        .Build())
                     .Build()));
 
             //Act

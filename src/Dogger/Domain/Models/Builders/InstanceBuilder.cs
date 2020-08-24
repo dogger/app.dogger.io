@@ -2,7 +2,7 @@
 
 namespace Dogger.Domain.Models.Builders
 {
-    public class InstanceBuilder : IModelBuilder<Instance>
+    public class InstanceBuilder : ModelBuilder<Instance>
     {
         private Guid id;
 
@@ -65,7 +65,7 @@ namespace Dogger.Domain.Models.Builders
             return this;
         }
 
-        public Instance Build()
+        public override Instance Build()
         {
             if (cluster == null)
                 throw new InvalidOperationException("Cluster not specified.");

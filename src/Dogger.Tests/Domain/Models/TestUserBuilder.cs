@@ -5,11 +5,17 @@ using Dogger.Domain.Models.Builders;
 
 namespace Dogger.Tests.Domain.Models
 {
-    class TestUserBuilder : UserBuilder
+    public class TestUserBuilder : UserBuilder
     {
         public TestUserBuilder()
         {
             WithId(Guid.NewGuid());
+        }
+
+        public TestUserBuilder WithPullDogSettings()
+        {
+            WithPullDogSettings(new TestPullDogSettingsBuilder().Build());
+            return this;
         }
     }
 }

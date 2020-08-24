@@ -35,17 +35,12 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var user = new TestUserBuilder().Build();
 
             var pullDogPullRequest = new TestPullDogPullRequestBuilder()
-                .WithPullDogRepository(new PullDogRepository()
-                {
-                    Handle = "dummy",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        User = user,
-                        PoolSize = 1,
-                        PlanId = "dummy",
-                        EncryptedApiKey = Array.Empty<byte>()
-                    }
-                })
+                .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                    .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                        .WithUser(user)
+                        .WithPoolSize(1)
+                        .Build())
+                    .Build())
                 .Build();
 
             var oldInstance = new TestInstanceBuilder()
@@ -100,17 +95,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             });
 
             var pullDogPullRequest = new TestPullDogPullRequestBuilder()
-                .WithPullDogRepository(new PullDogRepository()
-                {
-                    Handle = "dummy",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        User = new TestUserBuilder().Build(),
-                        PoolSize = 0,
-                        PlanId = "dummy",
-                        EncryptedApiKey = Array.Empty<byte>()
-                    }
-                })
+                .WithPullDogRepository(new TestPullDogRepositoryBuilder().Build())
                 .Build();
 
             var oldInstance = new TestInstanceBuilder()
@@ -162,17 +147,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             });
 
             var pullDogPullRequest = new TestPullDogPullRequestBuilder()
-                .WithPullDogRepository(new PullDogRepository()
-                {
-                    Handle = "dummy",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        User = new TestUserBuilder().Build(),
-                        PoolSize = 0,
-                        PlanId = "dummy",
-                        EncryptedApiKey = Array.Empty<byte>()
-                    }
-                })
+                .WithPullDogRepository(new TestPullDogRepositoryBuilder().Build())
                 .Build();
 
             var oldInstance = new TestInstanceBuilder()
@@ -219,17 +194,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         {
             //Arrange
             var pullDogPullRequest = new TestPullDogPullRequestBuilder()
-                .WithPullDogRepository(new PullDogRepository()
-                {
-                    Handle = "dummy",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        User = new TestUserBuilder().Build(),
-                        PoolSize = 0,
-                        PlanId = "dummy",
-                        EncryptedApiKey = Array.Empty<byte>()
-                    }
-                })
+                .WithPullDogRepository(new TestPullDogRepositoryBuilder().Build())
                 .Build();
 
             var fakeMediator = Substitute.For<IMediator>();
@@ -273,17 +238,12 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             var user = new TestUserBuilder().Build();
             var pullDogPullRequest = new TestPullDogPullRequestBuilder()
-                .WithPullDogRepository(new PullDogRepository()
-                {
-                    Handle = "dummy",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        User = user,
-                        PoolSize = 1,
-                        PlanId = "dummy",
-                        EncryptedApiKey = Array.Empty<byte>()
-                    }
-                })
+                .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                    .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                        .WithUser(user)
+                        .WithPoolSize(1)
+                        .Build())
+                    .Build())
                 .Build();
 
             var fakeMediator = Substitute.For<IMediator>();

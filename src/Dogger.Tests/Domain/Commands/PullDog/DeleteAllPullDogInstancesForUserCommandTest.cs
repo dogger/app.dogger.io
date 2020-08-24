@@ -80,16 +80,11 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                         .WithUser(otherUser)
                         .Build())
                     .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
-                        .WithPullDogRepository(new PullDogRepository()
-                        {
-                            Handle = "dummy",
-                            PullDogSettings = new PullDogSettings()
-                            {
-                                User = otherUser,
-                                PlanId = "dummy",
-                                EncryptedApiKey = Array.Empty<byte>()
-                            }
-                        })
+                        .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                            .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                                .WithUser(otherUser)
+                                .Build())
+                            .Build())
                         .Build())
                     .Build());
             });
@@ -129,16 +124,11 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                         .Build())
                     .WithName("some-name")
                     .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
-                        .WithPullDogRepository(new PullDogRepository()
-                        {
-                            Handle = "dummy",
-                            PullDogSettings = new PullDogSettings()
-                            {
-                                User = user,
-                                PlanId = "dummy",
-                                EncryptedApiKey = Array.Empty<byte>()
-                            }
-                        })
+                        .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                            .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                                .WithUser(user)
+                                .Build())
+                            .Build())
                         .Build())
                     .Build());
             });

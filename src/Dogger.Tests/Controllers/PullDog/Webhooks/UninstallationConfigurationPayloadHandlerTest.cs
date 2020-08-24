@@ -5,6 +5,7 @@ using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -60,32 +61,25 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             fakeMediator
                 .Send(Arg.Is<GetPullDogSettingsByGitHubInstallationIdQuery>(args =>
                     args.InstallationId == 1337))
-                .Returns(new PullDogSettings()
-                {
-                    Repositories = new List<PullDogRepository>()
-                    {
-                        new PullDogRepository()
-                        {
-                            Handle = "correct-1",
-                            GitHubInstallationId = 1337
-                        },
-                        new PullDogRepository()
-                        {
-                            Handle = "incorrect-1",
-                            GitHubInstallationId = 1338
-                        },
-                        new PullDogRepository()
-                        {
-                            Handle = "correct-2",
-                            GitHubInstallationId = 1337
-                        },
-                        new PullDogRepository()
-                        {
-                            Handle = "incorrect-1",
-                            GitHubInstallationId = 1338
-                        }
-                    }
-                });
+                .Returns(new TestPullDogSettingsBuilder()
+                    .WithRepositories(
+                        new TestPullDogRepositoryBuilder()
+                            .WithHandle("correct-1")
+                            .WithGitHubInstallationId(1337)
+                            .Build(),
+                        new TestPullDogRepositoryBuilder()
+                            .WithHandle("incorrect-1")
+                            .WithGitHubInstallationId(1338)
+                            .Build(),
+                        new TestPullDogRepositoryBuilder()
+                            .WithHandle("correct-2")
+                            .WithGitHubInstallationId(1337)
+                            .Build(),
+                        new TestPullDogRepositoryBuilder()
+                            .WithHandle("incorrect-2")
+                            .WithGitHubInstallationId(1338)
+                            .Build())
+                    .Build());
 
             var handler = new UninstallationConfigurationPayloadHandler(
                 fakeMediator);
@@ -106,7 +100,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             await fakeMediator
                 .Received(1)
-                .Send(Arg.Is<DeletePullDogRepositoryCommand>(args => 
+                .Send(Arg.Is<DeletePullDogRepositoryCommand>(args =>
                     args.Handle == "correct-1"));
 
             await fakeMediator

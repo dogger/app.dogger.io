@@ -208,17 +208,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                         .WithName("some-instance-name")
                         .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
                             .WithHandle("1339")
-                            .WithPullDogRepository(new PullDogRepository()
-                            {
-                                Handle = "1338",
-                                GitHubInstallationId = 1337,
-                                PullDogSettings = new PullDogSettings()
-                                {
-                                    PlanId = "dummy",
-                                    EncryptedApiKey = Array.Empty<byte>(),
-                                    User = new TestUserBuilder().Build()
-                                }
-                            })
+                            .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                                .WithHandle("1338")
+                                .WithGitHubInstallationId(1337)
+                                .Build())
                             .Build())
                         .Build())
                 .Build();
@@ -328,17 +321,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                         .WithName("some-instance-name")
                         .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
                             .WithHandle("1339")
-                            .WithPullDogRepository(new PullDogRepository()
-                            {
-                                Handle = "1338",
-                                GitHubInstallationId = 1337,
-                                PullDogSettings = new PullDogSettings()
-                                {
-                                    PlanId = "dummy",
-                                    EncryptedApiKey = Array.Empty<byte>(),
-                                    User = new TestUserBuilder().Build()
-                                }
-                            })
+                            .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                                .WithHandle("1338")
+                                .WithGitHubInstallationId(1337)
+                                .Build())
                             .Build())
                         .Build())
                 .Build();
