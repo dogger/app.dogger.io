@@ -8,7 +8,7 @@ WORKDIR /src
 COPY ["src/Dogger/Dogger.csproj", "Dogger/"]
 RUN dotnet tool restore
 RUN dotnet restore "Dogger/Dogger.csproj"
-COPY . .
+COPY ./src .
 WORKDIR "/src/Dogger"
 RUN dotnet build "Dogger.csproj" -c Release -o /app/build
 
