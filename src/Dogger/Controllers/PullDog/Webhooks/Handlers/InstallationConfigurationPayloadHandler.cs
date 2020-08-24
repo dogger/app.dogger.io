@@ -55,7 +55,7 @@ namespace Dogger.Controllers.PullDog.Webhooks.Handlers
                 throw new InvalidOperationException($"Could not find Pull Dog settings for an installation ID of {payload.Installation.Id}.");
             }
 
-            if (payload.RepositoriesRemoved != null)
+            if (payload.RepositoriesRemoved?.Length > 0)
             {
                 await this.mediator.Send(new SendSlackMessageCommand("Pull Dog repositories have been uninstalled :frowning:")
                 {
@@ -76,7 +76,7 @@ namespace Dogger.Controllers.PullDog.Webhooks.Handlers
                 }
             }
 
-            if (payload.RepositoriesAdded != null)
+            if (payload.RepositoriesAdded?.Length > 0)
             {
                 await this.mediator.Send(new SendSlackMessageCommand("Pull Dog repositories have been installed :sunglasses:")
                 {

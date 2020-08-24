@@ -75,7 +75,9 @@ namespace Dogger.Domain.Models.Builders
                 Id = this.id,
                 PullDogSettings = this.pullDogSettings,
                 StripeSubscriptionId = this.stripeSubscriptionId,
-                StripeCustomerId = this.stripeCustomerId ?? throw new InvalidOperationException("Stripe customer ID not specified.")
+                StripeCustomerId = 
+                    this.stripeCustomerId ?? 
+                    throw new InvalidOperationException("Stripe customer ID not specified.")
             };
 
             user.Identities.AddRange(this.identities);

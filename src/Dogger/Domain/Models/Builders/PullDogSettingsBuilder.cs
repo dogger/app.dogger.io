@@ -65,17 +65,14 @@ namespace Dogger.Domain.Models.Builders
 
         public override PullDogSettings Build()
         {
-            if (user == null)
-                throw new InvalidOperationException("No user specified.");
-
             var settings = new PullDogSettings()
             {
                 EncryptedApiKey = encryptedApiKey ?? throw new InvalidOperationException("No API key specified."),
                 Id = id,
                 PlanId = planId ?? throw new InvalidOperationException("No plan ID specified."),
                 PoolSize = poolSize,
-                User = user.Reference!,
-                UserId = user.Id
+                User = user?.Reference!,
+                UserId = user?.Id ?? default
             };
             settings.Repositories.AddRange(repositories);
 

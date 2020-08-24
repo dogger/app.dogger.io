@@ -17,39 +17,6 @@
             }
         },
         {
-            "label": "test",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "test",
-                "/p:GenerateFullPaths=true",
-                "${workspaceFolder}/Dogger.sln"
-            ],
-            "problemMatcher": "$msCompile",
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            }
-        },
-        {
-            "label": "test with coverage",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "test",
-                "/p:GenerateFullPaths=true",
-                "/p:CollectCoverage=true",
-                "/p:CoverletOutputFormat=lcov",
-                "/p:CoverletOutput=./lcov.info",
-                "${workspaceFolder}/Dogger.sln"
-            ],
-            "problemMatcher": "$msCompile",
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            }
-        },
-        {
             "label": "test watch with coverage",
             "command": "dotnet",
             "type": "process",
@@ -58,13 +25,12 @@
                 "--project",
                 "Dogger.sln",
                 "test",
-                "/p:GenerateFullPaths=true",
-                "/p:CollectCoverage=true",
-                "/p:CoverletOutputFormat=lcov",
-                "/p:CoverletOutput=./lcov.info"
+                "--collect:\"XPlat Code Coverage\"",
+                "--",
+                "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov"
             ],
             "problemMatcher": "$msCompile",
-            "isBackground": true,
+            "isBackground": false,
             "runOptions": {
                 "instanceLimit": 1,
                 "reevaluateOnRerun": true

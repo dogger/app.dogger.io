@@ -36,15 +36,12 @@ namespace Dogger.Domain.Models.Builders
 
         public override Identity Build()
         {
-            if (user == null)
-                throw new InvalidOperationException("User has not been set.");
-
             return new Identity()
             {
                 Id = id,
                 Name = name ?? throw new InvalidOperationException("Name is not set."),
-                User = user.Reference!,
-                UserId = user.Id!
+                User = user?.Reference!,
+                UserId = user?.Id ?? default
             };
         }
     }

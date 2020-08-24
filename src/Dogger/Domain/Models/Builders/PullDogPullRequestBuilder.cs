@@ -54,22 +54,16 @@ namespace Dogger.Domain.Models.Builders
 
         public override PullDogPullRequest Build()
         {
-            if (instance == null)
-                throw new InvalidOperationException("Instance not specified.");
-
-            if (pullDogRepository == null)
-                throw new InvalidOperationException("Pull Dog repository not specified.");
-
             return new PullDogPullRequest()
             {
                 ConfigurationOverride = configurationOverride,
                 CreatedAtUtc = createdAtUtc ?? DateTime.UtcNow,
                 Handle = handle ?? throw new InvalidOperationException("No handle specified."),
                 Id = id,
-                Instance = instance,
-                InstanceId = instance,
-                PullDogRepository = pullDogRepository,
-                PullDogRepositoryId = pullDogRepository
+                Instance = instance?.Reference,
+                InstanceId = instance?.Id,
+                PullDogRepository = pullDogRepository?.Reference!,
+                PullDogRepositoryId = pullDogRepository?.Id ?? default
             };
         }
     }

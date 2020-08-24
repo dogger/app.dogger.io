@@ -58,16 +58,13 @@ namespace Dogger.Domain.Models.Builders
 
         public override PullDogRepository Build()
         {
-            if (pullDogSettings == null)
-                throw new InvalidOperationException("No Pull Dog settings specified.");
-
             var repository = new PullDogRepository()
             {
                 GitHubInstallationId = gitHubInstallationId,
                 Handle = handle ?? throw new InvalidOperationException("Handle not specified."),
                 Id = id,
-                PullDogSettings = pullDogSettings,
-                PullDogSettingsId = pullDogSettings
+                PullDogSettings = pullDogSettings?.Reference!,
+                PullDogSettingsId = pullDogSettings?.Id ?? default
             };
             repository.PullRequests.AddRange(pullRequests);
 

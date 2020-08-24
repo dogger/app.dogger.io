@@ -10,6 +10,7 @@ namespace Dogger.Tests.Domain.Models
         public TestUserBuilder()
         {
             WithId(Guid.NewGuid());
+            WithStripeCustomerId(Guid.NewGuid().ToString());
         }
 
         public TestUserBuilder WithPullDogSettings()
