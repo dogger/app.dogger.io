@@ -60,8 +60,8 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker build . --file Dogger/Dockerfile --tag dogger-image
-          docker build . --file Dogger.Setup/Dockerfile --tag dogger-setup-image
+          docker build . --file src/Dogger/Dockerfile --tag dogger-image
+          docker build . --file src/Dogger.Setup/Dockerfile --tag dogger-setup-image
 
 
       - name: Tag Docker images
