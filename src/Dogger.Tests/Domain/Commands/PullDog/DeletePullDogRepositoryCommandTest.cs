@@ -28,8 +28,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     .WithHandle("some-handle")
                     .WithPullRequests(
                         new TestPullDogPullRequestBuilder().Build(),
-                        new TestPullDogPullRequestBuilder().Build())
-                    .Build());
+                        new TestPullDogPullRequestBuilder().Build()));
             });
 
             Assert.AreEqual(1, await environment.DataContext.PullDogRepositories.AsQueryable().CountAsync());
@@ -59,8 +58,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 await dataContext.PullDogRepositories.AddAsync(new TestPullDogRepositoryBuilder().Build());
 
                 await dataContext.PullDogRepositories.AddAsync(new TestPullDogRepositoryBuilder()
-                    .WithHandle("some-handle")
-                    .Build());
+                    .WithHandle("some-handle"));
 
                 await dataContext.PullDogRepositories.AddAsync(new TestPullDogRepositoryBuilder().Build());
             });

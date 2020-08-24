@@ -43,10 +43,7 @@ namespace Dogger.Tests.Domain.Events
                     .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
                         .WithHandle("some-pull-request-handle")
                         .WithPullDogRepository(new TestPullDogRepositoryBuilder()
-                            .WithHandle("some-repository-handle")
-                            .Build())
-                        .Build())
-                    .Build());
+                            .WithHandle("some-repository-handle"))));
             });
 
             var createdInstance = await environment
@@ -96,10 +93,7 @@ namespace Dogger.Tests.Domain.Events
                     .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
                         .WithHandle("some-pull-request-handle")
                         .WithPullDogRepository(new TestPullDogRepositoryBuilder()
-                            .WithHandle("some-repository-handle")
-                            .Build())
-                        .Build())
-                    .Build());
+                            .WithHandle("some-repository-handle"))));
             });
 
             var createdInstance = await environment

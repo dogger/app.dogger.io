@@ -66,10 +66,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
                         .WithHandle("some-pull-request-handle")
                         .WithPullDogRepository(new TestPullDogRepositoryBuilder()
-                            .WithHandle("some-repository-handle")
-                            .Build())
-                        .Build())
-                    .Build());
+                            .WithHandle("some-repository-handle"))));
             });
 
             await environment.WithFreshDataContext(async dataContext =>

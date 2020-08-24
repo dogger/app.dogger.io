@@ -49,8 +49,7 @@ namespace Dogger.Tests.Domain.Events
             fakeMediator
                 .Send(Arg.Is<GetInstanceByNameQuery>(args => args.Name == "some-instance-name"))
                 .Returns(new TestInstanceBuilder()
-                    .WithPullDogPullRequest(null)
-                    .Build());
+                    .WithPullDogPullRequest(null));
 
             var handler = new ServerDeploymentCompletedEventHandler(fakeMediator);
 
@@ -74,8 +73,7 @@ namespace Dogger.Tests.Domain.Events
             fakeMediator
                 .Send(Arg.Is<GetInstanceByNameQuery>(args => args.Name == "some-instance-name"))
                 .Returns(new TestInstanceBuilder()
-                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder().Build())
-                    .Build());
+                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder().Build()));
 
             var handler = new ServerDeploymentCompletedEventHandler(fakeMediator);
 
@@ -102,8 +100,7 @@ namespace Dogger.Tests.Domain.Events
             fakeMediator
                 .Send(Arg.Is<GetInstanceByNameQuery>(args => args.Name == "some-instance-name"))
                 .Returns(new TestInstanceBuilder()
-                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder().Build())
-                    .Build());
+                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder().Build()));
 
             fakeMediator
                 .Send(Arg.Is<GetConnectionDetailsQuery>(args => args.ClusterId == "some-instance-name"))

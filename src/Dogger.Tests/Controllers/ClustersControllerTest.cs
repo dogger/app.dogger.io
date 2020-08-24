@@ -218,9 +218,7 @@ namespace Dogger.Tests.Controllers
                     args.ClusterId == default))
                 .Returns(new TestClusterBuilder()
                     .WithInstances(new TestInstanceBuilder()
-                        .WithName("some-instance-name")
-                        .Build())
-                    .Build());
+                        .WithName("some-instance-name")));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -258,9 +256,7 @@ namespace Dogger.Tests.Controllers
                     args.ClusterId == fakeClusterId))
                 .Returns(new TestClusterBuilder()
                     .WithInstances(new TestInstanceBuilder()
-                        .WithName("some-instance-name")
-                        .Build())
-                    .Build());
+                        .WithName("some-instance-name")));
 
             var fakeMapper = Substitute.For<IMapper>();
 

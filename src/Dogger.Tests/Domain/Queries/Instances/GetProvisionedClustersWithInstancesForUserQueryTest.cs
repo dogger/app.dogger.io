@@ -83,10 +83,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
                                 .Build(),
                             new TestInstanceBuilder()
                                 .WithName("some-instance-2")
-                                .WithProvisionedStatus(false)
-                                .Build())
-                        .Build())
-                    .Build());
+                                .WithProvisionedStatus(false))));
             });
 
             //Act
@@ -160,10 +157,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
                                 .Build(),
                             new TestInstanceBuilder()
                                 .WithName("some-instance-2")
-                                .WithProvisionedStatus(true)
-                                .Build())
-                        .Build())
-                    .Build());
+                                .WithProvisionedStatus(true))));
             });
 
             //Act
@@ -246,10 +240,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
                                 .Build(),
                             new TestInstanceBuilder()
                                 .WithName("some-instance-2")
-                                .WithProvisionedStatus(true)
-                                .Build())
-                        .Build())
-                    .Build());
+                                .WithProvisionedStatus(true))));
             });
 
             //Act

@@ -36,10 +36,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
                     .WithCluster(new TestClusterBuilder()
-                        .WithUser(user)
-                        .Build())
-                    .WithPullDogPullRequest(null)
-                    .Build());
+                        .WithUser(user))
+                    .WithPullDogPullRequest(null));
             });
 
             //Act
@@ -77,16 +75,11 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
                     .WithCluster(new TestClusterBuilder()
-                        .WithUser(otherUser)
-                        .Build())
+                        .WithUser(otherUser))
                     .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
                         .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                             .WithPullDogSettings(new TestPullDogSettingsBuilder()
-                                .WithUser(otherUser)
-                                .Build())
-                            .Build())
-                        .Build())
-                    .Build());
+                                .WithUser(otherUser)))));
             });
 
             //Act
@@ -120,17 +113,12 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
                     .WithCluster(new TestClusterBuilder()
-                        .WithUser(user)
-                        .Build())
+                        .WithUser(user))
                     .WithName("some-name")
                     .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
                         .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                             .WithPullDogSettings(new TestPullDogSettingsBuilder()
-                                .WithUser(user)
-                                .Build())
-                            .Build())
-                        .Build())
-                    .Build());
+                                .WithUser(user)))));
             });
 
             //Act

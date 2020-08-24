@@ -44,7 +44,7 @@ namespace Dogger.Tests.TestHelpers.Environments.Dogger
                 .ConfigureServices(services =>
                 {
                     TestServiceProviderFactory.ConfigureServicesForTesting(
-                        services, 
+                        services,
                         TestConfigurationFactory
                             .ConfigureBuilder(new ConfigurationBuilder())
                             .Build());

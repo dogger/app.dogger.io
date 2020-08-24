@@ -30,8 +30,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                         .WithName("some-matching-cluster")
                         .Build(),
                     new TestClusterBuilder()
-                        .WithName("some-non-matching-cluster-2")
-                        .Build())
+                        .WithName("some-non-matching-cluster-2"))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -64,8 +63,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                         .WithName("some-non-matching-cluster-1")
                         .Build(),
                     new TestClusterBuilder()
-                        .WithName("some-non-matching-cluster-2")
-                        .Build())
+                        .WithName("some-non-matching-cluster-2"))
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>

@@ -69,8 +69,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
                     new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1337)
-                        .Build()),
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -125,8 +124,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
                     new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1337)
-                        .Build()),
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -165,8 +163,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     new ProvisionPullDogEnvironmentCommand(
                         "some-pull-request-handle",
                         new TestPullDogRepositoryBuilder()
-                            .WithGitHubInstallationId(null)
-                            .Build()),
+                            .WithGitHubInstallationId(null)),
                     default));
 
             //Assert
@@ -212,8 +209,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
                     new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1337)
-                        .Build()),
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -265,8 +261,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
                     new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1337)
-                        .Build()),
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -325,8 +320,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
                     new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1337)
-                        .Build()),
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -377,8 +371,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
                     new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1337)
-                        .Build()),
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -427,8 +420,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
                     new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1337)
-                        .Build()),
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -481,8 +473,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
                     new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1337)
-                        .Build()),
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -534,8 +525,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
                     new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1337)
-                        .Build()),
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert

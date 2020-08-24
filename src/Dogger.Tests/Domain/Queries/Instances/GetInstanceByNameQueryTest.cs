@@ -36,13 +36,11 @@ namespace Dogger.Tests.Domain.Queries.Instances
             {
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
                     .WithCluster()
-                    .WithName("non-matching-name")
-                    .Build());
+                    .WithName("non-matching-name"));
 
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
                     .WithCluster()
-                    .WithName("some-instance-name")
-                    .Build());
+                    .WithName("some-instance-name"));
             });
 
             //Act

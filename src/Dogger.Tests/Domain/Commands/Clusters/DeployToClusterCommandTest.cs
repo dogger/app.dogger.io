@@ -29,9 +29,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 .Send(Arg.Any<GetClusterByIdQuery>())
                 .Returns(new TestClusterBuilder()
                     .WithInstances(new TestInstanceBuilder()
-                        .WithName("some-instance-name")
-                        .Build())
-                    .Build());
+                        .WithName("some-instance-name")));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -63,9 +61,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 .Send(Arg.Any<GetClusterByIdQuery>())
                 .Returns(new TestClusterBuilder()
                     .WithInstances(new TestInstanceBuilder()
-                        .WithName("some-instance-name")
-                        .Build())
-                    .Build());
+                        .WithName("some-instance-name")));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -95,9 +91,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 .Send(Arg.Any<GetClusterByIdQuery>())
                 .Returns(new TestClusterBuilder()
                     .WithInstances(new TestInstanceBuilder()
-                        .WithName("some-instance-name")
-                        .Build())
-                    .Build());
+                        .WithName("some-instance-name")));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -128,9 +122,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 .Returns(new TestClusterBuilder()
                     .WithUser(Guid.NewGuid())
                     .WithInstances(new TestInstanceBuilder()
-                        .WithName("some-instance-name")
-                        .Build())
-                    .Build());
+                        .WithName("some-instance-name")));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 
@@ -191,9 +183,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 .Returns(new TestClusterBuilder()
                     .WithUser(fakeUserId)
                     .WithInstances(new TestInstanceBuilder()
-                        .WithName("some-instance-name")
-                        .Build())
-                    .Build());
+                        .WithName("some-instance-name")));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
 

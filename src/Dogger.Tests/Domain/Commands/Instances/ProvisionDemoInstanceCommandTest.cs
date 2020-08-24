@@ -262,8 +262,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(new TestUserBuilder()
-                    .WithId(someAuthenticatedUserId)
-                    .Build());
+                    .WithId(someAuthenticatedUserId));
             });
 
             //Act

@@ -40,7 +40,7 @@ namespace Dogger.Tests.Controllers
                     new Plan(
                         "some-bundle-id",
                         1337,
-                        new Bundle(), 
+                        new Bundle(),
                         Array.Empty<PullDogPlan>())
                 });
 
@@ -108,8 +108,7 @@ namespace Dogger.Tests.Controllers
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(
                     args => args.IdentityName == "some-identity-name"))
                 .Returns(new TestUserBuilder()
-                    .WithId(fakeAuthenticatedUserId)
-                    .Build());
+                    .WithId(fakeAuthenticatedUserId));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -209,8 +208,7 @@ namespace Dogger.Tests.Controllers
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(
                     args => args.IdentityName == "some-identity-name"))
                 .Returns(new TestUserBuilder()
-                    .WithId(signedInUserId)
-                    .Build());
+                    .WithId(signedInUserId));
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
@@ -252,8 +250,7 @@ namespace Dogger.Tests.Controllers
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(
                     args => args.IdentityName == "some-identity-name"))
                 .Returns(new TestUserBuilder()
-                    .WithId(signedInUserId)
-                    .Build());
+                    .WithId(signedInUserId));
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
@@ -300,8 +297,7 @@ namespace Dogger.Tests.Controllers
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(
                     args => args.IdentityName == "some-identity-name"))
                 .Returns(new TestUserBuilder()
-                    .WithId(signedInUserId)
-                    .Build());
+                    .WithId(signedInUserId));
 
             var fakeMapper = Substitute.For<IMapper>();
 

@@ -38,9 +38,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                     .WithPullDogSettings(new TestPullDogSettingsBuilder()
                         .WithUser(user)
-                        .WithPoolSize(1)
-                        .Build())
-                    .Build())
+                        .WithPoolSize(1)))
                 .Build();
 
             var oldInstance = new TestInstanceBuilder()
@@ -48,8 +46,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .WithPullDogPullRequest(pullDogPullRequest)
                 .WithCluster(new TestClusterBuilder()
                     .WithName("pull-dog")
-                    .WithUser(user)
-                    .Build())
+                    .WithUser(user))
                 .Build();
 
             await environment.DataContext.Instances.AddAsync(oldInstance);
@@ -102,8 +99,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .WithName("existing-instance")
                 .WithPullDogPullRequest(pullDogPullRequest)
                 .WithCluster(new TestClusterBuilder()
-                    .WithId(DataContext.PullDogDemoClusterId)
-                    .Build())
+                    .WithId(DataContext.PullDogDemoClusterId))
                 .Build();
 
             await environment.DataContext.Instances.AddAsync(oldInstance);
@@ -154,8 +150,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .WithName("existing-instance")
                 .WithPullDogPullRequest(pullDogPullRequest)
                 .WithCluster(new TestClusterBuilder()
-                    .WithId(DataContext.PullDogDemoClusterId)
-                    .Build())
+                    .WithId(DataContext.PullDogDemoClusterId))
                 .Build();
 
             await environment.DataContext.Instances.AddAsync(oldInstance);
@@ -241,9 +236,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                     .WithPullDogSettings(new TestPullDogSettingsBuilder()
                         .WithUser(user)
-                        .WithPoolSize(1)
-                        .Build())
-                    .Build())
+                        .WithPoolSize(1)))
                 .Build();
 
             var fakeMediator = Substitute.For<IMediator>();
@@ -252,8 +245,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     args.PullRequest == pullDogPullRequest))
                 .Returns(new TestClusterBuilder()
                     .WithName("pull-dog")
-                    .WithUser(user)
-                    .Build());
+                    .WithUser(user));
 
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {

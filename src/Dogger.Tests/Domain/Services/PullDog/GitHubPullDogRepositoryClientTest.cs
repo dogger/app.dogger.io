@@ -33,15 +33,12 @@ namespace Dogger.Tests.Domain.Services.PullDog
                     default,
                     new RepositoryBuilder()
                         .WithUser(new UserBuilder()
-                            .WithLogin("some-user-name")
-                            .Build())
-                        .WithFullName("some-repository-name")
-                        .Build()));
+                            .WithLogin("some-user-name"))
+                        .WithFullName("some-repository-name")));
 
             //Act
             var details = client.GetPullRequestDetails(new TestPullDogPullRequestBuilder()
-                .WithHandle("some-handle")
-                .Build());
+                .WithHandle("some-handle"));
 
             //Assert
             Assert.IsNotNull(details);
@@ -76,10 +73,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
                     default,
                     new RepositoryBuilder()
                         .WithUser(new UserBuilder()
-                            .WithLogin("some-user-name")
-                            .Build())
-                        .WithName("some-repository-name")
-                        .Build()));
+                            .WithLogin("some-user-name"))
+                        .WithName("some-repository-name")));
 
             //Act
             var contents = await client.GetFilesForPathAsync("some-path");
@@ -147,10 +142,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
                     default,
                     new RepositoryBuilder()
                         .WithUser(new UserBuilder()
-                            .WithLogin("some-user-name")
-                            .Build())
-                        .WithName("some-repository-name")
-                        .Build()));
+                            .WithLogin("some-user-name"))
+                        .WithName("some-repository-name")));
 
             //Act
             var contents = await client.GetFilesForPathAsync("some-path");

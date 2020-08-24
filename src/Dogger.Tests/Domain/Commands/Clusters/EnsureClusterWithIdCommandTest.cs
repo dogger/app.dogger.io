@@ -23,8 +23,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 await dataContext.Clusters.AddAsync(new TestClusterBuilder().Build());
 
                 await dataContext.Clusters.AddAsync(new TestClusterBuilder()
-                    .WithId(DataContext.DemoClusterId)
-                    .Build());
+                    .WithId(DataContext.DemoClusterId));
             });
 
             //Act

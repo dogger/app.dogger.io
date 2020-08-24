@@ -52,10 +52,8 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 .Get(1338)
                 .Returns(new RepositoryBuilder()
                     .WithUser(new UserBuilder()
-                        .WithLogin("some-login")
-                        .Build())
-                    .WithName("some-repository-name")
-                    .Build());
+                        .WithLogin("some-login"))
+                    .WithName("some-repository-name"));
 
             fakeGitHubClient
                 .Search

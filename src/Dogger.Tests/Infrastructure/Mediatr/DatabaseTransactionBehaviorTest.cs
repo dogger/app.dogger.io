@@ -31,15 +31,13 @@ namespace Dogger.Tests.Infrastructure.Mediatr
                 await environment.Mediator.Send(new TestCommand(async () =>
                 {
                     await environment.DataContext.Clusters.AddAsync(new TestClusterBuilder()
-                        .WithName("outer")
-                        .Build());
+                        .WithName("outer"));
                     await environment.DataContext.SaveChangesAsync();
 
                     await environment.Mediator.Send(new TestCommand(async () =>
                     {
                         await environment.DataContext.Clusters.AddAsync(new TestClusterBuilder()
-                            .WithName("inner")
-                            .Build());
+                            .WithName("inner"));
                         await environment.DataContext.SaveChangesAsync();
                     }));
 
@@ -69,15 +67,13 @@ namespace Dogger.Tests.Infrastructure.Mediatr
             await environment.Mediator.Send(new TestCommand(async () =>
             {
                 await environment.DataContext.Clusters.AddAsync(new TestClusterBuilder()
-                    .WithName("outer")
-                    .Build());
+                    .WithName("outer"));
                 await environment.DataContext.SaveChangesAsync();
 
                 await environment.Mediator.Send(new TestCommand(async () =>
                 {
                     await environment.DataContext.Clusters.AddAsync(new TestClusterBuilder()
-                        .WithName("inner")
-                        .Build());
+                        .WithName("inner"));
                     await environment.DataContext.SaveChangesAsync();
                 }));
             }));
@@ -104,15 +100,13 @@ namespace Dogger.Tests.Infrastructure.Mediatr
                 await environment.Mediator.Send(new TestCommand(async () =>
                 {
                     await environment.DataContext.Clusters.AddAsync(new TestClusterBuilder()
-                        .WithName("outer")
-                        .Build());
+                        .WithName("outer"));
                     await environment.DataContext.SaveChangesAsync();
 
                     await environment.Mediator.Send(new TestCommand(async () =>
                     {
                         await environment.DataContext.Clusters.AddAsync(new TestClusterBuilder()
-                            .WithName("inner")
-                            .Build());
+                            .WithName("inner"));
                         await environment.DataContext.SaveChangesAsync();
 
                         throw new TestException();

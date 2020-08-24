@@ -39,19 +39,13 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             {
                 await dataContext.PullDogSettings.AddAsync(new TestPullDogSettingsBuilder()
                     .WithRepositories(new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1336)
-                        .Build())
-                    .Build());
+                        .WithGitHubInstallationId(1336)));
                 await dataContext.PullDogSettings.AddAsync(new TestPullDogSettingsBuilder()
                     .WithRepositories(new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1337)
-                        .Build())
-                    .Build());
+                        .WithGitHubInstallationId(1337)));
                 await dataContext.PullDogSettings.AddAsync(new TestPullDogSettingsBuilder()
                     .WithRepositories(new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1338)
-                        .Build())
-                    .Build());
+                        .WithGitHubInstallationId(1338)));
             });
 
             //Act

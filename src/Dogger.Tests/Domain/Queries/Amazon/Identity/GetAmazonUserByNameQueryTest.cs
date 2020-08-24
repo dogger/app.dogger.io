@@ -35,14 +35,11 @@ namespace Dogger.Tests.Domain.Queries.Amazon.Identity
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.AmazonUsers.AddAsync(new TestAmazonUserBuilder()
-                    .WithName("user-1")
-                    .Build());
+                    .WithName("user-1"));
                 await dataContext.AmazonUsers.AddAsync(new TestAmazonUserBuilder()
-                    .WithName("user-2")
-                    .Build());
+                    .WithName("user-2"));
                 await dataContext.AmazonUsers.AddAsync(new TestAmazonUserBuilder()
-                    .WithName("user-3")
-                    .Build());
+                    .WithName("user-3"));
             });
 
             //Act

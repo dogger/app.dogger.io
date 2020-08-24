@@ -35,8 +35,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                 await dataContext.AmazonUsers.AddAsync(new TestAmazonUserBuilder()
 
                     .WithName("some-name")
-                    .WithId(userId)
-                    .Build());
+                    .WithId(userId));
             });
 
             //Act

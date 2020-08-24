@@ -68,9 +68,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                             .WithPlanId("some-plan-id-1")
                             .Build(),
                         new TestInstanceBuilder()
-                            .WithPlanId("some-plan-id-2")
-                            .Build())
-                    .Build())
+                            .WithPlanId("some-plan-id-2")))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -143,9 +141,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                             .WithPlanId("some-plan-id-1")
                             .Build(),
                         new TestInstanceBuilder()
-                            .WithPlanId("some-plan-id-1")
-                            .Build())
-                    .Build())
+                            .WithPlanId("some-plan-id-1")))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -252,12 +248,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                             .WithPullDogSettings(new TestPullDogSettingsBuilder()
                                 .WithPlanId("some-plan-id")
                                 .WithPoolSize(1)
-                                .WithUser(user)
-                                .Build())
-                            .Build())
-                        .Build())
-                    .Build())
-                .Build());
+                                .WithUser(user))))));
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -337,8 +328,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .WithStripeSubscriptionId("some-subscription-id")
                 .WithPullDogSettings(new TestPullDogSettingsBuilder()
                     .WithPoolSize(2)
-                    .WithPlanId("some-pull-dog-plan")
-                    .Build())
+                    .WithPlanId("some-pull-dog-plan"))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -417,8 +407,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             var user = new TestUserBuilder()
                 .WithStripeSubscriptionId(null)
                 .WithPullDogSettings(new TestPullDogSettingsBuilder()
-                    .WithPoolSize(0)
-                    .Build())
+                    .WithPoolSize(0))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -490,9 +479,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .WithStripeSubscriptionId("some-subscription-id")
                 .WithClusters(new TestClusterBuilder()
                     .WithInstances(new TestInstanceBuilder()
-                        .WithPlanId("some-new-plan-id")
-                        .Build())
-                    .Build())
+                        .WithPlanId("some-new-plan-id")))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -606,8 +593,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .WithStripeSubscriptionId("some-subscription-id")
                 .WithPullDogSettings(new TestPullDogSettingsBuilder()
                     .WithPoolSize(5)
-                    .WithPlanId("some-pull-dog-plan")
-                    .Build())
+                    .WithPlanId("some-pull-dog-plan"))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -662,9 +648,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .WithStripeSubscriptionId(null)
                 .WithClusters(new TestClusterBuilder()
                     .WithInstances(new TestInstanceBuilder()
-                        .WithPlanId("some-plan-id")
-                        .Build())
-                    .Build())
+                        .WithPlanId("some-plan-id")))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -720,9 +704,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .WithStripeSubscriptionId(null)
                 .WithClusters(new TestClusterBuilder()
                     .WithInstances(new TestInstanceBuilder()
-                        .WithPlanId("some-plan-id")
-                        .Build())
-                    .Build())
+                        .WithPlanId("some-plan-id")))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {

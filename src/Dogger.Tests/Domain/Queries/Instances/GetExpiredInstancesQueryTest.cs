@@ -22,8 +22,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
 
             await environment.WithFreshDataContext(async dataContext =>
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
-                    .WithCluster()
-                    .Build()));
+                    .WithCluster()));
 
             //Act
             var expiredInstances = await environment.Mediator.Send(new GetExpiredInstancesQuery());
@@ -43,8 +42,7 @@ namespace Dogger.Tests.Domain.Queries.Instances
             await environment.WithFreshDataContext(async dataContext =>
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
                     .WithCluster()
-                    .WithExpiredDate(DateTime.UtcNow.AddMinutes(1))
-                    .Build()));
+                    .WithExpiredDate(DateTime.UtcNow.AddMinutes(1))));
 
             //Act
             var expiredInstances = await environment.Mediator.Send(new GetExpiredInstancesQuery());
@@ -66,27 +64,23 @@ namespace Dogger.Tests.Domain.Queries.Instances
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
                     .WithCluster()
                     .WithName("non-expiring-1")
-                    .WithExpiredDate(DateTime.UtcNow.AddMinutes(1))
-                    .Build());
+                    .WithExpiredDate(DateTime.UtcNow.AddMinutes(1)));
 
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
                     .WithCluster()
                     .WithName("expiring-1")
-                    .WithExpiredDate(DateTime.UtcNow.AddMinutes(-1))
-                    .Build());
+                    .WithExpiredDate(DateTime.UtcNow.AddMinutes(-1)));
 
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
                     .WithCluster()
                     .WithName("non-expiring-2")
-                    .WithExpiredDate(DateTime.UtcNow.AddMinutes(3))
-                    .Build());
+                    .WithExpiredDate(DateTime.UtcNow.AddMinutes(3)));
 
 
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
                     .WithCluster()
                     .WithName("expiring-2")
-                    .WithExpiredDate(DateTime.UtcNow.AddMinutes(-3))
-                    .Build());
+                    .WithExpiredDate(DateTime.UtcNow.AddMinutes(-3)));
             });
 
             //Act

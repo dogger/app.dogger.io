@@ -23,9 +23,8 @@ namespace Dogger.Tests.Domain.Services.Amazon
             fakeMediator
                 .Send(Arg.Is<GetAmazonUserByNameQuery>(args => args.Name == "some-amazon-user-name"))
                 .Returns(new TestAmazonUserBuilder()
-                    
-                    .WithName("some-amazon-user-name")
-                    .Build());
+
+                    .WithName("some-amazon-user-name"));
 
             var serviceFactory = new UserAuthenticatedEcrServiceFactory(
                 fakeMediator,

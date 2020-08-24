@@ -40,8 +40,7 @@ namespace Dogger.Tests.Controllers.PullDog
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(args =>
                     args.IdentityName == "some-identity-name"))
                 .Returns(new TestUserBuilder()
-                    .WithPullDogSettings(null)
-                    .Build());
+                    .WithPullDogSettings(null));
 
             var fakeMapper = Substitute.For<IMapper>();
             var fakeAesEncryptionHelper = Substitute.For<IAesEncryptionHelper>();
@@ -73,8 +72,7 @@ namespace Dogger.Tests.Controllers.PullDog
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(args =>
                     args.IdentityName == "some-identity-name"))
                 .Returns(new TestUserBuilder()
-                    .WithPullDogSettings()
-                    .Build());
+                    .WithPullDogSettings());
 
             var fakeMapper = Substitute.For<IMapper>();
             var fakeAesEncryptionHelper = Substitute.For<IAesEncryptionHelper>();
@@ -161,8 +159,7 @@ namespace Dogger.Tests.Controllers.PullDog
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
                     args.RepositoryHandle == "some-repository-handle"))
                 .Returns(new TestPullDogRepositoryBuilder()
-                    .WithPullDogSettings()
-                    .Build());
+                    .WithPullDogSettings());
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -292,8 +289,7 @@ namespace Dogger.Tests.Controllers.PullDog
                 .Returns(new PullRequestBuilder()
                     .WithNumber(1337)
                     .WithState(ItemState.Open)
-                    .WithUser(new Octokit.User())
-                    .Build());
+                    .WithUser(new Octokit.User()));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -341,8 +337,7 @@ namespace Dogger.Tests.Controllers.PullDog
                 .Returns(new PullRequestBuilder()
                     .WithNumber(1337)
                     .WithState(ItemState.Open)
-                    .WithUser(new Octokit.User())
-                    .Build());
+                    .WithUser(new Octokit.User()));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -390,8 +385,7 @@ namespace Dogger.Tests.Controllers.PullDog
                 .Returns(new PullRequestBuilder()
                     .WithNumber(1337)
                     .WithState(ItemState.Open)
-                    .WithUser(new Octokit.User())
-                    .Build());
+                    .WithUser(new Octokit.User()));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -465,9 +459,7 @@ namespace Dogger.Tests.Controllers.PullDog
                 .Returns(new TestUserBuilder()
                     .WithPullDogSettings(new TestPullDogSettingsBuilder()
                         .WithPoolSize(1337)
-                        .WithPlanId("some-plan-id")
-                        .Build())
-                    .Build());
+                        .WithPlanId("some-plan-id")));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -530,8 +522,7 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
                 .Returns(new TestUserBuilder()
-                    .WithPullDogSettings()
-                    .Build());
+                    .WithPullDogSettings());
 
             fakeMediator
                 .Send(Arg.Any<GetRepositoriesForUserQuery>())

@@ -30,11 +30,10 @@ namespace Dogger.Tests.Controllers
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
                 .Returns(new TestUserBuilder()
-                    .WithId(fakeAuthenticatedUserId)
-                    .Build());
+                    .WithId(fakeAuthenticatedUserId));
 
             fakeMediator
-                .Send(Arg.Is<EnsureRepositoryWithNameCommand>(args => 
+                .Send(Arg.Is<EnsureRepositoryWithNameCommand>(args =>
                     args.Name == fakeAuthenticatedUserId.ToString()))
                 .Returns(new RepositoryResponse(
                     "some-repository-name",

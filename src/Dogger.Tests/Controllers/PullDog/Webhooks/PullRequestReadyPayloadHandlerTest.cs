@@ -195,8 +195,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                 null!,
                 databaseRepository,
                 new TestPullDogPullRequestBuilder()
-                    .WithHandle("1338")
-                    .Build()));
+                    .WithHandle("1338")));
 
             //Assert
             await fakeMediator

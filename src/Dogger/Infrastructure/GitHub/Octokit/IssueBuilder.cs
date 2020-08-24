@@ -1,8 +1,9 @@
-﻿using Octokit;
+﻿using Dogger.Domain.Models.Builders;
+using Octokit;
 
 namespace Dogger.Infrastructure.GitHub.Octokit
 {
-    public class IssueBuilder
+    public class IssueBuilder : ModelBuilder<Issue>
     {
         private PullRequest? pullRequest;
 
@@ -12,7 +13,7 @@ namespace Dogger.Infrastructure.GitHub.Octokit
             return this;
         }
 
-        public Issue Build()
+        public override Issue Build()
         {
             return new Issue(
                 default,

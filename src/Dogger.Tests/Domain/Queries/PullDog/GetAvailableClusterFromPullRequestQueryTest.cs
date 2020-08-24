@@ -29,10 +29,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                     .WithInstances(
                         new TestInstanceBuilder()
                             .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
-                                .WithHandle("pr-1")
-                                .Build())
-                            .Build())
-                    .Build());
+                                .WithHandle("pr-1"))));
 
             var handler = new GetAvailableClusterFromPullRequestQueryHandler(
                 fakeMediator,
@@ -45,9 +42,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                         new TestPullDogPullRequestBuilder()
                             .WithHandle("pr-2")
                             .WithPullDogRepository(new TestPullDogRepositoryBuilder()
-                                .WithPullDogSettings()
-                                .Build())
-                            .Build()),
+                                .WithPullDogSettings())),
                     default));
 
             //Assert
@@ -77,10 +72,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                         .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                             .WithPullDogSettings(new TestPullDogSettingsBuilder()
                                 .WithUser(user)
-                                .WithPoolSize(0)
-                                .Build())
-                            .Build())
-                        .Build()),
+                                .WithPoolSize(0)))),
                 default);
 
             //Assert
@@ -106,9 +98,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                             .WithPullDogPullRequest()
                             .Build(),
                         new TestInstanceBuilder()
-                            .WithPullDogPullRequest()
-                            .Build())
-                    .Build());
+                            .WithPullDogPullRequest()));
 
             var handler = new GetAvailableClusterFromPullRequestQueryHandler(
                 fakeMediator,
@@ -123,10 +113,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                             .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                                 .WithPullDogSettings(new TestPullDogSettingsBuilder()
                                     .WithUser(user)
-                                    .WithPoolSize(2)
-                                    .Build())
-                                .Build())
-                            .Build()),
+                                    .WithPoolSize(2)))),
                     default));
 
             //Assert
@@ -158,10 +145,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                         .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                             .WithPullDogSettings(new TestPullDogSettingsBuilder()
                                 .WithUser(user)
-                                .WithPoolSize(1)
-                                .Build())
-                            .Build())
-                        .Build()),
+                                .WithPoolSize(1)))),
                 default);
 
             //Assert

@@ -48,9 +48,8 @@ namespace Dogger.Tests.Domain.Queries.Amazon.ElasticContainerRegistry
             //Act
             var loginResponse = await handler.Handle(
                 new GetRepositoryLoginForUserQuery(new TestAmazonUserBuilder()
-                    
-                    .WithName("some-amazon-username")
-                    .Build()),
+
+                    .WithName("some-amazon-username")),
                 default);
 
             //Assert

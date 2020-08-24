@@ -298,8 +298,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
                 .WithName("some-instance-name")
                 .WithCluster(new TestClusterBuilder()
                     .WithId(fakeClusterId)
-                    .WithUser(fakeUserId)
-                    .Build())
+                    .WithUser(fakeUserId))
                 .Build();
 
             //Act

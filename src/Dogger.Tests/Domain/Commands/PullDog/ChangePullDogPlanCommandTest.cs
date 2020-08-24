@@ -159,8 +159,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             var databaseUser = new TestUserBuilder()
                 .WithPullDogSettings(new TestPullDogSettingsBuilder()
-                    .WithPoolSize(1337)
-                    .Build())
+                    .WithPoolSize(1337))
                 .Build();
             fakeMediator
                 .Send(Arg.Is<GetUserByIdQuery>(args => args.UserId == databaseUser.Id))
@@ -212,8 +211,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             var databaseUser = new TestUserBuilder()
                 .WithPullDogSettings(new TestPullDogSettingsBuilder()
-                    .WithPoolSize(1337)
-                    .Build())
+                    .WithPoolSize(1337))
                 .Build();
             fakeMediator
                 .Send(Arg.Is<GetUserByIdQuery>(args => args.UserId == databaseUser.Id))
@@ -263,8 +261,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             var databaseUser = new TestUserBuilder()
                 .WithPullDogSettings(new TestPullDogSettingsBuilder()
-                    .WithPoolSize(1337)
-                    .Build())
+                    .WithPoolSize(1337))
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -312,8 +309,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var databaseUser = new TestUserBuilder()
                 .WithPullDogSettings(new TestPullDogSettingsBuilder()
                     .WithPoolSize(1337)
-                    .WithPlanId("some-plan-id")
-                    .Build())
+                    .WithPlanId("some-plan-id"))
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -370,8 +366,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var databaseUser = new TestUserBuilder()
                 .WithPullDogSettings(new TestPullDogSettingsBuilder()
                     .WithPoolSize(1337)
-                    .WithPlanId("some-plan-id")
-                    .Build())
+                    .WithPlanId("some-plan-id"))
                 .Build();
             fakeMediator
                 .Send(Arg.Is<GetUserByIdQuery>(args => args.UserId == databaseUser.Id))
@@ -426,8 +421,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var databaseUser = new TestUserBuilder()
                 .WithPullDogSettings(new TestPullDogSettingsBuilder()
                     .WithPoolSize(1337)
-                    .WithPlanId("some-plan-id")
-                    .Build())
+                    .WithPlanId("some-plan-id"))
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>

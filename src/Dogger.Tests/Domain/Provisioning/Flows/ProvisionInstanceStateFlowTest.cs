@@ -25,8 +25,7 @@ namespace Dogger.Tests.Domain.Provisioning.Flows
             var flow = new ProvisionInstanceStateFlow(
                 "some-plan-id",
                 new TestInstanceBuilder()
-                    .WithName("some-instance-name")
-                    .Build());
+                    .WithName("some-instance-name"));
 
             var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
             var stateFactory = new ProvisioningStateFactory(serviceProvider);
@@ -55,8 +54,7 @@ namespace Dogger.Tests.Domain.Provisioning.Flows
             var flow = new ProvisionInstanceStateFlow(
                 "some-plan-id",
                 new TestInstanceBuilder()
-                    .WithName("some-instance-name")
-                    .Build());
+                    .WithName("some-instance-name"));
 
             var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
             var stateFactory = new ProvisioningStateFactory(serviceProvider);
@@ -92,8 +90,7 @@ namespace Dogger.Tests.Domain.Provisioning.Flows
             var flow = new ProvisionInstanceStateFlow(
                 "some-plan-id",
                 new TestInstanceBuilder()
-                    .WithName("some-instance-name")
-                    .Build())
+                    .WithName("some-instance-name"))
             {
                 UserId = fakeUserId
             };
@@ -129,8 +126,7 @@ namespace Dogger.Tests.Domain.Provisioning.Flows
             var flow = new ProvisionInstanceStateFlow(
                 "some-plan-id",
                 new TestInstanceBuilder()
-                    .WithName("some-instance-name")
-                    .Build());
+                    .WithName("some-instance-name"));
 
             var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
             var stateFactory = new ProvisioningStateFactory(serviceProvider);
@@ -156,8 +152,7 @@ namespace Dogger.Tests.Domain.Provisioning.Flows
             var flow = new ProvisionInstanceStateFlow(
                 "some-plan-id",
                 new TestInstanceBuilder()
-                    .WithName("some-instance-name")
-                    .Build());
+                    .WithName("some-instance-name"));
 
             var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
             var stateFactory = new ProvisioningStateFactory(serviceProvider);

@@ -77,9 +77,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                             .Build(),
                         new TestPullDogRepositoryBuilder()
                             .WithHandle("incorrect-2")
-                            .WithGitHubInstallationId(1338)
-                            .Build())
-                    .Build());
+                            .WithGitHubInstallationId(1338)));
 
             var handler = new UninstallationConfigurationPayloadHandler(
                 fakeMediator);

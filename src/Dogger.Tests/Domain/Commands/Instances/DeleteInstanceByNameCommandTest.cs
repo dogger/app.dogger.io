@@ -104,8 +104,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                         .WithName("not-matching")
                         .Build(),
                     new TestInstanceBuilder()
-                        .WithName("some-instance-name")
-                        .Build())
+                        .WithName("some-instance-name"))
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -179,8 +178,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .WithBase(
                         CreateGitReferenceDto(
                             CreateRepositoryDto(
-                                1338)))
-                    .Build());
+                                1338))));
 
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
 
@@ -210,10 +208,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                             .WithHandle("1339")
                             .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                                 .WithHandle("1338")
-                                .WithGitHubInstallationId(1337)
-                                .Build())
-                            .Build())
-                        .Build())
+                                .WithGitHubInstallationId(1337))))
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -290,8 +285,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .WithBase(
                         CreateGitReferenceDto(
                             CreateRepositoryDto(
-                                1338)))
-                    .Build());
+                                1338))));
 
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
 
@@ -314,8 +308,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     new TestInstanceBuilder()
                         .WithName("not-matching")
                         .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
-                            .WithPullDogRepository()
-                            .Build())
+                            .WithPullDogRepository())
                         .Build(),
                     new TestInstanceBuilder()
                         .WithName("some-instance-name")
@@ -323,10 +316,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                             .WithHandle("1339")
                             .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                                 .WithHandle("1338")
-                                .WithGitHubInstallationId(1337)
-                                .Build())
-                            .Build())
-                        .Build())
+                                .WithGitHubInstallationId(1337))))
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -398,8 +388,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                         .WithName("not-matching")
                         .Build(),
                     new TestInstanceBuilder()
-                        .WithName("some-instance-name")
-                        .Build())
+                        .WithName("some-instance-name"))
                 .Build();
 
             await environment.WithFreshDataContext(async dataContext =>

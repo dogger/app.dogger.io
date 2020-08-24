@@ -84,9 +84,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromGitHub
                     .WithPlanId("some-plan-id")
                     .WithRepositories(
                         new TestPullDogRepositoryBuilder()
-                            .WithGitHubInstallationId(1337)
-                            .Build())
-                    .Build())
+                            .WithGitHubInstallationId(1337)))
                 .Build();
             await environment.DataContext.Users.AddAsync(userInDatabase);
             await environment.DataContext.SaveChangesAsync();
@@ -182,9 +180,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromGitHub
                 .WithPullDogSettings(new TestPullDogSettingsBuilder()
                     .WithPlanId("some-plan-id")
                     .WithRepositories(new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1337)
-                        .Build())
-                    .Build())
+                        .WithGitHubInstallationId(1337)))
                 .Build();
             await environment.DataContext.Users.AddAsync(userInDatabase);
             await environment.DataContext.SaveChangesAsync();

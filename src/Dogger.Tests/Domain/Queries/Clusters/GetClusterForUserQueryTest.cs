@@ -25,9 +25,7 @@ namespace Dogger.Tests.Domain.Queries.Clusters
             {
                 await dataContext.Clusters.AddAsync(new TestClusterBuilder()
                     .WithUser(new TestUserBuilder()
-                        .WithId(fakeUserId)
-                        .Build())
-                    .Build());
+                        .WithId(fakeUserId)));
             });
 
             //Act
@@ -54,12 +52,10 @@ namespace Dogger.Tests.Domain.Queries.Clusters
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Clusters.AddAsync(new TestClusterBuilder()
-                    .WithUser(user)
-                    .Build());
+                    .WithUser(user));
                 await dataContext.Clusters.AddAsync(new TestClusterBuilder()
                     .WithId(fakeClusterId)
-                    .WithUser(user)
-                    .Build());
+                    .WithUser(user));
             });
 
             //Act
@@ -89,12 +85,10 @@ namespace Dogger.Tests.Domain.Queries.Clusters
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Clusters.AddAsync(new TestClusterBuilder()
-                    .WithUser(user)
-                    .Build());
+                    .WithUser(user));
 
                 await dataContext.Clusters.AddAsync(new TestClusterBuilder()
-                    .WithUser(user)
-                    .Build());
+                    .WithUser(user));
             });
 
             //Act

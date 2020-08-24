@@ -47,8 +47,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
-                    .WithName("some-instance-name")
-                    .Build());
+                    .WithName("some-instance-name"));
             });
 
             //Act
@@ -94,8 +93,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
-                    .WithName("some-instance-name")
-                    .Build());
+                    .WithName("some-instance-name"));
             });
 
             //Act
@@ -148,9 +146,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .WithName("some-instance-name")
                     .WithCluster(new TestClusterBuilder()
                         .WithId(fakeClusterId)
-                        .WithUser(existingUser)
-                        .Build())
-                    .Build());
+                        .WithUser(existingUser)));
             });
 
             //Act
@@ -225,9 +221,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .WithName("some-instance-name")
                     .WithCluster(new TestClusterBuilder()
                         .WithId(fakeClusterId)
-                        .WithUser(existingUser)
-                        .Build())
-                    .Build());
+                        .WithUser(existingUser)));
             });
 
             //Act
@@ -279,10 +273,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
                     .WithName("some-instance-name")
                     .WithCluster(new TestClusterBuilder()
-                        .WithUser(existingUser)
-                        .Build())
-                    .WithProvisionedStatus(false)
-                    .Build());
+                        .WithUser(existingUser))
+                    .WithProvisionedStatus(false));
             });
 
             //Act
@@ -345,9 +337,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 await dataContext.Instances.AddAsync(new TestInstanceBuilder()
                     .WithName("some-instance-name")
                     .WithCluster(new TestClusterBuilder()
-                        .WithUser(existingUser)
-                        .Build())
-                    .Build());
+                        .WithUser(existingUser)));
             });
 
             //Act

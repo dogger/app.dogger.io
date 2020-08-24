@@ -64,8 +64,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
                 .Returns(new TestPullDogRepositoryBuilder()
-                    .WithGitHubInstallationId(1338)
-                    .Build());
+                    .WithGitHubInstallationId(1338));
 
             var fakeGitHubClient = Substitute.For<IGitHubClient>();
 
@@ -202,8 +201,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
                 .Returns(new TestPullDogRepositoryBuilder()
-                    .WithGitHubInstallationId(1338)
-                    .Build());
+                    .WithGitHubInstallationId(1338));
 
             var fakeWebhookPayloadHandler = Substitute.For<IWebhookPayloadHandler>();
 
@@ -280,8 +278,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
                 .Returns(new TestPullDogRepositoryBuilder()
-                    .WithGitHubInstallationId(13381338)
-                    .Build());
+                    .WithGitHubInstallationId(13381338));
 
             var fakeGitHubClient = Substitute.For<IGitHubClient>();
 
@@ -346,8 +343,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
                 .Returns(new TestPullDogRepositoryBuilder()
-                    .WithGitHubInstallationId(1338)
-                    .Build());
+                    .WithGitHubInstallationId(1338));
 
             var fakeGitHubClient = Substitute.For<IGitHubClient>();
 
@@ -420,8 +416,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
                 .Returns(new TestPullDogRepositoryBuilder()
-                    .WithGitHubInstallationId(1338)
-                    .Build());
+                    .WithGitHubInstallationId(1338));
 
             var fakeGitHubClient = Substitute.For<IGitHubClient>();
 

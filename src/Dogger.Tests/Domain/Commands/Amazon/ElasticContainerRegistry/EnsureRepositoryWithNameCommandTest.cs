@@ -312,8 +312,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             fakeMediator
                 .Send(Arg.Is<EnsureAmazonUserWithNameCommand>(args => args.Name == "environment-ecr-read-some-repository-name"))
                 .Returns(new TestAmazonUserBuilder()
-                    .WithName("environment-ecr-read-some-repository-name")
-                    .Build());
+                    .WithName("environment-ecr-read-some-repository-name"));
 
             var fakeHostEnvironment = Substitute.For<IHostEnvironment>();
             fakeHostEnvironment.EnvironmentName.Returns("environment");
@@ -378,8 +377,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
             fakeMediator
                 .Send(Arg.Is<EnsureAmazonUserWithNameCommand>(args => args.Name == "environment-ecr-write-some-repository-name"))
                 .Returns(new TestAmazonUserBuilder()
-                    .WithName("environment-ecr-write-some-repository-name")
-                    .Build());
+                    .WithName("environment-ecr-write-some-repository-name"));
 
             var fakeHostEnvironment = Substitute.For<IHostEnvironment>();
             fakeHostEnvironment.EnvironmentName.Returns("environment");
@@ -452,7 +450,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.ElasticContainerRegistry
                 Substitute.For<IHostEnvironment>());
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<TestException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<TestException>(async () =>
                 await handler.Handle(
                     new EnsureRepositoryWithNameCommand("some-repository-name"),
                     default));

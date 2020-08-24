@@ -30,8 +30,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             await environment.WithFreshDataContext(async dataContext =>
                 await dataContext.Users.AddAsync(new TestUserBuilder()
                     .WithId(userId)
-                    .WithPullDogSettings(null)
-                    .Build()));
+                    .WithPullDogSettings(null)));
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
@@ -53,8 +52,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             await environment.WithFreshDataContext(async dataContext =>
                 await dataContext.Users.AddAsync(new TestUserBuilder()
                     .WithPullDogSettings()
-                    .WithId(userId)
-                    .Build()));
+                    .WithId(userId)));
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
@@ -76,9 +74,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 await dataContext.Users.AddAsync(new TestUserBuilder()
                     .WithId(userId)
                     .WithPullDogSettings(new TestPullDogSettingsBuilder()
-                        .WithRepositories(new TestPullDogRepositoryBuilder().Build())
-                        .Build())
-                    .Build()));
+                        .WithRepositories(new TestPullDogRepositoryBuilder().Build()))));
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
@@ -125,10 +121,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                                 .Build(),
                             new TestPullDogRepositoryBuilder()
                                 .WithHandle("4")
-                                .WithGitHubInstallationId(1337)
-                                .Build())
-                        .Build())
-                    .Build()));
+                                .WithGitHubInstallationId(1337)))));
 
             //Act
             var repositories = await environment.Mediator.Send(
@@ -178,10 +171,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                     .WithPullDogSettings(new TestPullDogSettingsBuilder()
                         .WithRepositories(new TestPullDogRepositoryBuilder()
                             .WithHandle("2")
-                            .WithGitHubInstallationId(1337)
-                            .Build())
-                        .Build())
-                    .Build()));
+                            .WithGitHubInstallationId(1337)))));
 
             //Act
             var repositories = await environment.Mediator.Send(

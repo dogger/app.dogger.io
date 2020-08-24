@@ -36,8 +36,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     new UpsertPullRequestCommentCommand(
                         new TestPullDogPullRequestBuilder()
                             .WithPullDogRepository(new TestPullDogRepositoryBuilder()
-                                .WithGitHubInstallationId(null)
-                                .Build())
+                                .WithGitHubInstallationId(null))
                             .Build(),
                         "some-content"),
                     default));
@@ -64,8 +63,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                         new TestPullDogPullRequestBuilder()
                             .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                                 .WithHandle("invalid-handle")
-                                .WithGitHubInstallationId(1337)
-                                .Build())
+                                .WithGitHubInstallationId(1337))
                             .Build(),
                         "some-content"),
                     default));
@@ -93,8 +91,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                             .WithHandle("invalid-handle")
                             .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                                 .WithHandle("1337")
-                                .WithGitHubInstallationId(1337)
-                                .Build())
+                                .WithGitHubInstallationId(1337))
                             .Build(),
                         "some-content"),
                     default));
@@ -154,8 +151,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                         .WithHandle("1337")
                         .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                             .WithHandle("1337")
-                            .WithGitHubInstallationId(1337)
-                            .Build())
+                            .WithGitHubInstallationId(1337))
                         .Build(),
                     "some-content"),
                 default);
@@ -222,8 +218,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                         .WithHandle("1337")
                         .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                             .WithHandle("1337")
-                            .WithGitHubInstallationId(1337)
-                            .Build())
+                            .WithGitHubInstallationId(1337))
                         .Build(),
                     "some-content"),
                 default);
@@ -282,8 +277,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                         .WithHandle("1337")
                         .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                             .WithHandle("1337")
-                            .WithGitHubInstallationId(1337)
-                            .Build())
+                            .WithGitHubInstallationId(1337))
                         .Build(),
                     "some-content"),
                 default);
@@ -341,8 +335,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                         .WithHandle("1337")
                         .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                             .WithHandle("1337")
-                            .WithGitHubInstallationId(1337)
-                            .Build())
+                            .WithGitHubInstallationId(1337))
                         .Build(),
                     "some-content"),
                 default);
