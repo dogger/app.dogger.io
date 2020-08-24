@@ -110,10 +110,12 @@ namespace Dogger.Tests.Infrastructure.AspNet
                 .CreateTimer(
                     Arg.Any<TimeSpan>(),
                     Arg.Any<Func<Task>>())
-                .Returns(async callInfo =>
+                .Returns(callInfo =>
                 {
                     var callback = callInfo.Arg<Func<Task>>();
-                    await callback();
+                    callback()
+                        .GetAwaiter()
+                        .GetResult();
 
                     return null;
                 });

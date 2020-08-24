@@ -4,16 +4,16 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build-dotnet
-WORKDIR /src
-COPY ["Dogger.Setup/Dogger.Setup.csproj", "Dogger.Setup/"]
+WORKDIR /
+COPY ["src/Dogger.Setup/Dogger.Setup.csproj", "src/Dogger.Setup/"]
 RUN dotnet tool restore
-RUN dotnet restore "Dogger.Setup/Dogger.Setup.csproj"
-COPY ./src .
+RUN dotnet restore "src/Dogger.Setup/Dogger.Setup.csproj"
+COPY . .
 WORKDIR "/src/Dogger.Setup"
-RUN dotnet build "Dogger.Setup.csproj" -c Release -o /app/build
+RUN dotnet build "src/Dogger.Setup.csproj" -c Release -o /app/build
 
 FROM build-dotnet AS publish-dotnet
-RUN dotnet publish "Dogger.Setup.csproj" -c Release -o /app/publish
+RUN dotnet publish "src/Dogger.Setup.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
