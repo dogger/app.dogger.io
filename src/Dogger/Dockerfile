@@ -9,10 +9,10 @@ COPY ["src/Dogger/Dogger.csproj", "src/Dogger/"]
 RUN dotnet tool restore
 RUN dotnet restore "src/Dogger/Dogger.csproj"
 COPY . .
-RUN dotnet build "src/Dogger.csproj" -c Release -o /app/build
+RUN dotnet build "src/Dogger/Dogger.csproj" -c Release -o /app/build
 
 FROM build-dotnet AS publish-dotnet
-RUN dotnet publish "src/Dogger.csproj" -c Release -o /app/publish
+RUN dotnet publish "src/Dogger/Dogger.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
