@@ -5,7 +5,7 @@ using Dogger.Controllers.PullDog.Webhooks.Handlers;
 using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.AddPullDogToGitHubRepositories;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
-using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
+using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubPayloadInformation;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
@@ -134,7 +134,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
-                .Send(Arg.Is<GetPullDogSettingsByGitHubInstallationIdQuery>(args => args.InstallationId == 1338))
+                .Send(Arg.Is<GetPullDogSettingsByGitHubPayloadInformationQuery>(args => args.InstallationId == 1338))
                 .Returns(settings);
 
             var handler = new InstallationConfigurationPayloadHandler(
@@ -148,7 +148,11 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                 Pusher = new UserPayload(),
                 Installation = new InstallationPayload()
                 {
-                    Id = 1338
+                    Id = 1338,
+                    Account = new UserPayload()
+                    {
+                        Id = 1341
+                    }
                 },
                 RepositoriesAdded = new[]
                 {
@@ -182,7 +186,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
-                .Send(Arg.Is<GetPullDogSettingsByGitHubInstallationIdQuery>(args => args.InstallationId == 1338))
+                .Send(Arg.Is<GetPullDogSettingsByGitHubPayloadInformationQuery>(args => args.InstallationId == 1338))
                 .Returns(settings);
 
             var handler = new InstallationConfigurationPayloadHandler(
@@ -196,7 +200,11 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                 Pusher = new UserPayload(),
                 Installation = new InstallationPayload()
                 {
-                    Id = 1338
+                    Id = 1338,
+                    Account = new UserPayload()
+                    {
+                        Id = 1341
+                    }
                 },
                 RepositoriesRemoved = new[]
                 {
@@ -246,7 +254,11 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                     Pusher = new UserPayload(),
                     Installation = new InstallationPayload()
                     {
-                        Id = 1338
+                        Id = 1338,
+                        Account = new UserPayload()
+                        {
+                            Id = 1341
+                        }
                     },
                     Repository = new RepositoryPayload()
                     {

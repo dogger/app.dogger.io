@@ -190,7 +190,11 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                     },
                     Installation = new InstallationPayload()
                     {
-                        Id = 1338
+                        Id = 1338,
+                        Account = new UserPayload()
+                        {
+                            Id = 1341
+                        }
                     }
                 },
                 null!,
