@@ -100,7 +100,7 @@ namespace Dogger.Controllers.PullDog.Webhooks
             {
                 foreach (var handler in this.configurationPayloadHandlers)
                 {
-                    if (handler.Event != @event)
+                    if (!handler.Events.Contains(@event))
                         continue;
 
                     if (!handler.CanHandle(payload))

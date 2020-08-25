@@ -10,7 +10,7 @@ namespace Dogger.Controllers.PullDog.Webhooks.Handlers
     {
         private readonly IMediator mediator;
 
-        public string Event => "installation";
+        public string[] Events => new [] { "installation" };
 
         public UninstallationConfigurationPayloadHandler(
             IMediator mediator)
