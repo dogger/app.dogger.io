@@ -203,7 +203,8 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
-                .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
+                .Send(Arg.Is<GetRepositoryByHandleQuery>(args => 
+                    args.RepositoryHandle == "1337"))
                 .Returns(new TestPullDogRepositoryBuilder()
                     .WithGitHubInstallationId(1338));
 
