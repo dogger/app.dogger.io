@@ -13,6 +13,7 @@ using Dogger.Infrastructure.GitHub;
 using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Logging;
 using FluffySpoon.AspNet.NGrok;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Octokit;
@@ -32,7 +33,7 @@ namespace Dogger
             try
             {
                 var host = CreateDoggerHostBuilder(configuration, args).Build();
-                await DatabaseMigrator.MigrateDatabaseForHostAsync(host);
+                //await DatabaseMigrator.MigrateDatabaseForHostAsync(host);
 
                 var dataContext = host.Services.CreateScope().ServiceProvider.GetRequiredService<DataContext>();
                 var repositories = await dataContext
@@ -43,7 +44,15 @@ namespace Dogger
                     .ToListAsync();
 
                 var gitHubClient = host.Services.GetRequiredService<IGitHubClient>();
-                var list = await gitHubClient.GitHubApps.GetAllInstallationsForCurrent();
+                var installations = await gitHubClient.GitHubApps.GetAllInstallationsForCurrent(new ApiOptions()
+                {
+                    PageSize = 100
+                });
+                
+                var mediator = host.Services.GetRequiredService<IMediator>();
+                var accountIds = installations
+                    .Select(x => x.Account.Id)
+                    .Select(x => mediator.Send(new Context))
 
                 throw new InvalidOperationException("Remember to clear secrets");
 
