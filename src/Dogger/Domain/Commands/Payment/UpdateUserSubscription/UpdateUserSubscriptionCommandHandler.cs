@@ -231,14 +231,33 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
                 cancellationToken);
 
             var existingSubscriptionItem = existingSubscriptionItems.SingleOrDefault(plan =>
-                availablePullDogPlans.Any(p => p.Id == plan.Plan.Id));
+                availablePullDogPlans.Any(p => 
+                    NormalizePlanName(p.Id) == NormalizePlanName(plan.Plan.Id)));
 
             return new SubscriptionItemOptions()
             {
                 Id = existingSubscriptionItem?.Id,
-                Plan = $"{pullDogPlan.Id}_v2",
+                Plan = GetLatestPlanName(pullDogPlan.Id),
                 Quantity = 1
             };
+        }
+
+        private static string GetLatestPlanSuffix()
+        {
+            return "_v2";
+        }
+
+        private static string GetLatestPlanName(string name)
+        {
+            return $"{name}{GetLatestPlanSuffix()}";
+        }
+
+        private static string NormalizePlanName(string name)
+        {
+            if (name.EndsWith(GetLatestPlanSuffix(), StringComparison.InvariantCulture))
+                name = name.Substring(0, name.LastIndexOf(GetLatestPlanSuffix(), StringComparison.InvariantCulture));
+
+            return name;
         }
 
         private static SubscriptionCancelOptions GetSubscriptionCancelOptions()
