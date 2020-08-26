@@ -77,31 +77,37 @@ namespace Dogger.Tests.Domain.Queries.PullDog
         public async Task Handle_MatchingAuth0UserByGitHubUserId_ReturnsUserPullDogSettings()
         {
             //Arrange
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
+            var fakeMediator = Substitute.For<IMediator>();
+            fakeMediator
+                .Send(Arg.Is<GetAuth0UserFromGitHubUserIdQuery>(args =>
+                    args.GitHubUserId == 1338))
+                .Returns(new User()
+                {
+                    EmailVerified = true,
+                    UserId = "some-user-id"
+                });
 
-            await environment.WithFreshDataContext(async dataContext =>
+            fakeMediator
+                .Send(Arg.Is<GetUserByIdentityNameQuery>(args =>
+                    args.IdentityName == "some-user-id"))
+                .Returns(new TestUserBuilder()
+                    .WithPullDogSettings());
+
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
-                await dataContext.PullDogSettings.AddAsync(new TestPullDogSettingsBuilder()
-                    .WithRepositories(new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1336)));
-                await dataContext.PullDogSettings.AddAsync(new TestPullDogSettingsBuilder()
-                    .WithRepositories(new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1337)));
-                await dataContext.PullDogSettings.AddAsync(new TestPullDogSettingsBuilder()
-                    .WithRepositories(new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1338)));
+                IocConfiguration = services =>
+                {
+                    services.AddSingleton(fakeMediator);
+                }
             });
 
             //Act
             var settings = await environment.Mediator.Send(new GetPullDogSettingsByGitHubPayloadInformationQuery(
                 1337,
-                1337));
+                1338));
 
             //Assert
             Assert.IsNotNull(settings);
-            Assert.AreEqual(1337, settings.Repositories.Single().GitHubInstallationId);
-
-            Assert.Fail("Not done yet.");
         }
     }
 }

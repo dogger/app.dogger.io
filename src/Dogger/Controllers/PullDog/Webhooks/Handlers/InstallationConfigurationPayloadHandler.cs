@@ -55,12 +55,6 @@ namespace Dogger.Controllers.PullDog.Webhooks.Handlers
                     payload.Installation.Account.Id));
             if (settings == null)
             {
-                this.logger.Error("No settings error occured - will log more details.");
-
-                var client = await this.gitHubClientFactory.CreateInstallationClientAsync(payload.Installation.Id);
-                var installations = await client.GitHubApps.GetAllInstallationsForCurrentUser();
-                this.logger.Error("An error occured with user {@Installations}.", installations);
-
                 throw new InvalidOperationException($"Could not find Pull Dog settings for an installation ID of {payload.Installation.Id}.");
             }
 
