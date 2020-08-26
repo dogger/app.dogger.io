@@ -1,5 +1,5 @@
 #!/bin/bash
-cd src/Dogger.Setup.Tests
+cd src/Dogger.Tests
 dotnet test --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 [ $? -eq 0 ] || exit 1
 
