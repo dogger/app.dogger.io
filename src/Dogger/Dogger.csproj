@@ -4,7 +4,7 @@
     <Nullable>enable</Nullable>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>8</LangVersion>
-    <UserSecretsId>be404feb-b81c-425a-b355-029dbd854c3d</UserSecretsId>
+    <UserSecretsId>be404feb-b81c-425a-b355-029dbd855c3d</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>

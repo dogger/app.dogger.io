@@ -388,10 +388,10 @@ namespace Dogger.Infrastructure.AspNet
 
             services.AddHostedService(p => p.GetRequiredService<DockerDependencyService>());
 
-            services.AddDbContextPool<DataContext>(optionsBuilder =>
-            {
-                optionsBuilder.UseSqlServer(GetSqlConnectionStringForDatabase("dogger"));
-            });
+            //services.AddDbContextPool<DataContext>(optionsBuilder =>
+            //{
+            //    optionsBuilder.UseSqlServer(GetSqlConnectionStringForDatabase("dogger"));
+            //});
         }
     }
 }

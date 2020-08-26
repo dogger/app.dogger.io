@@ -4,12 +4,18 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
+using Dogger.Domain.Models;
 using Dogger.Infrastructure.Configuration;
 using Dogger.Infrastructure.Database;
+using Dogger.Infrastructure.GitHub;
 using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Logging;
 using FluffySpoon.AspNet.NGrok;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Octokit;
 using Serilog;
 
 namespace Dogger
@@ -28,9 +34,22 @@ namespace Dogger
                 var host = CreateDoggerHostBuilder(configuration, args).Build();
                 await DatabaseMigrator.MigrateDatabaseForHostAsync(host);
 
-                await host.RunAsync();
+                var dataContext = host.Services.CreateScope().ServiceProvider.GetRequiredService<DataContext>();
+                var repositories = await dataContext
+                    .PullDogSettings
+                    .Include(x => x.User)
+                    .ThenInclude(x => x.Identities)
+                    .Include(x => x.Repositories)
+                    .ToListAsync();
 
-                return 0;
+                var gitHubClient = host.Services.GetRequiredService<IGitHubClient>();
+                var list = await gitHubClient.GitHubApps.GetAllInstallationsForCurrent();
+
+                throw new InvalidOperationException("Remember to clear secrets");
+
+                //await host.RunAsync();
+
+                //return 0;
             }
             catch (Exception ex) when(!Debugger.IsAttached)
             {
