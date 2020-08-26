@@ -2,7 +2,7 @@
 using Dogger.Controllers.PullDog.Webhooks.Handlers;
 using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
-using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
+using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubPayloadInformation;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
@@ -57,7 +57,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
-                .Send(Arg.Is<GetPullDogSettingsByGitHubInstallationIdQuery>(args =>
+                .Send(Arg.Is<GetPullDogSettingsByGitHubPayloadInformationQuery>(args =>
                     args.InstallationId == 1337))
                 .Returns(new TestPullDogSettingsBuilder()
                     .WithRepositories(
@@ -82,7 +82,11 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             {
                 Installation = new InstallationPayload()
                 {
-                    Id = 1337
+                    Id = 1337,
+                    Account = new UserPayload()
+                    {
+                        Id = 1341
+                    }
                 }
             });
 

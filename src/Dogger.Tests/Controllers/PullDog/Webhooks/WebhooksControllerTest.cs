@@ -73,6 +73,11 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             var fakeHandler3 = Substitute.For<IWebhookPayloadHandler>();
             var fakeHandler4 = Substitute.For<IWebhookPayloadHandler>();
 
+            fakeHandler1.Event.Returns("some-event");
+            fakeHandler2.Event.Returns("some-event");
+            fakeHandler3.Event.Returns("some-event");
+            fakeHandler4.Event.Returns("some-event");
+
             fakeHandler1.CanHandle(context.Payload).Returns(false);
             fakeHandler2.CanHandle(context.Payload).Returns(true);
             fakeHandler3.CanHandle(context.Payload).Returns(true);
@@ -190,7 +195,11 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                     },
                     Installation = new InstallationPayload()
                     {
-                        Id = 1338
+                        Id = 1338,
+                        Account = new UserPayload()
+                        {
+                            Id = 1341
+                        }
                     }
                 },
                 null!,
@@ -199,7 +208,8 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
-                .Send(Arg.Is<GetRepositoryByHandleQuery>(args => args.RepositoryHandle == "1337"))
+                .Send(Arg.Is<GetRepositoryByHandleQuery>(args => 
+                    args.RepositoryHandle == "1337"))
                 .Returns(new TestPullDogRepositoryBuilder()
                     .WithGitHubInstallationId(1338));
 
@@ -208,6 +218,13 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             var fakeGitHubClient = Substitute.For<IGitHubClient>();
 
             var fakeConfigurationCommitPayloadHandler = Substitute.For<IConfigurationPayloadHandler>();
+            fakeConfigurationCommitPayloadHandler
+                .Events
+                .Returns(new []
+                {
+                    "some-event"
+                });
+
             fakeConfigurationCommitPayloadHandler
                 .CanHandle(Arg.Any<WebhookPayload>())
                 .Returns(true);
@@ -348,6 +365,8 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             var fakeGitHubClient = Substitute.For<IGitHubClient>();
 
             var fakeWebhookPayloadHandler = Substitute.For<IWebhookPayloadHandler>();
+            fakeWebhookPayloadHandler.Event.Returns("some-event");
+
             fakeWebhookPayloadHandler
                 .CanHandle(Arg.Any<WebhookPayload>())
                 .Returns(true);
@@ -421,6 +440,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             var fakeGitHubClient = Substitute.For<IGitHubClient>();
 
             var fakeWebhookPayloadHandler = Substitute.For<IWebhookPayloadHandler>();
+            fakeWebhookPayloadHandler.Event.Returns("some-event");
             fakeWebhookPayloadHandler
                 .CanHandle(Arg.Any<WebhookPayload>())
                 .Returns(true);
@@ -497,6 +517,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             var httpContext = new DefaultHttpContext();
             httpContext.Request.Headers.Add("X-Hub-Signature", "sha1=b2c5a0cc23f36c7d7031e6c8d544c22ca8f9fc6a");
             httpContext.Request.Headers.Add("X-GitHub-Delivery", "foobar");
+            httpContext.Request.Headers.Add("X-GitHub-Event", "some-event");
             httpContext.Request.Body = new MemoryStream(
                 Encoding.UTF8.GetBytes("{}"));
 

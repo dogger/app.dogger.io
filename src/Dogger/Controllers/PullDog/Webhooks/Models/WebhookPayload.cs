@@ -27,6 +27,8 @@ namespace Dogger.Controllers.PullDog.Webhooks.Models
 
         public CommitPayload[]? Commits { get; set; }
 
+        public InstallationRepositoryReferencePayload[]? Repositories { get; set; }
+
         [JsonPropertyName("repositories_added")]
         public InstallationRepositoryReferencePayload[]? RepositoriesAdded { get; set; }
 
