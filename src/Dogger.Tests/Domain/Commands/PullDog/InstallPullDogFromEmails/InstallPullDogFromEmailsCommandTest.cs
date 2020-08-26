@@ -3,12 +3,10 @@ using System.Threading.Tasks;
 using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Auth0.CreateAuth0User;
 using Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails;
-using Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
 using Dogger.Domain.Queries.Auth0.GetAuth0UserFromEmails;
 using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
-using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -16,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using Octokit;
+using Dogger.Tests.Domain.Models;
 
 namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromEmails
 {
@@ -38,9 +36,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromEmails
                 }
             });
 
-            var userInDatabase = new Dogger.Domain.Models.User() {
-                StripeCustomerId = "dummy"
-            };
+            var userInDatabase = new TestUserBuilder().Build();
             await environment.DataContext.Users.AddAsync(userInDatabase);
             await environment.DataContext.SaveChangesAsync();
 
@@ -72,7 +68,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromEmails
 
             //Act
             await environment.Mediator.Send(new InstallPullDogFromEmailsCommand(
-                new []
+                new[]
                 {
                     "email-1@example.com",
                     "email-2@example.com"
@@ -107,10 +103,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromEmails
                 }
             });
 
-            var userInDatabase = new Dogger.Domain.Models.User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var userInDatabase = new TestUserBuilder().Build();
             await environment.DataContext.Users.AddAsync(userInDatabase);
             await environment.DataContext.SaveChangesAsync();
 
@@ -142,7 +135,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromEmails
 
             //Act
             await environment.Mediator.Send(new InstallPullDogFromEmailsCommand(
-                new []
+                new[]
                 {
                     "email-1@example.com",
                     "email-2@example.com"

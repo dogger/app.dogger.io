@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lightsail.Model;
-using Dogger.Domain.Commands.Auth0.CreateAuth0User;
 using Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails;
 using Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub;
-using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Auth0.GetAuth0UserFromEmails;
 using Dogger.Domain.Queries.Auth0.GetAuth0UserFromGitHubUserId;
 using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Infrastructure.GitHub;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -80,23 +77,13 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromGitHub
                 }
             });
 
-            var userInDatabase = new Dogger.Domain.Models.User()
-            {
-                StripeCustomerId = "dummy",
-                PullDogSettings = new PullDogSettings()
-                {
-                    PlanId = "some-plan-id",
-                    EncryptedApiKey = Array.Empty<byte>(),
-                    Repositories = new List<PullDogRepository>()
-                    {
-                        new PullDogRepository()
-                        {
-                            GitHubInstallationId = 1337,
-                            Handle = "dummy"
-                        }
-                    }
-                }
-            };
+            var userInDatabase = new TestUserBuilder()
+                .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                    .WithPlanId("some-plan-id")
+                    .WithRepositories(
+                        new TestPullDogRepositoryBuilder()
+                            .WithGitHubInstallationId(1337)))
+                .Build();
             await environment.DataContext.Users.AddAsync(userInDatabase);
             await environment.DataContext.SaveChangesAsync();
 
@@ -187,23 +174,12 @@ namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromGitHub
                 }
             });
 
-            var userInDatabase = new Dogger.Domain.Models.User()
-            {
-                StripeCustomerId = "dummy",
-                PullDogSettings = new PullDogSettings()
-                {
-                    PlanId = "some-plan-id",
-                    EncryptedApiKey = Array.Empty<byte>(),
-                    Repositories = new List<PullDogRepository>()
-                    {
-                        new PullDogRepository()
-                        {
-                            GitHubInstallationId = 1337,
-                            Handle = "dummy"
-                        }
-                    }
-                }
-            };
+            var userInDatabase = new TestUserBuilder()
+                .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                    .WithPlanId("some-plan-id")
+                    .WithRepositories(new TestPullDogRepositoryBuilder()
+                        .WithGitHubInstallationId(1337)))
+                .Build();
             await environment.DataContext.Users.AddAsync(userInDatabase);
             await environment.DataContext.SaveChangesAsync();
 

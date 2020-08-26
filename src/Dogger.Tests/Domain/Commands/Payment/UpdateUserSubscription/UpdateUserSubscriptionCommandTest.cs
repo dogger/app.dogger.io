@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Queries.Plans.GetSupportedPullDogPlans;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -59,30 +59,15 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
                 });
 
-            var user = new User()
-            {
-                StripeSubscriptionId = "some-subscription-id",
-                StripeCustomerId = "dummy",
-                Clusters = new List<Cluster>()
-                {
-                    new Cluster()
-                    {
-                        Instances = new List<Instance>()
-                        {
-                            new Instance()
-                            {
-                                PlanId = "some-plan-id-1",
-                                Name = "dummy-1"
-                            },
-                            new Instance()
-                            {
-                                PlanId = "some-plan-id-2",
-                                Name = "dummy-2"
-                            }
-                        }
-                    }
-                }
-            };
+            var user = new TestUserBuilder()
+                .WithStripeSubscriptionId("some-subscription-id")
+                .WithClusters(new TestClusterBuilder()
+                    .WithInstances(
+                        new TestInstanceBuilder()
+                            .WithPlanId("some-plan-id-1"),
+                        new TestInstanceBuilder()
+                            .WithPlanId("some-plan-id-2")))
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);
@@ -98,12 +83,14 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     "some-subscription-id",
                     Arg.Is<SubscriptionUpdateOptions>(args =>
                         args.Prorate == true &&
-                        args.Items[0].Plan == "some-plan-id-1" &&
-                        args.Items[0].Id == null &&
-                        args.Items[0].Quantity == 1 &&
-                        args.Items[1].Plan == "some-plan-id-2" &&
-                        args.Items[1].Id == null &&
-                        args.Items[1].Quantity == 1),
+                        args.Items.Any(i => 
+                            i.Plan == "some-plan-id-1" &&
+                            i.Id == null &&
+                            i.Quantity == 1) &&
+                        args.Items.Any(i => 
+                            i.Plan == "some-plan-id-2" &&
+                            i.Id == null &&
+                            i.Quantity == 1)),
                     default,
                     default);
         }
@@ -146,30 +133,15 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
                 });
 
-            var user = new User()
-            {
-                StripeSubscriptionId = "some-subscription-id",
-                StripeCustomerId = "dummy",
-                Clusters = new List<Cluster>()
-                {
-                    new Cluster()
-                    {
-                        Instances = new List<Instance>()
-                        {
-                            new Instance()
-                            {
-                                PlanId = "some-plan-id-1",
-                                Name = "dummy-1"
-                            },
-                            new Instance()
-                            {
-                                PlanId = "some-plan-id-1",
-                                Name = "dummy-2"
-                            }
-                        }
-                    }
-                }
-            };
+            var user = new TestUserBuilder()
+                .WithStripeSubscriptionId("some-subscription-id")
+                .WithClusters(new TestClusterBuilder()
+                    .WithInstances(
+                        new TestInstanceBuilder()
+                            .WithPlanId("some-plan-id-1"),
+                        new TestInstanceBuilder()
+                            .WithPlanId("some-plan-id-1")))
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);
@@ -205,7 +177,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<GetSupportedPullDogPlansQuery>())
-                .Returns(new []
+                .Returns(new[]
                 {
                     fakePullDogPlan
                 });
@@ -263,37 +235,19 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     }
                 });
 
-            var user = new User()
-            {
-                StripeSubscriptionId = "some-subscription-id",
-                StripeCustomerId = "dummy"
-            };
-            user.Clusters.Add(new Cluster() {
-                User = user,
-                Instances = new List<Instance>()
-                {
-                    new Instance()
-                    {
-                        PlanId = "some-plan-id",
-                        Name = "dummy",
-                        PullDogPullRequest = new PullDogPullRequest()
-                        {
-                            Handle = "dummy",
-                            PullDogRepository = new PullDogRepository()
-                            {
-                                Handle = "dummy",
-                                PullDogSettings = new PullDogSettings()
-                                {
-                                    EncryptedApiKey = Array.Empty<byte>(),
-                                    PlanId = "some-plan-id",
-                                    PoolSize = 1,
-                                    User = user
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+            var user = new TestUserBuilder()
+                .WithStripeSubscriptionId("some-subscription-id")
+                .Build();
+            user.Clusters.Add(new TestClusterBuilder()
+                .WithUser(user)
+                .WithInstances(new TestInstanceBuilder()
+                    .WithPlanId("some-plan-id")
+                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                        .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                            .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                                .WithPlanId("some-plan-id")
+                                .WithPoolSize(1)
+                                .WithUser(user))))));
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -329,7 +283,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     args.PoolSize == 2))
                 .Returns(new PullDogPlan(
                     "some-pull-dog-plan",
-                    1337, 
+                    1337,
                     2));
 
             var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
@@ -369,17 +323,12 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     }
                 });
 
-            var user = new User()
-            {
-                StripeSubscriptionId = "some-subscription-id",
-                StripeCustomerId = "dummy",
-                PullDogSettings = new PullDogSettings()
-                {
-                    PoolSize = 2,
-                    PlanId = "some-pull-dog-plan",
-                    EncryptedApiKey = Array.Empty<byte>()
-                }
-            };
+            var user = new TestUserBuilder()
+                .WithStripeSubscriptionId("some-subscription-id")
+                .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                    .WithPoolSize(2)
+                    .WithPlanId("some-pull-dog-plan"))
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);
@@ -454,17 +403,11 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     }
                 });
 
-            var user = new User()
-            {
-                StripeSubscriptionId = null,
-                StripeCustomerId = "dummy",
-                PullDogSettings = new PullDogSettings()
-                {
-                    PoolSize = 0,
-                    PlanId = "dummy",
-                    EncryptedApiKey = Array.Empty<byte>()
-                }
-            };
+            var user = new TestUserBuilder()
+                .WithStripeSubscriptionId(null)
+                .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                    .WithPoolSize(0))
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);
@@ -531,25 +474,12 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
                 });
 
-            var user = new User()
-            {
-                StripeSubscriptionId = "some-subscription-id",
-                StripeCustomerId = "dummy",
-                Clusters = new List<Cluster>()
-                {
-                    new Cluster()
-                    {
-                        Instances = new List<Instance>()
-                        {
-                            new Instance()
-                            {
-                                PlanId = "some-new-plan-id",
-                                Name = "dummy"
-                            }
-                        }
-                    }
-                }
-            };
+            var user = new TestUserBuilder()
+                .WithStripeSubscriptionId("some-subscription-id")
+                .WithClusters(new TestClusterBuilder()
+                    .WithInstances(new TestInstanceBuilder()
+                        .WithPlanId("some-new-plan-id")))
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);
@@ -600,7 +530,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
 
             fakeMediator
                 .Send(Arg.Any<GetSupportedPullDogPlansQuery>())
-                .Returns(new [] {
+                .Returns(new[] {
                     new PullDogPlan(
                         "some-old-pull-dog-plan",
                         1337,
@@ -658,17 +588,12 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     }
                 });
 
-            var user = new User()
-            {
-                StripeSubscriptionId = "some-subscription-id",
-                StripeCustomerId = "dummy",
-                PullDogSettings = new PullDogSettings()
-                {
-                    PoolSize = 5,
-                    PlanId = "some-pull-dog-plan",
-                    EncryptedApiKey = Array.Empty<byte>()
-                }
-            };
+            var user = new TestUserBuilder()
+                .WithStripeSubscriptionId("some-subscription-id")
+                .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                    .WithPoolSize(5)
+                    .WithPlanId("some-pull-dog-plan"))
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);
@@ -717,25 +642,13 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
                 });
 
-            var user = new User()
-            {
-                StripeCustomerId = "some-user-id",
-                StripeSubscriptionId = null,
-                Clusters = new List<Cluster>()
-                {
-                    new Cluster()
-                    {
-                        Instances = new List<Instance>()
-                        {
-                            new Instance()
-                            {
-                                PlanId = "some-plan-id",
-                                Name = "dummy"
-                            }
-                        }
-                    }
-                }
-            };
+            var user = new TestUserBuilder()
+                .WithStripeCustomerId("some-customer-id")
+                .WithStripeSubscriptionId(null)
+                .WithClusters(new TestClusterBuilder()
+                    .WithInstances(new TestInstanceBuilder()
+                        .WithPlanId("some-plan-id")))
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);
@@ -750,7 +663,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .CreateAsync(
                     Arg.Is<SubscriptionCreateOptions>(args =>
                         args.ProrationBehavior == "create_prorations" &&
-                        args.Customer == "some-user-id" &&
+                        args.Customer == "some-customer-id" &&
                         args.BillingCycleAnchor != null &&
                         args.Items[0].Plan == "some-plan-id" &&
                         args.Items[0].Id == null &&
@@ -786,25 +699,12 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
                 });
 
-            var user = new User()
-            {
-                StripeCustomerId = "some-user-id",
-                StripeSubscriptionId = null,
-                Clusters = new List<Cluster>()
-                {
-                    new Cluster()
-                    {
-                        Instances = new List<Instance>()
-                        {
-                            new Instance()
-                            {
-                                PlanId = "some-plan-id",
-                                Name = "dummy"
-                            }
-                        }
-                    }
-                }
-            };
+            var user = new TestUserBuilder()
+                .WithStripeSubscriptionId(null)
+                .WithClusters(new TestClusterBuilder()
+                    .WithInstances(new TestInstanceBuilder()
+                        .WithPlanId("some-plan-id")))
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);

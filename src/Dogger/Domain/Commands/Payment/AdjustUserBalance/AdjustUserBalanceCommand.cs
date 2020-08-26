@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Dogger.Domain.Models;
+﻿using Dogger.Domain.Models;
 using MediatR;
 
 namespace Dogger.Domain.Commands.Payment.AdjustUserBalance

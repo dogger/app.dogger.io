@@ -31,7 +31,7 @@ namespace Dogger.Controllers.PullDog.Webhooks
     {
         public const string WebhookSignatureVerificationKeyName = "IsWebhookSignatureVerified";
 
-        private const string sha1Prefix = "sha1=";
+        private const string Sha1Prefix = "sha1=";
 
         private readonly IMediator mediator;
         private readonly ILogger logger;
@@ -72,17 +72,21 @@ namespace Dogger.Controllers.PullDog.Webhooks
             var correlationId = correlationIdValues.Single();
             this.HttpContext.TraceIdentifier = correlationId;
 
-            this.logger.Debug("Received webhook with correlation ID {GitHubCorrelationId} and payload {@Payload}.", correlationId, payload);
-
             if (!await IsGithubPushAllowedAsync())
                 return NotFound();
 
-            this.HttpContext.Items.Add(WebhookSignatureVerificationKeyName, true);
+            using (LogContext.PushProperty("CorrelationId", correlationId))
+            using (LogContext.PushProperty("Payload", payload, true))
+            {
+                this.logger.Debug("Received authentic webhook.");
 
-            return await this.dataContext.ExecuteInTransactionAsync(
-                async () => await HandlePayloadAsync(payload),
-                default,
-                cancellationToken);
+                this.HttpContext.Items.Add(WebhookSignatureVerificationKeyName, true);
+
+                return await this.dataContext.ExecuteInTransactionAsync(
+                    async () => await HandlePayloadAsync(payload),
+                    default,
+                    cancellationToken);
+            }
         }
 
         private async Task<IActionResult> HandlePayloadAsync(WebhookPayload payload)
@@ -96,7 +100,7 @@ namespace Dogger.Controllers.PullDog.Webhooks
             {
                 foreach (var handler in this.configurationPayloadHandlers)
                 {
-                    if (handler.Event != @event)
+                    if (!handler.Events.Contains(@event))
                         continue;
 
                     if (!handler.CanHandle(payload))
@@ -157,7 +161,7 @@ namespace Dogger.Controllers.PullDog.Webhooks
         }
 
         private async Task<PullDogPullRequest?> GetPullRequestFromPayloadAsync(
-            WebhookPayload payload, 
+            WebhookPayload payload,
             PullDogRepository repository)
         {
             var pullRequestHandle = GetPullRequestHandleFromPayload(payload);
@@ -198,14 +202,14 @@ namespace Dogger.Controllers.PullDog.Webhooks
             var payload = await reader.ReadToEndAsync();
 
             var signatureWithPrefixString = (string)signatureWithPrefix;
-            if (!signatureWithPrefixString.StartsWith(sha1Prefix, StringComparison.OrdinalIgnoreCase))
+            if (!signatureWithPrefixString.StartsWith(Sha1Prefix, StringComparison.OrdinalIgnoreCase))
                 return false;
 
             var options = this.gitHubOptionsMonitor.CurrentValue.PullDog;
             if (options?.WebhookSecret == null)
                 throw new InvalidOperationException("The webhook secret could not be found.");
 
-            var signature = signatureWithPrefixString.Substring(sha1Prefix.Length);
+            var signature = signatureWithPrefixString[Sha1Prefix.Length..];
             var secret = Encoding.UTF8.GetBytes(options.WebhookSecret);
             var payloadBytes = Encoding.UTF8.GetBytes(payload);
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsByHandle;
 using Dogger.Infrastructure.GitHub;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -26,11 +26,8 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await handler.Handle(
                     new GetPullRequestDetailsByHandleQuery(
-                        new PullDogRepository()
-                        {
-                            PullDogSettings = new PullDogSettings()
-                        }, 
-                        "dummy"), 
+                        new TestPullDogRepositoryBuilder(),
+                        "dummy"),
                     default));
 
             //Assert
@@ -55,13 +52,10 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             //Act
             var pullRequest = await handler.Handle(
                 new GetPullRequestDetailsByHandleQuery(
-                    new PullDogRepository()
-                    {
-                        Handle = "1338",
-                        GitHubInstallationId = 1337,
-                        PullDogSettings = new PullDogSettings()
-                    },
-                    "1339"), 
+                    new TestPullDogRepositoryBuilder()
+                        .WithHandle("1338")
+                        .WithGitHubInstallationId(1337),
+                    "1339"),
                 default);
 
             //Assert

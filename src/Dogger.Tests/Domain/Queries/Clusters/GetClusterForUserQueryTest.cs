@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Clusters.GetClusterForUser;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -22,14 +22,9 @@ namespace Dogger.Tests.Domain.Queries.Clusters
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Clusters.AddAsync(new Cluster()
-                {
-                    User = new User()
-                    {
-                        Id = fakeUserId,
-                        StripeCustomerId = "dummy"
-                    }
-                });
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithUser(new TestUserBuilder()
+                        .WithId(fakeUserId)));
             });
 
             //Act
@@ -49,23 +44,17 @@ namespace Dogger.Tests.Domain.Queries.Clusters
             var fakeUserId = Guid.NewGuid();
             var fakeClusterId = Guid.NewGuid();
 
-            var user = new User()
-            {
-                Id = fakeUserId,
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder()
+                .WithId(fakeUserId)
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Clusters.AddAsync(new Cluster()
-                {
-                    User = user
-                });
-                await dataContext.Clusters.AddAsync(new Cluster()
-                {
-                    Id = fakeClusterId,
-                    User = user
-                });
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithUser(user));
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithId(fakeClusterId)
+                    .WithUser(user));
             });
 
             //Act
@@ -88,26 +77,21 @@ namespace Dogger.Tests.Domain.Queries.Clusters
 
             var fakeUserId = Guid.NewGuid();
 
-            var user = new User()
-            {
-                Id = fakeUserId,
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder()
+                .WithId(fakeUserId)
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Clusters.AddAsync(new Cluster()
-                {
-                    User = user
-                });
-                await dataContext.Clusters.AddAsync(new Cluster()
-                {
-                    User = user
-                });
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithUser(user));
+
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithUser(user));
             });
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<ClusterQueryTooBroadException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<ClusterQueryTooBroadException>(async () =>
                 await environment.Mediator.Send(new GetClusterForUserQuery(fakeUserId)));
 
             //Assert

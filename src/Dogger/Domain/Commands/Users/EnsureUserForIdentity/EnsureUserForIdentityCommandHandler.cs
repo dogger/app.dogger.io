@@ -5,17 +5,23 @@ using Dogger.Domain.Commands.Users.CreateUserForIdentity;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Users.GetUserByIdentityName;
 using MediatR;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Dogger.Domain.Commands.Users.EnsureUserForIdentity
 {
     public class EnsureUserForIdentityCommandHandler : IRequestHandler<EnsureUserForIdentityCommand, User>
     {
         private readonly IMediator mediator;
+        private readonly ILogger logger;
 
         public EnsureUserForIdentityCommandHandler(
-            IMediator mediator)
+            IMediator mediator,
+            ILogger logger)
         {
             this.mediator = mediator;
+            this.logger = logger;
         }
 
         public async Task<User> Handle(EnsureUserForIdentityCommand request, CancellationToken cancellationToken)
@@ -23,19 +29,38 @@ namespace Dogger.Domain.Commands.Users.EnsureUserForIdentity
             if (string.IsNullOrWhiteSpace(request.IdentityName))
                 throw new InvalidOperationException("No identity name specified.");
 
-            var existingUser = await this.mediator.Send(
-                new GetUserByIdentityNameQuery(request.IdentityName),
-                cancellationToken);
+            var existingUser = await GetExistingIdentityAsync(request, cancellationToken);
             if (existingUser != null)
                 return existingUser;
 
-            var newUser = await this.mediator.Send(
-                new CreateUserForIdentityCommand(
-                    request.IdentityName,
-                    request.Email), 
-                cancellationToken);
+            try
+            {
+                var newUser = await this.mediator.Send(
+                    new CreateUserForIdentityCommand(
+                        request.IdentityName,
+                        request.Email),
+                    cancellationToken);
+                return newUser;
+            }
+            catch (DbUpdateException ex) when (ex.IsUniqueConstraintViolation())
+            {
+                var conflictingPullRequest = await GetExistingIdentityAsync(request, cancellationToken);
+                return conflictingPullRequest!;
+            }
+            catch (DbUpdateException dbe) when (dbe.InnerException is SqlException sqe)
+            {
+                this.logger.Error("An unknown database error occured while ensuring a identity with code {Code}.", sqe.Number);
+                throw;
+            }
+        }
 
-            return newUser;
+        private async Task<User?> GetExistingIdentityAsync(
+            EnsureUserForIdentityCommand request, 
+            CancellationToken cancellationToken)
+        {
+            return await this.mediator.Send(
+                new GetUserByIdentityNameQuery(request.IdentityName),
+                cancellationToken);
         }
     }
 }

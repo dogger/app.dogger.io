@@ -4,7 +4,7 @@ services:
   dogger-setup:
     build: 
         context: .
-        dockerfile: ./Dogger.Setup/Dockerfile
+        dockerfile: ./src/Dogger.Setup/Dockerfile
     image: docker.pkg.github.com/dogger/app.dogger.io/dogger-setup:${Dogfeed__Tag:-latest}
     networks:
     - network

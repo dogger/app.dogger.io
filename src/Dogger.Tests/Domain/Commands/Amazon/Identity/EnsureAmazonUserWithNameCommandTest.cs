@@ -4,8 +4,8 @@ using Amazon.IdentityManagement;
 using Amazon.IdentityManagement.Model;
 using Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonGroupWithName;
 using Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonUserWithName;
-using Dogger.Domain.Models;
 using Dogger.Infrastructure.Encryption;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -31,13 +31,10 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.AmazonUsers.AddAsync(new AmazonUser()
-                {
-                    Id = userId,
-                    Name = "some-name",
-                    EncryptedAccessKeyId = Array.Empty<byte>(),
-                    EncryptedSecretAccessKey = Array.Empty<byte>()
-                });
+                await dataContext.AmazonUsers.AddAsync(new TestAmazonUserBuilder()
+
+                    .WithName("some-name")
+                    .WithId(userId));
             });
 
             //Act
@@ -206,10 +203,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                 }
             });
 
-            var user = new Dogger.Domain.Models.User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder().Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);
@@ -226,7 +220,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
 
             await fakeAmazonIdentityManagementService
                 .Received(1)
-                .AddUserToGroupAsync(Arg.Is<AddUserToGroupRequest>(args => 
+                .AddUserToGroupAsync(Arg.Is<AddUserToGroupRequest>(args =>
                     args.GroupName == "some-group" &&
                     args.UserName == "some-name"));
         }
@@ -247,7 +241,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
             });
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<TestException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<TestException>(async () =>
                 await environment.Mediator.Send(new EnsureAmazonUserWithNameCommand("some-name")));
 
             //Assert
@@ -314,10 +308,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                 }
             });
 
-            var user = new Dogger.Domain.Models.User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder().Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);
@@ -365,10 +356,7 @@ namespace Dogger.Tests.Domain.Commands.Amazon.Identity
                 }
             });
 
-            var user = new Dogger.Domain.Models.User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder().Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);

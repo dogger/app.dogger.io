@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Clusters.GetClusterById;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,28 +23,16 @@ namespace Dogger.Tests.Domain.Queries.Clusters
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Clusters.AddAsync(new Cluster()
-                {
-                    Id = guid1
-                });
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithId(guid1));
 
-                await dataContext.Clusters.AddAsync(new Cluster()
-                {
-                    Id = guid2,
-                    Instances = new List<Instance>()
-                    {
-                        new Instance()
-                        {
-                            Name = "non-demo",
-                            PlanId = "dummy"
-                        },
-                        new Instance()
-                        {
-                            Name = "demo",
-                            PlanId = "dummy"
-                        }
-                    }
-                });
+                await dataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithId(guid2)
+                    .WithInstances(
+                        new TestInstanceBuilder()
+                            .WithName("non-demo"),
+                        new TestInstanceBuilder()
+                            .WithName("demo")));
             });
 
             //Act

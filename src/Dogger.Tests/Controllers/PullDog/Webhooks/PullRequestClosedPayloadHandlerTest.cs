@@ -2,7 +2,7 @@
 using Dogger.Controllers.PullDog.Webhooks.Handlers;
 using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest;
-using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -72,14 +72,10 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             await handler.HandleAsync(new WebhookPayloadContext(
                 null!,
                 null!,
-                new PullDogRepository()
-                {
-                    Handle = "1337"
-                },
-                new PullDogPullRequest()
-                {
-                    Handle = "1338"
-                }));
+                new TestPullDogRepositoryBuilder()
+                    .WithHandle("1337"),
+                new TestPullDogPullRequestBuilder()
+                    .WithHandle("1338")));
 
             //Assert
             await fakeMediator

@@ -7,7 +7,6 @@ using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
 using Dogger.Domain.Commands.PullDog.OverrideConfigurationForPullRequest;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsByHandle;
 using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromBranchReference;
 using Dogger.Domain.Queries.PullDog.GetRepositoriesForUser;
@@ -15,6 +14,7 @@ using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Encryption;
 using Dogger.Infrastructure.GitHub.Octokit;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +22,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Octokit;
 using RepositoriesResponse = Dogger.Controllers.PullDog.Api.RepositoriesResponse;
-using User = Dogger.Domain.Models.User;
 
 namespace Dogger.Tests.Controllers.PullDog
 {
@@ -38,10 +37,8 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(args =>
                     args.IdentityName == "some-identity-name"))
-                .Returns(new User()
-                {
-                    PullDogSettings = null
-                });
+                .Returns(new TestUserBuilder()
+                    .WithPullDogSettings(null));
 
             var fakeMapper = Substitute.For<IMapper>();
             var fakeAesEncryptionHelper = Substitute.For<IAesEncryptionHelper>();
@@ -72,10 +69,8 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(args =>
                     args.IdentityName == "some-identity-name"))
-                .Returns(new User()
-                {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestUserBuilder()
+                    .WithPullDogSettings());
 
             var fakeMapper = Substitute.For<IMapper>();
             var fakeAesEncryptionHelper = Substitute.For<IAesEncryptionHelper>();
@@ -113,8 +108,8 @@ namespace Dogger.Tests.Controllers.PullDog
             var fakeAesEncryptionHelper = Substitute.For<IAesEncryptionHelper>();
 
             var controller = new PullDogApiController(
-                fakeMediator, 
-                fakeMapper, 
+                fakeMediator,
+                fakeMapper,
                 fakeAesEncryptionHelper);
 
             //Act
@@ -161,10 +156,8 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
                     args.RepositoryHandle == "some-repository-handle"))
-                .Returns(new PullDogRepository()
-                {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder()
+                    .WithPullDogSettings());
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -199,10 +192,7 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
                     args.RepositoryHandle == "some-repository-handle"))
-                .Returns(new PullDogRepository()
-                {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetPullRequestDetailsByHandleQuery>(args =>
@@ -242,10 +232,7 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
                     args.RepositoryHandle == "some-repository-handle"))
-                .Returns(new PullDogRepository()
-                {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetPullRequestDetailsFromBranchReferenceQuery>(args =>
@@ -281,16 +268,13 @@ namespace Dogger.Tests.Controllers.PullDog
         public async Task Provision_ConfigurationOverridePresentInRequest_UpdatesPullRequestConfigurationOverride()
         {
             //Arrange
-            var fakePullDogPullRequest = new PullDogPullRequest();
+            var fakePullDogPullRequest = new TestPullDogPullRequestBuilder().Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
                     args.RepositoryHandle == "some-repository-handle"))
-                .Returns(new PullDogRepository()
-                {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<EnsurePullDogPullRequestCommand>(args =>
@@ -303,8 +287,7 @@ namespace Dogger.Tests.Controllers.PullDog
                 .Returns(new PullRequestBuilder()
                     .WithNumber(1337)
                     .WithState(ItemState.Open)
-                    .WithUser(new Octokit.User())
-                    .Build());
+                    .WithUser(new Octokit.User()));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -344,10 +327,7 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
                     args.RepositoryHandle == "some-repository-handle"))
-                .Returns(new PullDogRepository()
-                {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetPullRequestDetailsFromBranchReferenceQuery>(args =>
@@ -355,8 +335,7 @@ namespace Dogger.Tests.Controllers.PullDog
                 .Returns(new PullRequestBuilder()
                     .WithNumber(1337)
                     .WithState(ItemState.Open)
-                    .WithUser(new Octokit.User())
-                    .Build());
+                    .WithUser(new Octokit.User()));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -396,10 +375,7 @@ namespace Dogger.Tests.Controllers.PullDog
             fakeMediator
                 .Send(Arg.Is<GetRepositoryByHandleQuery>(args =>
                     args.RepositoryHandle == "some-repository-handle"))
-                .Returns(new PullDogRepository()
-                {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestPullDogRepositoryBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetPullRequestDetailsByHandleQuery>(args =>
@@ -407,8 +383,7 @@ namespace Dogger.Tests.Controllers.PullDog
                 .Returns(new PullRequestBuilder()
                     .WithNumber(1337)
                     .WithState(ItemState.Open)
-                    .WithUser(new Octokit.User())
-                    .Build());
+                    .WithUser(new Octokit.User()));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -447,7 +422,7 @@ namespace Dogger.Tests.Controllers.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             var fakeMapper = Substitute.For<IMapper>();
             var fakeAesEncryptionHelper = Substitute.For<IAesEncryptionHelper>();
@@ -479,15 +454,11 @@ namespace Dogger.Tests.Controllers.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User()
-                {
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        PoolSize = 1337,
-                        PlanId = "some-plan-id",
-                        EncryptedApiKey = new byte[] { 1 }
-                    }
-                });
+                .Returns(new TestUserBuilder()
+                    .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                        .WithPoolSize(1337)
+                        .WithEncryptedApiKey(new byte[] { 1 })
+                        .WithPlanId("some-plan-id")));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -523,7 +494,7 @@ namespace Dogger.Tests.Controllers.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             var fakeMapper = Substitute.For<IMapper>();
             var fakeAesEncryptionHelper = Substitute.For<IAesEncryptionHelper>();
@@ -549,13 +520,12 @@ namespace Dogger.Tests.Controllers.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User() {
-                    PullDogSettings = new PullDogSettings()
-                });
+                .Returns(new TestUserBuilder()
+                    .WithPullDogSettings());
 
             fakeMediator
                 .Send(Arg.Any<GetRepositoriesForUserQuery>())
-                .Returns(new [] {
+                .Returns(new[] {
                     new UserRepositoryResponse()
                 });
 

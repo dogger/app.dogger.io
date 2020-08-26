@@ -2,9 +2,9 @@
 using Dogger.Domain.Commands.PullDog.AddLabelToGitHubPullRequest;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Events.ServerProvisioningStarted;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
 using Dogger.Domain.Services.PullDog;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -26,10 +26,8 @@ namespace Dogger.Tests.Domain.Events
             //Act
             await handler.Handle(
                 new ServerProvisioningStartedEvent(
-                    new Instance()
-                    {
-                        PullDogPullRequest = null
-                    }),
+                    new TestInstanceBuilder()
+                        .WithPullDogPullRequest(null)),
                 default);
 
             //Assert
@@ -53,10 +51,8 @@ namespace Dogger.Tests.Domain.Events
             //Act
             await handler.Handle(
                 new ServerProvisioningStartedEvent(
-                    new Instance()
-                    {
-                        PullDogPullRequest = new PullDogPullRequest()
-                    }),
+                    new TestInstanceBuilder()
+                        .WithPullDogPullRequest(new TestPullDogPullRequestBuilder().Build())),
                 default);
 
             //Assert
@@ -83,16 +79,14 @@ namespace Dogger.Tests.Domain.Events
             //Act
             await handler.Handle(
                 new ServerProvisioningStartedEvent(
-                    new Instance()
-                    {
-                        PullDogPullRequest = new PullDogPullRequest()
-                    }),
+                    new TestInstanceBuilder()
+                        .WithPullDogPullRequest(new TestPullDogPullRequestBuilder().Build())),
                 default);
 
             //Assert
             await fakeMediator
                 .Received(1)
-                .Send(Arg.Is<AddLabelToGitHubPullRequestCommand>(args => 
+                .Send(Arg.Is<AddLabelToGitHubPullRequestCommand>(args =>
                     args.Label == "some-label"));
         }
     }

@@ -1,8 +1,9 @@
-﻿using Octokit;
+﻿using Dogger.Domain.Models.Builders;
+using Octokit;
 
 namespace Dogger.Infrastructure.GitHub.Octokit
 {
-    public class RepositoryBuilder
+    public class RepositoryBuilder : ModelBuilder<Repository>
     {
         private User? user;
         private string? name;
@@ -33,7 +34,7 @@ namespace Dogger.Infrastructure.GitHub.Octokit
             return this;
         }
 
-        public Repository Build()
+        public override Repository Build()
         {
             return new Repository(
                 default,

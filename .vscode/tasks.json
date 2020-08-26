@@ -1,0 +1,40 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "/p:GenerateFullPaths=true",
+                "${workspaceFolder}/Dogger.sln"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "test watch with coverage",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "--project",
+                "Dogger.sln",
+                "test",
+                "--collect:\"XPlat Code Coverage\"",
+                "--",
+                "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov"
+            ],
+            "problemMatcher": "$msCompile",
+            "isBackground": false,
+            "runOptions": {
+                "instanceLimit": 1,
+                "reevaluateOnRerun": true
+            }
+        }
+    ]
+}

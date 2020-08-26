@@ -1,11 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.RemoveLabelFromGitHubPullRequest;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
 using Dogger.Domain.Events.InstanceDeleted;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
 using Dogger.Domain.Services.PullDog;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -36,29 +35,13 @@ namespace Dogger.Tests.Domain.Events
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new Cluster(),
-                    PullDogPullRequest = new PullDogPullRequest()
-                    {
-                        Handle = "some-pull-request-handle",
-                        PullDogRepository = new PullDogRepository()
-                        {
-                            Handle = "some-repository-handle",
-                            PullDogSettings = new PullDogSettings()
-                            {
-                                PlanId = "dummy",
-                                User = new User()
-                                {
-                                    StripeCustomerId = "dummy"
-                                },
-                                EncryptedApiKey = Array.Empty<byte>()
-                            }
-                        }
-                    }
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster()
+                    .WithName("some-instance-name")
+                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                        .WithHandle("some-pull-request-handle")
+                        .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                            .WithHandle("some-repository-handle"))));
             });
 
             var createdInstance = await environment
@@ -102,29 +85,13 @@ namespace Dogger.Tests.Domain.Events
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new Cluster(),
-                    PullDogPullRequest = new PullDogPullRequest()
-                    {
-                        Handle = "some-pull-request-handle",
-                        PullDogRepository = new PullDogRepository()
-                        {
-                            Handle = "some-repository-handle",
-                            PullDogSettings = new PullDogSettings()
-                            {
-                                PlanId = "dummy",
-                                User = new User()
-                                {
-                                    StripeCustomerId = "dummy"
-                                },
-                                EncryptedApiKey = Array.Empty<byte>()
-                            }
-                        }
-                    }
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster()
+                    .WithName("some-instance-name")
+                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                        .WithHandle("some-pull-request-handle")
+                        .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                            .WithHandle("some-repository-handle"))));
             });
 
             var createdInstance = await environment

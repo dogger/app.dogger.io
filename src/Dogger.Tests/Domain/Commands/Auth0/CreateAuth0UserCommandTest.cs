@@ -5,7 +5,6 @@ using Dogger.Domain.Commands.Auth0.CreateAuth0User;
 using Dogger.Infrastructure.Auth.Auth0;
 using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
-using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -21,14 +20,12 @@ namespace Dogger.Tests.Domain.Commands.Auth0
         {
             //Arrange
             var fakeManagementApiClientFactory = Substitute.For<IOptionalService<IManagementApiClientFactory>>();
-            var fakeMediator = Substitute.For<IMediator>();
 
             var handler = new CreateAuth0UserCommandHandler(
-                fakeManagementApiClientFactory, 
-                fakeMediator);
+                fakeManagementApiClientFactory);
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await handler.Handle(new CreateAuth0UserCommand(Array.Empty<string>()), default));
 
             //Assert
@@ -62,20 +59,17 @@ namespace Dogger.Tests.Domain.Commands.Auth0
                         UserId = "user-3"
                     });
 
-            var fakeMediator = Substitute.For<IMediator>();
-
             var handler = new CreateAuth0UserCommandHandler(
-                fakeManagementApiClientFactory,
-                fakeMediator);
+                fakeManagementApiClientFactory);
 
             //Act
             var createdUser = await handler.Handle(
-                new CreateAuth0UserCommand(new []
+                new CreateAuth0UserCommand(new[]
                 {
                     "some-email-1@example.com",
                     "some-email-2@example.com",
                     "some-email-3@example.com"
-                }), 
+                }),
                 default);
 
             //Assert
@@ -84,14 +78,14 @@ namespace Dogger.Tests.Domain.Commands.Auth0
             await fakeManagementApiClient
                 .Received(2)
                 .LinkUserAccountAsync(
-                    "user-1", 
+                    "user-1",
                     Arg.Any<UserAccountLinkRequest>());
 
             await fakeManagementApiClient
                 .Received(1)
                 .LinkUserAccountAsync(
-                    "user-1", 
-                    Arg.Is<UserAccountLinkRequest>(args => 
+                    "user-1",
+                    Arg.Is<UserAccountLinkRequest>(args =>
                         args.UserId == "user-2"));
 
             await fakeManagementApiClient
@@ -136,14 +130,11 @@ namespace Dogger.Tests.Domain.Commands.Auth0
                         args.UserId == "user-3"))
                 .Throws(new TestException());
 
-            var fakeMediator = Substitute.For<IMediator>();
-
             var handler = new CreateAuth0UserCommandHandler(
-                fakeManagementApiClientFactory,
-                fakeMediator);
+                fakeManagementApiClientFactory);
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<TestException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<TestException>(async () =>
                 await handler.Handle(
                     new CreateAuth0UserCommand(new[]
                     {

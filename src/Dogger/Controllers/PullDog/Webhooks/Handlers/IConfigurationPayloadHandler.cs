@@ -5,7 +5,7 @@ namespace Dogger.Controllers.PullDog.Webhooks.Handlers
 {
     public interface IConfigurationPayloadHandler
     {
-        string Event { get; }
+        string[] Events { get; }
 
         bool CanHandle(WebhookPayload payload);
 

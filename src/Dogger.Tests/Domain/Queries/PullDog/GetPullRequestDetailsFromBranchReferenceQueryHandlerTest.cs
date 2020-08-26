@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromBranchReference;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Infrastructure.GitHub.Octokit;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -30,10 +30,7 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await handler.Handle(
                     new GetPullRequestDetailsFromBranchReferenceQuery(
-                        new PullDogRepository()
-                        {
-                            PullDogSettings = new PullDogSettings()
-                        }, 
+                        new TestPullDogRepositoryBuilder(),
                         "dummy"),
                     default));
 
@@ -54,10 +51,8 @@ namespace Dogger.Tests.Domain.Queries.PullDog
                 .Get(1338)
                 .Returns(new RepositoryBuilder()
                     .WithUser(new UserBuilder()
-                        .WithLogin("some-login")
-                        .Build())
-                    .WithName("some-repository-name")
-                    .Build());
+                        .WithLogin("some-login"))
+                    .WithName("some-repository-name"));
 
             fakeGitHubClient
                 .Search
@@ -77,12 +72,9 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             //Act
             var pullRequest = await handler.Handle(
                 new GetPullRequestDetailsFromBranchReferenceQuery(
-                    new PullDogRepository()
-                    {
-                        Handle = "1338",
-                        GitHubInstallationId = 1337,
-                        PullDogSettings = new PullDogSettings()
-                    },
+                    new TestPullDogRepositoryBuilder()
+                        .WithHandle("1338")
+                        .WithGitHubInstallationId(1337),
                     "some-branch-reference"),
                 default);
 

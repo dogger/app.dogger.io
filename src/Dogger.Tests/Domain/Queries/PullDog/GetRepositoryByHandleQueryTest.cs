@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using Dogger.Domain.Models;
+﻿using System.Threading.Tasks;
 using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
@@ -38,19 +37,9 @@ namespace Dogger.Tests.Domain.Queries.PullDog
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var pullDogRepository = new PullDogRepository()
-            {
-                Handle = "some-repository-handle",
-                PullDogSettings = new PullDogSettings()
-                {
-                    User = new User()
-                    {
-                        StripeCustomerId = "dummy"
-                    },
-                    PlanId = "dummy",
-                    EncryptedApiKey = Array.Empty<byte>()
-                }
-            };
+            var pullDogRepository = new TestPullDogRepositoryBuilder()
+                .WithHandle("some-repository-handle")
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.PullDogRepositories.AddAsync(pullDogRepository);

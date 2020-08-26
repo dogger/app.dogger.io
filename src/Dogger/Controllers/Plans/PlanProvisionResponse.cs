@@ -6,14 +6,14 @@ namespace Dogger.Controllers.Plans
     [ExcludeFromCodeCoverage]
     public class PlanProvisionResponse
     {
-        public JobStatusResponse? Status
+        public PlanProvisionResponse(JobStatusResponse status, string jobId)
         {
-            get; set;
+            this.Status = status;
+            this.JobId = jobId;
         }
 
-        public string? JobId
-        {
-            get; set;
-        }
+        public JobStatusResponse Status { get; }
+
+        public string JobId { get; }
     }
 }

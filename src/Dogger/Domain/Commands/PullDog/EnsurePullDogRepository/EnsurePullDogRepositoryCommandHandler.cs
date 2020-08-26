@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
+using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.PullDog.GetRepositoryByHandle;
 using MediatR;
 
@@ -27,11 +28,10 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogRepository
             if (existingRepository != null)
                 return existingRepository;
 
-            var newRepository = new PullDogRepository()
-            {
-                PullDogSettings = request.PullDogSettings,
-                Handle = request.RepositoryHandle
-            };
+            var newRepository = new PullDogRepositoryBuilder()
+                .WithPullDogSettings(request.PullDogSettings)
+                .WithHandle(request.RepositoryHandle)
+                .Build();
 
             await this.dataContext.PullDogRepositories.AddAsync(newRepository, cancellationToken);
             await this.dataContext.SaveChangesAsync(cancellationToken);

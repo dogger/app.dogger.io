@@ -16,7 +16,6 @@ using Dogger.Setup.Domain.Services;
 using Dogger.Setup.Tests.TestHelpers.Environments;
 using Dogger.Tests.TestHelpers;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -41,10 +40,9 @@ namespace Dogger.Setup.Tests.Domain.Services
             fakeMediator
                 .Send(Arg.Any<GetAllInstancesQuery>())
                 .Returns(
-                    new[]
+                    new Instance[]
                     {
-                        new Instance()
-                        {
+                        new Instance() {
                             Name = "new-instance"
                         }
                     });
@@ -98,14 +96,12 @@ namespace Dogger.Setup.Tests.Domain.Services
             fakeMediator
                 .Send(Arg.Any<GetAllInstancesQuery>())
                 .Returns(
-                    new[]
+                    new Instance[]
                     {
-                        new Instance()
-                        {
+                        new Instance() {
                             Name = "new-instance"
                         },
-                        new Instance()
-                        {
+                        new Instance() {
                             Name = "old-instance"
                         }
                     });
@@ -164,18 +160,15 @@ namespace Dogger.Setup.Tests.Domain.Services
             fakeMediator
                 .Send(Arg.Any<GetAllInstancesQuery>())
                 .Returns(
-                    new[]
+                    new Instance[]
                     {
-                        new Instance()
-                        {
+                        new Instance() {
                             Name = "some-random-instance"
                         },
-                        new Instance()
-                        {
+                        new Instance() {
                             Name = "main-attached-instance-from-load-balancer"
                         },
-                        new Instance()
-                        {
+                        new Instance() {
                             Name = "main-detached-instance-from-load-balancer"
                         }
                     });
@@ -333,24 +326,6 @@ namespace Dogger.Setup.Tests.Domain.Services
                 .Received()
                 .Send(Arg.Is<DeleteInstanceByNameCommand>(
                     arg => arg.Name == "new-instance"));
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
-        public async Task Dogfeed_DogfeedPrefixedEnvironmentVariable_MovesEnvironmentVariableIntoCurrentEnvironmentVariables()
-        {
-            //Arrange
-            Environment.SetEnvironmentVariable("DOGFEED_FOO", "some-value");
-
-            var configurationBuilder = new ConfigurationBuilder();
-
-            //Act
-            DogfeedService.MoveDogfeedPrefixedEnvironmentVariableIntoConfiguration(configurationBuilder);
-
-            //Assert
-            var configuration = configurationBuilder.Build();
-            var value = configuration["FOO"];
-            Assert.AreEqual("some-value", value);
         }
 
         [TestMethod]

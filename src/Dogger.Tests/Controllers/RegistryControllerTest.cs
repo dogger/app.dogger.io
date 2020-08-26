@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using Dogger.Controllers.Registry;
 using Dogger.Domain.Commands.Amazon.ElasticContainerRegistry.EnsureRepositoryWithName;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Amazon.ElasticContainerRegistry.GetRepositoryLoginByRepositoryName;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -22,19 +22,17 @@ namespace Dogger.Tests.Controllers
             //Arrange
             var fakeAuthenticatedUserId = Guid.NewGuid();
 
-            var readUser = new AmazonUser();
-            var writeUser = new AmazonUser();
+            var readUser = new TestAmazonUserBuilder().Build();
+            var writeUser = new TestAmazonUserBuilder().Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User()
-                {
-                    Id = fakeAuthenticatedUserId
-                });
+                .Returns(new TestUserBuilder()
+                    .WithId(fakeAuthenticatedUserId));
 
             fakeMediator
-                .Send(Arg.Is<EnsureRepositoryWithNameCommand>(args => 
+                .Send(Arg.Is<EnsureRepositoryWithNameCommand>(args =>
                     args.Name == fakeAuthenticatedUserId.ToString()))
                 .Returns(new RepositoryResponse(
                     "some-repository-name",
@@ -66,8 +64,8 @@ namespace Dogger.Tests.Controllers
         public async Task GetLoginForDemo_NoUserAuthenticated_ReturnsLoginCodeForRepositoryWriteUser()
         {
             //Arrange
-            var readUser = new AmazonUser();
-            var writeUser = new AmazonUser();
+            var readUser = new TestAmazonUserBuilder().Build();
+            var writeUser = new TestAmazonUserBuilder().Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator

@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Payment.SetActivePaymentMethodForUser;
 using Dogger.Domain.Commands.Users.CreateUserForIdentity;
-using Dogger.Domain.Models;
 using Dogger.Infrastructure.Ioc;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,16 +23,16 @@ namespace Dogger.Tests.Domain.Commands.Payment.SetActivePaymentMethodForUser
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<NoStripeCustomerIdException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<NoStripeCustomerIdException>(async () =>
                 await environment.Mediator.Send(
                     new SetActivePaymentMethodForUserCommand(
-                        new User(), 
+                        new TestUserBuilder(),
                         "some-payment-method-id")));
 
             //Assert
             Assert.IsNotNull(exception);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_ExistingPaymentMethodsPresent_OldPaymentMethodsRemoved()
@@ -64,7 +64,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.SetActivePaymentMethodForUser
 
             //Assert
             var refreshedExistingPaymentMethod = await GetPaymentMethodForCustomerAsync(
-                paymentMethodService.Value, 
+                paymentMethodService.Value,
                 user.StripeCustomerId,
                 existingPaymentMethod.Id);
 
@@ -115,7 +115,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.SetActivePaymentMethodForUser
 
             Assert.AreEqual(stripeCustomer.InvoiceSettings.DefaultPaymentMethodId, newPaymentMethod.Id);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_NoPaymentMethodsPresent_DefaultPaymentMethodChangedToAddedMethod()

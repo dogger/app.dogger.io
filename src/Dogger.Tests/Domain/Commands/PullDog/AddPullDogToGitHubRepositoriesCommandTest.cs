@@ -1,8 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.AddPullDogToGitHubRepositories;
-using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
@@ -20,15 +19,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var user = new User()
-            {
-                StripeCustomerId = "dummy",
-                PullDogSettings = new PullDogSettings()
-                {
-                    EncryptedApiKey = Array.Empty<byte>(),
-                    PlanId = "dummy"
-                }
-            };
+            var user = new TestUserBuilder()
+                .WithPullDogSettings()
+                .Build();
             await environment.DataContext.Users.AddAsync(user);
             await environment.DataContext.SaveChangesAsync();
 
@@ -38,7 +31,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 user.PullDogSettings,
                 new[]
                 {
-                    1338L, 
+                    1338L,
                     1339L
                 }));
 
@@ -52,7 +45,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 Assert.AreEqual(2, repositories.Count);
 
                 Assert.IsTrue(repositories.Any(repository =>
-                    repository.GitHubInstallationId == 1337 && 
+                    repository.GitHubInstallationId == 1337 &&
                     repository.PullDogSettingsId == user.PullDogSettings.Id &&
                     repository.Handle == "1338"));
 

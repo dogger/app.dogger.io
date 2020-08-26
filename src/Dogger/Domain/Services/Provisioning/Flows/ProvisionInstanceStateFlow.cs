@@ -38,24 +38,23 @@ namespace Dogger.Domain.Services.Provisioning.Flows
         public async Task<IProvisioningState?> GetNextStateAsync(
             NextStateContext context)
         {
-            switch (context.CurrentState)
+            return context.CurrentState switch
             {
-                case ICreateLightsailInstanceState createLightsailInstanceState:
-                    return TransitionFromCreateToInstall(context.StateFactory, createLightsailInstanceState);
+                ICreateLightsailInstanceState createLightsailInstanceState =>
+                    TransitionFromCreateToInstall(context.StateFactory, createLightsailInstanceState),
 
-                case IInstallSoftwareOnInstanceState installDockerOnInstanceState:
-                    return TransitionFromInstallToComplete(context.StateFactory, installDockerOnInstanceState);
+                IInstallSoftwareOnInstanceState installDockerOnInstanceState =>
+                    TransitionFromInstallToComplete(context.StateFactory, installDockerOnInstanceState),
 
-                case ICompleteInstanceSetupState _:
-                    return null;
+                ICompleteInstanceSetupState _ =>
+                    null,
 
-                default:
-                    throw new UnknownFlowStateException($"Could not determine the next state for a state of type {context.CurrentState.GetType().FullName}.");
-            }
+                _ => throw new UnknownFlowStateException($"Could not determine the next state for a state of type {context.CurrentState.GetType().FullName}."),
+            };
         }
 
         private IProvisioningState? TransitionFromInstallToComplete(
-            IProvisioningStateFactory stateFactory, 
+            IProvisioningStateFactory stateFactory,
             IInstallSoftwareOnInstanceState installSoftwareOnInstanceState)
         {
             return stateFactory.Create<CompleteInstanceSetupState>(state =>
@@ -68,7 +67,7 @@ namespace Dogger.Domain.Services.Provisioning.Flows
         }
 
         private IProvisioningState TransitionFromCreateToInstall(
-            IProvisioningStateFactory stateFactory, 
+            IProvisioningStateFactory stateFactory,
             ICreateLightsailInstanceState createLightsailInstanceState)
         {
             return stateFactory.Create<InstallSoftwareOnInstanceState>(state =>

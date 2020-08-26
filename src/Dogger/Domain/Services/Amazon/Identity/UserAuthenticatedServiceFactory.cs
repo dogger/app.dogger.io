@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Amazon;
 using Amazon.Runtime;
 using Dogger.Domain.Queries.Amazon.Identity.GetAmazonUserByName;
@@ -23,6 +24,9 @@ namespace Dogger.Domain.Services.Amazon.Identity
         public async Task<T> CreateAsync(string amazonUserName)
         {
             var user = await this.mediator.Send(new GetAmazonUserByNameQuery(amazonUserName));
+            if (user == null)
+                throw new InvalidOperationException("Could not find Amazon user.");
+
             return OnCreate(
                 new BasicAWSCredentials(
                     await this.aesEncryptionHelper.DecryptAsync(user.EncryptedAccessKeyId),

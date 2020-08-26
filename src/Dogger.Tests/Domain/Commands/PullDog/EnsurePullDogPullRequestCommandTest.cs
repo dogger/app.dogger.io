@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest;
-using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
@@ -19,26 +18,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var pullDogRepository = new PullDogRepository()
-            {
-                Handle = "some-repository-handle",
-                PullDogSettings = new PullDogSettings()
-                {
-                    User = new User()
-                    {
-                        StripeCustomerId = "dummy"
-                    },
-                    PlanId = "dummy",
-                    EncryptedApiKey = Array.Empty<byte>()
-                }
-            };
+            var pullDogRepository = new TestPullDogRepositoryBuilder()
+                .WithHandle("some-repository-handle")
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.PullDogPullRequests.AddAsync(new PullDogPullRequest()
-                {
-                    Handle = "some-pull-request-handle",
-                    PullDogRepository = pullDogRepository
-                });
+                await dataContext.PullDogPullRequests.AddAsync(new TestPullDogPullRequestBuilder()
+                    .WithHandle("some-pull-request-handle")
+                    .WithPullDogRepository(pullDogRepository));
             });
 
             //Act
@@ -62,19 +49,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var pullDogRepository = new PullDogRepository()
-            {
-                Handle = "some-repository-handle",
-                PullDogSettings = new PullDogSettings()
-                {
-                    User = new User()
-                    {
-                        StripeCustomerId = "dummy"
-                    },
-                    PlanId = "dummy",
-                    EncryptedApiKey = Array.Empty<byte>()
-                }
-            };
+            var pullDogRepository = new TestPullDogRepositoryBuilder()
+                .WithHandle("some-repository-handle")
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 Assert.AreEqual(0, await dataContext.PullDogPullRequests.CountAsync());

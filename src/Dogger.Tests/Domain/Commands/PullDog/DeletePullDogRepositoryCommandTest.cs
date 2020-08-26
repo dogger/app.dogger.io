@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
-using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
@@ -23,30 +21,11 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.PullDogRepositories.AddAsync(new PullDogRepository()
-                {
-                    Handle = "some-handle",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        EncryptedApiKey = Array.Empty<byte>(),
-                        PlanId = "dummy",
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        }
-                    },
-                    PullRequests = new List<PullDogPullRequest>()
-                    {
-                        new PullDogPullRequest()
-                        {
-                            Handle = "dummy-1"
-                        },
-                        new PullDogPullRequest()
-                        {
-                            Handle = "dummy-2"
-                        }
-                    }
-                });
+                await dataContext.PullDogRepositories.AddAsync(new TestPullDogRepositoryBuilder()
+                    .WithHandle("some-handle")
+                    .WithPullRequests(
+                        new TestPullDogPullRequestBuilder(),
+                        new TestPullDogPullRequestBuilder().Build()));
             });
 
             Assert.AreEqual(1, await environment.DataContext.PullDogRepositories.AsQueryable().CountAsync());
@@ -73,47 +52,12 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.PullDogRepositories.AddAsync(new PullDogRepository()
-                {
-                    Handle = "dummy-1",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        EncryptedApiKey = Array.Empty<byte>(),
-                        PlanId = "dummy",
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        }
-                    },
-                });
+                await dataContext.PullDogRepositories.AddAsync(new TestPullDogRepositoryBuilder().Build());
 
-                await dataContext.PullDogRepositories.AddAsync(new PullDogRepository()
-                {
-                    Handle = "some-handle",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        EncryptedApiKey = Array.Empty<byte>(),
-                        PlanId = "dummy",
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        }
-                    },
-                });
+                await dataContext.PullDogRepositories.AddAsync(new TestPullDogRepositoryBuilder()
+                    .WithHandle("some-handle"));
 
-                await dataContext.PullDogRepositories.AddAsync(new PullDogRepository()
-                {
-                    Handle = "dummy-2",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        EncryptedApiKey = Array.Empty<byte>(),
-                        PlanId = "dummy",
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        }
-                    },
-                });
+                await dataContext.PullDogRepositories.AddAsync(new TestPullDogRepositoryBuilder().Build());
             });
 
             Assert.AreEqual(3, await environment.DataContext.PullDogRepositories.AsQueryable().CountAsync());

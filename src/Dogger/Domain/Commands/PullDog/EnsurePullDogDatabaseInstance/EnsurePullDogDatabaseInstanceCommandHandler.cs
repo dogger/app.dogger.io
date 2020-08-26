@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
+using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest;
 using MediatR;
 using Microsoft.Extensions.Hosting;
@@ -66,15 +67,14 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance
                     return existingInstance;
                 }
 
-                var newInstance = new Instance()
-                {
-                    Name = $"{hostEnvironment.EnvironmentName}_pull-dog_{user.Id}_{request.PullRequest.Id}",
-                    Cluster = cluster,
-                    IsProvisioned = false,
-                    PlanId = settings.PlanId,
-                    PullDogPullRequest = pullRequest,
-                    ExpiresAtUtc = expiryTime
-                };
+                var newInstance = new InstanceBuilder()
+                    .WithName($"{hostEnvironment.EnvironmentName}_pull-dog_{user.Id}_{request.PullRequest.Id}")
+                    .WithCluster(cluster)
+                    .WithProvisionedStatus(false)
+                    .WithPlanId(settings.PlanId)
+                    .WithPullDogPullRequest(pullRequest)
+                    .WithExpiredDate(expiryTime)
+                    .Build();
                 pullRequest.Instance = newInstance;
 
                 cluster.Instances.Add(newInstance);

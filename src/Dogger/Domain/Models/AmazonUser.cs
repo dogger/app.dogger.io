@@ -2,8 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Destructurama.Attributed;
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-
 namespace Dogger.Domain.Models
 {
     [ExcludeFromCodeCoverage]
@@ -11,16 +9,17 @@ namespace Dogger.Domain.Models
     {
         public Guid Id { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [NotLogged]
-        public byte[] EncryptedAccessKeyId { get; set; }
+        public byte[] EncryptedAccessKeyId { get; set; } = null!;
 
         [NotLogged]
-        public byte[] EncryptedSecretAccessKey { get; set; }
+        public byte[] EncryptedSecretAccessKey { get; set; } = null!;
 
         [NotLogged]
         public User? User { get; set; }
         public Guid? UserId { get; set; }
     }
+
 }

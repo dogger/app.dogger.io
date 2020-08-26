@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.OverrideConfigurationForPullRequest;
-using Dogger.Domain.Models;
 using Dogger.Domain.Services.PullDog;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
@@ -21,23 +20,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var pullRequest = new PullDogPullRequest()
-            {
-                Handle = "some-handle",
-                PullDogRepository = new PullDogRepository()
-                {
-                    Handle = "dummy",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        EncryptedApiKey = Array.Empty<byte>(),
-                        PlanId = "dummy",
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        }
-                    }
-                }
-            };
+            var pullRequest = new TestPullDogPullRequestBuilder()
+                .WithHandle("some-handle")
+                .WithPullDogRepository(new TestPullDogRepositoryBuilder().Build())
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -50,11 +36,11 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 new ConfigurationFileOverride()
                 {
                     BuildArguments = new Dictionary<string, string>()
-                {
                     {
-                        "foo", "bar"
+                        {
+                            "foo", "bar"
+                        }
                     }
-                }
                 }));
 
             //Assert

@@ -59,6 +59,7 @@ dotnet_naming_symbols.constant_fields.required_modifiers          = const
 ###############################
 # C# Coding Conventions       #
 ###############################
+
 [*.cs]
 # var preferences
 csharp_style_var_for_built_in_types = true:silent
@@ -156,7 +157,7 @@ dotnet_diagnostic.CA1819.severity = none
 dotnet_diagnostic.CS8618.severity = warning
 
 # CA2227: Collection properties should be read only
-dotnet_diagnostic.CA2227.severity = suggestion
+dotnet_diagnostic.CA2227.severity = none
 
 # CA1724: Type names should not match namespaces
 dotnet_diagnostic.CA1724.severity = suggestion
@@ -211,3 +212,11 @@ dotnet_diagnostic.CA1308.severity = none
 
 # CS0436: Type conflicts with imported type
 dotnet_diagnostic.CS0436.severity = none
+
+dotnet_diagnostic.CA1032.severity = none
+
+[src/Dogger/Domain/Models/*.cs]
+dotnet_diagnostic.CS8618.severity = none
+
+[src/Dogger{.Tests,.Setup.Tests}/**.cs]
+dotnet_diagnostic.CS1998.severity = none

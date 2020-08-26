@@ -7,11 +7,11 @@ using Dogger.Controllers.Plans;
 using Dogger.Domain.Commands.Instances.ProvisionDemoInstance;
 using Dogger.Domain.Commands.Instances.ProvisionInstanceForUser;
 using Dogger.Domain.Commands.Users.EnsureUserForIdentity;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Payment.GetActivePaymentMethodForUser;
 using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Domain.Queries.Plans.GetPlanById;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +39,7 @@ namespace Dogger.Tests.Controllers
                     new Plan(
                         "some-bundle-id",
                         1337,
-                        new Bundle(), 
+                        new Bundle(),
                         Array.Empty<PullDogPlan>())
                 });
 
@@ -106,10 +106,8 @@ namespace Dogger.Tests.Controllers
             fakeMediator
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(
                     args => args.IdentityName == "some-identity-name"))
-                .Returns(new User()
-                {
-                    Id = fakeAuthenticatedUserId
-                });
+                .Returns(new TestUserBuilder()
+                    .WithId(fakeAuthenticatedUserId));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -208,10 +206,8 @@ namespace Dogger.Tests.Controllers
             fakeMediator
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(
                     args => args.IdentityName == "some-identity-name"))
-                .Returns(new User()
-                {
-                    Id = signedInUserId
-                });
+                .Returns(new TestUserBuilder()
+                    .WithId(signedInUserId));
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
@@ -252,10 +248,8 @@ namespace Dogger.Tests.Controllers
             fakeMediator
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(
                     args => args.IdentityName == "some-identity-name"))
-                .Returns(new User()
-                {
-                    Id = signedInUserId
-                });
+                .Returns(new TestUserBuilder()
+                    .WithId(signedInUserId));
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
@@ -301,10 +295,8 @@ namespace Dogger.Tests.Controllers
             fakeMediator
                 .Send(Arg.Is<EnsureUserForIdentityCommand>(
                     args => args.IdentityName == "some-identity-name"))
-                .Returns(new User()
-                {
-                    Id = signedInUserId
-                });
+                .Returns(new TestUserBuilder()
+                    .WithId(signedInUserId));
 
             var fakeMapper = Substitute.For<IMapper>();
 

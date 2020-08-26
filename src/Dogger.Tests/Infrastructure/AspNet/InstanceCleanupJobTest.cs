@@ -4,6 +4,7 @@ using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Queries.Instances.GetExpiredInstances;
 using Dogger.Infrastructure.AspNet;
 using Dogger.Infrastructure.Time;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,14 +26,11 @@ namespace Dogger.Tests.Infrastructure.AspNet
                 .Send(Arg.Any<GetExpiredInstancesQuery>())
                 .Returns(new Dogger.Domain.Models.Instance[]
                 {
-                    new Dogger.Domain.Models.Instance()
-                    {
-                        Name = "some-instance-name-1"
-                    },
-                    new Dogger.Domain.Models.Instance()
-                    {
-                        Name = "some-instance-name-2"
-                    }
+                    new TestInstanceBuilder()
+                        .WithName("some-instance-name-1"),
+                    new TestInstanceBuilder()
+                        .WithName("some-instance-name-2")
+                        .Build()
                 });
 
             var fakeServiceProvider = GetServiceProviderForTimedServiceTesting();
@@ -109,13 +107,15 @@ namespace Dogger.Tests.Infrastructure.AspNet
         {
             var fakeTime = Substitute.For<ITime>();
             fakeTime
-                .CreateTimerAsync(
+                .CreateTimer(
                     Arg.Any<TimeSpan>(),
                     Arg.Any<Func<Task>>())
-                .Returns(async callInfo =>
+                .Returns(callInfo =>
                 {
                     var callback = callInfo.Arg<Func<Task>>();
-                    await callback();
+                    callback()
+                        .GetAwaiter()
+                        .GetResult();
 
                     return null;
                 });

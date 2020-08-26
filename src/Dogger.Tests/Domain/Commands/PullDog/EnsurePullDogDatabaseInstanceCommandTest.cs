@@ -5,6 +5,7 @@ using Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest;
 using Dogger.Domain.Services.PullDog;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -31,38 +32,22 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 }
             });
 
-            var user = new User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder().Build();
 
-            var pullDogPullRequest = new PullDogPullRequest()
-            {
-                Handle = "dummy",
-                PullDogRepository = new PullDogRepository()
-                {
-                    Handle = "dummy",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        User = user,
-                        PoolSize = 1,
-                        PlanId = "dummy",
-                        EncryptedApiKey = Array.Empty<byte>()
-                    }
-                }
-            };
+            var pullDogPullRequest = new TestPullDogPullRequestBuilder()
+                .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                    .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                        .WithUser(user)
+                        .WithPoolSize(1)))
+                .Build();
 
-            var oldInstance = new Instance()
-            {
-                Name = "existing-instance",
-                PlanId = "dummy",
-                PullDogPullRequest = pullDogPullRequest,
-                Cluster = new Cluster()
-                {
-                    Name = "pull-dog",
-                    User = user
-                }
-            };
+            var oldInstance = new TestInstanceBuilder()
+                .WithName("existing-instance")
+                .WithPullDogPullRequest(pullDogPullRequest)
+                .WithCluster(new TestClusterBuilder()
+                    .WithName("pull-dog")
+                    .WithUser(user))
+                .Build();
 
             await environment.DataContext.Instances.AddAsync(oldInstance);
             await environment.DataContext.SaveChangesAsync();
@@ -106,35 +91,16 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 }
             });
 
-            var pullDogPullRequest = new PullDogPullRequest()
-            {
-                Handle = "dummy",
-                PullDogRepository = new PullDogRepository()
-                {
-                    Handle = "dummy",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        },
-                        PoolSize = 0,
-                        PlanId = "dummy",
-                        EncryptedApiKey = Array.Empty<byte>()
-                    }
-                }
-            };
+            var pullDogPullRequest = new TestPullDogPullRequestBuilder()
+                .WithPullDogRepository(new TestPullDogRepositoryBuilder().Build())
+                .Build();
 
-            var oldInstance = new Instance()
-            {
-                Name = "existing-instance",
-                PlanId = "dummy",
-                PullDogPullRequest = pullDogPullRequest,
-                Cluster = new Cluster()
-                {
-                    Id = DataContext.PullDogDemoClusterId
-                }
-            };
+            var oldInstance = new TestInstanceBuilder()
+                .WithName("existing-instance")
+                .WithPullDogPullRequest(pullDogPullRequest)
+                .WithCluster(new TestClusterBuilder()
+                    .WithId(DataContext.PullDogDemoClusterId))
+                .Build();
 
             await environment.DataContext.Instances.AddAsync(oldInstance);
             await environment.DataContext.SaveChangesAsync();
@@ -176,35 +142,16 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 }
             });
 
-            var pullDogPullRequest = new PullDogPullRequest()
-            {
-                Handle = "dummy",
-                PullDogRepository = new PullDogRepository()
-                {
-                    Handle = "dummy",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        },
-                        PoolSize = 0,
-                        PlanId = "dummy",
-                        EncryptedApiKey = Array.Empty<byte>()
-                    }
-                }
-            };
+            var pullDogPullRequest = new TestPullDogPullRequestBuilder()
+                .WithPullDogRepository(new TestPullDogRepositoryBuilder().Build())
+                .Build();
 
-            var oldInstance = new Instance()
-            {
-                Name = "existing-instance",
-                PlanId = "dummy",
-                PullDogPullRequest = pullDogPullRequest,
-                Cluster = new Cluster()
-                {
-                    Id = DataContext.PullDogDemoClusterId
-                }
-            };
+            var oldInstance = new TestInstanceBuilder()
+                .WithName("existing-instance")
+                .WithPullDogPullRequest(pullDogPullRequest)
+                .WithCluster(new TestClusterBuilder()
+                    .WithId(DataContext.PullDogDemoClusterId))
+                .Build();
 
             await environment.DataContext.Instances.AddAsync(oldInstance);
             await environment.DataContext.SaveChangesAsync();
@@ -241,30 +188,15 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_NoExistingClusterInstanceFoundAndDemoUser_ReturnsNewPersistedInstanceWithProperValuesAndExpiryOfAnHour()
         {
             //Arrange
-            var pullDogPullRequest = new PullDogPullRequest()
-            {
-                Handle = "dummy",
-                PullDogRepository = new PullDogRepository()
-                {
-                    Handle = "dummy",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        User = new User()
-                        {
-                            StripeCustomerId = "dummy"
-                        },
-                        PoolSize = 0,
-                        PlanId = "dummy",
-                        EncryptedApiKey = Array.Empty<byte>()
-                    }
-                }
-            };
+            var pullDogPullRequest = new TestPullDogPullRequestBuilder()
+                .WithPullDogRepository(new TestPullDogRepositoryBuilder().Build())
+                .Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Is<GetAvailableClusterFromPullRequestQuery>(args =>
                     args.PullRequest == pullDogPullRequest))
-                .Returns(new Cluster());
+                .Returns(new TestClusterBuilder().Build());
 
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {
@@ -299,35 +231,21 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_NoExistingClusterInstanceFoundAndPaidUser_ReturnsNewPersistedInstanceWithProperValuesAndExpiry()
         {
             //Arrange
-            var user = new User()
-            {
-                StripeCustomerId = "dummy"
-            };
-            var pullDogPullRequest = new PullDogPullRequest()
-            {
-                Handle = "dummy",
-                PullDogRepository = new PullDogRepository()
-                {
-                    Handle = "dummy",
-                    PullDogSettings = new PullDogSettings()
-                    {
-                        User = user,
-                        PoolSize = 1,
-                        PlanId = "dummy",
-                        EncryptedApiKey = Array.Empty<byte>()
-                    }
-                }
-            };
+            var user = new TestUserBuilder().Build();
+            var pullDogPullRequest = new TestPullDogPullRequestBuilder()
+                .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                    .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                        .WithUser(user)
+                        .WithPoolSize(1)))
+                .Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Is<GetAvailableClusterFromPullRequestQuery>(args =>
                     args.PullRequest == pullDogPullRequest))
-                .Returns(new Cluster()
-                {
-                    Name = "pull-dog",
-                    User = user
-                });
+                .Returns(new TestClusterBuilder()
+                    .WithName("pull-dog")
+                    .WithUser(user));
 
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
             {

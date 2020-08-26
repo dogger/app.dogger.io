@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Infrastructure.GitHub.Octokit;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -30,17 +30,12 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 Substitute.For<IMediator>());
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await handler.Handle(
                     new UpsertPullRequestCommentCommand(
-                        new PullDogPullRequest()
-                        {
-                            PullDogRepository = new PullDogRepository()
-                            {
-                                GitHubInstallationId = null,
-                                PullDogSettings = new PullDogSettings()
-                            }
-                        },
+                        new TestPullDogPullRequestBuilder()
+                            .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                                .WithGitHubInstallationId(null)),
                         "some-content"),
                     default));
 
@@ -63,15 +58,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await handler.Handle(
                     new UpsertPullRequestCommentCommand(
-                        new PullDogPullRequest()
-                        {
-                            PullDogRepository = new PullDogRepository()
-                            {
-                                Handle = "invalid-handle",
-                                GitHubInstallationId = 1337,
-                                PullDogSettings = new PullDogSettings()
-                            }
-                        },
+                        new TestPullDogPullRequestBuilder()
+                            .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                                .WithHandle("invalid-handle")
+                                .WithGitHubInstallationId(1337)),
                         "some-content"),
                     default));
 
@@ -94,16 +84,11 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await handler.Handle(
                     new UpsertPullRequestCommentCommand(
-                        new PullDogPullRequest()
-                        {
-                            Handle = "invalid-handle",
-                            PullDogRepository = new PullDogRepository()
-                            {
-                                Handle = "1337",
-                                GitHubInstallationId = 1337,
-                                PullDogSettings = new PullDogSettings()
-                            }
-                        },
+                        new TestPullDogPullRequestBuilder()
+                            .WithHandle("invalid-handle")
+                            .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                                .WithHandle("1337")
+                                .WithGitHubInstallationId(1337)),
                         "some-content"),
                     default));
 
@@ -158,16 +143,11 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Act
             await handler.Handle(
                 new UpsertPullRequestCommentCommand(
-                    new PullDogPullRequest()
-                    {
-                        Handle = "1337",
-                        PullDogRepository = new PullDogRepository()
-                        {
-                            Handle = "1337",
-                            GitHubInstallationId = 1337,
-                            PullDogSettings = new PullDogSettings()
-                        }
-                    },
+                    new TestPullDogPullRequestBuilder()
+                        .WithHandle("1337")
+                        .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                            .WithHandle("1337")
+                            .WithGitHubInstallationId(1337)),
                     "some-content"),
                 default);
 
@@ -229,16 +209,11 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Act
             await handler.Handle(
                 new UpsertPullRequestCommentCommand(
-                    new PullDogPullRequest()
-                    {
-                        Handle = "1337",
-                        PullDogRepository = new PullDogRepository()
-                        {
-                            Handle = "1337",
-                            GitHubInstallationId = 1337,
-                            PullDogSettings = new PullDogSettings()
-                        }
-                    },
+                    new TestPullDogPullRequestBuilder()
+                        .WithHandle("1337")
+                        .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                            .WithHandle("1337")
+                            .WithGitHubInstallationId(1337)),
                     "some-content"),
                 default);
 
@@ -278,7 +253,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 .GetAllForIssue(
                     Arg.Any<long>(),
                     Arg.Any<int>())
-                .Returns(new []
+                .Returns(new[]
                 {
                     CreateIssueDto(CreateUserDto(1337)),
                     CreateIssueDto(CreateUserDto(64123634)),
@@ -292,16 +267,11 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Act
             await handler.Handle(
                 new UpsertPullRequestCommentCommand(
-                    new PullDogPullRequest()
-                    {
-                        Handle = "1337",
-                        PullDogRepository = new PullDogRepository()
-                        {
-                            Handle = "1337",
-                            GitHubInstallationId = 1337,
-                            PullDogSettings = new PullDogSettings()
-                        }
-                    },
+                    new TestPullDogPullRequestBuilder()
+                        .WithHandle("1337")
+                        .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                            .WithHandle("1337")
+                            .WithGitHubInstallationId(1337)),
                     "some-content"),
                 default);
 
@@ -354,16 +324,11 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Act
             await handler.Handle(
                 new UpsertPullRequestCommentCommand(
-                    new PullDogPullRequest()
-                    {
-                        Handle = "1337",
-                        PullDogRepository = new PullDogRepository()
-                        {
-                            Handle = "1337",
-                            GitHubInstallationId = 1337,
-                            PullDogSettings = new PullDogSettings()
-                        }
-                    },
+                    new TestPullDogPullRequestBuilder()
+                        .WithHandle("1337")
+                        .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                            .WithHandle("1337")
+                            .WithGitHubInstallationId(1337)),
                     "some-content"),
                 default);
 

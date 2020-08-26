@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.EnsurePullDogRepository;
-using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
@@ -19,20 +18,12 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            var pullDogSettings = new PullDogSettings()
-            {
-                User = new User()
-                {
-                    StripeCustomerId = "dummy"
-                },
-                PlanId = "dummy",
-                EncryptedApiKey = Array.Empty<byte>()
-            };
-            var pullDogRepository = new PullDogRepository()
-            {
-                Handle = "some-repository-handle",
-                PullDogSettings = pullDogSettings
-            };
+            var pullDogSettings = new TestPullDogSettingsBuilder().Build();
+            var pullDogRepository = new TestPullDogRepositoryBuilder()
+                .WithHandle("some-repository-handle")
+                .WithPullDogSettings(pullDogSettings)
+                .Build();
+
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.PullDogRepositories.AddAsync(pullDogRepository);
@@ -61,15 +52,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             //Act
             var repository = await environment.Mediator.Send(new EnsurePullDogRepositoryCommand(
-                new PullDogSettings()
-                {
-                    User = new User()
-                    {
-                        StripeCustomerId = "dummy"
-                    },
-                    PlanId = "dummy",
-                    EncryptedApiKey = Array.Empty<byte>()
-                },
+                new TestPullDogSettingsBuilder(),
                 "some-repository-handle"));
 
             //Assert

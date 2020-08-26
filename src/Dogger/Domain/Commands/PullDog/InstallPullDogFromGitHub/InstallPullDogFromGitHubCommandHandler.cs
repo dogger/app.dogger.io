@@ -8,9 +8,8 @@ using Dogger.Domain.Commands.PullDog.AddPullDogToGitHubRepositories;
 using Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Auth0.GetAuth0UserFromGitHubUserId;
-using Dogger.Infrastructure.Encryption;
 using Dogger.Infrastructure.GitHub;
-using Dogger.Infrastructure.Ioc;
+using Dogger.Infrastructure.Slack;
 using MediatR;
 using Octokit;
 using Slack.Webhooks;
@@ -21,22 +20,16 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
     {
         private readonly IGitHubClientFactory gitHubClientFactory;
         private readonly IMediator mediator;
-        private readonly ISlackClient? slackClient;
-        private readonly IAesEncryptionHelper aesEncryptionHelper;
 
         private readonly DataContext dataContext;
 
         public InstallPullDogFromGitHubCommandHandler(
             IGitHubClientFactory gitHubClientFactory,
             IMediator mediator,
-            IOptionalService<ISlackClient> slackClient,
-            IAesEncryptionHelper aesEncryptionHelper,
             DataContext dataContext)
         {
             this.gitHubClientFactory = gitHubClientFactory;
             this.mediator = mediator;
-            this.slackClient = slackClient.Value;
-            this.aesEncryptionHelper = aesEncryptionHelper;
             this.dataContext = dataContext;
         }
 
@@ -46,34 +39,26 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
             var currentUser = await client.User.Current();
             var emails = await client.User.Email.GetAll();
 
-            if (this.slackClient != null)
-            {
-                await this.slackClient.PostAsync(new SlackMessage()
+            await this.mediator.Send(
+                new SendSlackMessageCommand("Pull Dog was installed by a user :sunglasses:")
                 {
-                    Text = "Pull Dog was installed by a user.",
-                    Attachments = new List<SlackAttachment>()
+                    Fields = new List<SlackField>()
                     {
-                        new SlackAttachment()
+                        new SlackField()
                         {
-                            Fields = new List<SlackField>()
-                            {
-                                new SlackField()
-                                {
-                                    Title = "GitHub user login",
-                                    Value = currentUser.Login,
-                                    Short = true
-                                },
-                                new SlackField()
-                                {
-                                    Title = "GitHub user ID",
-                                    Value = currentUser.Id.ToString(CultureInfo.InvariantCulture),
-                                    Short = true
-                                }
-                            }
+                            Title = "GitHub user login",
+                            Value = currentUser.Login,
+                            Short = true
+                        },
+                        new SlackField()
+                        {
+                            Title = "GitHub user ID",
+                            Value = currentUser.Id.ToString(CultureInfo.InvariantCulture),
+                            Short = true
                         }
                     }
-                });
-            }
+                },
+                cancellationToken);
 
             var validatedEmailsOrderedByImportance = emails
                 .Where(x => x.Verified)

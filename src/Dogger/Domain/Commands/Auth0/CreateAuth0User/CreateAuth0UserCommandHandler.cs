@@ -13,14 +13,11 @@ namespace Dogger.Domain.Commands.Auth0.CreateAuth0User
     public class CreateAuth0UserCommandHandler : IRequestHandler<CreateAuth0UserCommand, User?>
     {
         private readonly IManagementApiClientFactory? managementApiClientFactory;
-        private readonly IMediator mediator;
 
         public CreateAuth0UserCommandHandler(
-            IOptionalService<IManagementApiClientFactory> managementApiClientFactory,
-            IMediator mediator)
+            IOptionalService<IManagementApiClientFactory> managementApiClientFactory)
         {
             this.managementApiClientFactory = managementApiClientFactory.Value;
-            this.mediator = mediator;
         }
 
         public async Task<User?> Handle(CreateAuth0UserCommand request, CancellationToken cancellationToken)
@@ -34,7 +31,8 @@ namespace Dogger.Domain.Commands.Auth0.CreateAuth0User
             using var client = await managementApiClientFactory.CreateAsync();
 
             var createdUsers = new List<User>();
-            foreach(var email in request.Emails) {
+            foreach (var email in request.Emails)
+            {
                 var createdUser = await client.CreateUserAsync(new UserCreateRequest()
                 {
                     Connection = "Username-Password-Authentication",

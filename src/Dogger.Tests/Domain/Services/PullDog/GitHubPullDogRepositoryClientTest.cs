@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Domain.Services.PullDog.GitHub;
 using Dogger.Infrastructure.GitHub.Octokit;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -32,16 +32,12 @@ namespace Dogger.Tests.Domain.Services.PullDog
                     default,
                     new RepositoryBuilder()
                         .WithUser(new UserBuilder()
-                            .WithLogin("some-user-name")
-                            .Build())
-                        .WithFullName("some-repository-name")
-                        .Build()));
+                            .WithLogin("some-user-name"))
+                        .WithFullName("some-repository-name")));
 
             //Act
-            var details = client.GetPullRequestDetails(new PullDogPullRequest()
-            {
-                Handle = "some-handle"
-            });
+            var details = client.GetPullRequestDetails(new TestPullDogPullRequestBuilder()
+                .WithHandle("some-handle"));
 
             //Assert
             Assert.IsNotNull(details);
@@ -76,10 +72,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
                     default,
                     new RepositoryBuilder()
                         .WithUser(new UserBuilder()
-                            .WithLogin("some-user-name")
-                            .Build())
-                        .WithName("some-repository-name")
-                        .Build()));
+                            .WithLogin("some-user-name"))
+                        .WithName("some-repository-name")));
 
             //Act
             var contents = await client.GetFilesForPathAsync("some-path");
@@ -104,7 +98,7 @@ namespace Dogger.Tests.Domain.Services.PullDog
                     "some-repository-name",
                     "some-path",
                     "some-reference")
-                .Returns(new []
+                .Returns(new[]
                 {
                     new RepositoryContent(
                         default,
@@ -147,10 +141,8 @@ namespace Dogger.Tests.Domain.Services.PullDog
                     default,
                     new RepositoryBuilder()
                         .WithUser(new UserBuilder()
-                            .WithLogin("some-user-name")
-                            .Build())
-                        .WithName("some-repository-name")
-                        .Build()));
+                            .WithLogin("some-user-name"))
+                        .WithName("some-repository-name")));
 
             //Act
             var contents = await client.GetFilesForPathAsync("some-path");

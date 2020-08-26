@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using Destructurama.Attributed;
 using Dogger.Domain.Services.PullDog;
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
 
 namespace Dogger.Domain.Models
 {
@@ -15,7 +15,7 @@ namespace Dogger.Domain.Models
         public DateTime CreatedAtUtc { get; set; }
 
         [NotLogged]
-        public PullDogRepository PullDogRepository { get; set; }
+        public PullDogRepository PullDogRepository { get; set; } = null!;
         public Guid PullDogRepositoryId { get; set; }
 
         public ConfigurationFileOverride? ConfigurationOverride { get; set; }
@@ -24,7 +24,7 @@ namespace Dogger.Domain.Models
         public Instance? Instance { get; set; }
         public Guid? InstanceId { get; set; }
 
-        public string Handle { get; set; }
+        public string Handle { get; set; } = null!;
 
         public PullDogPullRequest()
         {

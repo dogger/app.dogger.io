@@ -11,7 +11,6 @@ namespace Dogger.Controllers.Clusters
         public ClustersMappingProfile()
         {
             CreateMap<UserClusterResponse, ClusterResponse>()
-                .ForMember(x => x.Id, x => x.MapFrom(y => y.Id))
                 .ForMember(x => x.Instances, x => x.MapFrom(y => y.Instances));
 
             CreateMap<ProvisioningJob, DeployToClusterResponse>()

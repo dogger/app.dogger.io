@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Services.Amazon.Lightsail;
 using Dogger.Domain.Services.Provisioning.States;
 using Dogger.Domain.Services.Provisioning.States.CreateLightsailInstance;
 using Dogger.Domain.Services.Provisioning.States.InstallSoftwareOnInstance;
 using Dogger.Infrastructure.Ssh;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -55,16 +55,14 @@ namespace Dogger.Tests.Domain.Provisioning.States
 
             var state = serviceProvider.GetRequiredService<CreateLightsailInstanceState>();
             state.PlanId = "dummy";
-            state.DatabaseInstance = new Dogger.Domain.Models.Instance()
-            {
-                Name = "dummy",
-                Cluster = new Cluster()
-            };
+            state.DatabaseInstance = new TestInstanceBuilder()
+                .WithCluster()
+                .Build();
 
             await state.InitializeAsync();
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<StateUpdateException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<StateUpdateException>(async () =>
                 await state.UpdateAsync());
 
             //Assert
@@ -103,10 +101,7 @@ namespace Dogger.Tests.Domain.Provisioning.States
 
             var state = serviceProvider.GetRequiredService<CreateLightsailInstanceState>();
             state.PlanId = "dummy";
-            state.DatabaseInstance = new Dogger.Domain.Models.Instance()
-            {
-                Name = "dummy"
-            };
+            state.DatabaseInstance = new TestInstanceBuilder().Build();
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
@@ -148,11 +143,9 @@ namespace Dogger.Tests.Domain.Provisioning.States
 
             var state = serviceProvider.GetRequiredService<CreateLightsailInstanceState>();
             state.PlanId = "dummy";
-            state.DatabaseInstance = new Dogger.Domain.Models.Instance()
-            {
-                Name = "dummy",
-                Cluster = new Cluster()
-            };
+            state.DatabaseInstance = new TestInstanceBuilder()
+                .WithCluster()
+                .Build();
 
             await state.InitializeAsync();
 
@@ -195,11 +188,9 @@ namespace Dogger.Tests.Domain.Provisioning.States
 
             var state = serviceProvider.GetRequiredService<CreateLightsailInstanceState>();
             state.PlanId = "dummy";
-            state.DatabaseInstance = new Dogger.Domain.Models.Instance()
-            {
-                Name = "dummy",
-                Cluster = new Cluster()
-            };
+            state.DatabaseInstance = new TestInstanceBuilder()
+                .WithCluster()
+                .Build();
 
             await state.InitializeAsync();
 
@@ -262,11 +253,10 @@ namespace Dogger.Tests.Domain.Provisioning.States
 
             var state = serviceProvider.GetRequiredService<CreateLightsailInstanceState>();
             state.PlanId = "dummy";
-            state.DatabaseInstance = new Dogger.Domain.Models.Instance()
-            {
-                Name = "some-instance-name",
-                Cluster = new Cluster()
-            };
+            state.DatabaseInstance = new TestInstanceBuilder()
+                .WithCluster()
+                .WithName("some-instance-name")
+                .Build();
 
             await state.InitializeAsync();
 
@@ -301,16 +291,13 @@ namespace Dogger.Tests.Domain.Provisioning.States
 
             var state = serviceProvider.GetRequiredService<CreateLightsailInstanceState>();
             state.PlanId = "some-plan-id";
-            state.DatabaseInstance = new Dogger.Domain.Models.Instance()
-            {
-                Id = fakeInstanceId,
-                Name = "some-instance-name",
-                Cluster = new Cluster()
-                {
-                    Id = fakeClusterId,
-                    UserId = fakeUserId
-                }
-            };
+            state.DatabaseInstance = new TestInstanceBuilder()
+                .WithId(fakeInstanceId)
+                .WithName("some-instance-name")
+                .WithCluster(new TestClusterBuilder()
+                    .WithId(fakeClusterId)
+                    .WithUser(fakeUserId))
+                .Build();
 
             //Act
             await state.InitializeAsync();
@@ -377,11 +364,9 @@ namespace Dogger.Tests.Domain.Provisioning.States
 
             var state = serviceProvider.GetRequiredService<CreateLightsailInstanceState>();
             state.PlanId = "dummy";
-            state.DatabaseInstance = new Dogger.Domain.Models.Instance()
-            {
-                Name = "some-instance-name",
-                Cluster = new Cluster()
-            };
+            state.DatabaseInstance = new TestInstanceBuilder()
+                .WithName("some-instance-name")
+                .Build();
 
             await state.InitializeAsync();
 

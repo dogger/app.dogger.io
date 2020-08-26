@@ -6,6 +6,7 @@ using Dogger.Domain.Services.Provisioning.States;
 using Dogger.Domain.Services.Provisioning.States.CompleteInstanceSetup;
 using Dogger.Domain.Services.Provisioning.States.CreateLightsailInstance;
 using Dogger.Domain.Services.Provisioning.States.InstallSoftwareOnInstance;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -23,10 +24,8 @@ namespace Dogger.Tests.Domain.Provisioning.Flows
             //Arrange
             var flow = new ProvisionInstanceStateFlow(
                 "some-plan-id",
-                new Dogger.Domain.Models.Instance()
-                {
-                    Name = "some-instance-name"
-                });
+                new TestInstanceBuilder()
+                    .WithName("some-instance-name"));
 
             var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
             var stateFactory = new ProvisioningStateFactory(serviceProvider);
@@ -54,10 +53,8 @@ namespace Dogger.Tests.Domain.Provisioning.Flows
 
             var flow = new ProvisionInstanceStateFlow(
                 "some-plan-id",
-                new Dogger.Domain.Models.Instance()
-                {
-                    Name = "some-instance-name"
-                })
+                new TestInstanceBuilder()
+                    .WithName("some-instance-name"))
             {
                 UserId = fakeUserId
             };
@@ -95,10 +92,8 @@ namespace Dogger.Tests.Domain.Provisioning.Flows
 
             var flow = new ProvisionInstanceStateFlow(
                 "some-plan-id",
-                new Dogger.Domain.Models.Instance()
-                {
-                    Name = "some-instance-name"
-                })
+                new TestInstanceBuilder()
+                    .WithName("some-instance-name"))
             {
                 UserId = fakeUserId
             };
@@ -133,10 +128,8 @@ namespace Dogger.Tests.Domain.Provisioning.Flows
             //Arrange
             var flow = new ProvisionInstanceStateFlow(
                 "some-plan-id",
-                new Dogger.Domain.Models.Instance()
-                {
-                    Name = "some-instance-name"
-                });
+                new TestInstanceBuilder()
+                    .WithName("some-instance-name"));
 
             var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
             var stateFactory = new ProvisioningStateFactory(serviceProvider);
@@ -161,10 +154,8 @@ namespace Dogger.Tests.Domain.Provisioning.Flows
             //Arrange
             var flow = new ProvisionInstanceStateFlow(
                 "some-plan-id",
-                new Dogger.Domain.Models.Instance()
-                {
-                    Name = "some-instance-name"
-                });
+                new TestInstanceBuilder()
+                    .WithName("some-instance-name"));
 
             var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
             var stateFactory = new ProvisioningStateFactory(serviceProvider);
@@ -173,7 +164,7 @@ namespace Dogger.Tests.Domain.Provisioning.Flows
             var fakeMediator = Substitute.For<IMediator>();
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<UnknownFlowStateException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<UnknownFlowStateException>(async () =>
                 await flow.GetNextStateAsync(new NextStateContext(
                     fakeMediator,
                     stateFactory,

@@ -79,14 +79,14 @@ namespace Dogger.Domain.Commands.Amazon.ElasticContainerRegistry.EnsureRepositor
             foreach (var scheme in schemes)
             {
                 if (url.StartsWith(scheme, StringComparison.InvariantCulture))
-                    url = url.Substring(scheme.Length);
+                    url = url[scheme.Length..];
             }
 
             return url;
         }
 
         private async Task<AmazonUser> EnsureEcrUserWithPermissionsAsync(
-            EnsureRepositoryWithNameCommand request, 
+            EnsureRepositoryWithNameCommand request,
             string ecrUserType,
             string[] permissions,
             CancellationToken cancellationToken)

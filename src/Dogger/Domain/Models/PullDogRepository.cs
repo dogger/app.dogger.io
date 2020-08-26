@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Destructurama.Attributed;
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+#pragma warning disable CA2227
 
 namespace Dogger.Domain.Models
 {
@@ -13,7 +13,7 @@ namespace Dogger.Domain.Models
         public Guid Id { get; set; }
 
         [NotLogged]
-        public PullDogSettings PullDogSettings { get; set; }
+        public PullDogSettings PullDogSettings { get; set; } = null!;
         public Guid PullDogSettingsId { get; set; }
 
         [NotLogged]
@@ -21,7 +21,7 @@ namespace Dogger.Domain.Models
 
         public long? GitHubInstallationId { get; set; }
 
-        public string Handle { get; set; }
+        public string Handle { get; set; } = null!;
 
         public PullDogRepository()
         {

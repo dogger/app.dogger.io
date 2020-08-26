@@ -7,7 +7,7 @@ services:
     - network
     build:
       context: .
-      dockerfile: Dogger.Tests/Dockerfile
+      dockerfile: src/Dogger.Tests/Dockerfile
     volumes:
       - "./TestResults/Dogger:/src/Dogger.Tests/TestResults/Dogger"
     environment:
@@ -19,7 +19,7 @@ services:
     - network
     build:
       context: .
-      dockerfile: Dogger.Setup.Tests/Dockerfile
+      dockerfile: src/Dogger.Setup.Tests/Dockerfile
     volumes:
       - "./TestResults/Dogger.Setup:/src/Dogger.Setup.Tests/TestResults/Dogger.Setup"
     environment:

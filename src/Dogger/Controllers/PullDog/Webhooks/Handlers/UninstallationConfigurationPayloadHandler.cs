@@ -1,7 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
-using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
+using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubPayloadInformation;
 using MediatR;
 
 namespace Dogger.Controllers.PullDog.Webhooks.Handlers
@@ -10,7 +11,7 @@ namespace Dogger.Controllers.PullDog.Webhooks.Handlers
     {
         private readonly IMediator mediator;
 
-        public string Event => "installation";
+        public string[] Events => new [] { "installation" };
 
         public UninstallationConfigurationPayloadHandler(
             IMediator mediator)
@@ -25,8 +26,13 @@ namespace Dogger.Controllers.PullDog.Webhooks.Handlers
 
         public async Task HandleAsync(WebhookPayload payload)
         {
+            if (payload.Installation.Account == null)
+                throw new InvalidOperationException("Account was not found.");
+
             var settings = await this.mediator.Send(
-                new GetPullDogSettingsByGitHubInstallationIdQuery(payload.Installation.Id));
+                new GetPullDogSettingsByGitHubPayloadInformationQuery(
+                    payload.Installation.Id,
+                    payload.Installation.Account.Id));
             if (settings == null)
                 return;
 

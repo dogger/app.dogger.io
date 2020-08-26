@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dogger.Controllers.PullDog.Webhooks.Handlers;
 using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
-using Dogger.Domain.Models;
-using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubInstallationId;
+using Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubPayloadInformation;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -58,34 +57,22 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
-                .Send(Arg.Is<GetPullDogSettingsByGitHubInstallationIdQuery>(args =>
+                .Send(Arg.Is<GetPullDogSettingsByGitHubPayloadInformationQuery>(args =>
                     args.InstallationId == 1337))
-                .Returns(new PullDogSettings()
-                {
-                    Repositories = new List<PullDogRepository>()
-                    {
-                        new PullDogRepository()
-                        {
-                            Handle = "correct-1",
-                            GitHubInstallationId = 1337
-                        },
-                        new PullDogRepository()
-                        {
-                            Handle = "incorrect-1",
-                            GitHubInstallationId = 1338
-                        },
-                        new PullDogRepository()
-                        {
-                            Handle = "correct-2",
-                            GitHubInstallationId = 1337
-                        },
-                        new PullDogRepository()
-                        {
-                            Handle = "incorrect-1",
-                            GitHubInstallationId = 1338
-                        }
-                    }
-                });
+                .Returns(new TestPullDogSettingsBuilder()
+                    .WithRepositories(
+                        new TestPullDogRepositoryBuilder()
+                            .WithHandle("correct-1")
+                            .WithGitHubInstallationId(1337),
+                        new TestPullDogRepositoryBuilder()
+                            .WithHandle("incorrect-1")
+                            .WithGitHubInstallationId(1338),
+                        new TestPullDogRepositoryBuilder()
+                            .WithHandle("correct-2")
+                            .WithGitHubInstallationId(1337),
+                        new TestPullDogRepositoryBuilder()
+                            .WithHandle("incorrect-2")
+                            .WithGitHubInstallationId(1338)));
 
             var handler = new UninstallationConfigurationPayloadHandler(
                 fakeMediator);
@@ -95,7 +82,11 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             {
                 Installation = new InstallationPayload()
                 {
-                    Id = 1337
+                    Id = 1337,
+                    Account = new UserPayload()
+                    {
+                        Id = 1341
+                    }
                 }
             });
 
@@ -106,7 +97,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
             await fakeMediator
                 .Received(1)
-                .Send(Arg.Is<DeletePullDogRepositoryCommand>(args => 
+                .Send(Arg.Is<DeletePullDogRepositoryCommand>(args =>
                     args.Handle == "correct-1"));
 
             await fakeMediator

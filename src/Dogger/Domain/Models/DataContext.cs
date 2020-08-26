@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure;
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 namespace Dogger.Domain.Models
 {
     public class DataContext : DbContext
@@ -102,14 +101,14 @@ namespace Dogger.Domain.Models
                 .IsUnique();
         }
 
-        public DbSet<AmazonUser> AmazonUsers { get; set; }
-        public DbSet<PullDogSettings> PullDogSettings { get; set; }
-        public DbSet<PullDogRepository> PullDogRepositories { get; set; }
-        public DbSet<PullDogPullRequest> PullDogPullRequests { get; set; }
-        public DbSet<Identity> Identities { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Instance> Instances { get; set; }
-        public DbSet<Cluster> Clusters { get; set; }
+        public DbSet<AmazonUser> AmazonUsers { get; set; } = null!;
+        public DbSet<PullDogSettings> PullDogSettings { get; set; } = null!;
+        public DbSet<PullDogRepository> PullDogRepositories { get; set; } = null!;
+        public DbSet<PullDogPullRequest> PullDogPullRequests { get; set; } = null!;
+        public DbSet<Identity> Identities { get; set; } = null!;
+        public DbSet<User> Users { get; set; } = null!;
+        public DbSet<Instance> Instances { get; set; } = null!;
+        public DbSet<Cluster> Clusters { get; set; } = null!;
     }
 }
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+

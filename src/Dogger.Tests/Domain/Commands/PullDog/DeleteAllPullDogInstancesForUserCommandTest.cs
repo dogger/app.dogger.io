@@ -1,8 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Commands.PullDog.DeleteAllPullDogInstancesForUser;
-using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -28,24 +27,15 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
 
-            var user = new User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder().Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Cluster = new Cluster()
-                    {
-                        User = user
-                    },
-                    Name = "dummy",
-                    PlanId = "dummy",
-                    PullDogPullRequest = null
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster(new TestClusterBuilder()
+                        .WithUser(user))
+                    .WithPullDogPullRequest(null));
             });
 
             //Act
@@ -72,44 +62,22 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
 
-            var matchedUser = new User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var matchedUser = new TestUserBuilder().Build();
 
-            var otherUser = new User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var otherUser = new TestUserBuilder().Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(matchedUser);
                 await dataContext.Users.AddAsync(otherUser);
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Cluster = new Cluster()
-                    {
-                        User = otherUser
-                    },
-                    Name = "dummy",
-                    PlanId = "dummy",
-                    PullDogPullRequest = new PullDogPullRequest()
-                    {
-                        Handle = "dummy",
-                        PullDogRepository = new PullDogRepository()
-                        {
-                            Handle = "dummy",
-                            PullDogSettings = new PullDogSettings()
-                            {
-                                User = otherUser,
-                                PlanId = "dummy",
-                                EncryptedApiKey = Array.Empty<byte>()
-                            }
-                        }
-                    }
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster(new TestClusterBuilder()
+                        .WithUser(otherUser))
+                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                        .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                            .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                                .WithUser(otherUser)))));
             });
 
             //Act
@@ -136,37 +104,19 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                     IocConfiguration = services => services.AddSingleton(fakeMediator)
                 });
 
-            var user = new User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var user = new TestUserBuilder().Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(user);
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Cluster = new Cluster()
-                    {
-                        User = user
-                    },
-                    Name = "some-name",
-                    PlanId = "dummy",
-                    PullDogPullRequest = new PullDogPullRequest()
-                    {
-                        Handle = "dummy",
-                        PullDogRepository = new PullDogRepository()
-                        {
-                            Handle = "dummy",
-                            PullDogSettings = new PullDogSettings()
-                            {
-                                User = user,
-                                PlanId = "dummy",
-                                EncryptedApiKey = Array.Empty<byte>()
-                            }
-                        }
-                    }
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster(new TestClusterBuilder()
+                        .WithUser(user))
+                    .WithName("some-name")
+                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                        .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                            .WithPullDogSettings(new TestPullDogSettingsBuilder()
+                                .WithUser(user)))));
             });
 
             //Act
@@ -177,7 +127,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Assert
             await fakeMediator
                 .Received(1)
-                .Send(Arg.Is<DeleteInstanceByNameCommand>(args => 
+                .Send(Arg.Is<DeleteInstanceByNameCommand>(args =>
                     args.Name == "some-name"));
         }
     }

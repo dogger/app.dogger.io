@@ -8,6 +8,7 @@ namespace Dogger.Controllers.Clusters
     public class ClusterResponse
     {
         public Guid Id { get; set; }
+
         public IEnumerable<InstanceResponse> Instances { get; set; } = null!;
     }
 }

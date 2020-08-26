@@ -1,8 +1,9 @@
-﻿using Octokit;
+﻿using Dogger.Domain.Models.Builders;
+using Octokit;
 
 namespace Dogger.Infrastructure.GitHub.Octokit
 {
-    public class UserBuilder
+    public class UserBuilder : ModelBuilder<User>
     {
         private string? login;
         private int id;
@@ -19,7 +20,7 @@ namespace Dogger.Infrastructure.GitHub.Octokit
             return this;
         }
 
-        public User Build()
+        public override User Build()
         {
             return new User(
                 default,

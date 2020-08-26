@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
-using Dogger.Domain.Models;
 using Dogger.Domain.Services.Amazon.Lightsail;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Infrastructure.GitHub.Octokit;
 using Dogger.Infrastructure.Ioc;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
@@ -20,9 +20,7 @@ using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Octokit;
 using Stripe;
-using Instance = Dogger.Domain.Models.Instance;
 using NotFoundException = Amazon.Lightsail.Model.NotFoundException;
-using User = Dogger.Domain.Models.User;
 
 namespace Dogger.Tests.Domain.Commands.Instances
 {
@@ -96,23 +94,14 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             var clusterId = Guid.NewGuid();
-            var cluster = new Cluster()
-            {
-                Id = clusterId,
-                Instances = new List<Instance>()
-                {
-                    new Instance()
-                    {
-                        Name = "not-matching",
-                        PlanId = "dummy"
-                    },
-                    new Instance()
-                    {
-                        Name = "some-instance-name",
-                        PlanId = "dummy"
-                    }
-                }
-            };
+            var cluster = new TestClusterBuilder()
+                .WithId(clusterId)
+                .WithInstances(
+                    new TestInstanceBuilder()
+                        .WithName("not-matching"),
+                    new TestInstanceBuilder()
+                        .WithName("some-instance-name"))
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -185,8 +174,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .WithBase(
                         CreateGitReferenceDto(
                             CreateRepositoryDto(
-                                1338)))
-                    .Build());
+                                1338))));
 
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
 
@@ -203,58 +191,20 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             var clusterId = Guid.NewGuid();
-            var cluster = new Cluster()
-            {
-                Id = clusterId,
-                Instances = new List<Instance>()
-                {
-                    new Instance()
-                    {
-                        Name = "not-matching",
-                        PlanId = "dummy",
-                        PullDogPullRequest = new PullDogPullRequest()
-                        {
-                            Handle = "dummy",
-                            PullDogRepository = new PullDogRepository()
-                            {
-                                Handle = "dummy",
-                                PullDogSettings = new PullDogSettings()
-                                {
-                                    PlanId = "dummy",
-                                    EncryptedApiKey = Array.Empty<byte>(),
-                                    User = new User()
-                                    {
-                                        StripeCustomerId = "dummy"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    new Instance()
-                    {
-                        Name = "some-instance-name",
-                        PlanId = "dummy",
-                        PullDogPullRequest = new PullDogPullRequest()
-                        {
-                            Handle = "1339",
-                            PullDogRepository = new PullDogRepository()
-                            {
-                                Handle = "1338",
-                                GitHubInstallationId = 1337,
-                                PullDogSettings = new PullDogSettings()
-                                {
-                                    PlanId = "dummy",
-                                    EncryptedApiKey = Array.Empty<byte>(),
-                                    User = new User()
-                                    {
-                                        StripeCustomerId = "dummy"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            };
+            var cluster = new TestClusterBuilder()
+                .WithId(clusterId)
+                .WithInstances(
+                    new TestInstanceBuilder()
+                        .WithPullDogPullRequest()
+                        .WithName("not-matching"),
+                    new TestInstanceBuilder()
+                        .WithName("some-instance-name")
+                        .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                            .WithHandle("1339")
+                            .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                                .WithHandle("1338")
+                                .WithGitHubInstallationId(1337))))
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -330,8 +280,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .WithBase(
                         CreateGitReferenceDto(
                             CreateRepositoryDto(
-                                1338)))
-                    .Build());
+                                1338))));
 
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
 
@@ -348,58 +297,21 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             var clusterId = Guid.NewGuid();
-            var cluster = new Cluster()
-            {
-                Id = clusterId,
-                Instances = new List<Instance>()
-                {
-                    new Instance()
-                    {
-                        Name = "not-matching",
-                        PlanId = "dummy",
-                        PullDogPullRequest = new PullDogPullRequest()
-                        {
-                            Handle = "dummy",
-                            PullDogRepository = new PullDogRepository()
-                            {
-                                Handle = "dummy",
-                                PullDogSettings = new PullDogSettings()
-                                {
-                                    PlanId = "dummy",
-                                    EncryptedApiKey = Array.Empty<byte>(),
-                                    User = new User()
-                                    {
-                                        StripeCustomerId = "dummy"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    new Instance()
-                    {
-                        Name = "some-instance-name",
-                        PlanId = "dummy",
-                        PullDogPullRequest = new PullDogPullRequest()
-                        {
-                            Handle = "1339",
-                            PullDogRepository = new PullDogRepository()
-                            {
-                                Handle = "1338",
-                                GitHubInstallationId = 1337,
-                                PullDogSettings = new PullDogSettings()
-                                {
-                                    PlanId = "dummy",
-                                    EncryptedApiKey = Array.Empty<byte>(),
-                                    User = new User()
-                                    {
-                                        StripeCustomerId = "dummy"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            };
+            var cluster = new TestClusterBuilder()
+                .WithId(clusterId)
+                .WithInstances(
+                    new TestInstanceBuilder()
+                        .WithName("not-matching")
+                        .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                            .WithPullDogRepository()),
+                    new TestInstanceBuilder()
+                        .WithName("some-instance-name")
+                        .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                            .WithHandle("1339")
+                            .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                                .WithHandle("1338")
+                                .WithGitHubInstallationId(1337))))
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -463,23 +375,14 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             var clusterId = Guid.NewGuid();
-            var cluster = new Cluster()
-            {
-                Id = clusterId,
-                Instances = new List<Instance>()
-                {
-                    new Instance()
-                    {
-                        Name = "not-matching",
-                        PlanId = "dummy"
-                    },
-                    new Instance()
-                    {
-                        Name = "some-instance-name",
-                        PlanId = "dummy"
-                    }
-                }
-            };
+            var cluster = new TestClusterBuilder()
+                .WithId(clusterId)
+                .WithInstances(
+                    new TestInstanceBuilder()
+                        .WithName("not-matching"),
+                    new TestInstanceBuilder()
+                        .WithName("some-instance-name"))
+                .Build();
 
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -572,28 +475,22 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             var clusterId = Guid.NewGuid();
-            var user = new User()
-            {
-                StripeCustomerId = customer.Id
-            };
+            var user = new TestUserBuilder()
+                .WithStripeCustomerId(customer.Id)
+                .Build();
 
-            var cluster = new Cluster()
-            {
-                Id = clusterId,
-                User = user,
-                UserId = user.Id
-            };
+            var cluster = new TestClusterBuilder()
+                .WithId(clusterId)
+                .WithUser(user)
+                .Build();
             user.Clusters.Add(cluster);
 
-            var instance = new Instance()
-            {
-                Id = fakeInstanceId,
-                Name = "some-instance-name",
-                PlanId = "dummy",
-                Cluster = cluster,
-                ClusterId = cluster.Id,
-                IsProvisioned = false
-            };
+            var instance = new TestInstanceBuilder()
+                .WithId(fakeInstanceId)
+                .WithName("some-instance-name")
+                .WithCluster(cluster)
+                .WithProvisionedStatus(false)
+                .Build();
             cluster.Instances.Add(instance);
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -675,28 +572,22 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             var clusterId = Guid.NewGuid();
-            var user = new User()
-            {
-                StripeCustomerId = customer.Id
-            };
+            var user = new TestUserBuilder()
+                .WithStripeCustomerId(customer.Id)
+                .Build();
 
-            var cluster = new Cluster()
-            {
-                Id = clusterId,
-                User = user,
-                UserId = user.Id
-            };
+            var cluster = new TestClusterBuilder()
+                .WithId(clusterId)
+                .WithUser(user)
+                .Build();
             user.Clusters.Add(cluster);
 
-            var instance = new Instance()
-            {
-                Id = fakeInstanceId,
-                Name = "some-instance-name",
-                PlanId = "dummy",
-                Cluster = cluster,
-                ClusterId = cluster.Id,
-                IsProvisioned = true
-            };
+            var instance = new TestInstanceBuilder()
+                .WithId(fakeInstanceId)
+                .WithName("some-instance-name")
+                .WithCluster(cluster)
+                .WithProvisionedStatus(true)
+                .Build();
             cluster.Instances.Add(instance);
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -778,29 +669,23 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             var clusterId = Guid.NewGuid();
-            var user = new User()
-            {
-                StripeCustomerId = customer.Id,
-                StripeSubscriptionId = subscription.Id
-            };
+            var user = new TestUserBuilder()
+                .WithStripeCustomerId(customer.Id)
+                .WithStripeSubscriptionId(subscription.Id)
+                .Build();
 
-            var cluster = new Cluster()
-            {
-                Id = clusterId,
-                User = user,
-                UserId = user.Id
-            };
+            var cluster = new TestClusterBuilder()
+                .WithId(clusterId)
+                .WithUser(user)
+                .Build();
             user.Clusters.Add(cluster);
 
-            var instance = new Instance()
-            {
-                Id = fakeInstanceId,
-                Name = "some-instance-name",
-                PlanId = "dummy",
-                Cluster = cluster,
-                ClusterId = cluster.Id,
-                IsProvisioned = true
-            };
+            var instance = new TestInstanceBuilder()
+                .WithId(fakeInstanceId)
+                .WithName("some-instance-name")
+                .WithCluster(cluster)
+                .WithProvisionedStatus(true)
+                .Build();
             cluster.Instances.Add(instance);
 
             await environment.WithFreshDataContext(async dataContext =>

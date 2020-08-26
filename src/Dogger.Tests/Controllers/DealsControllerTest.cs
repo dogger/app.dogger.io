@@ -1,15 +1,14 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Controllers.Deals;
 using Dogger.Domain.Commands.Payment.AdjustUserBalance;
 using Dogger.Domain.Commands.Payment.ApplyCouponCodeForUser;
 using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
 using Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Payment.GetCouponByCode;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
+using Dogger.Tests.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -144,10 +143,7 @@ namespace Dogger.Tests.Controllers
                     args.CouponCode == "APPSUMO_TOTALLY_VALID_CODE"))
                 .Returns(true);
 
-            var user = new User()
-            {
-                Id = Guid.NewGuid()
-            };
+            var user = new TestUserBuilder().Build();
             fakeMediator
                 .Send(Arg.Is<InstallPullDogFromEmailsCommand>(args =>
                     args.Emails.Single() == "some-email@example.com"))
@@ -191,10 +187,7 @@ namespace Dogger.Tests.Controllers
                     args.CouponCode == "APPSUMO_TOTALLY_VALID_CODE"))
                 .Returns(true);
 
-            var user = new User()
-            {
-                Id = Guid.NewGuid()
-            };
+            var user = new TestUserBuilder().Build();
             fakeMediator
                 .Send(Arg.Is<InstallPullDogFromEmailsCommand>(args =>
                     args.Emails.Single() == "some-email@example.com"))
@@ -242,10 +235,7 @@ namespace Dogger.Tests.Controllers
                     args.CouponCode == "APPSUMO_TOTALLY_VALID_CODE"))
                 .Returns(true);
 
-            var user = new User()
-            {
-                Id = Guid.NewGuid()
-            };
+            var user = new TestUserBuilder().Build();
             fakeMediator
                 .Send(Arg.Is<InstallPullDogFromEmailsCommand>(args =>
                     args.Emails.Single() == "some-email@example.com"))

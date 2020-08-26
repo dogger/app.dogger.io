@@ -29,39 +29,44 @@ namespace Dogger.Domain.Commands.Payment.SetActivePaymentMethodForUser
                 return Unit.Value;
 
             var user = request.User;
-            if (user.StripeCustomerId == null)
-                throw new NoStripeCustomerIdException();
 
-            var existingPaymentMethods = await this.paymentMethodService
-                .ListAutoPagingAsync(
-                    new PaymentMethodListOptions()
+            try
+            {
+                var existingPaymentMethods = await this.paymentMethodService
+                    .ListAutoPagingAsync(
+                        new PaymentMethodListOptions()
+                        {
+                            Customer = user.StripeCustomerId,
+                            Type = "card"
+                        },
+                        cancellationToken: cancellationToken)
+                    .ToListAsync(cancellationToken);
+
+                await this.paymentMethodService.AttachAsync(
+                    request.PaymentMethodId,
+                    new PaymentMethodAttachOptions()
                     {
-                        Customer = user.StripeCustomerId,
-                        Type = "card"
-                    }, 
-                    cancellationToken: cancellationToken)
-                .ToListAsync(cancellationToken);
+                        Customer = user.StripeCustomerId
+                    }, cancellationToken: cancellationToken);
 
-            await this.paymentMethodService.AttachAsync(
-                request.PaymentMethodId,
-                new PaymentMethodAttachOptions()
+                await this.customerService.UpdateAsync(user.StripeCustomerId, new CustomerUpdateOptions()
                 {
-                    Customer = user.StripeCustomerId
+                    InvoiceSettings = new CustomerInvoiceSettingsOptions()
+                    {
+                        DefaultPaymentMethod = request.PaymentMethodId
+                    }
                 }, cancellationToken: cancellationToken);
 
-            await this.customerService.UpdateAsync(user.StripeCustomerId, new CustomerUpdateOptions()
-            {
-                InvoiceSettings = new CustomerInvoiceSettingsOptions()
+                foreach (var oldPaymentMethod in existingPaymentMethods)
                 {
-                    DefaultPaymentMethod = request.PaymentMethodId
+                    await this.paymentMethodService.DetachAsync(
+                        oldPaymentMethod.Id,
+                        cancellationToken: cancellationToken);
                 }
-            }, cancellationToken: cancellationToken);
-
-            foreach(var oldPaymentMethod in existingPaymentMethods)
+            }
+            catch (StripeException ex) when (ex.StripeError.Param == "customer" && ex.StripeError.Code == "resource_missing")
             {
-                await this.paymentMethodService.DetachAsync(
-                    oldPaymentMethod.Id,
-                    cancellationToken: cancellationToken);
+                throw new NoStripeCustomerIdException();
             }
 
             return Unit.Value;

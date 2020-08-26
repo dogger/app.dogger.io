@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Instances.RegisterInstanceAsProvisioned;
 using Dogger.Domain.Commands.Instances.SetInstanceExpiry;
-using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +27,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
+            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
                 await environment.Mediator.Send(new SetInstanceExpiryCommand(
                     "some-instance-name",
                     DateTime.UtcNow.AddDays(1))));
@@ -35,7 +35,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             //Assert
             Assert.IsNotNull(exception);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_InstanceFound_ExpiryTimeSetInDatabase()
@@ -45,12 +45,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new Cluster()
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithName("some-instance-name"));
             });
 
             //Act
@@ -70,7 +66,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 Assert.IsNotNull(instances.Single().ExpiresAtUtc);
             });
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_UserNotFound_NoStripeSubscriptionCreated()
@@ -95,12 +91,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new Cluster()
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithName("some-instance-name"));
             });
 
             //Act
@@ -114,7 +106,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     default,
                     default);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_UserFoundWithNoExistingSubscription_StripeSubscriptionCreatedWithProperDetails()
@@ -143,25 +135,17 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     }
                 });
 
-            var existingUser = new User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var existingUser = new TestUserBuilder().Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(existingUser);
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Id = fakeInstanceId,
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new Cluster()
-                    {
-                        Id = fakeClusterId,
-                        User = existingUser
-                    }
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithId(fakeInstanceId)
+                    .WithName("some-instance-name")
+                    .WithCluster(new TestClusterBuilder()
+                        .WithId(fakeClusterId)
+                        .WithUser(existingUser)));
             });
 
             //Act
@@ -174,14 +158,14 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await fakeSubscriptionService
                 .ReceivedWithAnyArgs(1)
                 .CreateAsync(
-                    Arg.Is<SubscriptionCreateOptions>(args => 
+                    Arg.Is<SubscriptionCreateOptions>(args =>
                         args.Metadata["InstanceId"] == fakeInstanceId.ToString() &&
                         args.Metadata["ClusterId"] == fakeClusterId.ToString() &&
                         args.Metadata["InstanceName"] == "some-instance-name"),
                     default,
                     default);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_UserFoundWithExistingSubscription_StripeSubscriptionUpdatedWithProperDetails()
@@ -224,26 +208,19 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     }
                 });
 
-            var existingUser = new User()
-            {
-                StripeCustomerId = "dummy",
-                StripeSubscriptionId = "some-subscription-id"
-            };
+            var existingUser = new TestUserBuilder()
+                .WithStripeSubscriptionId("some-subscription-id")
+                .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(existingUser);
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Id = fakeInstanceId,
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new Cluster()
-                    {
-                        Id = fakeClusterId,
-                        User = existingUser
-                    }
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithId(fakeInstanceId)
+                    .WithName("some-instance-name")
+                    .WithCluster(new TestClusterBuilder()
+                        .WithId(fakeClusterId)
+                        .WithUser(existingUser)));
             });
 
             //Act
@@ -264,7 +241,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     default,
                     default);
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_StripeExceptionThrown_NoDatabaseChangesMade()
@@ -287,24 +264,16 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     }
                 });
 
-            var existingUser = new User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var existingUser = new TestUserBuilder().Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(existingUser);
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new Cluster()
-                    {
-                        User = existingUser
-                    },
-                    IsProvisioned = false
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithName("some-instance-name")
+                    .WithCluster(new TestClusterBuilder()
+                        .WithUser(existingUser))
+                    .WithProvisionedStatus(false));
             });
 
             //Act
@@ -327,7 +296,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 Assert.IsFalse(instances.Single().IsProvisioned);
             });
         }
-        
+
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_SubscriptionRequiresAction_NotImplementedExceptionThrown()
@@ -359,23 +328,15 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     }
                 });
 
-            var existingUser = new User()
-            {
-                StripeCustomerId = "dummy"
-            };
+            var existingUser = new TestUserBuilder().Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
                 await dataContext.Users.AddAsync(existingUser);
 
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new Cluster()
-                    {
-                        User = existingUser
-                    }
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithName("some-instance-name")
+                    .WithCluster(new TestClusterBuilder()
+                        .WithUser(existingUser)));
             });
 
             //Act

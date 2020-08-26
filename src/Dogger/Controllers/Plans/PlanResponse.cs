@@ -2,7 +2,7 @@
 {
     public class PlanResponse
     {
-        public string? Id { get; set; }
+        public string Id { get; set; } = null!;
 
         public int PriceInHundreds { get; set; }
 
@@ -12,6 +12,6 @@
         public int DiskSizeInGigabytes { get; set; }
         public int TransferPerMonthInGigabytes { get; set; }
 
-        public PullDogPlanResponse[]? PullDogPlans { get; set; }
+        public PullDogPlanResponse[] PullDogPlans { get; set; } = null!;
     }
 }

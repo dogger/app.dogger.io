@@ -3,5 +3,7 @@
     public class InstallationPayload
     {
         public long Id { get; set; }
+
+        public UserPayload? Account { get; set; } = null!;
     }
 }

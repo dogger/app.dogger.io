@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Dogger.Controllers.Clusters;
-using Dogger.Controllers.Deals;
 using Dogger.Domain.Commands.Amazon.ElasticContainerRegistry.EnsureRepositoryWithName;
 using Dogger.Domain.Commands.Clusters.DeployToCluster;
 using Dogger.Domain.Commands.Clusters.EnsureClusterWithId;
@@ -20,6 +18,7 @@ using Dogger.Domain.Queries.Instances.GetInstanceByName;
 using Dogger.Domain.Queries.Instances.GetProvisionedClustersWithInstancesForUser;
 using Dogger.Infrastructure.Docker.Engine;
 using Dogger.Infrastructure.Docker.Yml;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -43,9 +42,9 @@ namespace Dogger.Tests.Controllers
             fakeMediator
                 .Send(
                     Arg.Is<EnsureUserForIdentityCommand>(
-                        args => args.IdentityName == "some-identity-name"), 
+                        args => args.IdentityName == "some-identity-name"),
                     default)
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetProvisionedClustersWithInstancesForUserQuery>(), default)
@@ -121,16 +120,16 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new AmazonUser(),
-                    new AmazonUser()));
+                    new TestAmazonUserBuilder(),
+                    new TestAmazonUserBuilder().Build()));
 
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<EnsureClusterWithIdCommand>())
-                .Returns(new Cluster());
+                .Returns(new TestClusterBuilder().Build());
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
@@ -172,16 +171,16 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new AmazonUser(), 
-                    new AmazonUser()));
+                    new TestAmazonUserBuilder(),
+                    new TestAmazonUserBuilder().Build()));
 
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<EnsureClusterWithIdCommand>())
-                .Returns(new Cluster());
+                .Returns(new TestClusterBuilder().Build());
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
@@ -210,21 +209,14 @@ namespace Dogger.Tests.Controllers
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetClusterForUserQuery>(args =>
                     args.ClusterId == default))
-                .Returns(new Cluster()
-                {
-                    Instances = new List<Dogger.Domain.Models.Instance>()
-                    {
-                        new Dogger.Domain.Models.Instance()
-                        {
-                            Name = "some-instance-name"
-                        }
-                    }
-                });
+                .Returns(new TestClusterBuilder()
+                    .WithInstances(new TestInstanceBuilder()
+                        .WithName("some-instance-name")));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -255,21 +247,14 @@ namespace Dogger.Tests.Controllers
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Is<GetClusterForUserQuery>(args =>
                     args.ClusterId == fakeClusterId))
-                .Returns(new Cluster()
-                {
-                    Instances = new List<Dogger.Domain.Models.Instance>()
-                    {
-                        new Dogger.Domain.Models.Instance()
-                        {
-                            Name = "some-instance-name"
-                        }
-                    }
-                });
+                .Returns(new TestClusterBuilder()
+                    .WithInstances(new TestInstanceBuilder()
+                        .WithName("some-instance-name")));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -305,7 +290,7 @@ namespace Dogger.Tests.Controllers
 
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
@@ -332,7 +317,7 @@ namespace Dogger.Tests.Controllers
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetRepositoryLoginForUserQuery>())
@@ -345,8 +330,8 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new AmazonUser(),
-                    new AmazonUser()));
+                    new TestAmazonUserBuilder(),
+                    new TestAmazonUserBuilder().Build()));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -378,7 +363,7 @@ namespace Dogger.Tests.Controllers
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetRepositoryLoginForUserQuery>())
@@ -391,8 +376,8 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new AmazonUser(),
-                    new AmazonUser()));
+                    new TestAmazonUserBuilder(),
+                    new TestAmazonUserBuilder().Build()));
 
             var fakeMapper = Substitute.For<IMapper>();
 
@@ -405,7 +390,7 @@ namespace Dogger.Tests.Controllers
             var result = await controller.Deploy(new DeployToClusterRequest()
             {
                 DockerComposeYmlFilePaths = new[] { "some-docker-compose-contents" },
-                Files = new []
+                Files = new[]
                 {
                     new FileRequest()
                     {
@@ -429,16 +414,16 @@ namespace Dogger.Tests.Controllers
         public async Task Deploy_UserIdGiven_DeployToClusterCommandFiredWithAuthorizationFromRepository()
         {
             //Arrange
-            var readUser = new AmazonUser();
-            var writeUser = new AmazonUser();
+            var readUser = new TestAmazonUserBuilder().Build();
+            var writeUser = new TestAmazonUserBuilder().Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             fakeMediator
-                .Send(Arg.Is<GetRepositoryLoginForUserQuery>(arg => 
+                .Send(Arg.Is<GetRepositoryLoginForUserQuery>(arg =>
                     arg.AmazonUser == readUser))
                 .Returns(new RepositoryLoginResponse(
                     "some-username",
@@ -497,12 +482,12 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new AmazonUser(),
-                    new AmazonUser()));
+                    new TestAmazonUserBuilder(),
+                    new TestAmazonUserBuilder().Build()));
 
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
@@ -545,12 +530,12 @@ namespace Dogger.Tests.Controllers
                 .Returns(new RepositoryResponse(
                     "dummy",
                     "dummy",
-                    new AmazonUser(),
-                    new AmazonUser()));
+                    new TestAmazonUserBuilder(),
+                    new TestAmazonUserBuilder().Build()));
 
             fakeMediator
                 .Send(Arg.Any<EnsureUserForIdentityCommand>())
-                .Returns(new User());
+                .Returns(new TestUserBuilder().Build());
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
@@ -609,7 +594,7 @@ namespace Dogger.Tests.Controllers
             fakeMediator
                 .Send(
                     Arg.Is<GetLightsailInstanceByNameQuery>(arg =>
-                        arg.Name == "some-instance-name"), 
+                        arg.Name == "some-instance-name"),
                     default)
                 .Returns((Instance)null);
 
@@ -642,7 +627,7 @@ namespace Dogger.Tests.Controllers
                 .Returns(new Dogger.Domain.Queries.Clusters.GetConnectionDetails.ConnectionDetailsResponse(
                     "some-ip-address",
                     "some-host-name",
-                    new []
+                    new[]
                     {
                         new ExposedPort()
                         {
@@ -688,15 +673,13 @@ namespace Dogger.Tests.Controllers
                 .Returns(new[]
                 {
                     new ContainerLogsResponse(
-                        new ContainerResponse()
-                        {
-                            Id = "some-id",
-                            Names = new[]
+                        new ContainerResponse(
+                            "some-id",
+                            "some-image",
+                            new []
                             {
                                 "some-name"
-                            },
-                            Image = "some-image"
-                        },
+                            }),
                         "some-logs")
                 });
 
@@ -705,7 +688,7 @@ namespace Dogger.Tests.Controllers
                     Arg.Is<GetInstanceByNameQuery>(arg =>
                         arg.Name == "demo"),
                     default)
-                .Returns(new Dogger.Domain.Models.Instance());
+                .Returns(new TestInstanceBuilder().Build());
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 
@@ -739,15 +722,13 @@ namespace Dogger.Tests.Controllers
                 .Returns(new[]
                 {
                     new ContainerLogsResponse(
-                        new ContainerResponse()
-                        {
-                            Id = "some-id",
-                            Names = new[]
+                        new ContainerResponse(
+                            "some-id",
+                            "some-image",
+                            new []
                             {
                                 "some-name"
-                            },
-                            Image = "some-image"
-                        },
+                            }),
                         "some-logs")
                 });
 
@@ -756,7 +737,7 @@ namespace Dogger.Tests.Controllers
                     Arg.Is<GetInstanceByNameQuery>(arg =>
                         arg.Name == "some-instance-name"),
                     default)
-                .Returns(new Dogger.Domain.Models.Instance());
+                .Returns(new TestInstanceBuilder().Build());
 
             var mapper = AutoMapperFactory.CreateValidMapper();
 

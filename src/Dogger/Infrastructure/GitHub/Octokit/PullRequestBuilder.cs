@@ -1,8 +1,9 @@
-﻿using Octokit;
+﻿using Dogger.Domain.Models.Builders;
+using Octokit;
 
 namespace Dogger.Infrastructure.GitHub.Octokit
 {
-    public class PullRequestBuilder
+    public class PullRequestBuilder : ModelBuilder<PullRequest>
     {
         private int number;
 
@@ -43,7 +44,7 @@ namespace Dogger.Infrastructure.GitHub.Octokit
             return this;
         }
 
-        public PullRequest Build()
+        public override PullRequest Build()
         {
             return new PullRequest(
                 default,

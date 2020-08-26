@@ -13,13 +13,12 @@ using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
 using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Docker.Yml;
-using Dogger.Infrastructure.Ioc;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Slack.Webhooks;
 using YamlDotNet.Core;
 
 namespace Dogger.Tests.Domain.Commands.PullDog
@@ -32,10 +31,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_ValidProvisionConditionsGiven_SchedulesJobWithPullDogDatabaseInstance()
         {
             //Arrange
-            var databaseInstance = new Instance()
-            {
-                Name = "some-instance-name"
-            };
+            var databaseInstance = new TestInstanceBuilder()
+                .WithName("some-instance-name")
+                .Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
@@ -44,14 +42,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -63,7 +61,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -71,11 +68,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await handler.Handle(
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
-                    new PullDogRepository()
-                    {
-                        GitHubInstallationId = 1337,
-                        PullDogSettings = new PullDogSettings()
-                    }),
+                    new TestPullDogRepositoryBuilder()
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -92,10 +86,9 @@ namespace Dogger.Tests.Domain.Commands.PullDog
         public async Task Handle_ValidProvisionConditionsGiven_SchedulesJobWithDockerComposeContents()
         {
             //Arrange
-            var databaseInstance = new Instance()
-            {
-                Name = "some-instance-name"
-            };
+            var databaseInstance = new TestInstanceBuilder()
+                .WithName("some-instance-name")
+                .Build();
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
@@ -104,14 +97,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
                 .Returns(new ConfigurationFile(new List<string> { "some-docker-compose-path" }));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -123,7 +116,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -131,11 +123,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await handler.Handle(
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
-                    new PullDogRepository()
-                    {
-                        GitHubInstallationId = 1337,
-                        PullDogSettings = new PullDogSettings()
-                    }),
+                    new TestPullDogRepositoryBuilder()
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -153,7 +142,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -165,7 +154,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -174,11 +162,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 await handler.Handle(
                     new ProvisionPullDogEnvironmentCommand(
                         "some-pull-request-handle",
-                        new PullDogRepository()
-                        {
-                            GitHubInstallationId = null,
-                            PullDogSettings = new PullDogSettings()
-                        }),
+                        new TestPullDogRepositoryBuilder()
+                            .WithGitHubInstallationId(null)),
                     default));
 
             //Assert
@@ -193,14 +178,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -216,7 +201,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -224,11 +208,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await handler.Handle(
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
-                    new PullDogRepository()
-                    {
-                        GitHubInstallationId = 1337,
-                        PullDogSettings = new PullDogSettings()
-                    }),
+                    new TestPullDogRepositoryBuilder()
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -253,14 +234,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -272,7 +253,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -280,11 +260,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await handler.Handle(
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
-                    new PullDogRepository()
-                    {
-                        GitHubInstallationId = 1337,
-                        PullDogSettings = new PullDogSettings()
-                    }),
+                    new TestPullDogRepositoryBuilder()
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -311,14 +288,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -335,7 +312,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -343,11 +319,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await handler.Handle(
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
-                    new PullDogRepository()
-                    {
-                        GitHubInstallationId = 1337,
-                        PullDogSettings = new PullDogSettings()
-                    }),
+                    new TestPullDogRepositoryBuilder()
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -371,10 +344,10 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -390,7 +363,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -398,11 +370,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await handler.Handle(
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
-                    new PullDogRepository()
-                    {
-                        GitHubInstallationId = 1337,
-                        PullDogSettings = new PullDogSettings()
-                    }),
+                    new TestPullDogRepositoryBuilder()
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -424,14 +393,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -443,7 +412,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -451,11 +419,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await handler.Handle(
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
-                    new PullDogRepository()
-                    {
-                        GitHubInstallationId = 1337,
-                        PullDogSettings = new PullDogSettings()
-                    }),
+                    new TestPullDogRepositoryBuilder()
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -481,14 +446,14 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
                 .Returns(new ConfigurationFile(new List<string>()));
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -500,7 +465,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -508,11 +472,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await handler.Handle(
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
-                    new PullDogRepository()
-                    {
-                        GitHubInstallationId = 1337,
-                        PullDogSettings = new PullDogSettings()
-                    }),
+                    new TestPullDogRepositoryBuilder()
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert
@@ -534,7 +495,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new PullDogPullRequest());
+                .Returns(new TestPullDogPullRequestBuilder().Build());
 
             fakeMediator
                 .Send(Arg.Any<GetConfigurationForPullRequestQuery>())
@@ -544,7 +505,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
                 });
 
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
-            var fakeSlackClient = Substitute.For<IOptionalService<ISlackClient>>();
+
             var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
             var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
 
@@ -556,7 +517,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             var handler = new ProvisionPullDogEnvironmentCommandHandler(
                 fakeMediator,
                 fakeProvisioningService,
-                fakeSlackClient,
                 fakePullDogFileCollectorFactory,
                 fakePullDogRepositoryClientFactory);
 
@@ -564,11 +524,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await handler.Handle(
                 new ProvisionPullDogEnvironmentCommand(
                     "some-pull-request-handle",
-                    new PullDogRepository()
-                    {
-                        GitHubInstallationId = 1337,
-                        PullDogSettings = new PullDogSettings()
-                    }),
+                    new TestPullDogRepositoryBuilder()
+                        .WithGitHubInstallationId(1337)),
                 default);
 
             //Assert

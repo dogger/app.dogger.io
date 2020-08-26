@@ -36,7 +36,7 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
         }
 
         public async Task<Unit> Handle(
-            UpdateUserSubscriptionCommand request, 
+            UpdateUserSubscriptionCommand request,
             CancellationToken cancellationToken)
         {
             if (this.subscriptionService == null)
@@ -63,13 +63,13 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
                 .GroupBy(x => x.PlanId)
                 .Select(instancesByPlanId =>
                     GetDoggerSubscriptionItemFromGroupedInstances(
-                        instancesByPlanId, 
+                        instancesByPlanId,
                         existingSubscriptionItems))
                 .ToList();
 
             var pullDogSubscriptionItem = await GetPullDogSubscriptionItemAsync(
-                user, 
-                existingSubscriptionItems, 
+                user,
+                existingSubscriptionItems,
                 cancellationToken);
             if (pullDogSubscriptionItem != null)
                 subscriptionItems.Add(pullDogSubscriptionItem);
@@ -82,16 +82,14 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
             var createdSubscription = await UpdateSubscriptionAsync(user, subscriptionItems, cancellationToken);
 
             var intent = createdSubscription.LatestInvoice.PaymentIntent;
-            switch (intent?.Status)
+            return (intent?.Status) switch
             {
-                case "requires_payment_method":
-                    throw new InvalidOperationException("Stripe reported no payment method present.");
-
-                case "requires_action":
-                    throw new NotImplementedException("Subscriptions requiring action are not yet supported.");
-            }
-
-            return Unit.Value;
+                "requires_payment_method" =>
+                    throw new InvalidOperationException("Stripe reported no payment method present."),
+                "requires_action" =>
+                    throw new NotImplementedException("Subscriptions requiring action are not yet supported."),
+                _ => Unit.Value,
+            };
         }
 
         private static void AddRemainingExistingSubscriptionItemsAsDeletions(List<SubscriptionItemOptions> subscriptionItems, SubscriptionItem[] existingSubscriptionItems)
@@ -112,7 +110,7 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
         }
 
         private static SubscriptionItemOptions GetDoggerSubscriptionItemFromGroupedInstances(
-            IGrouping<string, Instance> instancesByPlanId, 
+            IGrouping<string, Instance> instancesByPlanId,
             SubscriptionItem[] existingSubscriptionItems)
         {
             var planId = instancesByPlanId.Key;
@@ -129,7 +127,7 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
         }
 
         private static SubscriptionItem? GetSubscriptionByPlanId(
-            SubscriptionItem[] subscriptionItems, 
+            SubscriptionItem[] subscriptionItems,
             string planId)
         {
             return subscriptionItems.SingleOrDefault(x => x.Plan.Id == planId);
@@ -148,8 +146,8 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
         }
 
         private async Task<Subscription> UpdateSubscriptionAsync(
-            User user, 
-            List<SubscriptionItemOptions> subscriptionItems, 
+            User user,
+            List<SubscriptionItemOptions> subscriptionItems,
             CancellationToken cancellationToken)
         {
             var monthsOffset = 0;
@@ -214,7 +212,7 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
 
         private async Task<SubscriptionItemOptions?> GetPullDogSubscriptionItemAsync(
             User user,
-            SubscriptionItem[] existingSubscriptionItems, 
+            SubscriptionItem[] existingSubscriptionItems,
             CancellationToken cancellationToken)
         {
             if (user.PullDogSettings == null || user.PullDogSettings.PoolSize == 0)
@@ -232,15 +230,34 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
                 new GetSupportedPullDogPlansQuery(),
                 cancellationToken);
 
-            var existingSubscriptionItem = existingSubscriptionItems.SingleOrDefault(plan => 
-                availablePullDogPlans.Any(p => p.Id == plan.Plan.Id));
+            var existingSubscriptionItem = existingSubscriptionItems.SingleOrDefault(plan =>
+                availablePullDogPlans.Any(p => 
+                    NormalizePlanName(p.Id) == NormalizePlanName(plan.Plan.Id)));
 
             return new SubscriptionItemOptions()
             {
                 Id = existingSubscriptionItem?.Id,
-                Plan = $"{pullDogPlan.Id}_v2",
+                Plan = GetLatestPlanName(pullDogPlan.Id),
                 Quantity = 1
             };
+        }
+
+        private static string GetLatestPlanSuffix()
+        {
+            return "_v2";
+        }
+
+        private static string GetLatestPlanName(string name)
+        {
+            return $"{name}{GetLatestPlanSuffix()}";
+        }
+
+        private static string NormalizePlanName(string name)
+        {
+            if (name.EndsWith(GetLatestPlanSuffix(), StringComparison.InvariantCulture))
+                name = name.Substring(0, name.LastIndexOf(GetLatestPlanSuffix(), StringComparison.InvariantCulture));
+
+            return name;
         }
 
         private static SubscriptionCancelOptions GetSubscriptionCancelOptions()

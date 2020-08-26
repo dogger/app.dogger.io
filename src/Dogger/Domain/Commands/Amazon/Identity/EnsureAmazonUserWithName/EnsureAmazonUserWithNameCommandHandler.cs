@@ -6,6 +6,7 @@ using Amazon.IdentityManagement;
 using Amazon.IdentityManagement.Model;
 using Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonGroupWithName;
 using Dogger.Domain.Models;
+using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.Amazon.Identity.GetAmazonUserByName;
 using Dogger.Infrastructure.Amazon;
 using Dogger.Infrastructure.Encryption;
@@ -41,13 +42,13 @@ namespace Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonUserWithName
             if (amazonUser != null)
                 return amazonUser;
 
-            var newUser = new AmazonUser()
-            {
-                Name = request.Name,
-                UserId = request.UserId,
-                EncryptedSecretAccessKey = Array.Empty<byte>(),
-                EncryptedAccessKeyId = Array.Empty<byte>()
-            };
+            var newUser = new AmazonUserBuilder()
+                .WithName(request.Name)
+                .WithUser(request.UserId)
+                .WithAwsCredentials(
+                    Array.Empty<byte>(),
+                    Array.Empty<byte>())
+                .Build();
             await this.dataContext.AmazonUsers.AddAsync(newUser, cancellationToken);
             await this.dataContext.SaveChangesAsync(cancellationToken);
 
@@ -73,8 +74,10 @@ namespace Dogger.Domain.Commands.Amazon.Identity.EnsureAmazonUserWithName
 
                 try
                 {
-                    newUser.EncryptedAccessKeyId = await this.aesEncryptionHelper.EncryptAsync(keyResponse.AccessKey.AccessKeyId);
-                    newUser.EncryptedSecretAccessKey = await this.aesEncryptionHelper.EncryptAsync(keyResponse.AccessKey.SecretAccessKey);
+                    var accessKey = keyResponse.AccessKey;
+                    newUser.EncryptedAccessKeyId = await this.aesEncryptionHelper.EncryptAsync(accessKey.AccessKeyId);
+                    newUser.EncryptedSecretAccessKey = await this.aesEncryptionHelper.EncryptAsync(accessKey.SecretAccessKey);
+
                     await this.dataContext.SaveChangesAsync(cancellationToken);
 
                     await EnsureGroupMembershipAsync(newUser, cancellationToken);

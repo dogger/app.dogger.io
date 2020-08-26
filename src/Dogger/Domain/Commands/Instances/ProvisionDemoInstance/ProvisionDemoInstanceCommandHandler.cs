@@ -5,11 +5,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Clusters.EnsureClusterWithId;
 using Dogger.Domain.Models;
+using Dogger.Domain.Models.Builders;
 using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
-using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Mediatr.Database;
+using Dogger.Infrastructure.Slack;
 using MediatR;
 using Slack.Webhooks;
 
@@ -19,52 +20,41 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDemoInstance
     {
         private readonly IProvisioningService provisioningService;
         private readonly IMediator mediator;
-        private readonly ISlackClient? slackClient;
 
         private readonly DataContext dataContext;
 
         public ProvisionDemoInstanceCommandHandler(
             IProvisioningService provisioningService,
             IMediator mediator,
-            IOptionalService<ISlackClient> slackClient,
             DataContext dataContext)
         {
             this.provisioningService = provisioningService;
             this.mediator = mediator;
-            this.slackClient = slackClient.Value;
             this.dataContext = dataContext;
         }
 
         public async Task<IProvisioningJob> Handle(ProvisionDemoInstanceCommand request, CancellationToken cancellationToken)
         {
-            if (this.slackClient != null)
-            {
-                await this.slackClient.PostAsync(new SlackMessage()
+            await this.mediator.Send(
+                new SendSlackMessageCommand("A demo instance is being provisioned :sunglasses:")
                 {
-                    Text = "A demo instance is being provisioned.",
-                    Attachments = new List<SlackAttachment>()
+                    Fields = new List<SlackField>()
                     {
-                        new SlackAttachment()
+                        new SlackField()
                         {
-                            Fields = new List<SlackField>()
-                            {
-                                new SlackField()
-                                {
-                                    Title = "User ID",
-                                    Value = request.AuthenticatedUserId?.ToString() ?? string.Empty,
-                                    Short = true
-                                }
-                            }
+                            Title = "User ID",
+                            Value = request.AuthenticatedUserId?.ToString() ?? string.Empty,
+                            Short = true
                         }
                     }
-                });
-            }
+                },
+                cancellationToken);
 
             var cluster = await mediator.Send(new EnsureClusterWithIdCommand(DataContext.DemoClusterId), cancellationToken);
             if (cluster.Instances.Count > 0)
             {
-                var isDemoClusterOwnedByCurrentAuthenticatedUser = 
-                    cluster.UserId != default && 
+                var isDemoClusterOwnedByCurrentAuthenticatedUser =
+                    cluster.UserId != default &&
                     cluster.UserId == request.AuthenticatedUserId;
                 if (isDemoClusterOwnedByCurrentAuthenticatedUser)
                     return this.provisioningService.GetCompletedJob();
@@ -73,14 +63,13 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDemoInstance
             }
 
             var plan = await mediator.Send(new GetDemoPlanQuery(), cancellationToken);
-            var instance = new Instance()
-            {
-                Name = "demo",
-                Cluster = cluster,
-                IsProvisioned = false,
-                PlanId = plan.Id,
-                ExpiresAtUtc = DateTime.UtcNow.AddMinutes(30)
-            };
+            var instance = new InstanceBuilder()
+                .WithName("demo")
+                .WithCluster(cluster)
+                .WithProvisionedStatus(false)
+                .WithPlanId(plan.Id)
+                .WithExpiredDate(DateTime.UtcNow.AddMinutes(30))
+                .Build();
 
             cluster.UserId = request.AuthenticatedUserId;
 

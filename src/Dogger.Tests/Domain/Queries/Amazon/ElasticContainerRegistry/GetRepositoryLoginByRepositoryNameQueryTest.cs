@@ -4,9 +4,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Amazon.ECR;
 using Amazon.ECR.Model;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Amazon.ElasticContainerRegistry.GetRepositoryLoginByRepositoryName;
 using Dogger.Domain.Services.Amazon.Identity;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -45,10 +45,11 @@ namespace Dogger.Tests.Domain.Queries.Amazon.ElasticContainerRegistry
                 fakeUserAuthenticatedEcrServiceFactory);
 
             //Act
-            var loginResponse = await handler.Handle(new GetRepositoryLoginForUserQuery(new AmazonUser()
-            {
-                Name = "some-amazon-username"
-            }), default);
+            var loginResponse = await handler.Handle(
+                new GetRepositoryLoginForUserQuery(new TestAmazonUserBuilder()
+
+                    .WithName("some-amazon-username")),
+                default);
 
             //Assert
             Assert.AreEqual("username", loginResponse.Username);

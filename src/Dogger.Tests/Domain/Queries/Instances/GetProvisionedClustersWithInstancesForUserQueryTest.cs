@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Queries.Instances.GetProvisionedClustersWithInstancesForUser;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -72,32 +71,16 @@ namespace Dogger.Tests.Domain.Queries.Instances
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Users.AddAsync(new User()
-                {
-                    Id = userId,
-                    StripeCustomerId = "dummy",
-                    Clusters = new List<Cluster>()
-                    {
-                        new Cluster()
-                        {
-                            Instances = new List<Instance>()
-                            {
-                                new Instance()
-                                {
-                                    Name = "some-instance-1",
-                                    PlanId = "dummy",
-                                    IsProvisioned = false
-                                },
-                                new Instance()
-                                {
-                                    Name = "some-instance-2",
-                                    PlanId = "dummy",
-                                    IsProvisioned = false
-                                }
-                            }
-                        }
-                    }
-                });
+                await dataContext.Users.AddAsync(new TestUserBuilder()
+                    .WithId(userId)
+                    .WithClusters(new TestClusterBuilder()
+                        .WithInstances(
+                            new TestInstanceBuilder()
+                                .WithName("some-instance-1")
+                                .WithProvisionedStatus(false),
+                            new TestInstanceBuilder()
+                                .WithName("some-instance-2")
+                                .WithProvisionedStatus(false))));
             });
 
             //Act
@@ -161,32 +144,16 @@ namespace Dogger.Tests.Domain.Queries.Instances
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Users.AddAsync(new User()
-                {
-                    Id = userId,
-                    StripeCustomerId = "dummy",
-                    Clusters = new List<Cluster>()
-                    {
-                        new Cluster()
-                        {
-                            Instances = new List<Instance>()
-                            {
-                                new Instance()
-                                {
-                                    Name = "some-instance-1",
-                                    PlanId = "dummy",
-                                    IsProvisioned = true
-                                },
-                                new Instance()
-                                {
-                                    Name = "some-instance-2",
-                                    PlanId = "dummy",
-                                    IsProvisioned = true
-                                }
-                            }
-                        }
-                    }
-                });
+                await dataContext.Users.AddAsync(new TestUserBuilder()
+                    .WithId(userId)
+                    .WithClusters(new TestClusterBuilder()
+                        .WithInstances(
+                            new TestInstanceBuilder()
+                                .WithName("some-instance-1")
+                                .WithProvisionedStatus(true),
+                            new TestInstanceBuilder()
+                                .WithName("some-instance-2")
+                                .WithProvisionedStatus(true))));
             });
 
             //Act
@@ -259,32 +226,16 @@ namespace Dogger.Tests.Domain.Queries.Instances
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Users.AddAsync(new User()
-                {
-                    Id = userId,
-                    StripeCustomerId = "dummy",
-                    Clusters = new List<Cluster>()
-                    {
-                        new Cluster()
-                        {
-                            Instances = new List<Instance>()
-                            {
-                                new Instance()
-                                {
-                                    Name = "some-instance-1",
-                                    PlanId = "dummy",
-                                    IsProvisioned = true
-                                },
-                                new Instance()
-                                {
-                                    Name = "some-instance-2",
-                                    PlanId = "dummy",
-                                    IsProvisioned = true
-                                }
-                            }
-                        }
-                    }
-                });
+                await dataContext.Users.AddAsync(new TestUserBuilder()
+                    .WithId(userId)
+                    .WithClusters(new TestClusterBuilder()
+                        .WithInstances(
+                            new TestInstanceBuilder()
+                                .WithName("some-instance-1")
+                                .WithProvisionedStatus(true),
+                            new TestInstanceBuilder()
+                                .WithName("some-instance-2")
+                                .WithProvisionedStatus(true))));
             });
 
             //Act

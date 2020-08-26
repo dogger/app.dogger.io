@@ -4,7 +4,7 @@ using Dogger.Controllers.PullDog.Webhooks.Handlers;
 using Dogger.Controllers.PullDog.Webhooks.Models;
 using Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest;
 using Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment;
-using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.Extensions.Hosting;
@@ -121,8 +121,8 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                     }
                 },
                 null!,
-                new PullDogRepository(),
-                new PullDogPullRequest()));
+                new TestPullDogRepositoryBuilder(),
+                new TestPullDogPullRequestBuilder().Build()));
 
             //Assert
             await fakeMediator
@@ -151,8 +151,8 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                     }
                 },
                 null!,
-                new PullDogRepository(), 
-                new PullDogPullRequest()));
+                new TestPullDogRepositoryBuilder(),
+                new TestPullDogPullRequestBuilder().Build()));
 
             //Assert
             await fakeMediator
@@ -181,8 +181,8 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                     }
                 },
                 null!,
-                new PullDogRepository(),
-                new PullDogPullRequest()));
+                new TestPullDogRepositoryBuilder(),
+                new TestPullDogPullRequestBuilder().Build()));
 
             //Assert
             await fakeMediator

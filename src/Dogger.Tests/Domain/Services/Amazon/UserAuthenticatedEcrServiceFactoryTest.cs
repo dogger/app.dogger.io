@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Dogger.Domain.Models;
+﻿using System.Threading.Tasks;
 using Dogger.Domain.Queries.Amazon.Identity.GetAmazonUserByName;
 using Dogger.Domain.Services.Amazon.Identity;
 using Dogger.Infrastructure.Encryption;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -22,11 +21,9 @@ namespace Dogger.Tests.Domain.Services.Amazon
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
                 .Send(Arg.Is<GetAmazonUserByNameQuery>(args => args.Name == "some-amazon-user-name"))
-                .Returns(new AmazonUser()
-                {
-                    EncryptedAccessKeyId = Array.Empty<byte>(),
-                    EncryptedSecretAccessKey = Array.Empty<byte>()
-                });
+                .Returns(new TestAmazonUserBuilder()
+
+                    .WithName("some-amazon-user-name"));
 
             var serviceFactory = new UserAuthenticatedEcrServiceFactory(
                 fakeMediator,

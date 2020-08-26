@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
+using Dogger.Domain.Models.Builders;
 using MediatR;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -29,11 +30,10 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest
 
             try
             {
-                var newPullRequest = new PullDogPullRequest()
-                {
-                    Handle = request.PullRequestHandle,
-                    PullDogRepository = request.Repository
-                };
+                var newPullRequest = new PullDogPullRequestBuilder()
+                    .WithHandle(request.PullRequestHandle)
+                    .WithPullDogRepository(request.Repository)
+                    .Build();
 
                 await this.dataContext.PullDogPullRequests.AddAsync(newPullRequest, cancellationToken);
                 await this.dataContext.SaveChangesAsync(cancellationToken);
@@ -45,7 +45,7 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest
                 var conflictingPullRequest = await GetExistingPullRequestAsync(request, cancellationToken);
                 return conflictingPullRequest!;
             }
-            catch (DbUpdateException dbe) when(dbe.InnerException is SqlException sqe)
+            catch (DbUpdateException dbe) when (dbe.InnerException is SqlException sqe)
             {
                 this.logger.Error("An unknown database error occured while ensuring a Pull Dog pull request with code {Code}.", sqe.Number);
                 throw;

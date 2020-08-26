@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
+using Serilog;
 
 namespace Dogger.Tests.TestHelpers
 {
@@ -36,7 +37,7 @@ namespace Dogger.Tests.TestHelpers
             startup.ConfigureServices(services);
 
             ConfigureServicesForTesting(
-                services, 
+                services,
                 configuration);
 
             configure?.Invoke(services);
@@ -59,6 +60,8 @@ namespace Dogger.Tests.TestHelpers
             registry.ConfigureMediatr(typeof(TestServiceProviderFactory).Assembly);
 
             services.AddScoped<Mediator>();
+
+            services.AddSingleton(Substitute.For<ILogger>());
         }
 
         private static void ConfigureAmazonIdentityDefaultFakes(IServiceCollection services)

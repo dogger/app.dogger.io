@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dogger.Domain.Commands.Instances.DeleteInstanceByName;
 using Dogger.Domain.Commands.PullDog.DeleteInstanceByPullRequest;
 using Dogger.Domain.Commands.PullDog.UpsertPullRequestComment;
-using Dogger.Domain.Models;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -59,29 +58,13 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
             await environment.WithFreshDataContext(async dataContext =>
             {
-                await dataContext.Instances.AddAsync(new Instance()
-                {
-                    Name = "some-instance-name",
-                    PlanId = "dummy",
-                    Cluster = new Cluster(),
-                    PullDogPullRequest = new PullDogPullRequest()
-                    {
-                        Handle = "some-pull-request-handle",
-                        PullDogRepository = new PullDogRepository()
-                        {
-                            Handle = "some-repository-handle",
-                            PullDogSettings = new PullDogSettings()
-                            {
-                                PlanId = "dummy",
-                                User = new User()
-                                {
-                                    StripeCustomerId = "dummy"
-                                },
-                                EncryptedApiKey = Array.Empty<byte>()
-                            }
-                        }
-                    }
-                });
+                await dataContext.Instances.AddAsync(new TestInstanceBuilder()
+                    .WithCluster()
+                    .WithName("some-instance-name")
+                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
+                        .WithHandle("some-pull-request-handle")
+                        .WithPullDogRepository(new TestPullDogRepositoryBuilder()
+                            .WithHandle("some-repository-handle"))));
             });
 
             await environment.WithFreshDataContext(async dataContext =>
@@ -100,8 +83,8 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await fakeMediator
                 .Received(1)
                 .Send(
-                    Arg.Is<DeleteInstanceByNameCommand>(args => 
-                        args.Name == "some-instance-name"), 
+                    Arg.Is<DeleteInstanceByNameCommand>(args =>
+                        args.Name == "some-instance-name"),
                     default);
         }
     }

@@ -3,8 +3,8 @@ using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Dogger.Domain.Models;
 using Dogger.Infrastructure.Mediatr.Database;
+using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
@@ -29,18 +29,14 @@ namespace Dogger.Tests.Infrastructure.Mediatr
             {
                 await environment.Mediator.Send(new TestCommand(async () =>
                 {
-                    await environment.DataContext.Clusters.AddAsync(new Cluster()
-                    {
-                        Name = "outer"
-                    });
+                    await environment.DataContext.Clusters.AddAsync(new TestClusterBuilder()
+                        .WithName("outer"));
                     await environment.DataContext.SaveChangesAsync();
 
                     await environment.Mediator.Send(new TestCommand(async () =>
                     {
-                        await environment.DataContext.Clusters.AddAsync(new Cluster()
-                        {
-                            Name = "inner"
-                        });
+                        await environment.DataContext.Clusters.AddAsync(new TestClusterBuilder()
+                            .WithName("inner"));
                         await environment.DataContext.SaveChangesAsync();
                     }));
 
@@ -69,18 +65,14 @@ namespace Dogger.Tests.Infrastructure.Mediatr
             //Act
             await environment.Mediator.Send(new TestCommand(async () =>
             {
-                await environment.DataContext.Clusters.AddAsync(new Cluster()
-                {
-                    Name = "outer"
-                });
+                await environment.DataContext.Clusters.AddAsync(new TestClusterBuilder()
+                    .WithName("outer"));
                 await environment.DataContext.SaveChangesAsync();
 
                 await environment.Mediator.Send(new TestCommand(async () =>
                 {
-                    await environment.DataContext.Clusters.AddAsync(new Cluster()
-                    {
-                        Name = "inner"
-                    });
+                    await environment.DataContext.Clusters.AddAsync(new TestClusterBuilder()
+                        .WithName("inner"));
                     await environment.DataContext.SaveChangesAsync();
                 }));
             }));
@@ -106,18 +98,14 @@ namespace Dogger.Tests.Infrastructure.Mediatr
             {
                 await environment.Mediator.Send(new TestCommand(async () =>
                 {
-                    await environment.DataContext.Clusters.AddAsync(new Cluster()
-                    {
-                        Name = "outer"
-                    });
+                    await environment.DataContext.Clusters.AddAsync(new TestClusterBuilder()
+                        .WithName("outer"));
                     await environment.DataContext.SaveChangesAsync();
 
                     await environment.Mediator.Send(new TestCommand(async () =>
                     {
-                        await environment.DataContext.Clusters.AddAsync(new Cluster()
-                        {
-                            Name = "inner"
-                        });
+                        await environment.DataContext.Clusters.AddAsync(new TestClusterBuilder()
+                            .WithName("inner"));
                         await environment.DataContext.SaveChangesAsync();
 
                         throw new TestException();
