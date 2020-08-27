@@ -47,7 +47,12 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest
             }
             catch (DbUpdateException dbe) when (dbe.InnerException is SqlException sqe)
             {
-                this.logger.Error("An unknown database error occured while ensuring a Pull Dog pull request with code {Code}.", sqe.Number);
+                this.logger.Error("An unknown database error occured while ensuring a Pull Dog pull request with code {SqlCodeNumber}.", sqe.Number);
+                throw;
+            }
+            catch (DbUpdateException dbx)
+            {
+                this.logger.Error(dbx, "An unknown database error occured.");
                 throw;
             }
         }
