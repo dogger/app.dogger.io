@@ -203,8 +203,7 @@ namespace Dogger.Infrastructure.Ioc
 
         private void ConfigureHealthChecks()
         {
-            this.Services.AddHealthChecks()
-                .AddDbContextCheck<DataContext>();
+            this.Services.AddHealthChecks();
         }
 
         private void ConfigureOptions()
