@@ -56,6 +56,8 @@ namespace Dogger.Tests.Domain.Queries.Payment.GetCouponForUser
                 new GetCouponForUserQuery(user));
 
             //Assert
+            Assert.IsNotNull(result);
+
             Assert.IsNotNull(result.Code);
             Assert.AreEqual(promotionCode.Code, result.Code);
         }

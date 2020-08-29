@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Queries.Payment.GetCouponById;
@@ -31,19 +32,24 @@ namespace Dogger.Domain.Queries.Payment.GetCouponForUser
 
             var customer = await this.stripeCustomerService.GetAsync(
                 request.User.StripeCustomerId,
-                default,
+                new CustomerGetOptions()
+                {
+                    Expand = new List<string>()
+                    {
+                        "discount"
+                    }
+                },
                 default,
                 cancellationToken);
             if(customer == null)
                 throw new InvalidOperationException("Stripe customer not found.");
 
-            var promotionCode = customer.Discount?.PromotionCode;
+            var promotionCode = customer.Discount.PromotionCodeId;
             if (promotionCode == null)
                 return null;
 
             return await this.mediator.Send(
-                new GetCouponByIdQuery(
-                    promotionCode.Id),
+                new GetCouponByIdQuery(promotionCode),
                 cancellationToken);
         }
     }

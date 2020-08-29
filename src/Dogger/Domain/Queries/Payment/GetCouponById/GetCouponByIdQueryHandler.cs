@@ -24,15 +24,11 @@ namespace Dogger.Domain.Queries.Payment.GetCouponById
             if (this.stripePromotionCodeService == null)
                 return null;
 
-            return await this.stripePromotionCodeService
-                .ListAutoPagingAsync(
-                    new PromotionCodeListOptions()
-                    {
-                        Code = request.Id
-                    },
-                    default,
-                    cancellationToken)
-                .SingleOrDefaultAsync(cancellationToken);
+            return await this.stripePromotionCodeService.GetAsync(
+                request.Code,
+                default,
+                default,
+                cancellationToken);
         }
     }
 }

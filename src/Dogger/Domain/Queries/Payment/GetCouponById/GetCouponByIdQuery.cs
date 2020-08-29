@@ -5,12 +5,12 @@ namespace Dogger.Domain.Queries.Payment.GetCouponById
 {
     public class GetCouponByIdQuery : IRequest<PromotionCode?>
     {
-        public string Id { get; }
+        public string Code { get; }
 
         public GetCouponByIdQuery(
-            string id)
+            string code)
         {
-            this.Id = id;
+            this.Code = code;
         }
     }
 }
