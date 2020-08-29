@@ -44,7 +44,7 @@ namespace Dogger.Tests.Domain.Queries.Payment.GetCouponById
 
             //Act
             var result = await environment.Mediator.Send(
-                new GetCouponByIdQuery(promotionCode.Code));
+                new GetCouponByIdQuery(promotionCode.Id));
 
             //Assert
             Assert.IsNotNull(result);
