@@ -7,7 +7,8 @@ namespace Dogger.Domain.Queries.Payment.GetCouponById
     {
         public string Id { get; }
 
-        public GetCouponByIdQuery(string id)
+        public GetCouponByIdQuery(
+            string id)
         {
             this.Id = id;
         }

@@ -37,12 +37,13 @@ namespace Dogger.Domain.Queries.Payment.GetCouponForUser
             if(customer == null)
                 throw new InvalidOperationException("Stripe customer not found.");
 
-            var coupon = customer.Discount?.Coupon;
-            if (coupon == null)
+            var promotionCode = customer.Discount?.PromotionCode;
+            if (promotionCode == null)
                 return null;
 
             return await this.mediator.Send(
-                new GetCouponByIdQuery(coupon.Id),
+                new GetCouponByIdQuery(
+                    promotionCode.Id),
                 cancellationToken);
         }
     }

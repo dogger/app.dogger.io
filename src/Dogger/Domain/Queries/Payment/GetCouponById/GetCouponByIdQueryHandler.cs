@@ -28,7 +28,7 @@ namespace Dogger.Domain.Queries.Payment.GetCouponById
                 .ListAutoPagingAsync(
                     new PromotionCodeListOptions()
                     {
-                        Coupon = request.Id
+                        Code = request.Id
                     },
                     default,
                     cancellationToken)
