@@ -44,7 +44,7 @@ namespace Dogger.Domain.Queries.Payment.GetCouponForUser
             if(customer == null)
                 throw new InvalidOperationException("Stripe customer not found.");
 
-            var promotionCode = customer.Discount.PromotionCodeId;
+            var promotionCode = customer.Discount?.PromotionCodeId;
             if (promotionCode == null)
                 return null;
 
