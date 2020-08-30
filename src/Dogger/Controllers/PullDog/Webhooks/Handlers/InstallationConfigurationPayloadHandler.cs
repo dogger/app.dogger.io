@@ -17,8 +17,6 @@ namespace Dogger.Controllers.PullDog.Webhooks.Handlers
     public class InstallationConfigurationPayloadHandler : IConfigurationPayloadHandler
     {
         private readonly IMediator mediator;
-        private readonly IGitHubClientFactory gitHubClientFactory;
-        private readonly ILogger logger;
 
         public string[] Events => new []
         {
@@ -27,13 +25,9 @@ namespace Dogger.Controllers.PullDog.Webhooks.Handlers
         };
 
         public InstallationConfigurationPayloadHandler(
-            IMediator mediator,
-            IGitHubClientFactory gitHubClientFactory,
-            ILogger logger)
+            IMediator mediator)
         {
             this.mediator = mediator;
-            this.gitHubClientFactory = gitHubClientFactory;
-            this.logger = logger;
         }
 
         public bool CanHandle(WebhookPayload payload)
@@ -54,9 +48,7 @@ namespace Dogger.Controllers.PullDog.Webhooks.Handlers
                     payload.Installation.Id,
                     payload.Installation.Account.Id));
             if (settings == null)
-            {
-                throw new InvalidOperationException($"Could not find Pull Dog settings for an installation ID of {payload.Installation.Id}.");
-            }
+                return;
 
             if (payload.RepositoriesRemoved?.Length > 0)
             {

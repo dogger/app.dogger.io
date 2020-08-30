@@ -16,6 +16,25 @@ namespace Dogger.Tests.Domain.Queries.Payment.GetCouponForUser
     {
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
+        public async Task Handle_CouponCodeDoesNotExist_ReturnsNothing()
+        {
+            //Arrange
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
+
+            var user = await environment.Mediator.Send(
+                new CreateUserForIdentityCommand(
+                    TestClaimsPrincipalFactory.CreateWithIdentityName("some-identity-name")));
+
+            //Act
+            var result = await environment.Mediator.Send(
+                new GetCouponForUserQuery(user));
+
+            //Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_CouponCodeExists_ReturnsCouponCode()
         {
             //Arrange

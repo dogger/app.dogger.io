@@ -27,9 +27,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             var fakeMediator = Substitute.For<IMediator>();
 
             var handler = new InstallationConfigurationPayloadHandler(
-                fakeMediator,
-                Substitute.For<IGitHubClientFactory>(),
-                Substitute.For<ILogger>());
+                fakeMediator);
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -58,9 +56,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             var fakeMediator = Substitute.For<IMediator>();
 
             var handler = new InstallationConfigurationPayloadHandler(
-                fakeMediator,
-                Substitute.For<IGitHubClientFactory>(),
-                Substitute.For<ILogger>());
+                fakeMediator);
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -89,9 +85,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             var fakeMediator = Substitute.For<IMediator>();
 
             var handler = new InstallationConfigurationPayloadHandler(
-                fakeMediator,
-                Substitute.For<IGitHubClientFactory>(),
-                Substitute.For<ILogger>());
+                fakeMediator);
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -111,9 +105,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             var fakeMediator = Substitute.For<IMediator>();
 
             var handler = new InstallationConfigurationPayloadHandler(
-                fakeMediator,
-                Substitute.For<IGitHubClientFactory>(),
-                Substitute.For<ILogger>());
+                fakeMediator);
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -138,9 +130,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                 .Returns(settings);
 
             var handler = new InstallationConfigurationPayloadHandler(
-                fakeMediator,
-                Substitute.For<IGitHubClientFactory>(),
-                Substitute.For<ILogger>());
+                fakeMediator);
 
             //Act
             await handler.HandleAsync(new WebhookPayload()
@@ -190,9 +180,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                 .Returns(settings);
 
             var handler = new InstallationConfigurationPayloadHandler(
-                fakeMediator,
-                Substitute.For<IGitHubClientFactory>(),
-                Substitute.For<ILogger>());
+                fakeMediator);
 
             //Act
             await handler.HandleAsync(new WebhookPayload()
@@ -237,37 +225,40 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task Handle_ValidConfigurationCommitPayloadWithNoSettingsPresent_ThrowsException()
+        public async Task Handle_ValidConfigurationCommitPayloadWithNoSettingsPresent_DoesNothing()
         {
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
 
             var handler = new InstallationConfigurationPayloadHandler(
-                fakeMediator,
-                Substitute.For<IGitHubClientFactory>(),
-                Substitute.For<ILogger>());
+                fakeMediator);
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
-                await handler.HandleAsync(new WebhookPayload()
+            await handler.HandleAsync(new WebhookPayload()
+            {
+                Pusher = new UserPayload(),
+                Installation = new InstallationPayload()
                 {
-                    Pusher = new UserPayload(),
-                    Installation = new InstallationPayload()
+                    Id = 1338,
+                    Account = new UserPayload()
                     {
-                        Id = 1338,
-                        Account = new UserPayload()
-                        {
-                            Id = 1341
-                        }
-                    },
-                    Repository = new RepositoryPayload()
-                    {
-                        Id = 1337
+                        Id = 1341
                     }
-                }));
+                },
+                Repository = new RepositoryPayload()
+                {
+                    Id = 1337
+                }
+            });
 
             //Assert
-            Assert.IsNotNull(exception);
+            await fakeMediator
+                .DidNotReceive()
+                .Send(Arg.Any<DeletePullDogRepositoryCommand>());
+            
+            await fakeMediator
+                .DidNotReceive()
+                .Send(Arg.Any<AddPullDogToGitHubRepositoriesCommand>());
         }
     }
 }

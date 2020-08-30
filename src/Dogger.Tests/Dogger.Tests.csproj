@@ -50,6 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Dogger.Tests.Shared\Dogger.Tests.Shared.csproj" />
     <ProjectReference Include="..\Dogger\Dogger.csproj" />
   </ItemGroup>
 

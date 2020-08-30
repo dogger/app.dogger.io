@@ -25,8 +25,10 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
         public override string? IpAddress { get; set; }
         public string? InstanceName { get; set; }
-
+        
+        [NotLogged]
         public IDictionary<string, string>? BuildArguments { get; set; }
+
         public string[]? DockerComposeYmlFilePaths { get; set; }
         public IEnumerable<InstanceDockerFile>? Files { get; set; }
 

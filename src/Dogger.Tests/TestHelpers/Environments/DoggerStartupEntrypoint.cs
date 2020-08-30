@@ -89,7 +89,7 @@ namespace Dogger.Tests.TestHelpers.Environments.Dogger
                 isAvailable = true;
 
                 if (hostStartTask.IsFaulted)
-                    throw hostStartTask.Exception;
+                    throw hostStartTask.Exception ?? new Exception("Unknown start task exception.");
 
                 try
                 {

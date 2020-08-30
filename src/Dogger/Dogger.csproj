@@ -90,5 +90,9 @@
     <TypeScriptCompile Remove="Infrastructure\AspNet\Options\Dogfeed\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Dogger.Models\Dogger.Models.csproj" />
+  </ItemGroup>
+
 
 </Project>

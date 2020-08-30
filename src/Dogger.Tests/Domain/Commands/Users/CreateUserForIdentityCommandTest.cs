@@ -32,7 +32,7 @@ namespace Dogger.Tests.Domain.Commands.Users
             {
                 IocConfiguration = services => services.AddSingleton(provider =>
                 {
-                    var partiallyFakeCustomerService = Substitute.ForPartsOf<CustomerService>(
+                    var partiallyFakeCustomerService = Substitute.For<CustomerService>(
                         provider.GetRequiredService<IOptionalService<IStripeClient>>().Value);
                     partiallyFakeCustomerService
                         .CreateAsync(Arg.Any<CustomerCreateOptions>())

@@ -2,9 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
+using Dogger.Domain.Queries.Payment.GetSubscriptionById;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Queries.Plans.GetSupportedPullDogPlans;
+using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
@@ -26,7 +28,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_DoggerInstancesPresentWithDifferentPlanIds_DoggerInstancesAddedToDifferentSubscriptionItems()
         {
             //Arrange
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .UpdateAsync(
@@ -53,10 +55,13 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     }
                 });
 
+            var fakeOptionalSubscriptionService = Substitute.For<IOptionalService<SubscriptionService>>();
+            fakeOptionalSubscriptionService.Value.Returns(fakeSubscriptionService);
+
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
                 new DoggerEnvironmentSetupOptions()
                 {
-                    IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
+                    IocConfiguration = services => services.AddSingleton(fakeOptionalSubscriptionService)
                 });
 
             var user = new TestUserBuilder()
@@ -100,7 +105,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_DoggerInstancesPresentWithSamePlanIds_DoggerInstancesAddedToSameSubscriptionItem()
         {
             //Arrange
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .UpdateAsync(
@@ -127,10 +132,29 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     }
                 });
 
+            var fakeOptionalSubscriptionService = Substitute.For<IOptionalService<SubscriptionService>>();
+            fakeOptionalSubscriptionService.Value.Returns(fakeSubscriptionService);
+
+            var fakeMediator = Substitute.For<IMediator>();
+            fakeMediator
+                .Send(Arg.Is<GetSubscriptionByIdQuery>(args =>
+                    args.Id == "some-subscription-id"))
+                .Returns(new Subscription()
+                {
+                    Items = new StripeList<SubscriptionItem>()
+                    {
+                        Data = new List<SubscriptionItem>()
+                    }
+                });
+
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
                 new DoggerEnvironmentSetupOptions()
                 {
-                    IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
+                    IocConfiguration = services =>
+                    {
+                        services.AddSingleton(fakeMediator);
+                        services.AddSingleton(fakeOptionalSubscriptionService);
+                    }
                 });
 
             var user = new TestUserBuilder()
@@ -176,37 +200,8 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
 
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
-                .Send(Arg.Any<GetSupportedPullDogPlansQuery>())
-                .Returns(new[]
-                {
-                    fakePullDogPlan
-                });
-
-            fakeMediator
-                .Send(Arg.Is<GetPullDogPlanFromSettingsQuery>(args =>
-                    args.DoggerPlanId == "some-plan-id" &&
-                    args.PoolSize == 1))
-                .Returns(fakePullDogPlan);
-
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
-            fakeSubscriptionService
-                .Configure()
-                .UpdateAsync(
-                    Arg.Any<string>(),
-                    Arg.Any<SubscriptionUpdateOptions>(),
-                    default,
-                    default)
-                .Returns(new Subscription()
-                {
-                    LatestInvoice = new Invoice()
-                    {
-                        PaymentIntent = new PaymentIntent()
-                    }
-                });
-
-            fakeSubscriptionService
-                .Configure()
-                .GetAsync("some-subscription-id")
+                .Send(Arg.Is<GetSubscriptionByIdQuery>(args =>
+                    args.Id == "some-subscription-id"))
                 .Returns(new Subscription()
                 {
                     Items = new StripeList<SubscriptionItem>()
@@ -225,12 +220,44 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     }
                 });
 
+            fakeMediator
+                .Send(Arg.Any<GetSupportedPullDogPlansQuery>())
+                .Returns(new[]
+                {
+                    fakePullDogPlan
+                });
+
+            fakeMediator
+                .Send(Arg.Is<GetPullDogPlanFromSettingsQuery>(args =>
+                    args.DoggerPlanId == "some-plan-id" &&
+                    args.PoolSize == 1))
+                .Returns(fakePullDogPlan);
+
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
+            fakeSubscriptionService
+                .Configure()
+                .UpdateAsync(
+                    Arg.Any<string>(),
+                    Arg.Any<SubscriptionUpdateOptions>(),
+                    default,
+                    default)
+                .Returns(new Subscription()
+                {
+                    LatestInvoice = new Invoice()
+                    {
+                        PaymentIntent = new PaymentIntent()
+                    }
+                });
+
+            var fakeOptionalSubscriptionService = Substitute.For<IOptionalService<SubscriptionService>>();
+            fakeOptionalSubscriptionService.Value.Returns(fakeSubscriptionService);
+
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
                 new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {
-                        services.AddSingleton(fakeSubscriptionService);
+                        services.AddSingleton(fakeOptionalSubscriptionService);
                         services.AddSingleton(fakeMediator);
                     }
                 });
@@ -264,7 +291,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     "some-subscription-id",
                     Arg.Is<SubscriptionUpdateOptions>(args =>
                         args.Prorate == true &&
-                        args.Items[0].Plan == "some-pull-dog-plan_v2" &&
+                        args.Items[0].Plan == "some-pull-dog-plan_v3" &&
                         args.Items[0].Id == "some-subscription-item" &&
                         args.Items[0].Quantity == 1),
                     default,
@@ -278,6 +305,17 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             //Arrange
             var fakeMediator = Substitute.For<IMediator>();
             fakeMediator
+                .Send(Arg.Is<GetSubscriptionByIdQuery>(args =>
+                    args.Id == "some-subscription-id"))
+                .Returns(new Subscription()
+                {
+                    Items = new StripeList<SubscriptionItem>()
+                    {
+                        Data = new List<SubscriptionItem>()
+                    }
+                });
+
+            fakeMediator
                 .Send(Arg.Is<GetPullDogPlanFromSettingsQuery>(args =>
                     args.DoggerPlanId == "some-pull-dog-plan" &&
                     args.PoolSize == 2))
@@ -286,7 +324,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     1337,
                     2));
 
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .UpdateAsync(
@@ -302,23 +340,15 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     }
                 });
 
-            fakeSubscriptionService
-                .Configure()
-                .GetAsync("some-subscription-id")
-                .Returns(new Subscription()
-                {
-                    Items = new StripeList<SubscriptionItem>()
-                    {
-                        Data = new List<SubscriptionItem>()
-                    }
-                });
+            var fakeOptionalSubscriptionService = Substitute.For<IOptionalService<SubscriptionService>>();
+            fakeOptionalSubscriptionService.Value.Returns(fakeSubscriptionService);
 
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
                 new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {
-                        services.AddSingleton(fakeSubscriptionService);
+                        services.AddSingleton(fakeOptionalSubscriptionService);
                         services.AddSingleton(fakeMediator);
                     }
                 });
@@ -344,9 +374,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     "some-subscription-id",
                     Arg.Is<SubscriptionUpdateOptions>(args =>
                         args.Prorate == true &&
-                        args.Items[0].Plan == "some-pull-dog-plan_v2" &&
+                        args.Items[0].Plan == "some-pull-dog-plan_v3" &&
                         args.Items[0].Id == null &&
-                        args.Items[0].Quantity == 1),
+                        args.Items[0].Quantity == 2),
                     default,
                     default);
         }
@@ -366,7 +396,18 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     1337,
                     2));
 
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            fakeMediator
+                .Send(Arg.Is<GetSubscriptionByIdQuery>(args =>
+                    args.Id == "some-subscription-id"))
+                .Returns(new Subscription()
+                {
+                    Items = new StripeList<SubscriptionItem>()
+                    {
+                        Data = new List<SubscriptionItem>()
+                    }
+                });
+
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .UpdateAsync(
@@ -382,23 +423,15 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     }
                 });
 
-            fakeSubscriptionService
-                .Configure()
-                .GetAsync("some-subscription-id")
-                .Returns(new Subscription()
-                {
-                    Items = new StripeList<SubscriptionItem>()
-                    {
-                        Data = new List<SubscriptionItem>()
-                    }
-                });
+            var fakeOptionalSubscriptionService = Substitute.For<IOptionalService<SubscriptionService>>();
+            fakeOptionalSubscriptionService.Value.Returns(fakeSubscriptionService);
 
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
                 new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {
-                        services.AddSingleton(fakeSubscriptionService);
+                        services.AddSingleton(fakeOptionalSubscriptionService);
                         services.AddSingleton(fakeMediator);
                     }
                 });
@@ -431,7 +464,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_DoggerInstanceAddedAndOtherInstanceRemoved_AddsBothAddAndRemoveToSubscription()
         {
             //Arrange
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .UpdateAsync(
@@ -447,9 +480,13 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     }
                 });
 
-            fakeSubscriptionService
-                .Configure()
-                .GetAsync("some-subscription-id")
+            var fakeOptionalSubscriptionService = Substitute.For<IOptionalService<SubscriptionService>>();
+            fakeOptionalSubscriptionService.Value.Returns(fakeSubscriptionService);
+
+            var fakeMediator = Substitute.For<IMediator>();
+            fakeMediator
+                .Send(Arg.Is<GetSubscriptionByIdQuery>(args =>
+                    args.Id == "some-subscription-id"))
                 .Returns(new Subscription()
                 {
                     Items = new StripeList<SubscriptionItem>()
@@ -471,7 +508,11 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
                 new DoggerEnvironmentSetupOptions()
                 {
-                    IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
+                    IocConfiguration = services =>
+                    {
+                        services.AddSingleton(fakeMediator);
+                        services.AddSingleton(fakeOptionalSubscriptionService);
+                    }
                 });
 
             var user = new TestUserBuilder()
@@ -541,25 +582,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                         5)
                 });
 
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
-            fakeSubscriptionService
-                .Configure()
-                .UpdateAsync(
-                    Arg.Any<string>(),
-                    Arg.Any<SubscriptionUpdateOptions>(),
-                    default,
-                    default)
-                .Returns(new Subscription()
-                {
-                    LatestInvoice = new Invoice()
-                    {
-                        PaymentIntent = new PaymentIntent()
-                    }
-                });
-
-            fakeSubscriptionService
-                .Configure()
-                .GetAsync("some-subscription-id")
+            fakeMediator
+                .Send(Arg.Is<GetSubscriptionByIdQuery>(args =>
+                    args.Id == "some-subscription-id"))
                 .Returns(new Subscription()
                 {
                     Items = new StripeList<SubscriptionItem>()
@@ -578,12 +603,31 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     }
                 });
 
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
+            fakeSubscriptionService
+                .Configure()
+                .UpdateAsync(
+                    Arg.Any<string>(),
+                    Arg.Any<SubscriptionUpdateOptions>(),
+                    default,
+                    default)
+                .Returns(new Subscription()
+                {
+                    LatestInvoice = new Invoice()
+                    {
+                        PaymentIntent = new PaymentIntent()
+                    }
+                });
+
+            var fakeOptionalSubscriptionService = Substitute.For<IOptionalService<SubscriptionService>>();
+            fakeOptionalSubscriptionService.Value.Returns(fakeSubscriptionService);
+
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
                 new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {
-                        services.AddSingleton(fakeSubscriptionService);
+                        services.AddSingleton(fakeOptionalSubscriptionService);
                         services.AddSingleton(fakeMediator);
                     }
                 });
@@ -609,9 +653,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     "some-subscription-id",
                     Arg.Is<SubscriptionUpdateOptions>(args =>
                         args.Prorate == true &&
-                        args.Items[0].Plan == "some-new-pull-dog-plan_v2" &&
+                        args.Items[0].Plan == "some-new-pull-dog-plan_v3" &&
                         args.Items[0].Id == "some-subscription-item-id" &&
-                        args.Items[0].Quantity == 1),
+                        args.Items[0].Quantity == 5),
                     default,
                     default);
         }
@@ -621,7 +665,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_NoStripeSubscriptionPresent_StripeSubscriptionCreated()
         {
             //Arrange
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .CreateAsync(
@@ -636,10 +680,13 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     }
                 });
 
+            var fakeOptionalSubscriptionService = Substitute.For<IOptionalService<SubscriptionService>>();
+            fakeOptionalSubscriptionService.Value.Returns(fakeSubscriptionService);
+
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
                 new DoggerEnvironmentSetupOptions()
                 {
-                    IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
+                    IocConfiguration = services => services.AddSingleton(fakeOptionalSubscriptionService)
                 });
 
             var user = new TestUserBuilder()
@@ -677,7 +724,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_NoStripeSubscriptionPresent_UserStripeSubscriptionIdSavedInDatabase()
         {
             //Arrange
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .CreateAsync(
@@ -693,10 +740,13 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     }
                 });
 
+            var fakeOptionalSubscriptionService = Substitute.For<IOptionalService<SubscriptionService>>();
+            fakeOptionalSubscriptionService.Value.Returns(fakeSubscriptionService);
+
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
                 new DoggerEnvironmentSetupOptions()
                 {
-                    IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
+                    IocConfiguration = services => services.AddSingleton(fakeOptionalSubscriptionService)
                 });
 
             var user = new TestUserBuilder()

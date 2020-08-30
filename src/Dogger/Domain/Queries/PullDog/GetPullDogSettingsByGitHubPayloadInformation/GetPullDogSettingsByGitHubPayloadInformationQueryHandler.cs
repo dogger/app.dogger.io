@@ -43,7 +43,7 @@ namespace Dogger.Domain.Queries.PullDog.GetPullDogSettingsByGitHubPayloadInforma
                 new GetUserByIdentityNameQuery(auth0User.UserId),
                 cancellationToken);
             if (user == null)
-                throw new InvalidOperationException("Could not find the given user.");
+                return null;
 
             return user.PullDogSettings;
         }

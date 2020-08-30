@@ -27,7 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Dogger.Setup\Dogger.Setup.csproj" />
-    <ProjectReference Include="..\Dogger.Tests\Dogger.Tests.csproj" />
+    <ProjectReference Include="..\Dogger.Tests.Shared\Dogger.Tests.Shared.csproj" />
   </ItemGroup>
 
 </Project>

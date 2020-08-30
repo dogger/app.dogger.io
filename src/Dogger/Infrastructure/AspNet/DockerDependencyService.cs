@@ -77,8 +77,7 @@ namespace Dogger.Infrastructure.AspNet
                 return;
 
             var processesToKill = Process.GetProcessesByName("node")
-                .OrderByDescending(x => x.StartTime)
-                .Skip(1)
+                .Where(x => (DateTime.Now - x.StartTime).TotalMinutes > 30)
                 .ToArray();
             try
             {
