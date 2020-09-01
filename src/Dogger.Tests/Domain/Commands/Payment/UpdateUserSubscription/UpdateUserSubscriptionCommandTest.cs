@@ -188,7 +188,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     args.PoolSize == 1))
                 .Returns(fakePullDogPlan);
 
-            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .UpdateAsync(
@@ -286,7 +286,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     1337,
                     2));
 
-            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .UpdateAsync(
@@ -541,7 +541,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                         5)
                 });
 
-            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .UpdateAsync(

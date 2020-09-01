@@ -338,51 +338,6 @@ namespace Dogger.Tests.Domain.Commands.PullDog
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task Handle_NoConfigurationFileFound_DoesNothing()
-        {
-            //Arrange
-            var fakeMediator = Substitute.For<IMediator>();
-            fakeMediator
-                .Send(Arg.Any<EnsurePullDogPullRequestCommand>())
-                .Returns(new TestPullDogPullRequestBuilder().Build());
-
-            var fakeProvisioningService = Substitute.For<IProvisioningService>();
-
-            var fakePullDogFileCollectorFactory = Substitute.For<IPullDogFileCollectorFactory>();
-            var fakePullDogRepositoryClientFactory = Substitute.For<IPullDogRepositoryClientFactory>();
-
-            var fakePullDogFileCollector = fakePullDogFileCollectorFactory.Create(Arg.Any<IPullDogRepositoryClient>());
-            fakePullDogFileCollector
-                .GetConfigurationFileAsync()
-                .Returns((ConfigurationFile)null);
-
-            fakePullDogFileCollector
-                .GetRepositoryFilesFromConfiguration(Arg.Any<ConfigurationFile>())
-                .Returns(Array.Empty<RepositoryFile>());
-
-            var handler = new ProvisionPullDogEnvironmentCommandHandler(
-                fakeMediator,
-                fakeProvisioningService,
-                fakePullDogFileCollectorFactory,
-                fakePullDogRepositoryClientFactory);
-
-            //Act
-            await handler.Handle(
-                new ProvisionPullDogEnvironmentCommand(
-                    "some-pull-request-handle",
-                    new TestPullDogRepositoryBuilder()
-                        .WithGitHubInstallationId(1337)),
-                default);
-
-            //Assert
-            await fakeProvisioningService
-                .DidNotReceive()
-                .ScheduleJobAsync(
-                    Arg.Any<AggregateProvisioningStateFlow>());
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
         public async Task Handle_DockerComposeSyntaxError_UpdatesPullRequestCommentWithMessageExplainingIt()
         {
             //Arrange
