@@ -27,9 +27,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             var fakeMediator = Substitute.For<IMediator>();
 
             var handler = new InstallationConfigurationPayloadHandler(
-                fakeMediator,
-                Substitute.For<IGitHubClientFactory>(),
-                Substitute.For<ILogger>());
+                fakeMediator);
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -58,9 +56,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             var fakeMediator = Substitute.For<IMediator>();
 
             var handler = new InstallationConfigurationPayloadHandler(
-                fakeMediator,
-                Substitute.For<IGitHubClientFactory>(),
-                Substitute.For<ILogger>());
+                fakeMediator);
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -89,9 +85,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             var fakeMediator = Substitute.For<IMediator>();
 
             var handler = new InstallationConfigurationPayloadHandler(
-                fakeMediator,
-                Substitute.For<IGitHubClientFactory>(),
-                Substitute.For<ILogger>());
+                fakeMediator);
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -111,9 +105,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
             var fakeMediator = Substitute.For<IMediator>();
 
             var handler = new InstallationConfigurationPayloadHandler(
-                fakeMediator,
-                Substitute.For<IGitHubClientFactory>(),
-                Substitute.For<ILogger>());
+                fakeMediator);
 
             //Act
             var result = handler.CanHandle(new WebhookPayload()
@@ -138,9 +130,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                 .Returns(settings);
 
             var handler = new InstallationConfigurationPayloadHandler(
-                fakeMediator,
-                Substitute.For<IGitHubClientFactory>(),
-                Substitute.For<ILogger>());
+                fakeMediator);
 
             //Act
             await handler.HandleAsync(new WebhookPayload()
@@ -190,9 +180,7 @@ namespace Dogger.Tests.Controllers.PullDog.Webhooks
                 .Returns(settings);
 
             var handler = new InstallationConfigurationPayloadHandler(
-                fakeMediator,
-                Substitute.For<IGitHubClientFactory>(),
-                Substitute.For<ILogger>());
+                fakeMediator);
 
             //Act
             await handler.HandleAsync(new WebhookPayload()

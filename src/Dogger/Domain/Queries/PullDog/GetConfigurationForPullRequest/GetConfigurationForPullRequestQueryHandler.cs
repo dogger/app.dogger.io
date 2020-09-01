@@ -30,12 +30,12 @@ namespace Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest
                 logger.Information("No configuration file was found, a default will be used.");
             }
 
-            var configurationOverride = request.PullRequest.ConfigurationOverride;
-            if (configurationOverride == null)
+            var newConfigurationOverride = request.PullRequest.ConfigurationOverride;
+            if (newConfigurationOverride == null)
                 return configuration;
 
             ApplyOverridesToConfiguration(
-                configurationOverride, 
+                newConfigurationOverride, 
                 configuration);
 
             return configuration;

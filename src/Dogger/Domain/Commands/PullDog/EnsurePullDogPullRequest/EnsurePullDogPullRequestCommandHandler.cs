@@ -61,6 +61,7 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogPullRequest
         {
             return await this.dataContext
                 .PullDogPullRequests
+                .Include(x => x.ConfigurationOverride)
                 .Include(x => x.Instance)
                 .Include(x => x.PullDogRepository)
                 .ThenInclude(x => x.PullDogSettings)

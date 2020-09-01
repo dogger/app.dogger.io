@@ -55,9 +55,6 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
             var configuration = await this.mediator.Send(
                 new GetConfigurationForPullRequestQuery(pullRequest),
                 cancellationToken);
-            if (configuration == null)
-                return Unit.Value;
-
             if (configuration.IsLazy)
             {
                 await this.mediator.Send(
