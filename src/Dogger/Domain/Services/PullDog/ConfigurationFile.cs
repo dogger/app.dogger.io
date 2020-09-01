@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Destructurama.Attributed;
 
 namespace Dogger.Domain.Services.PullDog
 {
@@ -40,6 +41,7 @@ namespace Dogger.Domain.Services.PullDog
 
     public abstract class ConfigurationFileBase
     {
+        [NotLogged]
         public IDictionary<string, string>? BuildArguments { get; set; }
 
         public string? Label { get; set; }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Destructurama.Attributed;
 using Dogger.Domain.Queries.Amazon.Lightsail.GetLightsailInstanceByName;
 using Dogger.Domain.Services.Provisioning.Arguments;
 using Dogger.Domain.Services.Provisioning.States;
@@ -14,6 +15,8 @@ namespace Dogger.Domain.Services.Provisioning.Flows
         public string[] DockerComposeYmlFilePaths { get; }
         public IEnumerable<IDockerAuthenticationArguments>? Authentication { get; set; }
         public IEnumerable<InstanceDockerFile>? Files { get; set; }
+        
+        [NotLogged]
         public IDictionary<string, string>? BuildArguments { get; set; }
 
         public DeployToClusterStateFlow(

@@ -5,17 +5,21 @@ using System.Threading.Tasks;
 using Dogger.Infrastructure.GitHub;
 using MediatR;
 using Octokit;
+using Serilog;
 
 namespace Dogger.Domain.Queries.PullDog.GetPullRequestDetailsByHandle
 {
     public class GetPullRequestDetailsByHandleQueryHandler : IRequestHandler<GetPullRequestDetailsByHandleQuery, PullRequest?>
     {
         private readonly IGitHubClientFactory gitHubClientFactory;
+        private readonly ILogger logger;
 
         public GetPullRequestDetailsByHandleQueryHandler(
-            IGitHubClientFactory gitHubClientFactory)
+            IGitHubClientFactory gitHubClientFactory,
+            ILogger logger)
         {
             this.gitHubClientFactory = gitHubClientFactory;
+            this.logger = logger;
         }
 
         public async Task<PullRequest?> Handle(
@@ -33,8 +37,19 @@ namespace Dogger.Domain.Queries.PullDog.GetPullRequestDetailsByHandle
             var repositoryId = long.Parse(pullDogRepository.Handle, CultureInfo.InvariantCulture);
             var pullRequestNumber = int.Parse(request.Handle, CultureInfo.InvariantCulture);
 
-            var client = await this.gitHubClientFactory.CreateInstallationClientAsync(installationId.Value);
-            return await client.PullRequest.Get(repositoryId, pullRequestNumber);
+            var client = await this.gitHubClientFactory.CreateInstallationClientAsync(installationId.Value);            try
+            
+            try {
+                return await client.PullRequest.Get(repositoryId, pullRequestNumber);
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error(ex, 
+                    "An error occured while fetching pull request details for {RepositoryId} and {PullRequestNumber}.",
+                    repositoryId,
+                    pullRequestNumber);
+                throw;
+            }
         }
     }
 }

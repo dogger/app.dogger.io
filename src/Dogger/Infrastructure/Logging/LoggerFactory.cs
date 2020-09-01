@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Events;
+using Serilog.Filters;
 using Serilog.Sinks.Elasticsearch;
 using Serilog.Sinks.Slack.Core;
 
@@ -22,7 +23,7 @@ namespace Dogger.Infrastructure.Logging
                 .MinimumLevel.Verbose()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .MinimumLevel.Override("Microsoft.Extensions.Http", LogEventLevel.Information)
-                .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information);
+                .Filter.ByExcluding(Matching.FromSource("Microsoft.EntityFrameworkCore"));
         }
 
         public static LoggerConfiguration BuildDogfeedLogConfiguration()

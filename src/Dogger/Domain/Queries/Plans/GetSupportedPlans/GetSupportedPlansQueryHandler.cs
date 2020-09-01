@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
+using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
 using MediatR;
 
 namespace Dogger.Domain.Queries.Plans.GetSupportedPlans
@@ -48,15 +49,15 @@ namespace Dogger.Domain.Queries.Plans.GetSupportedPlans
             return new[]
             {
                 new PullDogPlan(
-                    $"personal_{ramSizeInMegabytes}",
+                    $"{ramSizeInMegabytes}{UpdateUserSubscriptionCommandHandler.GetLatestPullDogPlanSuffix()}",
                     GetPullDogPriceFromBundle(bundle, 1),
                     1),
                 new PullDogPlan(
-                    $"pro_{ramSizeInMegabytes}",
+                    $"{ramSizeInMegabytes}{UpdateUserSubscriptionCommandHandler.GetLatestPullDogPlanSuffix()}",
                     GetPullDogPriceFromBundle(bundle, 2),
                     2),
                 new PullDogPlan(
-                    $"business_{ramSizeInMegabytes}",
+                    $"{ramSizeInMegabytes}{UpdateUserSubscriptionCommandHandler.GetLatestPullDogPlanSuffix()}",
                     GetPullDogPriceFromBundle(bundle, 5),
                     5)
             };

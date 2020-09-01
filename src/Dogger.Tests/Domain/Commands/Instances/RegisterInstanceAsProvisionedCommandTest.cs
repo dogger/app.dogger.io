@@ -67,7 +67,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
         public async Task Handle_UserNotFound_NoStripeSubscriptionCreated()
         {
             //Arrange
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .CreateAsync(
                     Arg.Any<SubscriptionCreateOptions>(),
@@ -110,7 +110,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             var fakeInstanceId = Guid.NewGuid();
             var fakeClusterId = Guid.NewGuid();
 
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .CreateAsync(
                     Arg.Any<SubscriptionCreateOptions>(),
@@ -169,7 +169,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             var fakeInstanceId = Guid.NewGuid();
             var fakeClusterId = Guid.NewGuid();
 
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .GetAsync(
                     Arg.Is<string>(arg => arg == "some-subscription-id"),
@@ -242,7 +242,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
         public async Task Handle_StripeExceptionThrown_NoDatabaseChangesMade()
         {
             //Arrange
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .CreateAsync(
                     Arg.Any<SubscriptionCreateOptions>(),
@@ -297,7 +297,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
         public async Task Handle_SubscriptionRequiresAction_NotImplementedExceptionThrown()
         {
             //Arrange
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .CreateAsync(
                     Arg.Any<SubscriptionCreateOptions>(),

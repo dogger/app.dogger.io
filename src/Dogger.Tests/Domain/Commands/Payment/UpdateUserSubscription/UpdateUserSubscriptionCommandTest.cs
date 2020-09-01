@@ -26,7 +26,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_DoggerInstancesPresentWithDifferentPlanIds_DoggerInstancesAddedToDifferentSubscriptionItems()
         {
             //Arrange
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .UpdateAsync(
@@ -100,7 +100,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_DoggerInstancesPresentWithSamePlanIds_DoggerInstancesAddedToSameSubscriptionItem()
         {
             //Arrange
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .UpdateAsync(
@@ -188,7 +188,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     args.PoolSize == 1))
                 .Returns(fakePullDogPlan);
 
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .UpdateAsync(
@@ -286,7 +286,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     1337,
                     2));
 
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .UpdateAsync(
@@ -366,7 +366,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     1337,
                     2));
 
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .UpdateAsync(
@@ -431,7 +431,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_DoggerInstanceAddedAndOtherInstanceRemoved_AddsBothAddAndRemoveToSubscription()
         {
             //Arrange
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .UpdateAsync(
@@ -541,7 +541,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                         5)
                 });
 
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .UpdateAsync(
@@ -621,7 +621,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_NoStripeSubscriptionPresent_StripeSubscriptionCreated()
         {
             //Arrange
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .CreateAsync(
@@ -677,7 +677,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_NoStripeSubscriptionPresent_UserStripeSubscriptionIdSavedInDatabase()
         {
             //Arrange
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
+            var fakeSubscriptionService = Substitute.For<SubscriptionService>();
             fakeSubscriptionService
                 .Configure()
                 .CreateAsync(

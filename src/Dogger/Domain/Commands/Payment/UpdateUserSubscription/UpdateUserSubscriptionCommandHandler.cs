@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dogger.Domain.Models;
+using Dogger.Domain.Queries.Payment.GetSubscriptionById;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPullDogPlans;
 using Dogger.Infrastructure.Ioc;
@@ -54,9 +55,31 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
                     x => x.Id == request.UserId,
                     cancellationToken);
 
-            var existingSubscriptionItems = await GetExistingSubscriptionItemsAsync(user);
+            var createdSubscription = await UpdateSubscriptionAsync(user, cancellationToken);
+            if (createdSubscription == null)
+                return Unit.Value;
 
-            var subscriptionItems = user
+            var intent = createdSubscription.LatestInvoice.PaymentIntent;
+            return (intent?.Status) switch
+            {
+                "requires_payment_method" =>
+                    throw new InvalidOperationException("Stripe reported no payment method present."),
+                "requires_action" =>
+                    throw new NotImplementedException("Subscriptions requiring action are not yet supported."),
+                _ => Unit.Value,
+            };
+        }
+
+        private async Task<List<SubscriptionItemOptions>> GetCurrentSubscriptionItemOptionsAsync(
+            User user, 
+            Subscription? subscription,
+            CancellationToken cancellationToken)
+        {
+            var existingSubscriptionItems = 
+                subscription?.Items.Data.ToArray() ??
+                Array.Empty<SubscriptionItem>();
+
+            var subscriptionItemOptions = user
                 .Clusters
                 .SelectMany(x => x.Instances)
                 .Where(instance => instance.PullDogPullRequest == null)
@@ -72,24 +95,13 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
                 existingSubscriptionItems,
                 cancellationToken);
             if (pullDogSubscriptionItem != null)
-                subscriptionItems.Add(pullDogSubscriptionItem);
+                subscriptionItemOptions.Add(pullDogSubscriptionItem);
 
-            AddRemainingExistingSubscriptionItemsAsDeletions(subscriptionItems, existingSubscriptionItems);
+            AddRemainingExistingSubscriptionItemsAsDeletions(
+                subscriptionItemOptions,
+                existingSubscriptionItems);
 
-            if (CountAdditions(subscriptionItems) == 0 && user.StripeSubscriptionId == null)
-                return Unit.Value;
-
-            var createdSubscription = await UpdateSubscriptionAsync(user, subscriptionItems, cancellationToken);
-
-            var intent = createdSubscription.LatestInvoice.PaymentIntent;
-            return (intent?.Status) switch
-            {
-                "requires_payment_method" =>
-                    throw new InvalidOperationException("Stripe reported no payment method present."),
-                "requires_action" =>
-                    throw new NotImplementedException("Subscriptions requiring action are not yet supported."),
-                _ => Unit.Value,
-            };
+            return subscriptionItemOptions;
         }
 
         private static void AddRemainingExistingSubscriptionItemsAsDeletions(List<SubscriptionItemOptions> subscriptionItems, SubscriptionItem[] existingSubscriptionItems)
@@ -133,23 +145,25 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
             return subscriptionItems.SingleOrDefault(x => x.Plan.Id == planId);
         }
 
-        private async Task<SubscriptionItem[]> GetExistingSubscriptionItemsAsync(User user)
+        private async Task<Subscription?> GetExistingSubscriptionAsync(User user)
         {
-            if (this.subscriptionService == null)
-                throw new InvalidOperationException("Stripe subscription service was not configured.");
-
             if (user.StripeSubscriptionId == null)
-                return Array.Empty<SubscriptionItem>();
+                return null;
 
-            var subscription = await this.subscriptionService.GetAsync(user.StripeSubscriptionId);
-            return subscription.Items.Data.ToArray();
+            return await this.mediator.Send(new GetSubscriptionByIdQuery(user.StripeSubscriptionId));
         }
 
-        private async Task<Subscription> UpdateSubscriptionAsync(
+        private async Task<Subscription?> UpdateSubscriptionAsync(
             User user,
-            List<SubscriptionItemOptions> subscriptionItems,
             CancellationToken cancellationToken)
         {
+            var subscription = await GetExistingSubscriptionAsync(user);
+
+            var subscriptionItemOptions = await GetCurrentSubscriptionItemOptionsAsync(
+                user, 
+                subscription,
+                cancellationToken);
+
             var monthsOffset = 0;
 
             var policy = Policy
@@ -162,14 +176,17 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
             {
                 if (this.subscriptionService == null)
                     throw new InvalidOperationException("Stripe subscription service was not configured.");
-
-                Subscription subscription;
-                if (user.StripeSubscriptionId == null)
+                
+                var additions = CountAdditions(subscriptionItemOptions);
+                if (subscription == null)
                 {
+                    if (additions == 0)
+                        return null;
+
                     subscription = await this.subscriptionService.CreateAsync(
                         GetSubscriptionCreateOptions(
                             user,
-                            subscriptionItems,
+                            subscriptionItemOptions,
                             monthsOffset),
                         default,
                         cancellationToken);
@@ -177,7 +194,7 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
                 }
                 else
                 {
-                    if (CountAdditions(subscriptionItems) == 0)
+                    if (additions == 0)
                     {
                         subscription = await this.subscriptionService.CancelAsync(
                             user.StripeSubscriptionId,
@@ -191,7 +208,7 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
                         subscription = await this.subscriptionService.UpdateAsync(
                             user.StripeSubscriptionId,
                             GetSubscriptionUpdateOptions(
-                                subscriptionItems),
+                                subscriptionItemOptions),
                             default,
                             cancellationToken);
                         user.StripeSubscriptionId = subscription.Id;
@@ -238,26 +255,44 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
             {
                 Id = existingSubscriptionItem?.Id,
                 Plan = GetLatestPlanName(pullDogPlan.Id),
-                Quantity = 1
+                Quantity = user.PullDogSettings.PoolSize
             };
         }
 
-        private static string GetLatestPlanSuffix()
+        public static string GetLatestPullDogPlanSuffix()
         {
-            return "_v2";
+            return "_v3";
         }
 
         private static string GetLatestPlanName(string name)
         {
-            return $"{name}{GetLatestPlanSuffix()}";
+            return $"{NormalizePlanName(name)}{GetLatestPullDogPlanSuffix()}";
         }
 
         private static string NormalizePlanName(string name)
         {
-            if (name.EndsWith(GetLatestPlanSuffix(), StringComparison.InvariantCulture))
-                name = name.Substring(0, name.LastIndexOf(GetLatestPlanSuffix(), StringComparison.InvariantCulture));
+            name = TrimEnd(name, GetLatestPullDogPlanSuffix());
+            name = TrimStart(name, "personal_");
+            name = TrimStart(name, "business_");
+            name = TrimStart(name, "pro_");
 
             return name;
+        }
+
+        private static string TrimStart(string input, string trim)
+        {
+            if (input.StartsWith(trim, StringComparison.InvariantCulture))
+                input = input.Substring(trim.Length);
+
+            return input;
+        }
+
+        private static string TrimEnd(string input, string trim)
+        {
+            if (input.EndsWith(trim, StringComparison.InvariantCulture))
+                input = input.Substring(0, input.LastIndexOf(trim, StringComparison.InvariantCulture));
+
+            return input;
         }
 
         private static SubscriptionCancelOptions GetSubscriptionCancelOptions()
