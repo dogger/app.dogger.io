@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Dogger.Domain.Queries.Amazon.Identity.GetAmazonUserByName;
-using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Builders.Models;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

@@ -33,54 +33,15 @@ namespace Dogger.Tests.Domain.Queries.Payment.GetSubscriptionById
         {
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
-
-            var planService = environment.ServiceProvider.GetRequiredService<PlanService>();
-            var plan = await planService.CreateAsync(new PlanCreateOptions()
-            {
-                Interval = "month",
-                Currency = "usd",
-                Amount = 1_00,
-                Product = new PlanProductCreateOptions()
-                {
-                    Name = "dummy"
-                }
-            });
-
-            var customerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
-            var customer = await customerService.CreateAsync(new CustomerCreateOptions());
-
-            var paymentMethodService = environment.ServiceProvider.GetRequiredService<PaymentMethodService>();
-            var paymentMethod = await paymentMethodService.CreateAsync(new PaymentMethodCreateOptions()
-            {
-                Type = "card",
-                Card = new PaymentMethodCardCreateOptions()
-                {
-                    Cvc = "123",
-                    ExpMonth = 11,
-                    ExpYear = 2030,
-                    Number = "4242424242424242",
-                    Token = null
-                }
-            });
-
-            await paymentMethodService.AttachAsync(paymentMethod.Id, new PaymentMethodAttachOptions()
-            {
-                Customer = customer.Id
-            });
-
-            var subscriptionService = environment.ServiceProvider.GetRequiredService<SubscriptionService>();
-            var subscription = await subscriptionService.CreateAsync(new SubscriptionCreateOptions()
-            {
-                Customer = customer.Id,
-                DefaultPaymentMethod = paymentMethod.Id,
-                Items = new List<SubscriptionItemOptions>()
-                {
-                    new SubscriptionItemOptions()
-                    {
-                        Plan = plan.Id
-                    }
-                }
-            });
+            
+            var customer = await environment.Stripe.CustomerBuilder.BuildAsync();
+            var subscription = await environment.Stripe.SubscriptionBuilder
+                .WithPlan(await environment.Stripe.PlanBuilder.BuildAsync())
+                .WithCustomer(customer)
+                .WithDefaultPaymentMethod(await environment.Stripe.PaymentMethodBuilder
+                    .WithCustomer(customer)
+                    .BuildAsync())
+                .BuildAsync();
 
             //Act
             var result = await environment.Mediator.Send(
@@ -98,56 +59,16 @@ namespace Dogger.Tests.Domain.Queries.Payment.GetSubscriptionById
         {
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
-
-            var planService = environment.ServiceProvider.GetRequiredService<PlanService>();
-            var plan = await planService.CreateAsync(new PlanCreateOptions()
-            {
-                Interval = "month",
-                Currency = "usd",
-                Amount = 1_00,
-                Product = new PlanProductCreateOptions()
-                {
-                    Name = "dummy"
-                }
-            });
-
-            var customerService = environment.ServiceProvider.GetRequiredService<CustomerService>();
-            var customer = await customerService.CreateAsync(new CustomerCreateOptions());
-
-            var paymentMethodService = environment.ServiceProvider.GetRequiredService<PaymentMethodService>();
-            var paymentMethod = await paymentMethodService.CreateAsync(new PaymentMethodCreateOptions()
-            {
-                Type = "card",
-                Card = new PaymentMethodCardCreateOptions()
-                {
-                    Cvc = "123",
-                    ExpMonth = 11,
-                    ExpYear = 2030,
-                    Number = "4242424242424242",
-                    Token = null
-                }
-            });
-
-            await paymentMethodService.AttachAsync(paymentMethod.Id, new PaymentMethodAttachOptions()
-            {
-                Customer = customer.Id
-            });
-
-            var subscriptionService = environment.ServiceProvider.GetRequiredService<SubscriptionService>();
-            var subscription = await subscriptionService.CreateAsync(new SubscriptionCreateOptions()
-            {
-                Customer = customer.Id,
-                DefaultPaymentMethod = paymentMethod.Id,
-                Items = new List<SubscriptionItemOptions>()
-                {
-                    new SubscriptionItemOptions()
-                    {
-                        Plan = plan.Id
-                    }
-                }
-            });
-
-            await subscriptionService.CancelAsync(subscription.Id, new SubscriptionCancelOptions());
+            
+            var customer = await environment.Stripe.CustomerBuilder.BuildAsync();
+            var subscription = await environment.Stripe.SubscriptionBuilder
+                .WithPlan(await environment.Stripe.PlanBuilder.BuildAsync())
+                .WithCustomer(customer)
+                .WithDefaultPaymentMethod(await environment.Stripe.PaymentMethodBuilder
+                    .WithCustomer(customer)
+                    .BuildAsync())
+                .WithCanceledState()
+                .BuildAsync();
 
             //Act
             var result = await environment.Mediator.Send(

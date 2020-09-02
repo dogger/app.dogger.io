@@ -1,7 +1,7 @@
 using System;
 using Dogger.Domain.Models.Builders;
 
-namespace Dogger.Tests.Domain.Models
+namespace Dogger.Tests.TestHelpers.Builders.Models
 {
     public class TestInstanceBuilder : InstanceBuilder
     {

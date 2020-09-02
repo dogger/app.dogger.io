@@ -2,8 +2,8 @@
 using Dogger.Domain.Queries.Amazon.Identity.GetAmazonUserByName;
 using Dogger.Domain.Services.Amazon.Identity;
 using Dogger.Infrastructure.Encryption;
-using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Builders.Models;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;

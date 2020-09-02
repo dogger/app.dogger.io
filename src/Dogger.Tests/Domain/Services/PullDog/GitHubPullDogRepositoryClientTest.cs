@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Dogger.Domain.Services.PullDog.GitHub;
 using Dogger.Infrastructure.GitHub.Octokit;
-using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Builders.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;

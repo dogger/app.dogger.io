@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Dogger.Tests.TestHelpers.Environments
 {
+
     [ExcludeFromCodeCoverage]
     public abstract class IntegrationTestEnvironment<TOptions> : IAsyncDisposable
         where TOptions : class, new()
@@ -23,6 +24,7 @@ namespace Dogger.Tests.TestHelpers.Environments
         public IMediator Mediator => this.ServiceProvider.GetRequiredService<Mediator>();
         public DataContext DataContext => this.ServiceProvider.GetRequiredService<DataContext>();
         public IConfiguration Configuration => this.ServiceProvider.GetRequiredService<IConfiguration>();
+        public StripeEnvironmentContext Stripe => new StripeEnvironmentContext(this.ServiceProvider);
 
         protected abstract IIntegrationTestEntrypoint GetEntrypoint(TOptions options);
 

@@ -8,7 +8,7 @@ using Dogger.Domain.Commands.PullDog.InstallPullDogFromEmails;
 using Dogger.Domain.Queries.Payment.GetCouponByCode;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
-using Dogger.Tests.Domain.Models;
+using Dogger.Tests.TestHelpers.Builders.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

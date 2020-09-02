@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.PullDog.AddLabelToGitHubPullRequest;
 using Dogger.Infrastructure.GitHub;
-using Dogger.Tests.Domain.Models;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Builders.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 

@@ -8,13 +8,13 @@ using Dogger.Domain.Queries.Auth0.GetAuth0UserFromEmails;
 using Dogger.Domain.Queries.Plans.GetDemoPlan;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Tests.TestHelpers;
+using Dogger.Tests.TestHelpers.Builders.Models;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using Dogger.Tests.Domain.Models;
 
 namespace Dogger.Tests.Domain.Commands.PullDog.InstallPullDogFromEmails
 {
