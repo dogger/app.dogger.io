@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Auth0.AuthenticationApi" Version="7.0.9" />
+    <PackageReference Include="Auth0.AuthenticationApi" Version="7.1.0" />
     <PackageReference Include="Auth0.ManagementApi" Version="7.0.9" />
     <PackageReference Include="automapper" Version="10.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
