@@ -28,38 +28,34 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_DoggerInstancesPresentWithDifferentPlanIds_DoggerInstancesAddedToDifferentSubscriptionItems()
         {
             //Arrange
-            var fakeSubscriptionService = (SubscriptionService)null;
-            fakeSubscriptionService
-                .Configure()
-                .UpdateAsync(
-                    Arg.Any<string>(),
-                    Arg.Any<SubscriptionUpdateOptions>(),
-                    default,
-                    default)
-                .Returns(new Subscription()
-                {
-                    LatestInvoice = new Invoice()
-                    {
-                        PaymentIntent = new PaymentIntent()
-                    }
-                });
+            //var fakeSubscriptionService = (SubscriptionService)null;
+            //fakeSubscriptionService
+            //    .Configure()
+            //    .UpdateAsync(
+            //        Arg.Any<string>(),
+            //        Arg.Any<SubscriptionUpdateOptions>(),
+            //        default,
+            //        default)
+            //    .Returns(new Subscription()
+            //    {
+            //        LatestInvoice = new Invoice()
+            //        {
+            //            PaymentIntent = new PaymentIntent()
+            //        }
+            //    });
 
-            fakeSubscriptionService
-                .Configure()
-                .GetAsync("some-subscription-id")
-                .Returns(new Subscription()
-                {
-                    Items = new StripeList<SubscriptionItem>()
-                    {
-                        Data = new List<SubscriptionItem>()
-                    }
-                });
+            //fakeSubscriptionService
+            //    .Configure()
+            //    .GetAsync("some-subscription-id")
+            //    .Returns(new Subscription()
+            //    {
+            //        Items = new StripeList<SubscriptionItem>()
+            //        {
+            //            Data = new List<SubscriptionItem>()
+            //        }
+            //    });
 
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
-                new DoggerEnvironmentSetupOptions()
-                {
-                    IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
-                });
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var user = new TestUserBuilder()
                 .WithStripeSubscriptionId("some-subscription-id")
@@ -79,22 +75,23 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             await environment.Mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
 
             //Assert
-            await fakeSubscriptionService
-                .Received(1)
-                .UpdateAsync(
-                    "some-subscription-id",
-                    Arg.Is<SubscriptionUpdateOptions>(args =>
-                        args.Prorate == true &&
-                        args.Items.Any(i => 
-                            i.Plan == "some-plan-id-1" &&
-                            i.Id == null &&
-                            i.Quantity == 1) &&
-                        args.Items.Any(i => 
-                            i.Plan == "some-plan-id-2" &&
-                            i.Id == null &&
-                            i.Quantity == 1)),
-                    default,
-                    default);
+            //await fakeSubscriptionService
+            //    .Received(1)
+            //    .UpdateAsync(
+            //        "some-subscription-id",
+            //        Arg.Is<SubscriptionUpdateOptions>(args =>
+            //            args.Prorate == true &&
+            //            args.Items.Any(i => 
+            //                i.Plan == "some-plan-id-1" &&
+            //                i.Id == null &&
+            //                i.Quantity == 1) &&
+            //            args.Items.Any(i => 
+            //                i.Plan == "some-plan-id-2" &&
+            //                i.Id == null &&
+            //                i.Quantity == 1)),
+            //        default,
+            //        default);
+            Assert.Fail();
         }
 
         [TestMethod]
@@ -171,9 +168,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_DoggerInstanceWithPullRequestPresent_NothingAddedToSubscription()
         {
             //Arrange
-            var planId = Guid.NewGuid().ToString();
+            var doggerPlanId = Guid.NewGuid().ToString();
             var fakePullDogPlan = new PullDogPlan(
-                planId,
+                doggerPlanId,
                 1337,
                 1);
 
@@ -187,7 +184,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
 
             fakeMediator
                 .Send(Arg.Is<GetPullDogPlanFromSettingsQuery>(args =>
-                    args.DoggerPlanId == "some-plan-id" &&
+                    args.DoggerPlanId == doggerPlanId &&
                     args.PoolSize == 1))
                 .Returns(fakePullDogPlan);
 
@@ -202,7 +199,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             
             var customer = await environment.Stripe.CustomerBuilder.BuildAsync();
             var plan = await environment.Stripe.PlanBuilder
-                .WithId($"{planId}_v3")
+                .WithId($"{doggerPlanId}_v3")
                 .BuildAsync();
 
             var subscription = await environment.Stripe.SubscriptionBuilder
@@ -229,7 +226,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
                         .WithPullDogRepository(new TestPullDogRepositoryBuilder()
                             .WithPullDogSettings(new TestPullDogSettingsBuilder()
-                                .WithPlanId(planId)
+                                .WithPlanId(doggerPlanId)
                                 .WithPoolSize(1)
                                 .WithUser(user))))));
 
@@ -373,54 +370,27 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_DoggerInstanceAddedAndOtherInstanceRemoved_AddsBothAddAndRemoveToSubscription()
         {
             //Arrange
-            var fakeSubscriptionService = (SubscriptionService)null;
-            fakeSubscriptionService
-                .Configure()
-                .UpdateAsync(
-                    Arg.Any<string>(),
-                    Arg.Any<SubscriptionUpdateOptions>(),
-                    default,
-                    default)
-                .Returns(new Subscription()
-                {
-                    LatestInvoice = new Invoice()
-                    {
-                        PaymentIntent = new PaymentIntent()
-                    }
-                });
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
-            fakeSubscriptionService
-                .Configure()
-                .GetAsync("some-subscription-id")
-                .Returns(new Subscription()
-                {
-                    Items = new StripeList<SubscriptionItem>()
-                    {
-                        Data = new List<SubscriptionItem>()
-                        {
-                            new SubscriptionItem()
-                            {
-                                Id = "some-existing-subscription-item-id",
-                                Plan = new Stripe.Plan()
-                                {
-                                    Id = "some-existing-plan-id"
-                                }
-                            }
-                        }
-                    }
-                });
+            var customer = await environment.Stripe.CustomerBuilder.BuildAsync();
 
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
-                new DoggerEnvironmentSetupOptions()
-                {
-                    IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
-                });
+            var initialPlan = await environment.Stripe.PlanBuilder.BuildAsync();
+            var newPlan = await environment.Stripe.PlanBuilder.BuildAsync();
+
+            var subscription = await environment.Stripe.SubscriptionBuilder
+                .WithCustomer(customer)
+                .WithPlan(initialPlan)
+                .WithDefaultPaymentMethod(await environment.Stripe.PaymentMethodBuilder
+                    .WithCustomer(customer)
+                    .BuildAsync())
+                .BuildAsync();
 
             var user = new TestUserBuilder()
-                .WithStripeSubscriptionId("some-subscription-id")
+                .WithStripeSubscriptionId(subscription.Id)
+                .WithStripeCustomerId(customer.Id)
                 .WithClusters(new TestClusterBuilder()
                     .WithInstances(new TestInstanceBuilder()
-                        .WithPlanId("some-new-plan-id")))
+                        .WithPlanId(newPlan.Id)))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -431,19 +401,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             await environment.Mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
 
             //Assert
-            await fakeSubscriptionService
-                .Received(1)
-                .UpdateAsync(
-                    "some-subscription-id",
-                    Arg.Is<SubscriptionUpdateOptions>(args =>
-                        args.Prorate == true &&
-                        args.Items[0].Plan == "some-new-plan-id" &&
-                        args.Items[0].Id == null &&
-                        args.Items[0].Quantity == 1 &&
-                        args.Items[1].Id == "some-existing-subscription-item-id" &&
-                        args.Items[1].Deleted == true),
-                    default,
-                    default);
+            var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
+            Assert.AreEqual(newPlan.Id, refreshedSubscription.Plan.Id);
+            Assert.AreEqual(1, refreshedSubscription.Quantity);
         }
 
         [TestMethod]
@@ -483,49 +443,48 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                         5)
                 });
 
-            var fakeSubscriptionService = Substitute.ForPartsOf<SubscriptionService>();
-            fakeSubscriptionService
-                .Configure()
-                .UpdateAsync(
-                    Arg.Any<string>(),
-                    Arg.Any<SubscriptionUpdateOptions>(),
-                    default,
-                    default)
-                .Returns(new Subscription()
-                {
-                    LatestInvoice = new Invoice()
-                    {
-                        PaymentIntent = new PaymentIntent()
-                    }
-                });
+            //var fakeSubscriptionService = (SubscriptionService)null;
+            //fakeSubscriptionService
+            //    .Configure()
+            //    .UpdateAsync(
+            //        Arg.Any<string>(),
+            //        Arg.Any<SubscriptionUpdateOptions>(),
+            //        default,
+            //        default)
+            //    .Returns(new Subscription()
+            //    {
+            //        LatestInvoice = new Invoice()
+            //        {
+            //            PaymentIntent = new PaymentIntent()
+            //        }
+            //    });
 
-            fakeSubscriptionService
-                .Configure()
-                .GetAsync("some-subscription-id")
-                .Returns(new Subscription()
-                {
-                    Items = new StripeList<SubscriptionItem>()
-                    {
-                        Data = new List<SubscriptionItem>()
-                        {
-                            new SubscriptionItem()
-                            {
-                                Id = "some-subscription-item-id",
-                                Plan = new Stripe.Plan()
-                                {
-                                    Id = "some-old-pull-dog-plan"
-                                }
-                            }
-                        }
-                    }
-                });
+            //fakeSubscriptionService
+            //    .Configure()
+            //    .GetAsync("some-subscription-id")
+            //    .Returns(new Subscription()
+            //    {
+            //        Items = new StripeList<SubscriptionItem>()
+            //        {
+            //            Data = new List<SubscriptionItem>()
+            //            {
+            //                new SubscriptionItem()
+            //                {
+            //                    Id = "some-subscription-item-id",
+            //                    Plan = new Stripe.Plan()
+            //                    {
+            //                        Id = "some-old-pull-dog-plan"
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    });
 
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
                 new DoggerEnvironmentSetupOptions()
                 {
                     IocConfiguration = services =>
                     {
-                        services.AddSingleton(fakeSubscriptionService);
                         services.AddSingleton(fakeMediator);
                     }
                 });
@@ -545,17 +504,19 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             await environment.Mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
 
             //Assert
-            await fakeSubscriptionService
-                .Received(1)
-                .UpdateAsync(
-                    "some-subscription-id",
-                    Arg.Is<SubscriptionUpdateOptions>(args =>
-                        args.Prorate == true &&
-                        args.Items[0].Plan == "some-new-pull-dog-plan_v2" &&
-                        args.Items[0].Id == "some-subscription-item-id" &&
-                        args.Items[0].Quantity == 1),
-                    default,
-                    default);
+            //await fakeSubscriptionService
+            //    .Received(1)
+            //    .UpdateAsync(
+            //        "some-subscription-id",
+            //        Arg.Is<SubscriptionUpdateOptions>(args =>
+            //            args.Prorate == true &&
+            //            args.Items[0].Plan == "some-new-pull-dog-plan_v2" &&
+            //            args.Items[0].Id == "some-subscription-item-id" &&
+            //            args.Items[0].Quantity == 1),
+            //        default,
+            //        default);
+
+            Assert.Fail();
         }
 
         [TestMethod]
