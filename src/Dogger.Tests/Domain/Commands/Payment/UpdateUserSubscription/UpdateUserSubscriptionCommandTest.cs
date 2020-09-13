@@ -356,89 +356,53 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_ExistingPullDogSubscriptionAndSettingsChanged_ExistingPullDogPlanIsChanged()
         {
             //Arrange
-            var fakeMediator = Substitute.For<IMediator>();
-            fakeMediator
-                .Send(Arg.Is<GetPullDogPlanFromSettingsQuery>(args =>
-                    args.DoggerPlanId == "some-pull-dog-plan" &&
-                    args.PoolSize == 2))
-                .Returns(new PullDogPlan(
-                    "some-old-pull-dog-plan",
-                    1337,
-                    2));
+            var planId = Guid.NewGuid().ToString();
 
-            fakeMediator
-                .Send(Arg.Is<GetPullDogPlanFromSettingsQuery>(args =>
-                    args.DoggerPlanId == "some-pull-dog-plan" &&
-                    args.PoolSize == 5))
-                .Returns(new PullDogPlan(
-                    "some-new-pull-dog-plan",
-                    1337,
-                    5));
-
-            fakeMediator
-                .Send(Arg.Any<GetSupportedPullDogPlansQuery>())
-                .Returns(new[] {
-                    new PullDogPlan(
-                        "some-old-pull-dog-plan",
-                        1337,
-                        2),
-                    new PullDogPlan(
-                        "some-new-pull-dog-plan",
-                        1337,
-                        5)
-                });
-
-            //var fakeSubscriptionService = (SubscriptionService)null;
-            //fakeSubscriptionService
-            //    .Configure()
-            //    .UpdateAsync(
-            //        Arg.Any<string>(),
-            //        Arg.Any<SubscriptionUpdateOptions>(),
-            //        default,
-            //        default)
-            //    .Returns(new Subscription()
-            //    {
-            //        LatestInvoice = new Invoice()
-            //        {
-            //            PaymentIntent = new PaymentIntent()
-            //        }
-            //    });
-
-            //fakeSubscriptionService
-            //    .Configure()
-            //    .GetAsync("some-subscription-id")
-            //    .Returns(new Subscription()
-            //    {
-            //        Items = new StripeList<SubscriptionItem>()
-            //        {
-            //            Data = new List<SubscriptionItem>()
-            //            {
-            //                new SubscriptionItem()
-            //                {
-            //                    Id = "some-subscription-item-id",
-            //                    Plan = new Stripe.Plan()
-            //                    {
-            //                        Id = "some-old-pull-dog-plan"
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    });
-
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
-                new DoggerEnvironmentSetupOptions()
+            var fakeAmazonLightsail = Substitute.For<IAmazonLightsail>();
+            fakeAmazonLightsail
+                .GetBundlesAsync(Arg.Any<GetBundlesRequest>())
+                .Returns(new GetBundlesResponse()
                 {
-                    IocConfiguration = services =>
+                    Bundles = new List<Bundle>()
                     {
-                        services.AddSingleton(fakeMediator);
+                        new Bundle()
+                        {
+                            BundleId = planId,
+                            IsActive = true,
+                            RamSizeInGb = 0.5f,
+                            SupportedPlatforms = new List<string>()
+                            {
+                                "LINUX_UNIX"
+                            }
+                        }
                     }
                 });
 
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
+            {
+                IocConfiguration = services => services.AddSingleton(fakeAmazonLightsail)
+            });
+            
+            var customer = await environment.Stripe.CustomerBuilder.BuildAsync();
+
+            var plan = await environment.Stripe.PlanBuilder
+                .WithId("512_v3")
+                .BuildAsync();
+
+            var subscription = await environment.Stripe.SubscriptionBuilder
+                .WithPlans(plan)
+                .WithCustomer(customer)
+                .WithDefaultPaymentMethod(await environment.Stripe.PaymentMethodBuilder
+                    .WithCustomer(customer)
+                    .BuildAsync())
+                .BuildAsync();
+
             var user = new TestUserBuilder()
-                .WithStripeSubscriptionId("some-subscription-id")
+                .WithStripeCustomerId(customer.Id)
+                .WithStripeSubscriptionId(subscription.Id)
                 .WithPullDogSettings(new TestPullDogSettingsBuilder()
-                    .WithPoolSize(5)
-                    .WithPlanId("some-pull-dog-plan"))
+                    .WithPoolSize(0)
+                    .WithPlanId(planId))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -449,19 +413,10 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             await environment.Mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
 
             //Assert
-            //await fakeSubscriptionService
-            //    .Received(1)
-            //    .UpdateAsync(
-            //        "some-subscription-id",
-            //        Arg.Is<SubscriptionUpdateOptions>(args =>
-            //            args.Prorate == true &&
-            //            args.Items[0].Plan == "some-new-pull-dog-plan_v2" &&
-            //            args.Items[0].Id == "some-subscription-item-id" &&
-            //            args.Items[0].Quantity == 1),
-            //        default,
-            //        default);
+            var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
+            Assert.AreEqual("canceled", refreshedSubscription.Status);
 
-            Assert.Fail();
+            Assert.Fail("This test does not do what the title says.");
         }
 
         [TestMethod]
