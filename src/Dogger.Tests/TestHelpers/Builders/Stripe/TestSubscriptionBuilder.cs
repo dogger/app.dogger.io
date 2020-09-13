@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Stripe;
 
@@ -10,7 +11,7 @@ namespace Dogger.Tests.TestHelpers.Builders.Stripe
 
         private Customer customer;
         private PaymentMethod paymentMethod;
-        private Plan plan;
+        private Plan[] plans;
 
         private bool shouldCancel;
 
@@ -32,9 +33,9 @@ namespace Dogger.Tests.TestHelpers.Builders.Stripe
             return this;
         }
 
-        public TestSubscriptionBuilder WithPlan(Plan plan)
+        public TestSubscriptionBuilder WithPlans(params Plan[] plans)
         {
-            this.plan = plan;
+            this.plans = plans;
             return this;
         }
 
@@ -50,13 +51,12 @@ namespace Dogger.Tests.TestHelpers.Builders.Stripe
             {
                 Customer = this.customer.Id,
                 DefaultPaymentMethod = this.paymentMethod.Id,
-                Items = new List<SubscriptionItemOptions>()
-                {
-                    new SubscriptionItemOptions()
+                Items = plans
+                    .Select(plan => new SubscriptionItemOptions()
                     {
-                        Plan = this.plan.Id
-                    }
-                }
+                        Plan = plan.Id
+                    })
+                    .ToList()
             });
 
             if (this.shouldCancel)

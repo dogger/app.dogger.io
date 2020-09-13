@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.Lightsail;
+using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
 using Dogger.Domain.Queries.Payment.GetSubscriptionById;
+using Dogger.Domain.Queries.Plans.GetPlanById;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Queries.Plans.GetSupportedPullDogPlans;
@@ -28,43 +31,21 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_DoggerInstancesPresentWithDifferentPlanIds_DoggerInstancesAddedToDifferentSubscriptionItems()
         {
             //Arrange
-            //var fakeSubscriptionService = (SubscriptionService)null;
-            //fakeSubscriptionService
-            //    .Configure()
-            //    .UpdateAsync(
-            //        Arg.Any<string>(),
-            //        Arg.Any<SubscriptionUpdateOptions>(),
-            //        default,
-            //        default)
-            //    .Returns(new Subscription()
-            //    {
-            //        LatestInvoice = new Invoice()
-            //        {
-            //            PaymentIntent = new PaymentIntent()
-            //        }
-            //    });
-
-            //fakeSubscriptionService
-            //    .Configure()
-            //    .GetAsync("some-subscription-id")
-            //    .Returns(new Subscription()
-            //    {
-            //        Items = new StripeList<SubscriptionItem>()
-            //        {
-            //            Data = new List<SubscriptionItem>()
-            //        }
-            //    });
-
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var customer = await environment.Stripe.CustomerBuilder.BuildAsync();
 
-            var plan1 = await environment.Stripe.PlanBuilder.BuildAsync();
-            var plan2 = await environment.Stripe.PlanBuilder.BuildAsync();
+            var oldPlan1 = await environment.Stripe.PlanBuilder.BuildAsync();
+            var oldPlan2 = await environment.Stripe.PlanBuilder.BuildAsync();
+
+            var newPlan1 = await environment.Stripe.PlanBuilder.BuildAsync();
+            var newPlan2 = await environment.Stripe.PlanBuilder.BuildAsync();
 
             var subscription = await environment.Stripe.SubscriptionBuilder
                 .WithCustomer(customer)
-                .WithPlan(plan1)
+                .WithPlans(
+                    oldPlan1, 
+                    oldPlan2)
                 .WithDefaultPaymentMethod(await environment.Stripe.PaymentMethodBuilder
                     .WithCustomer(customer)
                     .BuildAsync())
@@ -75,9 +56,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .WithClusters(new TestClusterBuilder()
                     .WithInstances(
                         new TestInstanceBuilder()
-                            .WithPlanId(plan1.Id),
+                            .WithPlanId(newPlan1.Id),
                         new TestInstanceBuilder()
-                            .WithPlanId(plan2.Id)))
+                            .WithPlanId(newPlan2.Id)))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -89,27 +70,14 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
 
             //Assert
             var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
-            refreshedSubscription.Items //TODO: also check items on other passing tests!
-            Assert.AreEqual(newPlan.Id, refreshedSubscription.Plan.Id);
-            Assert.AreEqual(1, refreshedSubscription.Quantity);
+            Assert.IsNull(refreshedSubscription.Quantity);
+            Assert.AreEqual(2, refreshedSubscription.Items.Count());
 
-            //await fakeSubscriptionService
-            //    .Received(1)
-            //    .UpdateAsync(
-            //        "some-subscription-id",
-            //        Arg.Is<SubscriptionUpdateOptions>(args =>
-            //            args.Prorate == true &&
-            //            args.Items.Any(i => 
-            //                i.Plan == "some-plan-id-1" &&
-            //                i.Id == null &&
-            //                i.Quantity == 1) &&
-            //            args.Items.Any(i => 
-            //                i.Plan == "some-plan-id-2" &&
-            //                i.Id == null &&
-            //                i.Quantity == 1)),
-            //        default,
-            //        default);
-            Assert.Fail();
+            var refreshedNewPlan1 = refreshedSubscription.Items.Single(x => x.Plan.Id == newPlan1.Id);
+            Assert.AreEqual(1, refreshedNewPlan1.Quantity);
+            
+            var refreshedNewPlan2 = refreshedSubscription.Items.Single(x => x.Plan.Id == newPlan2.Id);
+            Assert.AreEqual(1, refreshedNewPlan2.Quantity);
         }
 
         [TestMethod]
@@ -183,103 +151,40 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
 
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_DoggerInstanceWithPullRequestPresent_NothingAddedToSubscription()
-        {
-            //Arrange
-            var doggerPlanId = Guid.NewGuid().ToString();
-            var fakePullDogPlan = new PullDogPlan(
-                doggerPlanId,
-                1337,
-                1);
-
-            var fakeMediator = Substitute.For<IMediator>();
-            fakeMediator
-                .Send(Arg.Any<GetSupportedPullDogPlansQuery>())
-                .Returns(new[]
-                {
-                    fakePullDogPlan
-                });
-
-            fakeMediator
-                .Send(Arg.Is<GetPullDogPlanFromSettingsQuery>(args =>
-                    args.DoggerPlanId == doggerPlanId &&
-                    args.PoolSize == 1))
-                .Returns(fakePullDogPlan);
-
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
-                new DoggerEnvironmentSetupOptions()
-                {
-                    IocConfiguration = services =>
-                    {
-                        services.AddSingleton(fakeMediator);
-                    }
-                });
-            
-            var customer = await environment.Stripe.CustomerBuilder.BuildAsync();
-            var plan = await environment.Stripe.PlanBuilder
-                .WithId($"{doggerPlanId}_v3")
-                .BuildAsync();
-
-            var subscription = await environment.Stripe.SubscriptionBuilder
-                .WithPlan(plan)
-                .WithCustomer(customer)
-                .WithDefaultPaymentMethod(await environment.Stripe.PaymentMethodBuilder
-                    .WithCustomer(customer)
-                    .BuildAsync())
-                .BuildAsync();
-
-            fakeMediator
-                .Send(Arg.Is<GetSubscriptionByIdQuery>(args =>
-                    args.Id == subscription.Id))
-                .Returns(subscription);
-
-            var user = new TestUserBuilder()
-                .WithStripeSubscriptionId(subscription.Id)
-                .WithStripeCustomerId(customer.Id)
-                .Build();
-            user.Clusters.Add(new TestClusterBuilder()
-                .WithUser(user)
-                .WithInstances(new TestInstanceBuilder()
-                    .WithPlanId("some-plan-id")
-                    .WithPullDogPullRequest(new TestPullDogPullRequestBuilder()
-                        .WithPullDogRepository(new TestPullDogRepositoryBuilder()
-                            .WithPullDogSettings(new TestPullDogSettingsBuilder()
-                                .WithPlanId(doggerPlanId)
-                                .WithPoolSize(1)
-                                .WithUser(user))))));
-
-            await environment.WithFreshDataContext(async dataContext =>
-            {
-                await dataContext.Users.AddAsync(user);
-            });
-
-            //Act
-            await environment.Mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
-
-            //Assert
-            var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
-            Assert.AreEqual(plan.Id, refreshedSubscription.Plan.Id);
-
-            Assert.AreEqual(subscription.Items.Single().Id, refreshedSubscription.Items.Single().Id);
-            Assert.AreEqual(1, refreshedSubscription.Items.Single().Quantity);
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.IntegrationCategory)]
         public async Task Handle_PullDogPresentWithPaidPlan_PullDogAddedToSubscription()
         {
             //Arrange
-            var planId = Guid.NewGuid().ToString();
+            var fakeAmazonLightsail = Substitute.For<IAmazonLightsail>();
+            fakeAmazonLightsail
+                .GetBundlesAsync(Arg.Any<GetBundlesRequest>())
+                .Returns(new GetBundlesResponse()
+                {
+                    Bundles = new List<Bundle>()
+                    {
+                        new Bundle()
+                        {
+                            IsActive = true,
+                            RamSizeInGb = 0.5f,
+                            SupportedPlatforms = new List<string>()
+                            {
+                                "LINUX_UNIX"
+                            }
+                        }
+                    }
+                });
 
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
+            {
+                IocConfiguration = services => services.AddSingleton(fakeAmazonLightsail)
+            });
             
             var customer = await environment.Stripe.CustomerBuilder.BuildAsync();
             var plan = await environment.Stripe.PlanBuilder
-                .WithId($"{planId}_v3")
+                .WithId("512_v3")
                 .BuildAsync();
 
             var subscription = await environment.Stripe.SubscriptionBuilder
-                .WithPlan(plan)
+                .WithPlans(plan)
                 .WithCustomer(customer)
                 .WithDefaultPaymentMethod(await environment.Stripe.PaymentMethodBuilder
                     .WithCustomer(customer)
@@ -289,8 +194,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             var user = new TestUserBuilder()
                 .WithStripeSubscriptionId(subscription.Id)
                 .WithPullDogSettings(new TestPullDogSettingsBuilder()
-                    .WithPoolSize(2)
-                    .WithPlanId(planId))
+                    .WithPoolSize(2))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -397,7 +301,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
 
             var subscription = await environment.Stripe.SubscriptionBuilder
                 .WithCustomer(customer)
-                .WithPlan(initialPlan)
+                .WithPlans(initialPlan)
                 .WithDefaultPaymentMethod(await environment.Stripe.PaymentMethodBuilder
                     .WithCustomer(customer)
                     .BuildAsync())
@@ -422,6 +326,8 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
             Assert.AreEqual(newPlan.Id, refreshedSubscription.Plan.Id);
             Assert.AreEqual(1, refreshedSubscription.Quantity);
+            Assert.AreEqual(1, refreshedSubscription.Items.Count());
+            Assert.AreEqual(newPlan.Id, refreshedSubscription.Items.Single().Plan.Id);
         }
 
         [TestMethod]

@@ -36,7 +36,7 @@ namespace Dogger.Tests.Domain.Queries.Payment.GetSubscriptionById
             
             var customer = await environment.Stripe.CustomerBuilder.BuildAsync();
             var subscription = await environment.Stripe.SubscriptionBuilder
-                .WithPlan(await environment.Stripe.PlanBuilder.BuildAsync())
+                .WithPlans(await environment.Stripe.PlanBuilder.BuildAsync())
                 .WithCustomer(customer)
                 .WithDefaultPaymentMethod(await environment.Stripe.PaymentMethodBuilder
                     .WithCustomer(customer)
@@ -62,7 +62,7 @@ namespace Dogger.Tests.Domain.Queries.Payment.GetSubscriptionById
             
             var customer = await environment.Stripe.CustomerBuilder.BuildAsync();
             var subscription = await environment.Stripe.SubscriptionBuilder
-                .WithPlan(await environment.Stripe.PlanBuilder.BuildAsync())
+                .WithPlans(await environment.Stripe.PlanBuilder.BuildAsync())
                 .WithCustomer(customer)
                 .WithDefaultPaymentMethod(await environment.Stripe.PaymentMethodBuilder
                     .WithCustomer(customer)

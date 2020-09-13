@@ -29,6 +29,7 @@ namespace Dogger.Infrastructure.AspNet
 
         private DataContext? dataContext;
         private CustomerService? customerService;
+        private PlanService? planService;
         private WebhookEndpointService? webhookEndpointService;
         private INGrokHostedService? ngrokHostedService;
 
@@ -58,8 +59,9 @@ namespace Dogger.Infrastructure.AspNet
             using var scope = this.serviceProvider.CreateScope();
 
             dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
-            customerService = scope.ServiceProvider.GetRequiredService<IOptionalService<CustomerService>>().Value;
-            webhookEndpointService = scope.ServiceProvider.GetRequiredService<IOptionalService<WebhookEndpointService>>().Value;
+            customerService = scope.ServiceProvider.GetRequiredService<CustomerService>();
+            planService = scope.ServiceProvider.GetRequiredService<PlanService>();
+            webhookEndpointService = scope.ServiceProvider.GetRequiredService<WebhookEndpointService>();
             ngrokHostedService = scope.ServiceProvider.GetService<INGrokHostedService>();
 
             if(this.ngrokHostedService != null)
@@ -67,8 +69,16 @@ namespace Dogger.Infrastructure.AspNet
 
             await InitializeDockerAsync();
             await WaitForHealthyDockerDependenciesAsync();
-            await PrepareDatabaseAsync();
-            await CleanupStripeCustomersAsync();
+            await Task.WhenAll(
+                PrepareDatabaseAsync(),
+                CleanupStripeDataAsync());
+        }
+
+        private async Task CleanupStripeDataAsync()
+        {
+            await Task.WhenAll(
+                CleanupStripeCustomersAsync(),
+                CleanupStripePlansAsync());
         }
 
         private static void KillOldNodeProcesses()
@@ -142,6 +152,35 @@ namespace Dogger.Infrastructure.AspNet
                 catch (StripeException)
                 {
                     Console.WriteLine("A webhook was no longer found while trying to remove it.");
+                }
+            }
+        }
+
+        private async Task CleanupStripePlansAsync()
+        {
+            if (this.planService == null)
+                return;
+
+            if (!ShouldDeleteExistingData())
+                return;
+
+            var plansToDelete = await this.planService
+                .ListAutoPagingAsync()
+                .ToListAsync();
+            foreach (var plan in plansToDelete)
+            {
+                if (plan.Livemode)
+                    throw new InvalidOperationException("Found livemode plan.");
+
+                Console.WriteLine($"Deleting customer {plan.Id}");
+                try
+                {
+                    await this.planService.DeleteAsync(plan.Id);
+                }
+                catch (StripeException ex)
+                {
+                    if (ex.HttpStatusCode != HttpStatusCode.NotFound)
+                        throw;
                 }
             }
         }
