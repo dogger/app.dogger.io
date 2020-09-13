@@ -7,15 +7,44 @@ namespace Dogger.Tests.TestHelpers.Builders.Stripe
     {
         private readonly CustomerService customerService;
 
+        private TestPaymentMethodBuilder paymentMethodBuilder;
+
         public TestCustomerBuilder(
             CustomerService customerService)
         {
             this.customerService = customerService;
         }
 
+        public TestCustomerBuilder WithDefaultPaymentMethod(TestPaymentMethodBuilder paymentMethodBuilder)
+        {
+            this.paymentMethodBuilder = paymentMethodBuilder;
+            return this;
+        }
+
         public async Task<Customer> BuildAsync()
         {
-            return await this.customerService.CreateAsync(new CustomerCreateOptions());
+            var customer = await this.customerService.CreateAsync(new CustomerCreateOptions());
+
+            var paymentMethod = this.paymentMethodBuilder != null ? 
+                await this.paymentMethodBuilder
+                    .WithCustomer(customer)
+                    .BuildAsync() :
+                null;
+
+            if (paymentMethod != null)
+            {
+                await this.customerService.UpdateAsync(
+                    customer.Id,
+                    new CustomerUpdateOptions()
+                    {
+                        InvoiceSettings = new CustomerInvoiceSettingsOptions()
+                        {
+                            DefaultPaymentMethod = paymentMethod.Id
+                        }
+                    });
+            }
+
+            return customer;
         }
     }
 

@@ -62,6 +62,7 @@ namespace Dogger.Infrastructure.AspNet
             customerService = scope.ServiceProvider.GetRequiredService<CustomerService>();
             planService = scope.ServiceProvider.GetRequiredService<PlanService>();
             webhookEndpointService = scope.ServiceProvider.GetRequiredService<WebhookEndpointService>();
+
             ngrokHostedService = scope.ServiceProvider.GetService<INGrokHostedService>();
 
             if(this.ngrokHostedService != null)
@@ -69,9 +70,8 @@ namespace Dogger.Infrastructure.AspNet
 
             await InitializeDockerAsync();
             await WaitForHealthyDockerDependenciesAsync();
-            await Task.WhenAll(
-                PrepareDatabaseAsync(),
-                CleanupStripeDataAsync());
+            await PrepareDatabaseAsync();
+            await CleanupStripeDataAsync();
         }
 
         private async Task CleanupStripeDataAsync()

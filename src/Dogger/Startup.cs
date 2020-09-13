@@ -27,6 +27,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Dogger
 {
+    [ExcludeFromCodeCoverage]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class Startup
     {

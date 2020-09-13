@@ -13,7 +13,10 @@ namespace Dogger.Tests.TestHelpers.Environments
         public TestSubscriptionBuilder SubscriptionBuilder => new TestSubscriptionBuilder(SubscriptionService);
 
         public TestPlanBuilder PlanBuilder => new TestPlanBuilder(this.serviceProvider.GetRequiredService<PlanService>());
-        public TestCustomerBuilder CustomerBuilder => new TestCustomerBuilder(this.serviceProvider.GetRequiredService<CustomerService>());
+
+        public CustomerService CustomerService => this.serviceProvider.GetRequiredService<CustomerService>();
+        public TestCustomerBuilder CustomerBuilder => new TestCustomerBuilder(CustomerService);
+
         public TestPaymentMethodBuilder PaymentMethodBuilder => new TestPaymentMethodBuilder(this.serviceProvider.GetRequiredService<PaymentMethodService>());
 
         public StripeEnvironmentContext(
