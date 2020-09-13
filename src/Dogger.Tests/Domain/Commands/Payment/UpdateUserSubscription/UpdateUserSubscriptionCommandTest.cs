@@ -57,14 +57,27 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
 
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
+            var customer = await environment.Stripe.CustomerBuilder.BuildAsync();
+
+            var plan1 = await environment.Stripe.PlanBuilder.BuildAsync();
+            var plan2 = await environment.Stripe.PlanBuilder.BuildAsync();
+
+            var subscription = await environment.Stripe.SubscriptionBuilder
+                .WithCustomer(customer)
+                .WithPlan(plan1)
+                .WithDefaultPaymentMethod(await environment.Stripe.PaymentMethodBuilder
+                    .WithCustomer(customer)
+                    .BuildAsync())
+                .BuildAsync();
+
             var user = new TestUserBuilder()
-                .WithStripeSubscriptionId("some-subscription-id")
+                .WithStripeSubscriptionId(subscription.Id)
                 .WithClusters(new TestClusterBuilder()
                     .WithInstances(
                         new TestInstanceBuilder()
-                            .WithPlanId("some-plan-id-1"),
+                            .WithPlanId(plan1.Id),
                         new TestInstanceBuilder()
-                            .WithPlanId("some-plan-id-2")))
+                            .WithPlanId(plan2.Id)))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -75,6 +88,11 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             await environment.Mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
 
             //Assert
+            var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
+            refreshedSubscription.Items //TODO: also check items on other passing tests!
+            Assert.AreEqual(newPlan.Id, refreshedSubscription.Plan.Id);
+            Assert.AreEqual(1, refreshedSubscription.Quantity);
+
             //await fakeSubscriptionService
             //    .Received(1)
             //    .UpdateAsync(
