@@ -64,6 +64,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .Subscriptions
                 .Single()
                 .Id);
+            Assert.AreEqual("active", refreshedSubscription.Status);
 
             Assert.IsNull(refreshedSubscription.Quantity);
             Assert.AreEqual(2, refreshedSubscription.Items.Count());
@@ -112,6 +113,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .Subscriptions
                 .Single()
                 .Id);
+            Assert.AreEqual("active", refreshedSubscription.Status);
 
             Assert.AreEqual(1, refreshedSubscription.Items.Count());
 
@@ -181,6 +183,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
 
             //Assert
             var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
+            Assert.AreEqual("active", refreshedSubscription.Status);
             Assert.AreEqual(plan.Id, refreshedSubscription.Plan.Id);
             Assert.AreEqual(2, refreshedSubscription.Quantity);
         }
@@ -345,6 +348,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
 
             //Assert
             var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
+            Assert.AreEqual("active", refreshedSubscription.Status);
             Assert.AreEqual(newPlan.Id, refreshedSubscription.Plan.Id);
             Assert.AreEqual(1, refreshedSubscription.Quantity);
             Assert.AreEqual(1, refreshedSubscription.Items.Count());
@@ -356,7 +360,8 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_ExistingPullDogSubscriptionAndSettingsChanged_ExistingPullDogPlanIsChanged()
         {
             //Arrange
-            var planId = Guid.NewGuid().ToString();
+            var oldPlanId = Guid.NewGuid().ToString();
+            var newPlanId = Guid.NewGuid().ToString();
 
             var fakeAmazonLightsail = Substitute.For<IAmazonLightsail>();
             fakeAmazonLightsail
@@ -367,9 +372,19 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     {
                         new Bundle()
                         {
-                            BundleId = planId,
+                            BundleId = oldPlanId,
                             IsActive = true,
                             RamSizeInGb = 0.5f,
+                            SupportedPlatforms = new List<string>()
+                            {
+                                "LINUX_UNIX"
+                            }
+                        },
+                        new Bundle()
+                        {
+                            BundleId = newPlanId,
+                            IsActive = true,
+                            RamSizeInGb = 1f,
                             SupportedPlatforms = new List<string>()
                             {
                                 "LINUX_UNIX"
@@ -385,12 +400,16 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             
             var customer = await environment.Stripe.CustomerBuilder.BuildAsync();
 
-            var plan = await environment.Stripe.PlanBuilder
+            var oldPlan = await environment.Stripe.PlanBuilder
                 .WithId("512_v3")
                 .BuildAsync();
 
+            var newPlan = await environment.Stripe.PlanBuilder
+                .WithId("1024_v3")
+                .BuildAsync();
+
             var subscription = await environment.Stripe.SubscriptionBuilder
-                .WithPlans(plan)
+                .WithPlans(oldPlan)
                 .WithCustomer(customer)
                 .WithDefaultPaymentMethod(await environment.Stripe.PaymentMethodBuilder
                     .WithCustomer(customer)
@@ -401,8 +420,8 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .WithStripeCustomerId(customer.Id)
                 .WithStripeSubscriptionId(subscription.Id)
                 .WithPullDogSettings(new TestPullDogSettingsBuilder()
-                    .WithPoolSize(0)
-                    .WithPlanId(planId))
+                    .WithPoolSize(1)
+                    .WithPlanId(newPlanId))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -414,9 +433,11 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
 
             //Assert
             var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
-            Assert.AreEqual("canceled", refreshedSubscription.Status);
-
-            Assert.Fail("This test does not do what the title says.");
+            Assert.AreEqual("active", refreshedSubscription.Status);
+            Assert.AreEqual(newPlan.Id, refreshedSubscription.Plan.Id);
+            Assert.AreEqual(1, refreshedSubscription.Quantity);
+            Assert.AreEqual(1, refreshedSubscription.Items.Count());
+            Assert.AreEqual(newPlan.Id, refreshedSubscription.Items.Single().Plan.Id);
         }
 
         [TestMethod]
