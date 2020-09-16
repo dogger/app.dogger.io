@@ -446,16 +446,45 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_NoStripeSubscriptionPresentAlreadyAndClusterWithPaidInstance_StripeSubscriptionCreated()
         {
             //Arrange
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
+            var planId = Guid.NewGuid().ToString();
+
+            var fakeAmazonLightsail = Substitute.For<IAmazonLightsail>();
+            fakeAmazonLightsail
+                .GetBundlesAsync(Arg.Any<GetBundlesRequest>())
+                .Returns(new GetBundlesResponse()
+                {
+                    Bundles = new List<Bundle>()
+                    {
+                        new Bundle()
+                        {
+                            BundleId = planId,
+                            IsActive = true,
+                            RamSizeInGb = 0.5f,
+                            SupportedPlatforms = new List<string>()
+                            {
+                                "LINUX_UNIX"
+                            }
+                        }
+                    }
+                });
+
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
+            {
+                IocConfiguration = services => services.AddSingleton(fakeAmazonLightsail)
+            });
             
             var customer = await environment.Stripe.CustomerBuilder.BuildAsync();
+
+            await environment.Stripe.PlanBuilder
+                .WithId("512_v3")
+                .BuildAsync();
 
             var user = new TestUserBuilder()
                 .WithStripeCustomerId(customer.Id)
                 .WithStripeSubscriptionId(null)
                 .WithClusters(new TestClusterBuilder()
                     .WithInstances(new TestInstanceBuilder()
-                        .WithPlanId("some-plan-id")))
+                        .WithPlanId(planId)))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
