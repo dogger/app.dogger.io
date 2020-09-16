@@ -50,7 +50,7 @@ namespace Dogger.Tests.TestHelpers.Builders.Stripe
             var subscription = await this.subscriptionService.CreateAsync(new SubscriptionCreateOptions()
             {
                 Customer = this.customer.Id,
-                DefaultPaymentMethod = this.paymentMethod.Id,
+                DefaultPaymentMethod = this.paymentMethod?.Id,
                 Items = plans
                     .Select(plan => new SubscriptionItemOptions()
                     {

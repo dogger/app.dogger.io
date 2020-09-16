@@ -107,15 +107,11 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .ServiceProvider
                 .GetRequiredService<IProvisioningService>();
 
-            var paymentMethodService = environment
-                .ServiceProvider
-                .GetRequiredService<IOptionalService<PaymentMethodService>>();
-
             var user = await environment.Mediator.Send(
                 new CreateUserForIdentityCommand(
                     TestClaimsPrincipalFactory.CreateWithIdentityName("some-identity-name")));
 
-            var paymentMethod = await CreatePaymentMethodAsync(paymentMethodService.Value);
+            var paymentMethod = await environment.Stripe.PaymentMethodBuilder.BuildAsync();
             await environment.Mediator.Send(
                 new SetActivePaymentMethodForUserCommand(
                     user,
@@ -166,15 +162,11 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 .ServiceProvider
                 .GetRequiredService<IProvisioningService>();
 
-            var paymentMethodService = environment
-                .ServiceProvider
-                .GetRequiredService<IOptionalService<PaymentMethodService>>();
-
             var user = await environment.Mediator.Send(
                 new CreateUserForIdentityCommand(
                     TestClaimsPrincipalFactory.CreateWithIdentityName("some-identity-name")));
-
-            var paymentMethod = await CreatePaymentMethodAsync(paymentMethodService.Value);
+            
+            var paymentMethod = await environment.Stripe.PaymentMethodBuilder.BuildAsync();
             await environment.Mediator.Send(
                 new SetActivePaymentMethodForUserCommand(
                     user,
@@ -320,22 +312,6 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 Id = Guid.NewGuid().ToString(),
                 Status = OperationStatus.Succeeded
             };
-        }
-
-        private static async Task<PaymentMethod> CreatePaymentMethodAsync(PaymentMethodService paymentMethodService)
-        {
-            return await paymentMethodService
-                .CreateAsync(new PaymentMethodCreateOptions()
-                {
-                    Card = new PaymentMethodCardCreateOptions()
-                    {
-                        Number = "4242424242424242",
-                        Cvc = "123",
-                        ExpMonth = 10,
-                        ExpYear = 30
-                    },
-                    Type = "card"
-                });
         }
     }
 }

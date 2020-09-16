@@ -36,12 +36,15 @@ namespace Dogger.Tests.TestHelpers.Builders.Stripe
                 }
             });
 
-            await this.paymentMethodService.AttachAsync(
-                paymentMethod.Id,
-                new PaymentMethodAttachOptions()
-                {
-                    Customer = this.customer.Id
-                });
+            if (this.customer != null)
+            {
+                await this.paymentMethodService.AttachAsync(
+                    paymentMethod.Id,
+                    new PaymentMethodAttachOptions()
+                    {
+                        Customer = this.customer.Id
+                    });
+            }
 
             return paymentMethod;
         }

@@ -12,6 +12,7 @@ using Dogger.Infrastructure.GitHub.Octokit;
 using Dogger.Infrastructure.Ioc;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Builders.Models;
+using Dogger.Tests.TestHelpers.Builders.Stripe;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -442,38 +443,17 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 }
             });
 
-            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<IOptionalService<CustomerService>>();
-            var customer = await stripeCustomerService.Value.CreateAsync(new CustomerCreateOptions()
-            {
-                Email = "dummy@example.com"
-            });
+            var customer = await environment.Stripe.CustomerBuilder
+                .WithDefaultPaymentMethod(environment.Stripe.PaymentMethodBuilder)
+                .BuildAsync();
 
-            var stripePaymentMethodService = environment.ServiceProvider.GetRequiredService<IOptionalService<PaymentMethodService>>();
-            var paymentMethod = await stripePaymentMethodService.Value.AttachAsync("pm_card_visa", new PaymentMethodAttachOptions()
-            {
-                Customer = customer.Id
-            });
-
-            var stripeSubscriptionService = environment.ServiceProvider.GetRequiredService<IOptionalService<SubscriptionService>>().Value;
-            var subscription = await stripeSubscriptionService.CreateAsync(new SubscriptionCreateOptions()
-            {
-                Customer = customer.Id,
-                DefaultPaymentMethod = paymentMethod.Id,
-                Items = new List<SubscriptionItemOptions>()
-                {
-                    new SubscriptionItemOptions()
-                    {
-                        Plan = "nano_2_0"
-                    }
-                },
-                Metadata = new Dictionary<string, string>()
-                {
-                    {
-                        "InstanceId", fakeInstanceId.ToString()
-                    }
-                }
-            });
-
+            var subscription = await environment.Stripe.SubscriptionBuilder
+                .WithCustomer(customer)
+                .WithPlans(await environment.Stripe.PlanBuilder
+                    .WithId("nano_2_0")
+                    .BuildAsync())
+                .BuildAsync();
+            
             var clusterId = Guid.NewGuid();
             var user = new TestUserBuilder()
                 .WithStripeCustomerId(customer.Id)
@@ -506,7 +486,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 default);
 
             //Assert
-            var refreshedSubscription = await stripeSubscriptionService.GetAsync(subscription.Id);
+            var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
             Assert.AreEqual(refreshedSubscription.Status, subscription.Status);
             Assert.AreNotEqual("canceled", refreshedSubscription.Status);
         }
@@ -539,37 +519,16 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 }
             });
 
-            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<IOptionalService<CustomerService>>();
-            var customer = await stripeCustomerService.Value.CreateAsync(new CustomerCreateOptions()
-            {
-                Email = "dummy@example.com"
-            });
+            var customer = await environment.Stripe.CustomerBuilder
+                .WithDefaultPaymentMethod(environment.Stripe.PaymentMethodBuilder)
+                .BuildAsync();
 
-            var stripePaymentMethodService = environment.ServiceProvider.GetRequiredService<IOptionalService<PaymentMethodService>>();
-            var paymentMethod = await stripePaymentMethodService.Value.AttachAsync("pm_card_visa", new PaymentMethodAttachOptions()
-            {
-                Customer = customer.Id
-            });
-
-            var stripeSubscriptionService = environment.ServiceProvider.GetRequiredService<SubscriptionService>();
-            var subscription = await stripeSubscriptionService.CreateAsync(new SubscriptionCreateOptions()
-            {
-                Customer = customer.Id,
-                DefaultPaymentMethod = paymentMethod.Id,
-                Items = new List<SubscriptionItemOptions>()
-                {
-                    new SubscriptionItemOptions()
-                    {
-                        Plan = "nano_2_0"
-                    }
-                },
-                Metadata = new Dictionary<string, string>()
-                {
-                    {
-                        "InstanceId", fakeInstanceId.ToString()
-                    }
-                }
-            });
+            var subscription = await environment.Stripe.SubscriptionBuilder
+                .WithCustomer(customer)
+                .WithPlans(await environment.Stripe.PlanBuilder
+                    .WithId("nano_2_0")
+                    .BuildAsync())
+                .BuildAsync();
 
             var clusterId = Guid.NewGuid();
             var user = new TestUserBuilder()
@@ -603,7 +562,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 default);
 
             //Assert
-            var refreshedSubscription = await stripeSubscriptionService.GetAsync(subscription.Id);
+            var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
             Assert.AreEqual(refreshedSubscription.Status, subscription.Status);
             Assert.AreNotEqual("canceled", refreshedSubscription.Status);
         }
@@ -636,37 +595,16 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 }
             });
 
-            var stripeCustomerService = environment.ServiceProvider.GetRequiredService<IOptionalService<CustomerService>>();
-            var customer = await stripeCustomerService.Value.CreateAsync(new CustomerCreateOptions()
-            {
-                Email = "dummy@example.com"
-            });
+            var customer = await environment.Stripe.CustomerBuilder
+                .WithDefaultPaymentMethod(environment.Stripe.PaymentMethodBuilder)
+                .BuildAsync();
 
-            var stripePaymentMethodService = environment.ServiceProvider.GetRequiredService<IOptionalService<PaymentMethodService>>();
-            var paymentMethod = await stripePaymentMethodService.Value.AttachAsync("pm_card_visa", new PaymentMethodAttachOptions()
-            {
-                Customer = customer.Id
-            });
-
-            var stripeSubscriptionService = environment.ServiceProvider.GetRequiredService<SubscriptionService>();
-            var subscription = await stripeSubscriptionService.CreateAsync(new SubscriptionCreateOptions()
-            {
-                Customer = customer.Id,
-                DefaultPaymentMethod = paymentMethod.Id,
-                Items = new List<SubscriptionItemOptions>()
-                {
-                    new SubscriptionItemOptions()
-                    {
-                        Plan = "nano_2_0"
-                    }
-                },
-                Metadata = new Dictionary<string, string>()
-                {
-                    {
-                        "InstanceId", fakeInstanceId.ToString()
-                    }
-                }
-            });
+            var subscription = await environment.Stripe.SubscriptionBuilder
+                .WithCustomer(customer)
+                .WithPlans(await environment.Stripe.PlanBuilder
+                    .WithId("nano_2_0")
+                    .BuildAsync())
+                .BuildAsync();
 
             var clusterId = Guid.NewGuid();
             var user = new TestUserBuilder()
@@ -701,7 +639,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 default);
 
             //Assert
-            var refreshedSubscription = await stripeSubscriptionService.GetAsync(subscription.Id);
+            var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
             Assert.AreNotEqual(refreshedSubscription.Status, subscription.Status);
             Assert.AreEqual("canceled", refreshedSubscription.Status);
         }
