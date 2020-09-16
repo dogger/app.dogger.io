@@ -10,6 +10,7 @@ using Dogger.Domain.Queries.Plans.GetPlanById;
 using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
 using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Queries.Plans.GetSupportedPullDogPlans;
+using Dogger.Domain.Queries.Users.GetUserById;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Builders.Models;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
@@ -442,29 +443,10 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
 
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_NoStripeSubscriptionPresent_StripeSubscriptionCreated()
+        public async Task Handle_NoStripeSubscriptionPresentAlreadyAndClusterWithPaidInstance_StripeSubscriptionCreated()
         {
             //Arrange
-            var fakeSubscriptionService = (SubscriptionService)null;
-            fakeSubscriptionService
-                .Configure()
-                .CreateAsync(
-                    Arg.Any<SubscriptionCreateOptions>(),
-                    default,
-                    default)
-                .Returns(new Subscription()
-                {
-                    LatestInvoice = new Invoice()
-                    {
-                        PaymentIntent = new PaymentIntent()
-                    }
-                });
-
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
-                new DoggerEnvironmentSetupOptions()
-                {
-                    IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
-                });
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             var user = new TestUserBuilder()
                 .WithStripeCustomerId("some-customer-id")
@@ -482,18 +464,9 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             await environment.Mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
 
             //Assert
-            await fakeSubscriptionService
-                .Received(1)
-                .CreateAsync(
-                    Arg.Is<SubscriptionCreateOptions>(args =>
-                        args.ProrationBehavior == "create_prorations" &&
-                        args.Customer == "some-customer-id" &&
-                        args.BillingCycleAnchor != null &&
-                        args.Items[0].Plan == "some-plan-id" &&
-                        args.Items[0].Id == null &&
-                        args.Items[0].Quantity == 1),
-                    default,
-                    default);
+            var refreshedUser = await environment.Mediator.Send(new GetUserByIdQuery(user.Id));
+            var createdSubscription = await environment.Stripe.SubscriptionService.GetAsync(refreshedUser.StripeSubscriptionId);
+            Assert.IsNotNull(createdSubscription);
         }
 
         [TestMethod]
