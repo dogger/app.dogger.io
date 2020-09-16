@@ -447,9 +447,11 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         {
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
+            
+            var customer = await environment.Stripe.CustomerBuilder.BuildAsync();
 
             var user = new TestUserBuilder()
-                .WithStripeCustomerId("some-customer-id")
+                .WithStripeCustomerId(customer.Id)
                 .WithStripeSubscriptionId(null)
                 .WithClusters(new TestClusterBuilder()
                     .WithInstances(new TestInstanceBuilder()
