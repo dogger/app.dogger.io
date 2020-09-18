@@ -117,9 +117,6 @@ namespace Dogger.Domain.Services.Provisioning
             while (this.jobQueue.Count > 0)
             {
                 var job = this.jobQueue.Dequeue();
-                if (job.CurrentState == null)
-                    throw new InvalidOperationException("A job's state was not set.");
-
                 try
                 {
                     var result = await job.CurrentState.UpdateAsync();

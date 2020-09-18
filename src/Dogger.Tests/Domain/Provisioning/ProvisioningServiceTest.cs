@@ -197,24 +197,6 @@ namespace Dogger.Tests.Domain.Provisioning
 
         [TestMethod]
         [TestCategory(TestCategories.UnitCategory)]
-        public async Task StartAsync_JobAvailableWithNoState_ThrowsException()
-        {
-            //Arrange
-            var serviceProvider = TestServiceProviderFactory.CreateUsingStartup();
-            ConfigureFakeLightsailClient(serviceProvider);
-
-            var provisioningService = serviceProvider.GetRequiredService<IProvisioningService>();
-
-            var createdJob = await provisioningService.ScheduleJobAsync(Substitute.For<IProvisioningStateFlow>());
-            createdJob.CurrentState = null;
-
-            //Act & assert
-            await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
-                await provisioningService.StartAsync(new CancellationToken(true)));
-        }
-
-        [TestMethod]
-        [TestCategory(TestCategories.UnitCategory)]
         public async Task StartAsync_UpdatingThrowsInvalidOperationException_SetsStateUpdateExceptionOnJob()
         {
             //Arrange

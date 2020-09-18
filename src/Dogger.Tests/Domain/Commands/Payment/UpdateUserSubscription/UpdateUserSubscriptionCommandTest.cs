@@ -446,34 +446,11 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_NoStripeSubscriptionPresentAlreadyAndClusterWithPaidInstance_StripeSubscriptionCreated()
         {
             //Arrange
-            var planId = Guid.NewGuid().ToString();
-
-            var fakeAmazonLightsail = Substitute.For<IAmazonLightsail>();
-            fakeAmazonLightsail
-                .GetBundlesAsync(Arg.Any<GetBundlesRequest>())
-                .Returns(new GetBundlesResponse()
-                {
-                    Bundles = new List<Bundle>()
-                    {
-                        new Bundle()
-                        {
-                            BundleId = planId,
-                            IsActive = true,
-                            RamSizeInGb = 0.5f,
-                            SupportedPlatforms = new List<string>()
-                            {
-                                "LINUX_UNIX"
-                            }
-                        }
-                    }
-                });
-
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
-            {
-                IocConfiguration = services => services.AddSingleton(fakeAmazonLightsail)
-            });
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
             
-            var customer = await environment.Stripe.CustomerBuilder.BuildAsync();
+            var customer = await environment.Stripe.CustomerBuilder
+                .WithDefaultPaymentMethod(environment.Stripe.PaymentMethodBuilder)
+                .BuildAsync();
 
             await environment.Stripe.PlanBuilder
                 .WithId("512_v3")
@@ -484,7 +461,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .WithStripeSubscriptionId(null)
                 .WithClusters(new TestClusterBuilder()
                     .WithInstances(new TestInstanceBuilder()
-                        .WithPlanId(planId)))
+                        .WithPlanId("512_v3")))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -505,33 +482,22 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
         public async Task Handle_NoStripeSubscriptionPresent_UserStripeSubscriptionIdSavedInDatabase()
         {
             //Arrange
-            var fakeSubscriptionService = (SubscriptionService)null;
-            fakeSubscriptionService
-                .Configure()
-                .CreateAsync(
-                    Arg.Any<SubscriptionCreateOptions>(),
-                    default,
-                    default)
-                .Returns(new Subscription()
-                {
-                    Id = "created-subscription-id",
-                    LatestInvoice = new Invoice()
-                    {
-                        PaymentIntent = new PaymentIntent()
-                    }
-                });
+            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
+            
+            var customer = await environment.Stripe.CustomerBuilder
+                .WithDefaultPaymentMethod(environment.Stripe.PaymentMethodBuilder)
+                .BuildAsync();
 
-            await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(
-                new DoggerEnvironmentSetupOptions()
-                {
-                    IocConfiguration = services => services.AddSingleton(fakeSubscriptionService)
-                });
+            await environment.Stripe.PlanBuilder
+                .WithId("512_v3")
+                .BuildAsync();
 
             var user = new TestUserBuilder()
+                .WithStripeCustomerId(customer.Id)
                 .WithStripeSubscriptionId(null)
                 .WithClusters(new TestClusterBuilder()
                     .WithInstances(new TestInstanceBuilder()
-                        .WithPlanId("some-plan-id")))
+                        .WithPlanId("512_v3")))
                 .Build();
             await environment.WithFreshDataContext(async dataContext =>
             {
@@ -550,7 +516,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     .SingleOrDefaultAsync();
                 Assert.IsNotNull(refreshedUser);
 
-                Assert.AreEqual("created-subscription-id", refreshedUser.StripeSubscriptionId);
+                Assert.IsNotNull(refreshedUser.StripeSubscriptionId);
             });
         }
     }

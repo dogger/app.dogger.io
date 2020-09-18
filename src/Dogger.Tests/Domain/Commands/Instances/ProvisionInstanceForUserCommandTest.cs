@@ -103,6 +103,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     }
                 });
 
+            await environment.Stripe.PlanBuilder
+                .WithId("nano_2_0")
+                .BuildAsync();
+
             var provisioningService = environment
                 .ServiceProvider
                 .GetRequiredService<IProvisioningService>();
@@ -157,6 +161,10 @@ namespace Dogger.Tests.Domain.Commands.Instances
                 {
                     IocConfiguration = FakeOutMinimalLightsailFeaturesForFullProvisioning
                 });
+
+            await environment.Stripe.PlanBuilder
+                .WithId("nano_2_0")
+                .BuildAsync();
 
             var provisioningService = environment
                 .ServiceProvider
