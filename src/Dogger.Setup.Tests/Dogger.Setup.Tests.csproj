@@ -11,8 +11,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\Dogger.Setup\appsettings.Development.json" Link="appsettings.Development.json" />
-    <Content Include="..\Dogger.Setup\appsettings.json" Link="appsettings.json" />
+    <Content Include="..\Dogger.Setup\appsettings.Development.json" Link="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Dogger.Setup\appsettings.json" Link="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
