@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Octokit;
+using Serilog;
 
 namespace Dogger.Tests.Infrastructure.GitHub
 {
@@ -25,6 +26,7 @@ namespace Dogger.Tests.Infrastructure.GitHub
             var gitHubClientFactory = new GitHubClientFactory(
                 Substitute.For<IGitHubClient>(),
                 Substitute.For<IFlurlClientFactory>(),
+                Substitute.For<ILogger>(),
                 Substitute.For<IOptionsMonitor<GitHubOptions>>());
 
             //Act
@@ -49,6 +51,7 @@ namespace Dogger.Tests.Infrastructure.GitHub
             var gitHubClientFactory = new GitHubClientFactory(
                 fakeGitHubClient,
                 Substitute.For<IFlurlClientFactory>(),
+                Substitute.For<ILogger>(),
                 Substitute.For<IOptionsMonitor<GitHubOptions>>());
 
             //Act
@@ -71,6 +74,7 @@ namespace Dogger.Tests.Infrastructure.GitHub
             var gitHubClientFactory = new GitHubClientFactory(
                 Substitute.For<IGitHubClient>(),
                 Substitute.For<IFlurlClientFactory>(),
+                Substitute.For<ILogger>(),
                 Substitute.For<IOptionsMonitor<GitHubOptions>>());
 
             //Act
@@ -89,6 +93,7 @@ namespace Dogger.Tests.Infrastructure.GitHub
             var gitHubClientFactory = new GitHubClientFactory(
                 Substitute.For<IGitHubClient>(),
                 Substitute.For<IFlurlClientFactory>(),
+                Substitute.For<ILogger>(),
                 Substitute.For<IOptionsMonitor<GitHubOptions>>());
 
             //Act
@@ -134,6 +139,7 @@ namespace Dogger.Tests.Infrastructure.GitHub
             var gitHubClientFactory = new GitHubClientFactory(
                 Substitute.For<IGitHubClient>(),
                 fakeFlurlClientFactory,
+                Substitute.For<ILogger>(),
                 fakeGitHubOptionsMonitor);
 
             //Act

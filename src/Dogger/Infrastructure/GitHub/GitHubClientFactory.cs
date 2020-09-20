@@ -7,12 +7,14 @@ using Flurl.Http;
 using Flurl.Http.Configuration;
 using Microsoft.Extensions.Options;
 using Octokit;
+using Serilog;
 
 namespace Dogger.Infrastructure.GitHub
 {
     public class GitHubClientFactory : IGitHubClientFactory
     {
         private readonly IGitHubClient gitHubClient;
+        private readonly ILogger logger;
         private readonly IFlurlClient flurlClient;
 
         private readonly IOptionsMonitor<GitHubOptions> gitHubOptionsMonitor;
@@ -20,9 +22,11 @@ namespace Dogger.Infrastructure.GitHub
         public GitHubClientFactory(
             IGitHubClient gitHubClient,
             IFlurlClientFactory flurlClientFactory,
+            ILogger logger,
             IOptionsMonitor<GitHubOptions> gitHubOptionsMonitor)
         {
             this.gitHubClient = gitHubClient;
+            this.logger = logger;
             this.gitHubOptionsMonitor = gitHubOptionsMonitor;
 
             this.flurlClient = flurlClientFactory.Get("https://github.com/login/oauth/access_token");
@@ -32,6 +36,8 @@ namespace Dogger.Infrastructure.GitHub
         {
             if (installationId == default)
                 throw new InvalidOperationException("No installation ID provided.");
+
+            this.logger.Information("Creating GitHub client for installation {InstallationId}.", installationId);
 
             var installationToken = await this.gitHubClient.GitHubApps.CreateInstallationToken(installationId);
             return new GitHubClient(new ProductHeaderValue("pull-dog"))

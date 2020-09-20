@@ -20,8 +20,7 @@ namespace Dogger.Controllers.PullDog.Webhooks.Handlers
 
         public string[] Events => new []
         {
-            "installation_repositories", 
-            "installation"
+            "installation_repositories"
         };
 
         public InstallationConfigurationPayloadHandler(
