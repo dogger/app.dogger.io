@@ -37,10 +37,15 @@ namespace Dogger.Domain.Queries.PullDog.GetPullRequestDetailsByHandle
             var repositoryId = long.Parse(pullDogRepository.Handle, CultureInfo.InvariantCulture);
             var pullRequestNumber = int.Parse(request.Handle, CultureInfo.InvariantCulture);
 
-            var client = await this.gitHubClientFactory.CreateInstallationClientAsync(installationId.Value);  
-            
-            try {
+            var client = await this.gitHubClientFactory.CreateInstallationClientAsync(installationId.Value);
+
+            try
+            {
                 return await client.PullRequest.Get(repositoryId, pullRequestNumber);
+            }
+            catch (NotFoundException)
+            {
+                return null;
             }
             catch (Exception ex)
             {
