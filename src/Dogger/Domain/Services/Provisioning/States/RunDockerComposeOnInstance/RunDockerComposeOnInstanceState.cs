@@ -199,11 +199,18 @@ namespace Dogger.Domain.Services.Provisioning.States.RunDockerComposeOnInstance
 
         private string[] GetBuildArgumentAssignments()
         {
-            return this.BuildArguments == null
-                ? Array.Empty<string>()
-                : this.BuildArguments
-                    .Select(x => $"{x.Key}={x.Value}")
-                    .ToArray();
+            var buildArguments = new List<string>
+            {
+                $"DOGGER_HOSTNAME={this.IpAddress}"
+            };
+
+            if (this.BuildArguments != null)
+            {
+                buildArguments.AddRange(this.BuildArguments
+                    .Select(x => $"{x.Key}={x.Value}"));
+            }
+
+            return buildArguments.ToArray();
         }
 
         private async Task AuthenticateDockerAsync(ISshClient sshClient)
