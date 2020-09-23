@@ -95,6 +95,7 @@ namespace Dogger.Domain.Services.Provisioning
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            logger.Information("Starting provisioning service.");
             await RunAsync(cancellationToken);
         }
 
@@ -176,6 +177,7 @@ namespace Dogger.Domain.Services.Provisioning
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
+            logger.Information("Stopping provisioning service.");
             return Task.CompletedTask;
         }
     }
