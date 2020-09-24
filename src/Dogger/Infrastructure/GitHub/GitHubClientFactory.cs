@@ -37,14 +37,20 @@ namespace Dogger.Infrastructure.GitHub
             if (installationId == default)
                 throw new InvalidOperationException("No installation ID provided.");
 
-            this.logger.Information("Creating GitHub client for installation {InstallationId}.", installationId);
-
-            var installationToken = await this.gitHubClient.GitHubApps.CreateInstallationToken(installationId);
-            return new GitHubClient(new ProductHeaderValue("pull-dog"))
+            try
             {
-                Credentials = new Credentials(
-                    installationToken.Token)
-            };
+                var installationToken = await this.gitHubClient.GitHubApps.CreateInstallationToken(installationId);
+                return new GitHubClient(new ProductHeaderValue("pull-dog"))
+                {
+                    Credentials = new Credentials(
+                        installationToken.Token)
+                };
+            }
+            catch (NotFoundException ex)
+            {
+                this.logger.Error(ex, "The installation {InstallationId} was not found.", installationId);
+                throw;
+            }
         }
 
         public async Task<IGitHubClient> CreateInstallationInitiatorClientAsync(string code)
