@@ -14,19 +14,13 @@ namespace Dogger.Domain.Services.Provisioning
 
         private IProvisioningState? state;
 
-        public string Id
-        {
-            get;
-        }
+        public string Id { get; }
 
-        public bool IsEnded => IsSucceeded || IsFailed;
-
-        public bool IsSucceeded
-        {
-            get; set;
-        }
+        public bool IsSucceeded { get; set; }
+        public bool IsStarted { get; set; }
 
         public bool IsFailed => Exception != null;
+        public bool IsEnded => IsSucceeded || IsFailed;
 
         public StateUpdateException? Exception { get; set; }
 

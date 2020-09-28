@@ -78,7 +78,9 @@ namespace Dogger.Domain.Services.Provisioning
         }
 
         [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "The IServiceScope is disposed once the job has finished running in this case.")]
-        public async Task<IProvisioningJob> ScheduleJobAsync(IProvisioningStateFlow flow)
+        public async Task<IProvisioningJob> ScheduleJobAsync(
+            string idempotencyKey,
+            IProvisioningStateFlow flow)
         {
             var scope = this.serviceProvider.CreateScope();
 
@@ -88,7 +90,7 @@ namespace Dogger.Domain.Services.Provisioning
             if (!this.jobsByIds.TryAdd(job.Id, job))
                 throw new InvalidOperationException("Could not add job to concurrent dictionary.");
 
-            this.jobQueue.Enqueue(job);
+            this.jobQueue.Enqueue(job, idempotencyKey);
 
             return job;
         }

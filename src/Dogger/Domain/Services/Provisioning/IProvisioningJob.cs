@@ -7,6 +7,7 @@ namespace Dogger.Domain.Services.Provisioning
         bool IsEnded { get; }
         bool IsSucceeded { get; }
         bool IsFailed { get; }
+        bool IsStarted { get; }
 
         string Id { get; }
 
