@@ -9,7 +9,7 @@ using Amazon.IdentityManagement;
 using Amazon.Lightsail;
 using Amazon.Runtime;
 using AutoMapper;
-using Dogger.Controllers.PullDog.Webhooks.Handlers;
+using Dogger.Domain.Controllers.PullDog.Webhooks.Handlers;
 using Dogger.Domain.Models;
 using Dogger.Domain.Services.Amazon.Identity;
 using Dogger.Domain.Services.Amazon.Lightsail;

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Dogger.Controllers.Clusters;
+using Dogger.Domain.Controllers.Clusters;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Arguments;
 using MediatR;
