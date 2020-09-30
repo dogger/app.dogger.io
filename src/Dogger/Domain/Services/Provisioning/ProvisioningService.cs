@@ -123,19 +123,15 @@ namespace Dogger.Domain.Services.Provisioning
 
         public async Task ProcessPendingJobsAsync()
         {
-            while (!this.jobQueuesByIdempotencyKey.IsEmpty)
-            {
-                await this.time.WaitAsync(1000);
-
-                var queueProcessingTasks = this.jobQueuesByIdempotencyKey.Keys.Select(key =>
-                    Task.Factory.StartNew(
-                        ProcessPendingJob,
-                        key,
-                        CancellationToken.None,
-                        TaskCreationOptions.LongRunning,
-                        TaskScheduler.Current));
-                await Task.WhenAll(queueProcessingTasks);
-            }
+            var taskCreations = this.jobQueuesByIdempotencyKey.Keys.Select(async key =>
+                await Task.Factory.StartNew(
+                    ProcessPendingJob,
+                    key,
+                    CancellationToken.None,
+                    TaskCreationOptions.LongRunning,
+                    TaskScheduler.Current));
+            var tasks = await Task.WhenAll(taskCreations);
+            await Task.WhenAll(tasks);
         }
 
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "The provisioning service must never crash.")]
@@ -144,7 +140,9 @@ namespace Dogger.Domain.Services.Provisioning
             if (!(state is string idempotencyKey))
                 throw new InvalidOperationException("A non-string idempotency key was used.");
 
-            var jobQueue = this.jobQueuesByIdempotencyKey.GetOrAdd(idempotencyKey, new FirstLastQueue<ProvisioningJob>());
+            var jobQueue = this.jobQueuesByIdempotencyKey.GetOrAdd(
+                idempotencyKey, 
+                new FirstLastQueue<ProvisioningJob>());
             while (jobQueue.Count > 0)
             {
                 var job = jobQueue.Dequeue();

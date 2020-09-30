@@ -49,7 +49,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             await fakeProvisioningService
                 .Received(1)
                 .ScheduleJobAsync(
-                    clusterId.ToString(),
+                    Arg.Any<string>(),
                     Arg.Is<DeployToClusterStateFlow>(args =>
                         args.InstanceName == "some-instance-name"));
         }
@@ -204,7 +204,7 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             await fakeProvisioningService
                 .Received(1)
                 .ScheduleJobAsync(
-                    DataContext.DemoClusterId.ToString(),
+                    Arg.Any<string>(),
                     Arg.Is<DeployToClusterStateFlow>(args =>
                         args.InstanceName == "some-instance-name"));
         }
