@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,8 +26,8 @@ namespace Dogger.Domain.Services.Provisioning
 
         private readonly ILogger logger;
 
-        private readonly Queue<ProvisioningJob> jobQueue;
-        private readonly ConcurrentDictionary<string, ProvisioningJob> jobsByIds;
+        private readonly ConcurrentDictionary<string, ProvisioningJob> jobsById;
+        private readonly ConcurrentDictionary<string, FirstLastQueue<ProvisioningJob>> jobQueuesByIdempotencyKey;
 
         public ProvisioningService(
             ITime time,
@@ -38,8 +38,8 @@ namespace Dogger.Domain.Services.Provisioning
             this.serviceProvider = serviceProvider;
             this.logger = logger;
 
-            this.jobQueue = new Queue<ProvisioningJob>();
-            this.jobsByIds = new ConcurrentDictionary<string, ProvisioningJob>();
+            this.jobsById = new ConcurrentDictionary<string, ProvisioningJob>();
+            this.jobQueuesByIdempotencyKey = new ConcurrentDictionary<string, FirstLastQueue<ProvisioningJob>>();
         }
 
         public static bool IsProtectedResourceName(string? resourceName)
@@ -72,8 +72,8 @@ namespace Dogger.Domain.Services.Provisioning
             if (jobId == CompletedJobId)
                 return Task.FromResult<IProvisioningJob?>(GetCompletedJob());
 
-            return this.jobsByIds.TryGetValue(jobId, out var job) ? 
-                Task.FromResult<IProvisioningJob?>(job) : 
+            return this.jobsById.TryGetValue(jobId, out var job) ?
+                Task.FromResult<IProvisioningJob?>(job) :
                 Task.FromResult<IProvisioningJob?>(null);
         }
 
@@ -87,12 +87,19 @@ namespace Dogger.Domain.Services.Provisioning
             var job = new ProvisioningJob(flow, scope);
             await job.InitializeAsync();
 
-            if (!this.jobsByIds.TryAdd(job.Id, job))
-                throw new InvalidOperationException("Could not add job to concurrent dictionary.");
+            this.jobsById.TryAdd(job.Id, job);
 
-            this.jobQueue.Enqueue(job, idempotencyKey);
+            var queue = GetJobQueueByIdempotencyKey(idempotencyKey);
+            queue.Enqueue(job);
 
             return job;
+        }
+
+        private FirstLastQueue<ProvisioningJob> GetJobQueueByIdempotencyKey(string idempotencyKey)
+        {
+            return this.jobQueuesByIdempotencyKey.GetOrAdd(
+                idempotencyKey,
+                new FirstLastQueue<ProvisioningJob>());
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -107,32 +114,56 @@ namespace Dogger.Domain.Services.Provisioning
             {
                 await this.time.WaitAsync(1000);
 
-                if (this.jobQueue.Count == 0)
+                if (this.jobQueuesByIdempotencyKey.IsEmpty)
                     continue;
 
                 await ProcessPendingJobsAsync();
             } while (!cancellationToken.IsCancellationRequested);
         }
 
-        [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "The provisioning service must never crash.")]
         public async Task ProcessPendingJobsAsync()
         {
-            while (this.jobQueue.Count > 0)
+            while (!this.jobQueuesByIdempotencyKey.IsEmpty)
             {
-                var job = this.jobQueue.Dequeue();
+                await this.time.WaitAsync(1000);
+
+                var queueProcessingTasks = this.jobQueuesByIdempotencyKey.Keys.Select(key =>
+                    Task.Factory.StartNew(
+                        ProcessPendingJob,
+                        key,
+                        CancellationToken.None,
+                        TaskCreationOptions.LongRunning,
+                        TaskScheduler.Current));
+                await Task.WhenAll(queueProcessingTasks);
+            }
+        }
+
+        [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "The provisioning service must never crash.")]
+        private async Task ProcessPendingJob(object? state)
+        {
+            if (!(state is string idempotencyKey))
+                throw new InvalidOperationException("A non-string idempotency key was used.");
+
+            var jobQueue = this.jobQueuesByIdempotencyKey.GetOrAdd(idempotencyKey, new FirstLastQueue<ProvisioningJob>());
+            while (jobQueue.Count > 0)
+            {
+                var job = jobQueue.Dequeue();
+                if (job == null)
+                    throw new InvalidOperationException("A scheduled job was null.");
+
                 try
                 {
                     var result = await job.CurrentState.UpdateAsync();
                     if (result == ProvisioningStateUpdateResult.InProgress)
                     {
-                        this.logger.Debug("Job is still in progress.");
+                        this.logger.Debug("Job {IdempotencyKey} is still in progress.", idempotencyKey);
 
-                        this.jobQueue.Enqueue(job);
+                        jobQueue.Enqueue(job);
                         await this.time.WaitAsync(1000);
                     }
                     else
                     {
-                        this.logger.Debug("Switching job to next state.");
+                        this.logger.Debug("Switching job {IdempotencyKey} to next state.", idempotencyKey);
 
                         var nextState = await job.Flow.GetNextStateAsync(new NextStateContext(
                             job.Mediator,
@@ -140,36 +171,38 @@ namespace Dogger.Domain.Services.Provisioning
                             job.CurrentState));
                         if (nextState == null)
                         {
-                            this.logger.Information("Job has succeeded.");
+                            this.logger.Information("Job {IdempotencyKey} has succeeded.", idempotencyKey);
 
                             job.IsSucceeded = true;
                             job.Dispose();
                         }
                         else
                         {
-                            this.logger.Debug("Job is initializing.");
-                            
+                            this.logger.Debug("Job {IdempotencyKey} is initializing.", idempotencyKey);
+
                             await nextState.InitializeAsync();
 
                             job.CurrentState = nextState;
-                            this.jobQueue.Enqueue(job);
+                            jobQueue.Enqueue(job);
 
-                            this.logger.Information("Job has initialized.");
+                            this.logger.Information("Job {IdempotencyKey} has initialized.", idempotencyKey);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    this.logger.Error(ex, "An error occured while trying to switch state with the message {ExceptionMessage}.", ex.Message);
+                    this.logger.Error(ex, "An error occured while trying to switch state for job {IdempotencyKey} with the message {ExceptionMessage}.", idempotencyKey, ex.Message);
 
                     job.Dispose();
-                    job.Exception = ex is StateUpdateException suex ?
-                        suex :
-                        new StateUpdateException(
+                    job.Exception = ex is StateUpdateException suex
+                        ? suex
+                        : new StateUpdateException(
                             "A generic error occured while trying to switch state.",
                             ex);
                 }
             }
+
+            this.jobQueuesByIdempotencyKey.TryRemove(idempotencyKey, out _);
         }
 
         public IProvisioningJob GetCompletedJob()

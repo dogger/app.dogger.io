@@ -11,6 +11,7 @@ namespace Dogger.Domain.Services.Provisioning
         public bool IsEnded => true;
         public bool IsSucceeded => true;
         public bool IsFailed => false;
+        public bool IsStarted => true;
 
         public string Id => ProvisioningService.CompletedJobId;
 

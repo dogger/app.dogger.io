@@ -9,6 +9,8 @@ namespace Dogger.Infrastructure
     {
         private readonly LinkedList<T> list;
 
+        public int Count => this.list.Count;
+
         public FirstLastQueue()
         {
             this.list = new LinkedList<T>();

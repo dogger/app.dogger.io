@@ -73,6 +73,7 @@ namespace Dogger.Setup.Domain.Commands.ProvisionDogfeedInstance
             var dockerFiles = await GetDockerFilesAsync(dogfeedOptions);
 
             return await this.provisioningService.ScheduleJobAsync(
+                cluster.Id.ToString(),
                 new AggregateProvisioningStateFlow(
                     new ProvisionInstanceStateFlow(
                         firstCapablePlan.Id,

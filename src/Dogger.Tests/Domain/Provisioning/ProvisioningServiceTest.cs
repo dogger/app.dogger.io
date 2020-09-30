@@ -118,7 +118,9 @@ namespace Dogger.Tests.Domain.Provisioning
 
             var provisioningService = serviceProvider.GetRequiredService<IProvisioningService>();
 
-            var createdJob = await provisioningService.ScheduleJobAsync(Substitute.For<IProvisioningStateFlow>());
+            var createdJob = await provisioningService.ScheduleJobAsync(
+                Guid.NewGuid().ToString(),
+                Substitute.For<IProvisioningStateFlow>());
 
             //Act
             var job = await provisioningService.GetJobByIdAsync(createdJob.Id);
@@ -159,7 +161,9 @@ namespace Dogger.Tests.Domain.Provisioning
                 .GetInitialStateAsync(Arg.Any<InitialStateContext>())
                 .Returns(fakeInitialState);
 
-            var createdJob = await provisioningService.ScheduleJobAsync(fakeFlow);
+            var createdJob = await provisioningService.ScheduleJobAsync(
+                Guid.NewGuid().ToString(),
+                fakeFlow);
 
             //Act
             var job = await provisioningService.GetJobByIdAsync(createdJob.Id);
@@ -205,7 +209,9 @@ namespace Dogger.Tests.Domain.Provisioning
 
             var provisioningService = serviceProvider.GetRequiredService<IProvisioningService>();
 
-            var createdJob = await provisioningService.ScheduleJobAsync(Substitute.For<IProvisioningStateFlow>());
+            var createdJob = await provisioningService.ScheduleJobAsync(
+                Guid.NewGuid().ToString(),
+                Substitute.For<IProvisioningStateFlow>());
 
             var fakeJobState = Substitute.For<IProvisioningState>();
             fakeJobState
@@ -231,7 +237,9 @@ namespace Dogger.Tests.Domain.Provisioning
 
             var provisioningService = serviceProvider.GetRequiredService<IProvisioningService>();
 
-            var createdJob = await provisioningService.ScheduleJobAsync(Substitute.For<IProvisioningStateFlow>());
+            var createdJob = await provisioningService.ScheduleJobAsync(
+                Guid.NewGuid().ToString(),
+                Substitute.For<IProvisioningStateFlow>());
 
             var fakeJobState = Substitute.For<IProvisioningState>();
             fakeJobState
@@ -271,7 +279,9 @@ namespace Dogger.Tests.Domain.Provisioning
                 .GetNextStateAsync(Arg.Any<NextStateContext>())
                 .Returns((IProvisioningState)null);
 
-            var createdJob = await provisioningService.ScheduleJobAsync(fakeFlow);
+            var createdJob = await provisioningService.ScheduleJobAsync(
+                Guid.NewGuid().ToString(),
+                fakeFlow);
 
             //Act
             await provisioningService.StartAsync(new CancellationToken(true));
@@ -311,7 +321,9 @@ namespace Dogger.Tests.Domain.Provisioning
                     args.CurrentState == fakeInitialState))
                 .Returns((IProvisioningState)null);
 
-            await provisioningService.ScheduleJobAsync(fakeFlow);
+            await provisioningService.ScheduleJobAsync(
+                Guid.NewGuid().ToString(),
+                fakeFlow);
 
             //Act
             await provisioningService.StartAsync(startCancellationTokenSource.Token);
@@ -364,7 +376,9 @@ namespace Dogger.Tests.Domain.Provisioning
                     args.CurrentState == fakeNextState))
                 .Returns((IProvisioningState)null);
 
-            await provisioningService.ScheduleJobAsync(fakeFlow);
+            await provisioningService.ScheduleJobAsync(
+                Guid.NewGuid().ToString(),
+                fakeFlow);
 
             //Act
             await provisioningService.StartAsync(startCancellationTokenSource.Token);
@@ -417,7 +431,9 @@ namespace Dogger.Tests.Domain.Provisioning
                     fakeJobState,
                     (IProvisioningState)null);
 
-            var createdJob = await provisioningService.ScheduleJobAsync(fakeFlow);
+            var createdJob = await provisioningService.ScheduleJobAsync(
+                Guid.NewGuid().ToString(),
+                fakeFlow);
 
             //Act
             await provisioningService.StartAsync(startCancellationTokenSource.Token);

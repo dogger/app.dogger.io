@@ -36,18 +36,22 @@ namespace Dogger.Tests.Domain.Commands.Clusters
                 fakeProvisioningService,
                 fakeMediator);
 
+            var clusterId = Guid.NewGuid();
+
             //Assert
             await handler.Handle(new DeployToClusterCommand(Array.Empty<string>())
             {
                 UserId = null,
-                ClusterId = Guid.NewGuid()
+                ClusterId = clusterId
             }, default);
 
             //Assert
             await fakeProvisioningService
                 .Received(1)
-                .ScheduleJobAsync(Arg.Is<DeployToClusterStateFlow>(args =>
-                    args.InstanceName == "some-instance-name"));
+                .ScheduleJobAsync(
+                    clusterId.ToString(),
+                    Arg.Is<DeployToClusterStateFlow>(args =>
+                        args.InstanceName == "some-instance-name"));
         }
 
         [TestMethod]
@@ -199,8 +203,10 @@ namespace Dogger.Tests.Domain.Commands.Clusters
             //Assert
             await fakeProvisioningService
                 .Received(1)
-                .ScheduleJobAsync(Arg.Is<DeployToClusterStateFlow>(args =>
-                    args.InstanceName == "some-instance-name"));
+                .ScheduleJobAsync(
+                    DataContext.DemoClusterId.ToString(),
+                    Arg.Is<DeployToClusterStateFlow>(args =>
+                        args.InstanceName == "some-instance-name"));
         }
 
         [TestMethod]

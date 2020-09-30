@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Stripe;
 
 namespace Dogger.Domain.Queries.Payment.GetSubscriptionById

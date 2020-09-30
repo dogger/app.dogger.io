@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using Dogger.Domain.Models;
-using Dogger.Domain.Services.PullDog;
 using Dogger.Infrastructure.Mediatr.Database;
 using MediatR;
 

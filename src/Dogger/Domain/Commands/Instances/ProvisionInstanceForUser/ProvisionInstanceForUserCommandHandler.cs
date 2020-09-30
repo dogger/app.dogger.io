@@ -72,6 +72,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionInstanceForUser
             await this.dataContext.SaveChangesAsync(cancellationToken);
 
             return await this.provisioningService.ScheduleJobAsync(
+                cluster.Id.ToString(),
                 new ProvisionInstanceStateFlow(
                     request.Plan.Id,
                     instance)

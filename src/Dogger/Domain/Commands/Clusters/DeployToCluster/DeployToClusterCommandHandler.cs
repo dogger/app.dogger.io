@@ -75,17 +75,19 @@ namespace Dogger.Domain.Commands.Clusters.DeployToCluster
 
             var instance = cluster.Instances.Single();
 
-            return await this.provisioningService.ScheduleJobAsync(new DeployToClusterStateFlow(
-                instance.Name,
-                request.DockerComposeYmlFilePaths)
-            {
-                Files = request
-                    .Files
-                    ?.Select(x => new InstanceDockerFile(
-                        x.Path,
-                        x.Contents)),
-                Authentication = request.Authentication
-            });
+            return await this.provisioningService.ScheduleJobAsync(
+                cluster.Id.ToString(),
+                new DeployToClusterStateFlow(
+                    instance.Name,
+                    request.DockerComposeYmlFilePaths)
+                {
+                    Files = request
+                        .Files
+                        ?.Select(x => new InstanceDockerFile(
+                            x.Path,
+                            x.Contents)),
+                    Authentication = request.Authentication
+                });
         }
     }
 

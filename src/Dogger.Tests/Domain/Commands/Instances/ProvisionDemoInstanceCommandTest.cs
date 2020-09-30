@@ -203,6 +203,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await fakeProvisioningService
                 .Received(1)
                 .ScheduleJobAsync(
+                    DataContext.DemoClusterId.ToString(),
                     Arg.Is<ProvisionInstanceStateFlow>(arguments =>
                         arguments.PlanId == "some-plan-id"));
         }
@@ -234,6 +235,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await fakeProvisioningService
                 .Received(1)
                 .ScheduleJobAsync(
+                    DataContext.DemoClusterId.ToString(),
                     Arg.Is<ProvisionInstanceStateFlow>(arguments =>
                         arguments.DatabaseInstance.Name == "demo"));
         }

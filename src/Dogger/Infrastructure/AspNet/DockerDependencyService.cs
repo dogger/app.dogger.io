@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Docker.DotNet;
 using Docker.DotNet.Models;
 using Dogger.Domain.Models;
-using Dogger.Infrastructure.Ioc;
 using FluffySpoon.AspNet.NGrok;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;

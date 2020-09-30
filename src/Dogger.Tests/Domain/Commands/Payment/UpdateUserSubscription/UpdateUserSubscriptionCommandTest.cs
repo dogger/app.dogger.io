@@ -5,22 +5,14 @@ using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Amazon.Lightsail.Model;
 using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
-using Dogger.Domain.Queries.Payment.GetSubscriptionById;
-using Dogger.Domain.Queries.Plans.GetPlanById;
-using Dogger.Domain.Queries.Plans.GetPullDogPlanFromSettings;
-using Dogger.Domain.Queries.Plans.GetSupportedPlans;
-using Dogger.Domain.Queries.Plans.GetSupportedPullDogPlans;
 using Dogger.Domain.Queries.Users.GetUserById;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Builders.Models;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using NSubstitute.Extensions;
-using Stripe;
 
 namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
 {

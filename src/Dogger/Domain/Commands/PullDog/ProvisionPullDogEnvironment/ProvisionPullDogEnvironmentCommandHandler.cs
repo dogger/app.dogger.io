@@ -115,6 +115,7 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
                 });
 
                 await provisioningService.ScheduleJobAsync(
+                    instance.ClusterId.ToString(),
                     new AggregateProvisioningStateFlow(flowsToUse.ToArray()));
             }
             catch (PullDogPoolSizeExceededException ex)

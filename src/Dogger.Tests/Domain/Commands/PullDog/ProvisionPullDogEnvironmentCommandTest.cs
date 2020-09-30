@@ -76,6 +76,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await fakeProvisioningService
                 .Received(1)
                 .ScheduleJobAsync(
+                    Arg.Any<string>(),
                     Arg.Is<AggregateProvisioningStateFlow>(args =>
                         args.GetFlowOfType<ProvisionInstanceStateFlow>(0).DatabaseInstance == databaseInstance &&
                         args.GetFlowOfType<DeployToClusterStateFlow>(1).InstanceName == "some-instance-name"));
@@ -131,6 +132,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await fakeProvisioningService
                 .Received(1)
                 .ScheduleJobAsync(
+                    Arg.Any<string>(),
                     Arg.Is<AggregateProvisioningStateFlow>(args =>
                         args.GetFlowOfType<DeployToClusterStateFlow>(1).DockerComposeYmlFilePaths.Single() == "some-docker-compose-path"));
         }
@@ -268,6 +270,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await fakeProvisioningService
                 .DidNotReceive()
                 .ScheduleJobAsync(
+                    Arg.Any<string>(),
                     Arg.Any<AggregateProvisioningStateFlow>());
 
             await fakeMediator
@@ -327,6 +330,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await fakeProvisioningService
                 .DidNotReceive()
                 .ScheduleJobAsync(
+                    Arg.Any<string>(),
                     Arg.Any<AggregateProvisioningStateFlow>());
 
             await fakeMediator
@@ -382,6 +386,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await fakeProvisioningService
                 .DidNotReceive()
                 .ScheduleJobAsync(
+                    Arg.Any<string>(),
                     Arg.Any<AggregateProvisioningStateFlow>());
 
             await fakeMediator
@@ -435,6 +440,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await fakeProvisioningService
                 .DidNotReceive()
                 .ScheduleJobAsync(
+                    Arg.Any<string>(),
                     Arg.Any<AggregateProvisioningStateFlow>());
 
             await fakeMediator
@@ -487,6 +493,7 @@ namespace Dogger.Tests.Domain.Commands.PullDog
             await fakeProvisioningService
                 .DidNotReceive()
                 .ScheduleJobAsync(
+                    Arg.Any<string>(),
                     Arg.Any<AggregateProvisioningStateFlow>());
 
             await fakeMediator

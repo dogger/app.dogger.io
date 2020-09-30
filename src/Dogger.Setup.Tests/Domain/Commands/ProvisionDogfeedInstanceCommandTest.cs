@@ -68,6 +68,7 @@ namespace Dogger.Setup.Tests.Domain.Commands
             await fakeProvisioningService
                 .Received(1)
                 .ScheduleJobAsync(
+                    Arg.Any<string>(),
                     Arg.Is<AggregateProvisioningStateFlow>(arguments => GetProvisionInstanceStateFlow(arguments)
                         .PlanId == "some-plan-id"));
         }
@@ -117,6 +118,7 @@ namespace Dogger.Setup.Tests.Domain.Commands
             await fakeProvisioningService
                 .Received(1)
                 .ScheduleJobAsync(
+                    Arg.Any<string>(),
                     Arg.Is<AggregateProvisioningStateFlow>(arguments => GetProvisionInstanceStateFlow(arguments)
                         .DatabaseInstance.Name == "some-instance-name"));
         }

@@ -10,7 +10,6 @@ using Dogger.Domain.Queries.Plans.GetSupportedPlans;
 using Dogger.Domain.Services.Amazon.Lightsail;
 using Dogger.Domain.Services.Provisioning;
 using Dogger.Domain.Services.Provisioning.Flows;
-using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Ssh;
 using Dogger.Infrastructure.Time;
 using Dogger.Tests.TestHelpers;
@@ -20,7 +19,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Stripe;
 using Instance = Amazon.Lightsail.Model.Instance;
 using Plan = Dogger.Domain.Queries.Plans.GetSupportedPlans.Plan;
 
@@ -217,7 +215,9 @@ namespace Dogger.Tests.Domain.Commands.Instances
             //Arrange
             var fakeProvisioningService = Substitute.For<IProvisioningService>();
             fakeProvisioningService
-                .ScheduleJobAsync(Arg.Any<IProvisioningStateFlow>())
+                .ScheduleJobAsync(
+                    Arg.Any<string>(),
+                    Arg.Any<IProvisioningStateFlow>())
                 .Throws(new TestException());
 
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync(new DoggerEnvironmentSetupOptions()
