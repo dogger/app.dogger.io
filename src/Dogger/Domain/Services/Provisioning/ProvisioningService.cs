@@ -145,7 +145,7 @@ namespace Dogger.Domain.Services.Provisioning
                 new FirstLastQueue<ProvisioningJob>());
             while (jobQueue.Count > 0)
             {
-                var job = jobQueue.Dequeue();
+                var job = jobQueue.Peek();
                 if (job == null)
                     throw new InvalidOperationException("A scheduled job was null.");
 
@@ -156,7 +156,6 @@ namespace Dogger.Domain.Services.Provisioning
                     {
                         this.logger.Debug("Job {IdempotencyKey} is still in progress.", idempotencyKey);
 
-                        jobQueue.Enqueue(job);
                         await this.time.WaitAsync(1000);
                     }
                     else
@@ -173,6 +172,7 @@ namespace Dogger.Domain.Services.Provisioning
 
                             job.IsSucceeded = true;
                             job.Dispose();
+                            jobQueue.Dequeue();
                         }
                         else
                         {
@@ -181,7 +181,6 @@ namespace Dogger.Domain.Services.Provisioning
                             await nextState.InitializeAsync();
 
                             job.CurrentState = nextState;
-                            jobQueue.Enqueue(job);
 
                             this.logger.Information("Job {IdempotencyKey} has initialized.", idempotencyKey);
                         }
@@ -197,6 +196,8 @@ namespace Dogger.Domain.Services.Provisioning
                         : new StateUpdateException(
                             "A generic error occured while trying to switch state.",
                             ex);
+
+                    jobQueue.Dequeue();
                 }
             }
 
