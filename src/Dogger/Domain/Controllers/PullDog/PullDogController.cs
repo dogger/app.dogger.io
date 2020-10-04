@@ -24,7 +24,7 @@ namespace Dogger.Domain.Controllers.PullDog
         [Route("install/github/instructions")]
         public IActionResult InstallGitHubInstructions()
         {
-            return View("~/Controllers/PullDog/Views/InstallGitHub.cshtml");
+            return View("~/Domain/Controllers/PullDog/Views/InstallGitHub.cshtml");
         }
 
         [HttpGet]
