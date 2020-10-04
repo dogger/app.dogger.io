@@ -92,6 +92,8 @@ namespace Dogger.Domain.Services.Provisioning
             var queue = GetJobQueueByIdempotencyKey(idempotencyKey);
             queue.Enqueue(job);
 
+            this.logger.Information("Scheduled job #{JobCount} with idempotency key {IdempotencyKey}.", queue.Count, idempotencyKey);
+
             return job;
         }
 
