@@ -13,6 +13,7 @@ using Dogger.Infrastructure;
 using Dogger.Infrastructure.Time;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using Serilog.Context;
 
 namespace Dogger.Domain.Services.Provisioning
 {
@@ -117,7 +118,10 @@ namespace Dogger.Domain.Services.Provisioning
                 await this.time.WaitAsync(1000);
 
                 if (this.jobQueuesByIdempotencyKey.IsEmpty)
+                {
+                    this.logger.Verbose("The queues are empty.");
                     continue;
+                }
 
                 await ProcessPendingJobsAsync();
             } while (!cancellationToken.IsCancellationRequested);
@@ -125,15 +129,21 @@ namespace Dogger.Domain.Services.Provisioning
 
         public async Task ProcessPendingJobsAsync()
         {
+            this.logger.Verbose("Processing pending jobs.");
+
             var taskCreations = this.jobQueuesByIdempotencyKey.Keys.Select(async key =>
                 await Task.Factory.StartNew(
                     ProcessPendingJob,
                     key,
                     CancellationToken.None,
-                    TaskCreationOptions.LongRunning,
+                    TaskCreationOptions.LongRunning |
+                    TaskCreationOptions.RunContinuationsAsynchronously |
+                    TaskCreationOptions.DenyChildAttach,
                     TaskScheduler.Current));
             var tasks = await Task.WhenAll(taskCreations);
             await Task.WhenAll(tasks);
+
+            this.logger.Verbose("Processed pending jobs.");
         }
 
         [SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "The provisioning service must never crash.")]
@@ -151,57 +161,64 @@ namespace Dogger.Domain.Services.Provisioning
                 if (job == null)
                     throw new InvalidOperationException("A scheduled job was null.");
 
-                try
+                using (LogContext.PushProperty("JobObject", job, true))
                 {
-                    var result = await job.CurrentState.UpdateAsync();
-                    if (result == ProvisioningStateUpdateResult.InProgress)
-                    {
-                        this.logger.Debug("Job {IdempotencyKey} is still in progress.", idempotencyKey);
+                    this.logger.Debug("Handling job.");
 
-                        await this.time.WaitAsync(1000);
-                    }
-                    else
+                    try
                     {
-                        this.logger.Debug("Switching job {IdempotencyKey} to next state.", idempotencyKey);
-
-                        var nextState = await job.Flow.GetNextStateAsync(new NextStateContext(
-                            job.Mediator,
-                            job.StateFactory,
-                            job.CurrentState));
-                        if (nextState == null)
+                        var result = await job.CurrentState.UpdateAsync();
+                        if (result == ProvisioningStateUpdateResult.InProgress)
                         {
-                            this.logger.Information("Job {IdempotencyKey} has succeeded.", idempotencyKey);
+                            this.logger.Debug("Job {IdempotencyKey} is still in progress.", idempotencyKey);
 
-                            job.IsSucceeded = true;
-                            job.Dispose();
-                            jobQueue.Dequeue();
+                            await this.time.WaitAsync(1000);
                         }
                         else
                         {
-                            this.logger.Debug("Job {IdempotencyKey} is initializing.", idempotencyKey);
+                            this.logger.Debug("Switching job {IdempotencyKey} to next state.", idempotencyKey);
 
-                            await nextState.InitializeAsync();
+                            var nextState = await job.Flow.GetNextStateAsync(new NextStateContext(
+                                job.Mediator,
+                                job.StateFactory,
+                                job.CurrentState));
+                            if (nextState == null)
+                            {
+                                this.logger.Information("Job {IdempotencyKey} has succeeded.", idempotencyKey);
 
-                            job.CurrentState = nextState;
+                                job.IsSucceeded = true;
+                                job.Dispose();
+                                jobQueue.Dequeue();
+                            }
+                            else
+                            {
+                                this.logger.Debug("Job {IdempotencyKey} is initializing.", idempotencyKey);
 
-                            this.logger.Information("Job {IdempotencyKey} has initialized.", idempotencyKey);
+                                await nextState.InitializeAsync();
+
+                                job.CurrentState = nextState;
+
+                                this.logger.Information("Job {IdempotencyKey} has initialized.", idempotencyKey);
+                            }
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    this.logger.Error(ex, "An error occured while trying to switch state for job {IdempotencyKey} with the message {ExceptionMessage}.", idempotencyKey, ex.Message);
+                    catch (Exception ex)
+                    {
+                        this.logger.Error(ex, "An error occured while trying to switch state for job {IdempotencyKey} with the message {ExceptionMessage}.", idempotencyKey, ex.Message);
 
-                    job.Dispose();
-                    job.Exception = ex is StateUpdateException suex
-                        ? suex
-                        : new StateUpdateException(
-                            "A generic error occured while trying to switch state.",
-                            ex);
+                        job.Dispose();
+                        job.Exception = ex is StateUpdateException suex
+                            ? suex
+                            : new StateUpdateException(
+                                "A generic error occured while trying to switch state.",
+                                ex);
 
-                    jobQueue.Dequeue();
+                        jobQueue.Dequeue();
+                    }
                 }
             }
+
+            this.logger.Debug("Jobs finished by idempotency key.");
 
             this.jobQueuesByIdempotencyKey.TryRemove(idempotencyKey, out _);
         }
