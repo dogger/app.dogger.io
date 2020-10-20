@@ -94,9 +94,12 @@ namespace Dogger.Domain.Commands.PullDog.UpsertPullRequestComment
             ConfigurationFile? configuration,
             UpsertPullRequestCommentCommand request)
         {
+            var options = JsonFactory.GetOptions();
+            options.WriteIndented = true;
+
             var configurationJson = JsonSerializer.Serialize(
                 configuration ?? new ConfigurationFile(), 
-                JsonFactory.GetOptions());
+                options);
 
             return GitHubCommentHelper.RenderSpoiler("Troubleshooting", $"Need help? Don't hesitate to <a href=\"https://github.com/dogger/app.dogger.io/issues/new\">file an issue</a> in our repository\n\n**Configuration**\n{GitHubCommentHelper.RenderCodeBlock("json", configurationJson)}\n\n**Trace ID**\n{request.TraceId ?? "No trace ID"}");
         }

@@ -136,9 +136,7 @@ namespace Dogger.Domain.Services.Provisioning
                     ProcessPendingJob,
                     key,
                     CancellationToken.None,
-                    TaskCreationOptions.LongRunning |
-                    TaskCreationOptions.RunContinuationsAsynchronously |
-                    TaskCreationOptions.DenyChildAttach,
+                    TaskCreationOptions.LongRunning,
                     TaskScheduler.Current));
             var tasks = await Task.WhenAll(taskCreations);
             await Task.WhenAll(tasks);
