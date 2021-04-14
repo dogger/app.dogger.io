@@ -3,7 +3,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0-buster AS build-dotnet
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build-dotnet
 WORKDIR /
 COPY ["src/Dogger/Dogger.csproj", "src/Dogger/"]
 RUN dotnet tool restore
