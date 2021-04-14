@@ -65,7 +65,7 @@ namespace Dogger.Tests.TestHelpers.Builders.Stripe
                 Interval = this.interval.ToString().ToLower(),
                 Currency = this.currency.ToString().ToLower(),
                 Amount = this.amountInHundreds,
-                Product = new PlanProductCreateOptions()
+                Product = new PlanProductOptions()
                 {
                     Name = Guid.NewGuid().ToString()
                 }

@@ -27,7 +27,7 @@ namespace Dogger.Tests.TestHelpers.Builders.Stripe
             var paymentMethod = await this.paymentMethodService.CreateAsync(new PaymentMethodCreateOptions()
             {
                 Type = "card",
-                Card = new PaymentMethodCardCreateOptions()
+                Card = new PaymentMethodCardOptions()
                 {
                     Cvc = "123",
                     ExpMonth = 11,

@@ -21,8 +21,8 @@ namespace Dogger.Domain.Services.Provisioning.Flows
             params IProvisioningStateFlow[] flows)
         {
             this.flows = flows.ToList();
-            this.currentFlow = this.firstFlow = flows.FirstOrDefault();
-            this.lastFlow = flows.LastOrDefault();
+            this.currentFlow = this.firstFlow = flows.First();
+            this.lastFlow = flows.Last();
         }
 
         public async Task<IProvisioningState> GetInitialStateAsync(InitialStateContext context)
