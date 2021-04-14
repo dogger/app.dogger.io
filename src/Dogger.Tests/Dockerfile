@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:5.0-buster AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0-buster AS build
 WORKDIR /
 COPY ["src/Dogger.Tests/Dogger.Tests.csproj", "src/Dogger.Tests/"]
 COPY ["src/Dogger/Dogger.csproj", "src/Dogger/"]
