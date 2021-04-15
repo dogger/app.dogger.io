@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using Stripe;
 
 namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
 {
@@ -51,7 +52,12 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             await environment.Mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
 
             //Assert
-            var refreshedCustomer = await environment.Stripe.CustomerService.GetAsync(customer.Id);
+            var refreshedCustomer = await environment.Stripe.CustomerService.GetAsync(
+                customer.Id, 
+                new CustomerGetOptions()
+                {
+                    Expand = new List<string>() { "subscriptions" }
+                });
 
             var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(refreshedCustomer
                 .Subscriptions
@@ -59,7 +65,6 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                 .Id);
             Assert.AreEqual("active", refreshedSubscription.Status);
 
-            Assert.IsNull(refreshedSubscription.Quantity);
             Assert.AreEqual(2, refreshedSubscription.Items.Count());
 
             var refreshedNewPlan1 = refreshedSubscription.Items.Single(x => x.Plan.Id == newPlan1.Id);
@@ -100,7 +105,15 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             await environment.Mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
 
             //Assert
-            var refreshedCustomer = await environment.Stripe.CustomerService.GetAsync(customer.Id);
+            var refreshedCustomer = await environment.Stripe.CustomerService.GetAsync(
+                customer.Id,
+                new CustomerGetOptions()
+                {
+                    Expand = new List<string>()
+                    {
+                        "subscriptions"
+                    }
+                });
 
             var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(refreshedCustomer
                 .Subscriptions
@@ -175,10 +188,17 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             await environment.Mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
 
             //Assert
-            var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
+            var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(
+                subscription.Id,
+                new SubscriptionGetOptions()
+                {
+                    Expand = new List<string>()
+                    {
+                        "items"
+                    }
+                });
             Assert.AreEqual("active", refreshedSubscription.Status);
-            Assert.AreEqual(plan.Id, refreshedSubscription.Plan.Id);
-            Assert.AreEqual(2, refreshedSubscription.Quantity);
+            Assert.AreEqual(2, refreshedSubscription.RawJObject["quantity"]);
         }
 
         [TestMethod]
@@ -300,7 +320,15 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             await environment.Mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
 
             //Assert
-            var refreshedCustomer = await environment.Stripe.CustomerService.GetAsync(customer.Id);
+            var refreshedCustomer = await environment.Stripe.CustomerService.GetAsync(
+                customer.Id,
+                new CustomerGetOptions()
+                {
+                    Expand = new List<string>()
+                    {
+                        "subscriptions"
+                    }
+                });
             Assert.AreEqual(0, refreshedCustomer.Subscriptions.Count());
         }
 
@@ -342,8 +370,6 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             //Assert
             var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
             Assert.AreEqual("active", refreshedSubscription.Status);
-            Assert.AreEqual(newPlan.Id, refreshedSubscription.Plan.Id);
-            Assert.AreEqual(1, refreshedSubscription.Quantity);
             Assert.AreEqual(1, refreshedSubscription.Items.Count());
             Assert.AreEqual(newPlan.Id, refreshedSubscription.Items.Single().Plan.Id);
         }
@@ -427,8 +453,6 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             //Assert
             var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
             Assert.AreEqual("active", refreshedSubscription.Status);
-            Assert.AreEqual(newPlan.Id, refreshedSubscription.Plan.Id);
-            Assert.AreEqual(1, refreshedSubscription.Quantity);
             Assert.AreEqual(1, refreshedSubscription.Items.Count());
             Assert.AreEqual(newPlan.Id, refreshedSubscription.Items.Single().Plan.Id);
         }

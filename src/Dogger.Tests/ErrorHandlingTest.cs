@@ -32,7 +32,7 @@ namespace Dogger.Tests
 
             var responseString = await response.Content.ReadAsStringAsync();
             var responseObject = JsonSerializer.Deserialize<ProblemDetails>(responseString);
-            Assert.AreEqual("An error occured while processing your request.", responseObject.Title);
+            Assert.AreEqual("An error occurred while processing your request.", responseObject.Title);
             Assert.IsNull(responseObject.Detail);
             Assert.AreEqual(500, responseObject.Status);
         }

@@ -49,7 +49,7 @@ namespace Dogger.Domain.Services.Provisioning
             this.Flow = flow;
             this.ServiceScope = serviceScope;
             this.StateFactory = new ProvisioningStateFactory(serviceScope.ServiceProvider);
-            this.Mediator = serviceScope.ServiceProvider.GetService<IMediator>();
+            this.Mediator = serviceScope.ServiceProvider.GetRequiredService<IMediator>();
 
             Id = Guid.NewGuid().ToString();
         }

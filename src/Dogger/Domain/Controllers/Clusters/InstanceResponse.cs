@@ -16,7 +16,7 @@ namespace Dogger.Domain.Controllers.Clusters
         public int DiskSizeInGigabytes { get; set; }
 
         public string PublicIpAddressV4 { get; set; } = null!;
-        public string PublicIpAddressV6 { get; set; } = null!;
+        public string[] PublicIpAddressesV6 { get; set; } = null!;
 
         public string PrivateIpAddress { get; set; } = null!;
     }

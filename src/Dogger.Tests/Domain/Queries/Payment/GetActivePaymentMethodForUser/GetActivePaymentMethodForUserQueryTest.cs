@@ -52,7 +52,7 @@ namespace Dogger.Tests.Domain.Queries.Payment.GetActivePaymentMethodForUser
                 .Value
                 .CreateAsync(new PaymentMethodCreateOptions()
                 {
-                    Card = new PaymentMethodCardCreateOptions()
+                    Card = new PaymentMethodCardOptions()
                     {
                         Number = "4242424242424242",
                         Cvc = "123",
