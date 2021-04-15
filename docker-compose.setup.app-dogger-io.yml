@@ -3,21 +3,10 @@ version: '3.4'
 services:
   dogger-setup:
     environment:
-    - Dogfeed__AdditionalFilePaths__0=/pwd/elk/certs/admin.key
-    - Dogfeed__AdditionalFilePaths__1=/pwd/elk/certs/admin.pem
-    - Dogfeed__AdditionalFilePaths__2=/pwd/elk/certs/node.key
-    - Dogfeed__AdditionalFilePaths__3=/pwd/elk/certs/node.pem
-    - Dogfeed__AdditionalFilePaths__4=/pwd/elk/certs/root-ca.key
-    - Dogfeed__AdditionalFilePaths__5=/pwd/elk/certs/root-ca.pem
+    - Dogfeed__AdditionalFilePaths__0=/pwd/env/dogger.env
 
-    - Dogfeed__AdditionalFilePaths__6=/pwd/elk/config/elasticsearch.yml
-
-    - Dogfeed__AdditionalFilePaths__7=/pwd/env/dogger.env
-    - Dogfeed__AdditionalFilePaths__8=/pwd/env/kibana.env
-    - Dogfeed__AdditionalFilePaths__9=/pwd/env/elasticsearch.env
-
-    - Dogfeed__AdditionalFilePaths__10=/pwd/certs/lightsail.pem
-    - Dogfeed__AdditionalFilePaths__11=/pwd/certs/pull-dog.pem
+    - Dogfeed__AdditionalFilePaths__1=/pwd/certs/lightsail.pem
+    - Dogfeed__AdditionalFilePaths__2=/pwd/certs/pull-dog.pem
 
     - Dogfeed__DockerComposeYmlFilePaths__0=/pwd/docker-compose.yml
     - Dogfeed__DockerComposeYmlFilePaths__1=/pwd/docker-compose.app-dogger-io.yml

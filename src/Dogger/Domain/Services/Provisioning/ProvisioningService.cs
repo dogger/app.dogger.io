@@ -108,10 +108,7 @@ namespace Dogger.Domain.Services.Provisioning
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             logger.Information("Starting provisioning service.");
-            await Task.Factory.StartNew(
-                async () => await RunAsync(cancellationToken),
-                TaskCreationOptions.LongRunning |
-                TaskCreationOptions.RunContinuationsAsynchronously);
+            await RunAsync(cancellationToken);
         }
 
         private async Task RunAsync(CancellationToken cancellationToken)
