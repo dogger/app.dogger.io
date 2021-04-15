@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
+using Stripe;
 
 namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
 {
@@ -51,7 +52,12 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             await environment.Mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
 
             //Assert
-            var refreshedCustomer = await environment.Stripe.CustomerService.GetAsync(customer.Id);
+            var refreshedCustomer = await environment.Stripe.CustomerService.GetAsync(
+                customer.Id, 
+                new CustomerGetOptions()
+                {
+                    Expand = new List<string>() { "subscriptions" }
+                });
 
             var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(refreshedCustomer
                 .Subscriptions
