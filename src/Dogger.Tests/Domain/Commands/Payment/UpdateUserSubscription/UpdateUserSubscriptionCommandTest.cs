@@ -198,7 +198,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
                     }
                 });
             Assert.AreEqual("active", refreshedSubscription.Status);
-            Assert.AreEqual(2, refreshedSubscription.Items.Count());
+            Assert.AreEqual(2, refreshedSubscription.RawJObject["quantity"]);
         }
 
         [TestMethod]
