@@ -6,6 +6,7 @@ using Dogger.Infrastructure.AspNet.Options.GitHub;
 using Dogger.Infrastructure.GitHub;
 using Dogger.Tests.TestHelpers;
 using Flurl;
+using Flurl.Http;
 using Flurl.Http.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -123,10 +124,11 @@ namespace Dogger.Tests.Infrastructure.GitHub
                     Arg.Any<StringContent>(),
                     default,
                     HttpCompletionOption.ResponseContentRead)
-                .Returns(new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent("access_token=some-token&expiry=now")
-                });
+                .Returns(new FlurlResponse(
+                    new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent("access_token=some-token&expiry=now")
+                    }));
 
             var fakeGitHubOptionsMonitor = Substitute.For<IOptionsMonitor<GitHubOptions>>();
             fakeGitHubOptionsMonitor

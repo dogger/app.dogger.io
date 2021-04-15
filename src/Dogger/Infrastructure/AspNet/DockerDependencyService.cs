@@ -235,7 +235,7 @@ namespace Dogger.Infrastructure.AspNet
             if (EnvironmentHelper.IsRunningInContainer)
                 return false;
 
-            return Console.CapsLock;
+            return false;
         }
 
         private static async Task WaitForHealthyDockerDependenciesAsync()
@@ -256,7 +256,7 @@ namespace Dogger.Infrastructure.AspNet
             Console.WriteLine("Docker dependencies are healthy.");
         }
 
-        private static async Task<object> ExecuteMasterDatabaseCommandAsync(string commandText)
+        private static async Task<object?> ExecuteMasterDatabaseCommandAsync(string commandText)
         {
             await using var connection = new SqlConnection(
                 GetSqlConnectionStringForMasterDatabase());
@@ -273,7 +273,7 @@ namespace Dogger.Infrastructure.AspNet
         {
             try
             {
-                var result = (int)await ExecuteMasterDatabaseCommandAsync("select 1");
+                var result = (int?)await ExecuteMasterDatabaseCommandAsync("select 1");
                 if (result == 1)
                     return true;
             }

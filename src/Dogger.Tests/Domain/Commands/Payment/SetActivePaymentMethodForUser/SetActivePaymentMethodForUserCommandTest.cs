@@ -168,7 +168,7 @@ namespace Dogger.Tests.Domain.Commands.Payment.SetActivePaymentMethodForUser
             return await paymentMethodService
                 .CreateAsync(new PaymentMethodCreateOptions()
                 {
-                    Card = new PaymentMethodCardCreateOptions()
+                    Card = new PaymentMethodCardOptions()
                     {
                         Number = "4242424242424242",
                         Cvc = "123",

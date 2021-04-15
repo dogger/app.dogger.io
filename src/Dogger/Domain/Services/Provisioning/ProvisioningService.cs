@@ -124,6 +124,8 @@ namespace Dogger.Domain.Services.Provisioning
                 }
 
                 await ProcessPendingJobsAsync();
+
+                GC.Collect();
             } while (!cancellationToken.IsCancellationRequested);
         }
 

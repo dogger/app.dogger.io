@@ -312,7 +312,6 @@ namespace Dogger.Domain.Commands.Payment.UpdateUserSubscription
         {
             var options = new SubscriptionUpdateOptions()
             {
-                Prorate = true,
                 Items = items
             };
 

@@ -57,7 +57,7 @@ namespace Dogger.Infrastructure.Docker.Engine
             var json = await ExecuteDockerEngineApiCallAsStringResponse(url, request);
             try
             {
-                return JsonSerializer.Deserialize<T>(json);
+                return JsonSerializer.Deserialize<T>(json)!;
             }
             catch (JsonException ex)
             {

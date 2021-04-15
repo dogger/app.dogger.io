@@ -43,7 +43,7 @@ namespace Dogger.Infrastructure.Docker.Yml
 
         public IReadOnlyCollection<string> GetEnvironmentFilePaths()
         {
-            var result = new List<string>();
+            var result = new List<string?>();
             foreach (var environmentFileElement in GetServiceElementProperties("env_file"))
             {
                 if (environmentFileElement.ValueKind == JsonValueKind.String)
@@ -57,7 +57,10 @@ namespace Dogger.Infrastructure.Docker.Yml
                 }
             }
 
-            return result;
+            return result
+                .Where(x => x != null)
+                .Select(x => x!)
+                .ToArray();
         }
 
         public IReadOnlyCollection<string> GetVolumePaths()
@@ -69,7 +72,7 @@ namespace Dogger.Infrastructure.Docker.Yml
                     .ToList() ??
                 new List<string>();
 
-            var result = new List<string>();
+            var result = new List<string?>();
             foreach (var environmentFileElement in GetServiceElementProperties("volumes"))
             {
                 if (environmentFileElement.ValueKind != JsonValueKind.Array)
@@ -79,8 +82,8 @@ namespace Dogger.Infrastructure.Docker.Yml
                 {
                     if (valueElement.ValueKind == JsonValueKind.String)
                     {
-                        var reference = valueElement
-                            .GetString()
+                        var value = valueElement.GetString() ?? string.Empty;
+                        var reference = value
                             .Split(':', 2)[0];
                         if (globalVolumeNames.Contains(reference))
                             continue;
@@ -102,12 +105,15 @@ namespace Dogger.Infrastructure.Docker.Yml
                 }
             }
 
-            return result;
+            return result
+                .Where(x => x != null)
+                .Select(x => x!)
+                .ToArray();
         }
 
         public IReadOnlyCollection<string> GetDockerfilePaths()
         {
-            var result = new List<string>();
+            var result = new List<string?>();
             foreach (var environmentFileElement in GetServiceElementProperties("build"))
             {
                 if (environmentFileElement.ValueKind == JsonValueKind.Object)
@@ -145,7 +151,10 @@ namespace Dogger.Infrastructure.Docker.Yml
                 }
             }
 
-            return result;
+            return result
+                .Where(x => x != null)
+                .Select(x => x!)
+                .ToArray();
         }
 
         private IReadOnlyCollection<JsonElement> GetServiceElementProperties(string propertyName)
@@ -216,16 +225,17 @@ namespace Dogger.Infrastructure.Docker.Yml
 
                         foreach (var portProperty in port.EnumerateObject())
                         {
+                            var portPropertyValue = portProperty.Value.GetString();
                             switch (portProperty.Name)
                             {
                                 case "published":
                                     portNumber = int.Parse(
-                                        portProperty.Value.GetString(),
+                                        portPropertyValue ?? "0",
                                         CultureInfo.InvariantCulture);
                                     break;
 
                                 case "protocol":
-                                    var protocolString = portProperty.Value.GetString();
+                                    var protocolString = portPropertyValue;
                                     if (protocolString == "udp")
                                     {
                                         protocol = SocketProtocol.Udp;
@@ -253,8 +263,11 @@ namespace Dogger.Infrastructure.Docker.Yml
             return result.ToArray();
         }
 
-        private static IReadOnlyCollection<ExposedPort> GetExposedHostPortsFromEntry(string stringValue)
+        private static IReadOnlyCollection<ExposedPort> GetExposedHostPortsFromEntry(string? stringValue)
         {
+            if (string.IsNullOrEmpty(stringValue))
+                return Array.Empty<ExposedPort>();
+                
             var protocolSplit = stringValue.Split('/');
 
             SocketProtocol? GetProtocol()

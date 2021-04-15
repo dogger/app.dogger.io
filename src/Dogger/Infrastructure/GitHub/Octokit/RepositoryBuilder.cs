@@ -76,6 +76,8 @@ namespace Dogger.Infrastructure.GitHub.Octokit
                 default,
                 default,
                 default,
+                default,
+                default,
                 default);
         }
     }

@@ -23,7 +23,7 @@ namespace Dogger.Domain.Controllers.Clusters
                 .ForMember(x => x.DiskSizeInGigabytes, x => x.MapFrom(y => y.AmazonModel.Hardware.Disks.Single().SizeInGb))
                 .ForMember(x => x.PrivateIpAddress, x => x.MapFrom(y => y.AmazonModel.PrivateIpAddress))
                 .ForMember(x => x.PublicIpAddressV4, x => x.MapFrom(y => y.AmazonModel.PublicIpAddress))
-                .ForMember(x => x.PublicIpAddressV6, x => x.MapFrom(y => y.AmazonModel.Ipv6Address))
+                .ForMember(x => x.PublicIpAddressesV6, x => x.MapFrom(y => y.AmazonModel.Ipv6Addresses))
                 .ForMember(x => x.RamSizeInMegabytes, x => x.MapFrom(y => (int)(y.AmazonModel.Hardware.RamSizeInGb * 1024)))
                 .ForMember(x => x.TransferPerMonthInGigabytes, x => x.MapFrom(y => y.AmazonModel.Networking.MonthlyTransfer.GbPerMonthAllocated))
                 .ForMember(x => x.Id, x => x.MapFrom(y => y.DatabaseModel.Id));
