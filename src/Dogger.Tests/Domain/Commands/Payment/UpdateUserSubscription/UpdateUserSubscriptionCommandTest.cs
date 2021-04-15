@@ -105,7 +105,15 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             await environment.Mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
 
             //Assert
-            var refreshedCustomer = await environment.Stripe.CustomerService.GetAsync(customer.Id);
+            var refreshedCustomer = await environment.Stripe.CustomerService.GetAsync(
+                customer.Id,
+                new CustomerGetOptions()
+                {
+                    Expand = new List<string>()
+                    {
+                        "subscriptions"
+                    }
+                });
 
             var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(refreshedCustomer
                 .Subscriptions
@@ -180,7 +188,15 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             await environment.Mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
 
             //Assert
-            var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(subscription.Id);
+            var refreshedSubscription = await environment.Stripe.SubscriptionService.GetAsync(
+                subscription.Id,
+                new SubscriptionGetOptions()
+                {
+                    Expand = new List<string>()
+                    {
+                        "items"
+                    }
+                });
             Assert.AreEqual("active", refreshedSubscription.Status);
             Assert.AreEqual(2, refreshedSubscription.Items.Count());
         }
@@ -304,7 +320,15 @@ namespace Dogger.Tests.Domain.Commands.Payment.UpdateUserSubscription
             await environment.Mediator.Send(new UpdateUserSubscriptionCommand(user.Id));
 
             //Assert
-            var refreshedCustomer = await environment.Stripe.CustomerService.GetAsync(customer.Id);
+            var refreshedCustomer = await environment.Stripe.CustomerService.GetAsync(
+                customer.Id,
+                new CustomerGetOptions()
+                {
+                    Expand = new List<string>()
+                    {
+                        "subscriptions"
+                    }
+                });
             Assert.AreEqual(0, refreshedCustomer.Subscriptions.Count());
         }
 
