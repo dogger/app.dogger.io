@@ -38,6 +38,8 @@ namespace Dogger.Domain.Queries.PullDog.GetPullRequestDetailsByHandle
             var pullRequestNumber = int.Parse(request.Handle, CultureInfo.InvariantCulture);
 
             var client = await this.gitHubClientFactory.CreateInstallationClientAsync(installationId.Value);
+            if (client == null)
+                return null;
 
             try
             {

@@ -38,7 +38,7 @@ namespace Dogger.Infrastructure.GitHub
             this.flurlClient = flurlClientFactory.Get("https://github.com/login/oauth/access_token");
         }
 
-        public async Task<IGitHubClient> CreateInstallationClientAsync(long installationId)
+        public async Task<IGitHubClient?> CreateInstallationClientAsync(long installationId)
         {
             if (installationId == default)
                 throw new InvalidOperationException("No installation ID provided.");
@@ -54,8 +54,7 @@ namespace Dogger.Infrastructure.GitHub
             }
             catch (NotFoundException ex)
             {
-                this.logger.Error(ex, "The installation {InstallationId} was not found.", installationId);
-
+                this.logger.Error(ex, "The installation {InstallationId} was not found, and will be deleted.", installationId);
                 await mediator.Send(new DeletePullDogRepositoryByGitHubInstallationIdCommand(installationId));
                 
                 throw;

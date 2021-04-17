@@ -80,8 +80,8 @@ namespace Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest
         {
             var offendingPullRequests = cluster
                 .Instances
+                .Where(x => x.PullDogPullRequest != null)
                 .Select(x => x.PullDogPullRequest!)
-                .Where(x => x != null)
                 .ToArray();
             return offendingPullRequests;
         }
@@ -94,8 +94,12 @@ namespace Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest
                 .Select(async group =>
                 {
                     var client = await this.pullDogRepositoryClientFactory.CreateAsync(group.First());
+                    if (client == null)
+                        return null!;
+                    
                     return group.Select(client.GetPullRequestDetails);
-                }));
+                })
+                .Where(x => x != null));
             return groupedPullRequestDetails
                 .SelectMany(x => x)
                 .ToArray();

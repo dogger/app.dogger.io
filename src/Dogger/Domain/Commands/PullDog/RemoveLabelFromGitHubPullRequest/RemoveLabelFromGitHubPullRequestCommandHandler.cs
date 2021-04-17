@@ -33,6 +33,9 @@ namespace Dogger.Domain.Commands.PullDog.RemoveLabelFromGitHubPullRequest
 
             var client = await this.gitHubClientFactory.CreateInstallationClientAsync(
                 repository.GitHubInstallationId.Value);
+            if (client == null)
+                return Unit.Value;
+            
             await client
                 .Issue
                 .Labels

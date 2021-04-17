@@ -22,6 +22,8 @@ namespace Dogger.Domain.Queries.PullDog.GetConfigurationForPullRequest
         public async Task<ConfigurationFile> Handle(GetConfigurationForPullRequestQuery request, CancellationToken cancellationToken)
         {
             var client = await this.pullDogFileCollectorFactory.CreateAsync(request.PullRequest);
+            if (client == null)
+                return new ConfigurationFile();
 
             var configuration = await client.GetConfigurationFileAsync();
             if (configuration == null)

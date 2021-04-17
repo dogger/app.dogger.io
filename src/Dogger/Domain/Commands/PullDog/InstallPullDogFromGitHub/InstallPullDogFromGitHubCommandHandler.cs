@@ -86,6 +86,9 @@ namespace Dogger.Domain.Commands.PullDog.InstallPullDogFromGitHub
                 throw new InvalidOperationException("Pull Dog settings were not installed properly on user.");
 
             var installationClient = await this.gitHubClientFactory.CreateInstallationClientAsync(request.InstallationId);
+            if (installationClient == null)
+                return Unit.Value;
+            
             var installedRepositories = await installationClient.GitHubApps.Installation.GetAllRepositoriesForCurrent();
             if (installedRepositories.TotalCount > installedRepositories.Repositories.Count)
                 throw new InvalidOperationException("Did not fetch all repositories.");

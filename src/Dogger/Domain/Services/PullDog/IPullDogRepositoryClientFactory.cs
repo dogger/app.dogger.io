@@ -5,7 +5,7 @@ namespace Dogger.Domain.Services.PullDog
 {
     public interface IPullDogRepositoryClientFactory
     {
-        Task<IPullDogRepositoryClient> CreateAsync(
+        Task<IPullDogRepositoryClient?> CreateAsync(
             PullDogPullRequest pullRequest);
     }
 }

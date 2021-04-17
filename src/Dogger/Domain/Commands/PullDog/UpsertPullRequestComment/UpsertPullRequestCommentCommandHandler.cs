@@ -40,6 +40,8 @@ namespace Dogger.Domain.Commands.PullDog.UpsertPullRequestComment
 
             var client = await this.gitHubClientFactory.CreateInstallationClientAsync(
                 repository.GitHubInstallationId.Value);
+            if (client == null)
+                return Unit.Value;
 
             var pullRequest = await client.PullRequest.Get(
                 repositoryId,

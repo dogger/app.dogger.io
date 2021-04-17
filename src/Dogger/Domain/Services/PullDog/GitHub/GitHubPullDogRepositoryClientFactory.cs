@@ -16,7 +16,7 @@ namespace Dogger.Domain.Services.PullDog.GitHub
             this.gitHubClientFactory = gitHubClientFactory;
         }
 
-        public async Task<IPullDogRepositoryClient> CreateAsync(
+        public async Task<IPullDogRepositoryClient?> CreateAsync(
             PullDogPullRequest pullRequest)
         {
             var repository = pullRequest.PullDogRepository;
@@ -25,6 +25,8 @@ namespace Dogger.Domain.Services.PullDog.GitHub
 
             var installationId = repository.GitHubInstallationId.Value;
             var gitHubClient = await this.gitHubClientFactory.CreateInstallationClientAsync(installationId);
+            if (gitHubClient == null)
+                return null;
 
             var gitHubPullRequest = await gitHubClient.PullRequest.Get(
                 long.Parse(repository.Handle, CultureInfo.InvariantCulture),

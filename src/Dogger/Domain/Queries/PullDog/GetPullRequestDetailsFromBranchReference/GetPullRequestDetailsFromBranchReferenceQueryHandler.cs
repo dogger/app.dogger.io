@@ -34,6 +34,8 @@ namespace Dogger.Domain.Queries.PullDog.GetPullRequestDetailsFromBranchReference
                 throw new InvalidOperationException("Installation ID not found.");
 
             var client = await this.gitHubClientFactory.CreateInstallationClientAsync(installationId.Value);
+            if (client == null)
+                return null;
 
             var repositoryId = long.Parse(pullDogRepository.Handle, CultureInfo.InvariantCulture);
             var repository = await client.Repository.Get(repositoryId);

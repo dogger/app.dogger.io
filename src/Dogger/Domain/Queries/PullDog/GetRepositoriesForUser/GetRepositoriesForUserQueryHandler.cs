@@ -49,7 +49,8 @@ namespace Dogger.Domain.Queries.PullDog.GetRepositoriesForUser
                     .CreateInstallationClientAsync(installationId)));
 
             var gitHubRepositoryResponses = await Task.WhenAll(clients
-                .Select(client => client
+                .Where(client => client != null)
+                .Select(client => client!
                     .GitHubApps
                     .Installation
                     .GetAllRepositoriesForCurrent()));

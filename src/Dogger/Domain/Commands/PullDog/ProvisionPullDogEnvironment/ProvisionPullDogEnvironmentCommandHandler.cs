@@ -66,6 +66,9 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
             }
 
             var client = await pullDogRepositoryClientFactory.CreateAsync(pullRequest);
+            if (client == null)
+                return Unit.Value;
+            
             var fileCollector = pullDogFileCollectorFactory.Create(client);
 
             var files = await fileCollector.GetRepositoryFilesFromConfiguration(configuration);

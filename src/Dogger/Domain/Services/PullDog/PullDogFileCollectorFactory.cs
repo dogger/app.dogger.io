@@ -22,9 +22,12 @@ namespace Dogger.Domain.Services.PullDog
             this.logger = logger;
         }
 
-        public async Task<IPullDogFileCollector> CreateAsync(PullDogPullRequest pullRequest)
+        public async Task<IPullDogFileCollector?> CreateAsync(PullDogPullRequest pullRequest)
         {
             var client = await factory.CreateAsync(pullRequest);
+            if (client == null)
+                return null;
+            
             return Create(client);
         }
 
