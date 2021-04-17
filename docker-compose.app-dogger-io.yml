@@ -2,5 +2,7 @@ version: '3.4'
 
 services:
   dogger:
+    volumes:
+     - ./certs/:/pwd/certs
     env_file:
      - ./env/dogger.env
