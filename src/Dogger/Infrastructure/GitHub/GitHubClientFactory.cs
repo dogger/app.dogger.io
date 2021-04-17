@@ -2,9 +2,12 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Dogger.Domain.Commands.PullDog.DeletePullDogRepository;
+using Dogger.Domain.Commands.PullDog.DeletePullDogRepositoryByGitHubInstallationId;
 using Dogger.Infrastructure.AspNet.Options.GitHub;
 using Flurl.Http;
 using Flurl.Http.Configuration;
+using MediatR;
 using Microsoft.Extensions.Options;
 using Octokit;
 using Serilog;
@@ -18,16 +21,19 @@ namespace Dogger.Infrastructure.GitHub
         private readonly IFlurlClient flurlClient;
 
         private readonly IOptionsMonitor<GitHubOptions> gitHubOptionsMonitor;
+        private readonly IMediator mediator;
 
         public GitHubClientFactory(
             IGitHubClient gitHubClient,
             IFlurlClientFactory flurlClientFactory,
             ILogger logger,
-            IOptionsMonitor<GitHubOptions> gitHubOptionsMonitor)
+            IOptionsMonitor<GitHubOptions> gitHubOptionsMonitor,
+            IMediator mediator)
         {
             this.gitHubClient = gitHubClient;
             this.logger = logger;
             this.gitHubOptionsMonitor = gitHubOptionsMonitor;
+            this.mediator = mediator;
 
             this.flurlClient = flurlClientFactory.Get("https://github.com/login/oauth/access_token");
         }
@@ -49,6 +55,9 @@ namespace Dogger.Infrastructure.GitHub
             catch (NotFoundException ex)
             {
                 this.logger.Error(ex, "The installation {InstallationId} was not found.", installationId);
+
+                await mediator.Send(new DeletePullDogRepositoryByGitHubInstallationIdCommand(installationId));
+                
                 throw;
             }
         }
