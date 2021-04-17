@@ -8,6 +8,7 @@ using Dogger.Tests.TestHelpers;
 using Flurl;
 using Flurl.Http;
 using Flurl.Http.Configuration;
+using MediatR;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -28,7 +29,8 @@ namespace Dogger.Tests.Infrastructure.GitHub
                 Substitute.For<IGitHubClient>(),
                 Substitute.For<IFlurlClientFactory>(),
                 Substitute.For<ILogger>(),
-                Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                Substitute.For<IOptionsMonitor<GitHubOptions>>(),
+                Substitute.For<IMediator>());
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () => 
@@ -53,7 +55,8 @@ namespace Dogger.Tests.Infrastructure.GitHub
                 fakeGitHubClient,
                 Substitute.For<IFlurlClientFactory>(),
                 Substitute.For<ILogger>(),
-                Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                Substitute.For<IOptionsMonitor<GitHubOptions>>(),
+                Substitute.For<IMediator>());
 
             //Act
             var client = await gitHubClientFactory.CreateInstallationClientAsync(1337);
@@ -76,7 +79,8 @@ namespace Dogger.Tests.Infrastructure.GitHub
                 Substitute.For<IGitHubClient>(),
                 Substitute.For<IFlurlClientFactory>(),
                 Substitute.For<ILogger>(),
-                Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                Substitute.For<IOptionsMonitor<GitHubOptions>>(),
+                Substitute.For<IMediator>());
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
@@ -95,7 +99,8 @@ namespace Dogger.Tests.Infrastructure.GitHub
                 Substitute.For<IGitHubClient>(),
                 Substitute.For<IFlurlClientFactory>(),
                 Substitute.For<ILogger>(),
-                Substitute.For<IOptionsMonitor<GitHubOptions>>());
+                Substitute.For<IOptionsMonitor<GitHubOptions>>(),
+                Substitute.For<IMediator>());
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
@@ -142,7 +147,8 @@ namespace Dogger.Tests.Infrastructure.GitHub
                 Substitute.For<IGitHubClient>(),
                 fakeFlurlClientFactory,
                 Substitute.For<ILogger>(),
-                fakeGitHubOptionsMonitor);
+                fakeGitHubOptionsMonitor,
+                Substitute.For<IMediator>());
 
             //Act
             var gitHubClient = await gitHubClientFactory.CreateInstallationInitiatorClientAsync("dummy");
