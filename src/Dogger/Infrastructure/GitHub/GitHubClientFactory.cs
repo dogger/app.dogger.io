@@ -56,8 +56,8 @@ namespace Dogger.Infrastructure.GitHub
             {
                 this.logger.Error(ex, "The installation {InstallationId} was not found, and will be deleted.", installationId);
                 await mediator.Send(new DeletePullDogRepositoryByGitHubInstallationIdCommand(installationId));
-                
-                throw;
+
+                return null;
             }
         }
 
