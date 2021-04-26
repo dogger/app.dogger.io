@@ -1,5 +1,6 @@
 name: Docker
 
+
 on:
   push:
     branches:
@@ -9,6 +10,7 @@ on:
       - v*
 
   pull_request:
+
 
 jobs:
   test:
@@ -46,6 +48,7 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           file: ./TestResults/Dogger.Setup/coverage.opencover.xml
+
 
   publish-app-dogger-io:
     name: Publish app-dogger-io
@@ -92,12 +95,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
           
-
       - name: Write secret files
         shell: bash
         env:
-          ELK_CONFIGURATION_YML_CONTENTS: ${{secrets.ELK_CONFIGURATION_YML_CONTENTS}}
-
           DOGGER_ENV: ${{secrets.DOGGER_ENV}}
           
           LIGHTSAIL_PRIVATE_KEY_PEM: ${{secrets.LIGHTSAIL_PRIVATE_KEY_PEM}}
@@ -107,15 +107,10 @@ jobs:
             mkdir certs
             mkdir env
 
-            mkdir elk
-            mkdir elk/certs
-            mkdir elk/config
-
             echo "$DOGGER_ENV" > ./env/dogger.env
             
             echo "$LIGHTSAIL_PRIVATE_KEY_PEM" > ./certs/lightsail.pem
             echo "$PULL_DOG_PRIVATE_KEY" > ./certs/pull-dog.pem
-
 
       - name: Deploy to app.dogger.io
         run: |
