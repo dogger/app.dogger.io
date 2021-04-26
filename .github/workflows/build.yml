@@ -92,7 +92,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
           
-
       - name: Write secret files
         shell: bash
         env:
@@ -109,7 +108,6 @@ jobs:
             
             echo "$LIGHTSAIL_PRIVATE_KEY_PEM" > ./certs/lightsail.pem
             echo "$PULL_DOG_PRIVATE_KEY" > ./certs/pull-dog.pem
-
 
       - name: Deploy to app.dogger.io
         run: |
