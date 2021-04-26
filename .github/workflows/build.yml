@@ -96,8 +96,6 @@ jobs:
       - name: Write secret files
         shell: bash
         env:
-          ELK_CONFIGURATION_YML_CONTENTS: ${{secrets.ELK_CONFIGURATION_YML_CONTENTS}}
-
           DOGGER_ENV: ${{secrets.DOGGER_ENV}}
           
           LIGHTSAIL_PRIVATE_KEY_PEM: ${{secrets.LIGHTSAIL_PRIVATE_KEY_PEM}}
@@ -106,10 +104,6 @@ jobs:
         run: |
             mkdir certs
             mkdir env
-
-            mkdir elk
-            mkdir elk/certs
-            mkdir elk/config
 
             echo "$DOGGER_ENV" > ./env/dogger.env
             
