@@ -211,9 +211,11 @@ namespace Dogger
             });
         }
 
-        public static void Configure(
+        public void Configure(
             IApplicationBuilder app)
         {
+            app.UseAllElasticApm(Configuration);
+            
             app.UseForwardedHeaders();
 
             app.UseNGrokAutomaticUrlDetection();

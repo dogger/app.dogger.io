@@ -65,8 +65,7 @@ namespace Dogger
                         services,
                         context.Configuration);
                     registry.RegisterDelayedHostedServices();
-                })
-                .UseAllElasticApm();
+                });
 
         [SuppressMessage(
             "CodeQuality", 
