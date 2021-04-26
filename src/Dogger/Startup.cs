@@ -21,6 +21,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Dogger.Infrastructure.AspNet.Health;
 using Dogger.Infrastructure.Ioc;
+using Elastic.Apm.NetCoreAll;
 using FluffySpoon.AspNet.NGrok;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
