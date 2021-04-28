@@ -9,6 +9,7 @@ using Dogger.Infrastructure.Configuration;
 using Dogger.Infrastructure.Database;
 using Dogger.Infrastructure.Ioc;
 using Dogger.Infrastructure.Logging;
+using Elastic.Apm.Extensions.Hosting;
 using Elastic.Apm.NetCoreAll;
 using FluffySpoon.AspNet.NGrok;
 using Serilog;
@@ -65,7 +66,8 @@ namespace Dogger
                         services,
                         context.Configuration);
                     registry.RegisterDelayedHostedServices();
-                });
+                })
+                .UseElasticApm();
 
         [SuppressMessage(
             "CodeQuality", 
