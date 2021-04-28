@@ -18,7 +18,7 @@ namespace Dogger.Infrastructure.Mediatr
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
-            logger.Verbose("Executing {CommandName}: {@Command}", request.GetType().Name, request);
+            logger.Verbose("Executing {CommandName}", request.GetType().Name);
 
             var result = await next();
 
