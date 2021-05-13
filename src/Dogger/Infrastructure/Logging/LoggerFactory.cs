@@ -53,6 +53,7 @@ namespace Dogger.Infrastructure.Logging
 
             var loggerConfiguration = CreateBaseLoggingConfiguration()
                 .Enrich.FromLogContext()
+                .Filter.ByExcluding(Matching.FromSource("Elastic.Apm"))
                 .WriteTo.Console();
 
             var loggingOptions = configuration.GetSection<LoggingOptions>();
