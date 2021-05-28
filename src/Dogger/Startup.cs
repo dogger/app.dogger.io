@@ -88,20 +88,6 @@ namespace Dogger
                     };
 
                     options.RequireHttpsMetadata = !Environment.IsDevelopment();
-                })
-                .AddJwtBearer("OnPremises", options =>
-                {
-                    options.Authority = "https://dogger.io/on-prem";
-                    options.Audience = AuthConstants.Audience;
-                    options.TokenValidationParameters = new TokenValidationParameters();
-                    options.RequireHttpsMetadata = false;
-                })
-                .AddJwtBearer("Licensing", options =>
-                {
-                    options.Authority = "https://dogger.io/licensing";
-                    options.Audience = AuthConstants.Audience;
-                    options.TokenValidationParameters = new TokenValidationParameters();
-                    options.RequireHttpsMetadata = false;
                 });
 
             services.AddAuthorization(options =>
