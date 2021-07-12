@@ -98,7 +98,7 @@ namespace Dogger.Domain.Commands.PullDog.ProvisionPullDogEnvironment
                     cancellationToken);
 
                 var flowsToUse = new List<IProvisioningStateFlow>();
-                if (!instance.IsProvisioned)
+                if (instance.IsProvisioned == null)
                 {
                     flowsToUse.Add(new ProvisionInstanceStateFlow(
                         settings.PlanId,

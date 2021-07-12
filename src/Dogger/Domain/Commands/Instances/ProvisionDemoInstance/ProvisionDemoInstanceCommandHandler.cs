@@ -66,7 +66,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionDemoInstance
             var instance = new InstanceBuilder()
                 .WithName("demo")
                 .WithCluster(cluster)
-                .WithProvisionedStatus(false)
+                .WithProvisionedStatus(null)
                 .WithPlanId(plan.Id)
                 .WithExpiredDate(DateTime.UtcNow.AddMinutes(30))
                 .Build();

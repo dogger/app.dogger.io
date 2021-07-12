@@ -1,22 +1,21 @@
 ﻿using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Dogger.Domain.Commands.Instances.RegisterInstanceAsProvisioning;
-using Dogger.Domain.Commands.Payment.UpdateUserSubscription;
+using Dogger.Domain.Commands.Instances.RegisterInstanceAsProvisioned;
 using Dogger.Domain.Models;
 using Dogger.Domain.Queries.Instances.GetInstanceByName;
 using MediatR;
 
-namespace Dogger.Domain.Commands.Instances.RegisterInstanceAsProvisioned
+namespace Dogger.Domain.Commands.Instances.RegisterInstanceAsProvisioning
 {
-    public class RegisterInstanceAsProvisionedCommandHandler : IRequestHandler<RegisterInstanceAsProvisioningCommand>
+    public class RegisterInstanceAsProvisioningCommandHandler : IRequestHandler<RegisterInstanceAsProvisioningCommand>
     {
         private readonly DataContext dataContext;
 
         private readonly IMediator mediator;
 
         [DebuggerStepThrough]
-        public RegisterInstanceAsProvisionedCommandHandler(
+        public RegisterInstanceAsProvisioningCommandHandler(
             DataContext dataContext,
             IMediator mediator)
         {
@@ -34,15 +33,8 @@ namespace Dogger.Domain.Commands.Instances.RegisterInstanceAsProvisioned
             if (instance == null)
                 throw new InstanceNotFoundException();
 
-            instance.IsProvisioned = true;
+            instance.IsProvisioned = false;
             await this.dataContext.SaveChangesAsync(cancellationToken);
-
-            if (request.UserId != null)
-            {
-                await this.mediator.Send(
-                    new UpdateUserSubscriptionCommand(request.UserId.Value),
-                    cancellationToken);
-            }
 
             return Unit.Value;
         }

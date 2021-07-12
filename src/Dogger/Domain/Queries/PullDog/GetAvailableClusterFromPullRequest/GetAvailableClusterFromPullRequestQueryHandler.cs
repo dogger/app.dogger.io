@@ -35,35 +35,49 @@ namespace Dogger.Domain.Queries.PullDog.GetAvailableClusterFromPullRequest
 
             if (settings.PoolSize == 0)
             {
-                var cluster = await mediator.Send(
-                    new EnsureClusterWithIdCommand(DataContext.PullDogDemoClusterId),
+                return await GetAvailableDemoClusterAsync(
+                    user, 
+                    pullRequest, 
                     cancellationToken);
-                var offendingPullRequests = GetPullRequestsFromCluster(cluster);
-                if (HasExceededPoolSize(pullRequest, offendingPullRequests))
-                {
-                    var details = await GetPullRequestDetailsFromPullRequestsAsync(offendingPullRequests);
-                    throw new PullDogDemoInstanceAlreadyProvisionedException(details.Last());
-                }
-
-                cluster.User = user;
-
-                return cluster;
             }
-            else
+
+            return await GetAvailableCustomerClusterAsync(
+                user, 
+                pullRequest, 
+                cancellationToken);
+        }
+
+        private async Task<Cluster> GetAvailableCustomerClusterAsync(User user, PullDogPullRequest pullRequest, CancellationToken cancellationToken)
+        {
+            var cluster = await this.mediator.Send(new EnsureClusterForUserCommand(user.Id)
             {
-                var cluster = await this.mediator.Send(new EnsureClusterForUserCommand(user.Id)
-                {
-                    ClusterName = "pull-dog"
-                }, cancellationToken);
-                var offendingPullRequests = GetPullRequestsFromCluster(cluster);
-                if (HasExceededPoolSize(pullRequest, offendingPullRequests))
-                {
-                    var details = await GetPullRequestDetailsFromPullRequestsAsync(offendingPullRequests);
-                    throw new PullDogPoolSizeExceededException(details);
-                }
-
-                return cluster;
+                ClusterName = "pull-dog"
+            }, cancellationToken);
+            var offendingPullRequests = GetPullRequestsFromCluster(cluster);
+            if (HasExceededPoolSize(pullRequest, offendingPullRequests))
+            {
+                var details = await GetPullRequestDetailsFromPullRequestsAsync(offendingPullRequests);
+                throw new PullDogPoolSizeExceededException(details);
             }
+
+            return cluster;
+        }
+
+        private async Task<Cluster> GetAvailableDemoClusterAsync(User user, PullDogPullRequest pullRequest, CancellationToken cancellationToken)
+        {
+            var cluster = await this.mediator.Send(
+                new EnsureClusterWithIdCommand(DataContext.PullDogDemoClusterId),
+                cancellationToken);
+            var offendingPullRequests = GetPullRequestsFromCluster(cluster);
+            if (HasExceededPoolSize(pullRequest, offendingPullRequests))
+            {
+                var details = await GetPullRequestDetailsFromPullRequestsAsync(offendingPullRequests);
+                throw new PullDogDemoInstanceAlreadyProvisionedException(details.Last());
+            }
+
+            cluster.User = user;
+
+            return cluster;
         }
 
         private static bool HasExceededPoolSize(

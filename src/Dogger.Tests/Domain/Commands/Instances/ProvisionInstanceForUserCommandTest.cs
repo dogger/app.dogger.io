@@ -66,7 +66,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .SingleAsync();
 
                 Assert.IsNotNull(addedInstance);
-                Assert.IsFalse(addedInstance.IsProvisioned);
+                Assert.IsNull(addedInstance.IsProvisioned);
             });
         }
 
@@ -144,7 +144,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .ThenInclude(x => x.User)
                     .SingleAsync();
 
-                Assert.IsTrue(provisionedInstance.IsProvisioned);
+                Assert.IsTrue(provisionedInstance.IsProvisioned == true);
                 Assert.AreEqual(provisionedInstance.Cluster.UserId, user.Id);
             });
         }
@@ -203,7 +203,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .ThenInclude(x => x.User)
                     .SingleAsync();
 
-                Assert.IsTrue(provisionedInstance.IsProvisioned);
+                Assert.IsTrue(provisionedInstance.IsProvisioned == true);
                 Assert.AreEqual(provisionedInstance.Cluster.UserId, user.Id);
             });
         }

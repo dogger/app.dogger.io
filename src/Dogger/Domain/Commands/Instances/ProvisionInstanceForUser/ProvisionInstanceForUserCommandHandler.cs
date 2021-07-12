@@ -62,7 +62,7 @@ namespace Dogger.Domain.Commands.Instances.ProvisionInstanceForUser
             var instance = new InstanceBuilder()
                 .WithName($"{request.User.Id}_{Guid.NewGuid()}")
                 .WithCluster(cluster)
-                .WithProvisionedStatus(false)
+                .WithProvisionedStatus(null)
                 .WithPlanId(request.Plan.Id)
                 .Build();
 

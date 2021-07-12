@@ -29,7 +29,7 @@ namespace Dogger.Domain.Queries.Instances.GetProvisionedClustersWithInstancesFor
                 .Include(x => x.Instances)
                 .Where(x => 
                     x.UserId == request.UserId &&
-                    x.Instances.Any(i => i.IsProvisioned))
+                    x.Instances.Any(i => i.IsProvisioned != null))
                 .ToArrayAsync(cancellationToken);
             var instances = await Task.WhenAll(clusters
                 .Select(async cluster => new UserClusterResponse(
