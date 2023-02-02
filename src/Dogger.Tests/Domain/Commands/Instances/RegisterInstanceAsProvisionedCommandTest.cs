@@ -58,7 +58,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .ToArrayAsync();
 
                 Assert.AreEqual(1, instances.Length);
-                Assert.IsTrue(instances.Single().IsProvisioned);
+                Assert.IsTrue(instances.Single().IsProvisioned == true);
             });
         }
 
@@ -288,7 +288,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
                 Assert.IsNotNull(exception);
                 Assert.AreEqual(1, instances.Length);
-                Assert.IsFalse(instances.Single().IsProvisioned);
+                Assert.IsFalse(instances.Single().IsProvisioned == true);
             });
         }
 

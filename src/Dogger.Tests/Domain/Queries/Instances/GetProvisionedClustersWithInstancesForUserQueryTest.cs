@@ -77,10 +77,10 @@ namespace Dogger.Tests.Domain.Queries.Instances
                         .WithInstances(
                             new TestInstanceBuilder()
                                 .WithName("some-instance-1")
-                                .WithProvisionedStatus(false),
+                                .WithProvisionedStatus(null),
                             new TestInstanceBuilder()
                                 .WithName("some-instance-2")
-                                .WithProvisionedStatus(false))));
+                                .WithProvisionedStatus(null))));
             });
 
             //Act

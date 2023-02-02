@@ -9,7 +9,7 @@ namespace Dogger.Domain.Models.Builders
         private DateTime createdAtUtc;
         private DateTime? expiresAtUtc;
 
-        private bool isProvisioned;
+        private bool? isProvisioned;
 
         private string? name;
         private string? planId;
@@ -35,7 +35,7 @@ namespace Dogger.Domain.Models.Builders
             return this;
         }
 
-        public InstanceBuilder WithProvisionedStatus(bool value)
+        public InstanceBuilder WithProvisionedStatus(bool? value)
         {
             this.isProvisioned = value;
             return this;

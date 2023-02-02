@@ -70,7 +70,7 @@ namespace Dogger.Domain.Commands.PullDog.EnsurePullDogDatabaseInstance
                 var newInstance = new InstanceBuilder()
                     .WithName($"{hostEnvironment.EnvironmentName}_pull-dog_{user.Id}_{request.PullRequest.Id}")
                     .WithCluster(cluster)
-                    .WithProvisionedStatus(false)
+                    .WithProvisionedStatus(null)
                     .WithPlanId(settings.PlanId)
                     .WithPullDogPullRequest(pullRequest)
                     .WithExpiredDate(expiryTime)

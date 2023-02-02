@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Amazon.Lightsail;
 using Dogger.Domain.Commands.Instances.RegisterInstanceAsProvisioned;
+using Dogger.Domain.Commands.Instances.RegisterInstanceAsProvisioning;
 using Dogger.Domain.Services.Provisioning.States;
 using Dogger.Domain.Services.Provisioning.States.CompleteInstanceSetup;
 using Dogger.Infrastructure.Ssh;

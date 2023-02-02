@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dogger.Domain.Commands.Instances.RegisterInstanceAsProvisioned;
-using Dogger.Domain.Commands.Instances.SetInstanceExpiry;
+using Dogger.Domain.Commands.Instances.RegisterInstanceAsProvisioning;
 using Dogger.Tests.TestHelpers;
 using Dogger.Tests.TestHelpers.Builders.Models;
 using Dogger.Tests.TestHelpers.Environments.Dogger;
@@ -17,7 +17,7 @@ using Stripe;
 namespace Dogger.Tests.Domain.Commands.Instances
 {
     [TestClass]
-    public class SetInstanceExpiryCommandTest
+    public class RegisterInstanceAsProvisioningCommandTest
     {
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
@@ -27,10 +27,8 @@ namespace Dogger.Tests.Domain.Commands.Instances
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
 
             //Act
-            var exception = await Assert.ThrowsExceptionAsync<InvalidOperationException>(async () =>
-                await environment.Mediator.Send(new SetInstanceExpiryCommand(
-                    "some-instance-name",
-                    DateTime.UtcNow.AddDays(1))));
+            var exception = await Assert.ThrowsExceptionAsync<InstanceNotFoundException>(async () =>
+                await environment.Mediator.Send(new RegisterInstanceAsProvisioningCommand("some-instance-name")));
 
             //Assert
             Assert.IsNotNull(exception);
@@ -38,7 +36,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
         [TestMethod]
         [TestCategory(TestCategories.IntegrationCategory)]
-        public async Task Handle_InstanceFound_ExpiryTimeSetInDatabase()
+        public async Task Handle_InstanceFound_ProvisionedFlagSetInDatabase()
         {
             //Arrange
             await using var environment = await DoggerIntegrationTestEnvironment.CreateAsync();
@@ -50,9 +48,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             //Act
-            await environment.Mediator.Send(new SetInstanceExpiryCommand(
-                "some-instance-name",
-                DateTime.UtcNow.AddDays(1)));
+            await environment.Mediator.Send(new RegisterInstanceAsProvisioningCommand("some-instance-name"));
 
             //Assert
             await environment.WithFreshDataContext(async dataContext =>
@@ -63,7 +59,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
                     .ToArrayAsync();
 
                 Assert.AreEqual(1, instances.Length);
-                Assert.IsNotNull(instances.Single().ExpiresAtUtc);
+                Assert.IsTrue(instances.Single().IsProvisioned == false);
             });
         }
 
@@ -96,7 +92,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             //Act
-            await environment.Mediator.Send(new RegisterInstanceAsProvisionedCommand("some-instance-name"));
+            await environment.Mediator.Send(new RegisterInstanceAsProvisioningCommand("some-instance-name"));
 
             //Assert
             await fakeSubscriptionService
@@ -149,7 +145,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             //Act
-            await environment.Mediator.Send(new RegisterInstanceAsProvisionedCommand("some-instance-name")
+            await environment.Mediator.Send(new RegisterInstanceAsProvisioningCommand("some-instance-name")
             {
                 UserId = existingUser.Id
             });
@@ -224,7 +220,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
             });
 
             //Act
-            await environment.Mediator.Send(new RegisterInstanceAsProvisionedCommand("some-instance-name")
+            await environment.Mediator.Send(new RegisterInstanceAsProvisioningCommand("some-instance-name")
             {
                 UserId = existingUser.Id
             });
@@ -278,7 +274,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<TestException>(async () =>
-                await environment.Mediator.Send(new RegisterInstanceAsProvisionedCommand("some-instance-name")
+                await environment.Mediator.Send(new RegisterInstanceAsProvisioningCommand("some-instance-name")
                 {
                     UserId = existingUser.Id
                 }));
@@ -293,7 +289,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
                 Assert.IsNotNull(exception);
                 Assert.AreEqual(1, instances.Length);
-                Assert.IsNull(instances.Single().IsProvisioned);
+                Assert.IsFalse(instances.Single().IsProvisioned == false);
             });
         }
 
@@ -341,7 +337,7 @@ namespace Dogger.Tests.Domain.Commands.Instances
 
             //Act
             var exception = await Assert.ThrowsExceptionAsync<NotImplementedException>(async () =>
-                await environment.Mediator.Send(new RegisterInstanceAsProvisionedCommand("some-instance-name")
+                await environment.Mediator.Send(new RegisterInstanceAsProvisioningCommand("some-instance-name")
                 {
                     UserId = existingUser.Id
                 }));

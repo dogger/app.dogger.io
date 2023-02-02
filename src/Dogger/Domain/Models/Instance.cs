@@ -23,7 +23,7 @@ namespace Dogger.Domain.Models
 
         public string PlanId { get; set; } = null!;
 
-        public bool IsProvisioned { get; set; }
+        public bool? IsProvisioned { get; set; }
 
         public DateTime? ExpiresAtUtc { get; set; }
 
